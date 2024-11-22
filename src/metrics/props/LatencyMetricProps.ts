@@ -1,7 +1,7 @@
 // Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
-import { AvailabilityAndLatencyMetricProps } from "./AvailabilityAndLatencyMetricProps";
-import { LatencyMetricType } from "../../utilities/LatencyMetricType";
+import { AvailabilityAndLatencyMetricProps } from './AvailabilityAndLatencyMetricProps';
+import { LatencyMetricType } from '../../utilities/LatencyMetricType';
 
 /**
  * Metric properties for latency metrics

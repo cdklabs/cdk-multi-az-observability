@@ -1,6 +1,6 @@
 // Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
-import { Fn } from "aws-cdk-lib";
+import { Fn } from 'aws-cdk-lib';
 import {
   Alarm,
   AlarmRule,
@@ -13,27 +13,27 @@ import {
   Metric,
   TreatMissingData,
   Unit,
-} from "aws-cdk-lib/aws-cloudwatch";
-import { CfnNatGateway } from "aws-cdk-lib/aws-ec2";
+} from 'aws-cdk-lib/aws-cloudwatch';
+import { CfnNatGateway } from 'aws-cdk-lib/aws-ec2';
 import {
   BaseLoadBalancer,
   HttpCodeElb,
   HttpCodeTarget,
   IApplicationLoadBalancer,
   ILoadBalancerV2,
-} from "aws-cdk-lib/aws-elasticloadbalancingv2";
-import { IFunction } from "aws-cdk-lib/aws-lambda";
-import { Construct } from "constructs";
-import { IBasicServiceMultiAZObservability } from "./IBasicServiceMultiAZObservability";
-import { BasicServiceMultiAZObservabilityProps } from "./props/BasicServiceMultiAZObservabilityProps";
-import { AvailabilityAndLatencyAlarmsAndRules } from "../alarmsandrules/AvailabilityAndLatencyAlarmsAndRules";
-import { AvailabilityZoneMapper } from "../azmapper/AvailabilityZoneMapper";
-import { IAvailabilityZoneMapper } from "../azmapper/IAvailabilityZoneMapper";
-import { BasicServiceDashboard } from "../dashboards/BasicServiceDashboard";
-import { AvailabilityAndLatencyMetrics } from "../metrics/AvailabilityAndLatencyMetrics";
-import { OutlierDetectionFunction } from "../outlier-detection/OutlierDetectionFunction";
-import { OutlierDetectionAlgorithm } from "../utilities/OutlierDetectionAlgorithm";
-import { StackWithDynamicSource } from "../utilities/StackWithDynamicSource";
+} from 'aws-cdk-lib/aws-elasticloadbalancingv2';
+import { IFunction } from 'aws-cdk-lib/aws-lambda';
+import { Construct } from 'constructs';
+import { IBasicServiceMultiAZObservability } from './IBasicServiceMultiAZObservability';
+import { BasicServiceMultiAZObservabilityProps } from './props/BasicServiceMultiAZObservabilityProps';
+import { AvailabilityAndLatencyAlarmsAndRules } from '../alarmsandrules/AvailabilityAndLatencyAlarmsAndRules';
+import { AvailabilityZoneMapper } from '../azmapper/AvailabilityZoneMapper';
+import { IAvailabilityZoneMapper } from '../azmapper/IAvailabilityZoneMapper';
+import { BasicServiceDashboard } from '../dashboards/BasicServiceDashboard';
+import { AvailabilityAndLatencyMetrics } from '../metrics/AvailabilityAndLatencyMetrics';
+import { OutlierDetectionFunction } from '../outlier-detection/OutlierDetectionFunction';
+import { OutlierDetectionAlgorithm } from '../utilities/OutlierDetectionAlgorithm';
+import { StackWithDynamicSource } from '../utilities/StackWithDynamicSource';
 
 /**
  * Basic observability for a service using metrics from
@@ -41,8 +41,7 @@ import { StackWithDynamicSource } from "../utilities/StackWithDynamicSource";
  */
 export class BasicServiceMultiAZObservability
   extends Construct
-  implements IBasicServiceMultiAZObservability
-{
+  implements IBasicServiceMultiAZObservability {
   /**
    * The NAT Gateways being used in the service, each set of NAT Gateways
    * are keyed by their Availability Zone Id
@@ -139,11 +138,11 @@ export class BasicServiceMultiAZObservability
     }
 
     // Create the AZ mapper resource to translate AZ names to ids
-    this.azMapper = new AvailabilityZoneMapper(this, "AvailabilityZoneMapper");
+    this.azMapper = new AvailabilityZoneMapper(this, 'AvailabilityZoneMapper');
 
     if (props.outlierDetectionAlgorithm != OutlierDetectionAlgorithm.STATIC) {
       let outlierDetectionStack: StackWithDynamicSource =
-        new StackWithDynamicSource(this, "OutlierDetectionStack", {
+        new StackWithDynamicSource(this, 'OutlierDetectionStack', {
           assetsBucketsParameterName: props.assetsBucketParameterName,
           assetsBucketPrefixParameterName:
             props.assetsBucketPrefixParameterName,
@@ -151,7 +150,7 @@ export class BasicServiceMultiAZObservability
 
       this.outlierDetectionFunction = new OutlierDetectionFunction(
         outlierDetectionStack,
-        "OutlierDetectionFunction",
+        'OutlierDetectionFunction',
         {},
       ).function;
     }
@@ -189,9 +188,9 @@ export class BasicServiceMultiAZObservability
 
       this.aggregateZonalIsolatedImpactAlarms[az] = new CompositeAlarm(
         this,
-        "AZ" + counter++ + "AggregateIsolatedImpactAlarm",
+        'AZ' + counter++ + 'AggregateIsolatedImpactAlarm',
         {
-          compositeAlarmName: availabilityZoneId + "-aggregate-isolated-impact",
+          compositeAlarmName: availabilityZoneId + '-aggregate-isolated-impact',
           alarmRule: AlarmRule.anyOf(...tmp),
           actionsEnabled: false,
         },
@@ -223,10 +222,10 @@ export class BasicServiceMultiAZObservability
 
         this.aggregateZonalIsolatedImpactAlarms[az] = new CompositeAlarm(
           this,
-          "AZ" + counter++ + "AggregateIsolatedImpactAlarm",
+          'AZ' + counter++ + 'AggregateIsolatedImpactAlarm',
           {
             compositeAlarmName:
-              availabilityZoneId + "-aggregate-isolated-impact",
+              availabilityZoneId + '-aggregate-isolated-impact',
             alarmRule: AlarmRule.anyOf(...tmp),
             actionsEnabled: false,
           },
@@ -241,7 +240,7 @@ export class BasicServiceMultiAZObservability
     if (props.createDashboard == true) {
       this.dashboard = new BasicServiceDashboard(
         this,
-        "BasicServiceDashboard",
+        'BasicServiceDashboard',
         {
           serviceName: props.serviceName.toLowerCase(),
           zonalAggregateIsolatedImpactAlarms:
@@ -253,7 +252,7 @@ export class BasicServiceMultiAZObservability
           interval: props.interval,
           zonalLoadBalancerFaultRateMetrics: this._faultsPerZone,
           zonalNatGatewayPacketDropMetrics: this._packetDropsPerZone,
-          azMapper: this.azMapper
+          azMapper: this.azMapper,
         },
       ).dashboard;
     }
@@ -270,7 +269,7 @@ export class BasicServiceMultiAZObservability
     // in the AZ saw a fault rate that exceeded the threshold
     let faultRatePercentageAlarms: { [key: string]: IAlarm[] } = {};
 
-    let keyPrefix: string = AvailabilityAndLatencyMetrics.nextChar("");
+    let keyPrefix: string = AvailabilityAndLatencyMetrics.nextChar('');
 
     // Iterate each ALB
     this.applicationLoadBalancers!.forEach((alb) => {
@@ -369,7 +368,7 @@ export class BasicServiceMultiAZObservability
             expression: `(${keyPrefix}1 + ${keyPrefix}2)`,
             usingMetrics: usingMetrics,
             label:
-              availabilityZoneId + " " + alb.loadBalancerArn + " fault count",
+              availabilityZoneId + ' ' + alb.loadBalancerArn + ' fault count',
             period: props.period,
           }),
         );
@@ -386,7 +385,7 @@ export class BasicServiceMultiAZObservability
         let faultRate: IMetric = new MathExpression({
           expression: `((${keyPrefix}4+${keyPrefix}5)/(${keyPrefix}1+${keyPrefix}2+${keyPrefix}3+${keyPrefix}4+${keyPrefix}5)) * 100`,
           usingMetrics: usingMetrics,
-          label: availabilityZoneId + " " + alb.loadBalancerArn + " fault rate",
+          label: availabilityZoneId + ' ' + alb.loadBalancerArn + ' fault rate',
           period: props.period,
         });
 
@@ -395,10 +394,10 @@ export class BasicServiceMultiAZObservability
         // Create a fault rate alarm for the ALB
         let faultRateAlarm: IAlarm = new Alarm(
           this,
-          "AZ" + index + keyPrefix + "FaultRatePercentageAlarm",
+          'AZ' + index + keyPrefix + 'FaultRatePercentageAlarm',
           {
             alarmName:
-              availabilityZoneId + "-" + alb.loadBalancerArn + "-fault-rate",
+              availabilityZoneId + '-' + alb.loadBalancerArn + '-fault-rate',
             actionsEnabled: false,
             metric: faultRate,
             evaluationPeriods: props.evaluationPeriods,
@@ -433,9 +432,9 @@ export class BasicServiceMultiAZObservability
 
       // Sum the total faults for the availability zone across all ALBs
       let totalFaultsPerZone: IMetric = new MathExpression({
-        expression: Object.keys(usingMetrics).join("+"),
+        expression: Object.keys(usingMetrics).join('+'),
         usingMetrics: usingMetrics,
-        label: availabilityZoneId + " fault count",
+        label: availabilityZoneId + ' fault count',
         period: props.period,
       });
 
@@ -455,9 +454,9 @@ export class BasicServiceMultiAZObservability
 
     // Calculate the total faults in the region by adding all AZs together
     let totalFaults: IMetric = new MathExpression({
-      expression: Object.keys(tmp).join("+"),
+      expression: Object.keys(tmp).join('+'),
       usingMetrics: tmp,
-      label: Fn.sub("${AWS::Region} fault count"),
+      label: Fn.sub('${AWS::Region} fault count'),
       period: props.period,
     });
 
@@ -483,9 +482,9 @@ export class BasicServiceMultiAZObservability
 
         let azIsOutlierForFaults: IAlarm = new Alarm(
           this,
-          "AZ" + index + "FaultCountOutlierAlarm",
+          'AZ' + index + 'FaultCountOutlierAlarm',
           {
-            alarmName: availabilityZoneId + "-fault-count-outlier",
+            alarmName: availabilityZoneId + '-fault-count-outlier',
             metric: outlierMetrics,
             threshold: outlierThreshold,
             evaluationPeriods: props.evaluationPeriods,
@@ -502,10 +501,10 @@ export class BasicServiceMultiAZObservability
         // one ALB exceeds the fault rate threshold provided
         this._albZonalIsolatedImpactAlarms[azLetter] = new CompositeAlarm(
           this,
-          "AZ" + index + "IsolatedFaultCountImpact",
+          'AZ' + index + 'IsolatedFaultCountImpact',
           {
             compositeAlarmName:
-              availabilityZoneId + "-isolated-fault-count-impact",
+              availabilityZoneId + '-isolated-fault-count-impact',
             alarmRule: AlarmRule.allOf(
               azIsOutlierForFaults,
               AlarmRule.anyOf(...faultRatePercentageAlarms[azLetter]),
@@ -539,7 +538,7 @@ export class BasicServiceMultiAZObservability
             index,
             props.evaluationPeriods,
             props.datapointsToAlarm,
-            "",
+            '',
           );
 
         // In addition to being an outlier for fault count, make sure
@@ -547,10 +546,10 @@ export class BasicServiceMultiAZObservability
         // by making sure at least 1 ALB sees packet loss that exceeds the threshold
         let azIsOutlierAndSeesImpact: IAlarm = new CompositeAlarm(
           this,
-          "AZ" + index + "ALBIsolatedImpact",
+          'AZ' + index + 'ALBIsolatedImpact',
           {
             compositeAlarmName:
-              availabilityZoneId + "-isolated-fault-count-impact",
+              availabilityZoneId + '-isolated-fault-count-impact',
             alarmRule: AlarmRule.allOf(
               azIsOutlierForFaults,
               AlarmRule.anyOf(...faultRatePercentageAlarms[azLetter]),
@@ -569,7 +568,7 @@ export class BasicServiceMultiAZObservability
     props: BasicServiceMultiAZObservabilityProps,
     outlierThreshold: number,
   ) {
-    let keyPrefix: string = AvailabilityAndLatencyMetrics.nextChar("");
+    let keyPrefix: string = AvailabilityAndLatencyMetrics.nextChar('');
 
     // Collect alarms for packet drops exceeding a threshold per NAT GW
     let packetDropPercentageAlarms: { [key: string]: IAlarm[] } = {};
@@ -590,11 +589,11 @@ export class BasicServiceMultiAZObservability
       entry[1].forEach((natgw) => {
         // Calculate packet drops
         let packetDropCount: IMetric = new Metric({
-          metricName: "PacketsDropCount",
-          namespace: "AWS/NATGateway",
-          statistic: "Sum",
+          metricName: 'PacketsDropCount',
+          namespace: 'AWS/NATGateway',
+          statistic: 'Sum',
           unit: Unit.COUNT,
-          label: availabilityZoneId + " packet drops",
+          label: availabilityZoneId + ' packet drops',
           dimensionsMap: {
             NatGatewayId: natgw.attrNatGatewayId,
           },
@@ -603,11 +602,11 @@ export class BasicServiceMultiAZObservability
 
         // Calculate packets in from source
         let packetsInFromSourceCount: IMetric = new Metric({
-          metricName: "PacketsInFromSource",
-          namespace: "AWS/NATGateway",
-          statistic: "Sum",
+          metricName: 'PacketsInFromSource',
+          namespace: 'AWS/NATGateway',
+          statistic: 'Sum',
           unit: Unit.COUNT,
-          label: availabilityZoneId + " packets in from source",
+          label: availabilityZoneId + ' packets in from source',
           dimensionsMap: {
             NatGatewayId: natgw.attrNatGatewayId,
           },
@@ -616,11 +615,11 @@ export class BasicServiceMultiAZObservability
 
         // Calculate packets in from destination
         let packetsInFromDestinationCount: IMetric = new Metric({
-          metricName: "PacketsInFromDestination",
-          namespace: "AWS/NATGateway",
-          statistic: "Sum",
+          metricName: 'PacketsInFromDestination',
+          namespace: 'AWS/NATGateway',
+          statistic: 'Sum',
           unit: Unit.COUNT,
-          label: availabilityZoneId + " packets in from destination",
+          label: availabilityZoneId + ' packets in from destination',
           dimensionsMap: {
             NatGatewayId: natgw.attrNatGatewayId,
           },
@@ -636,7 +635,7 @@ export class BasicServiceMultiAZObservability
         let packetDropPercentage: IMetric = new MathExpression({
           expression: `(${keyPrefix}1 / (${keyPrefix}2 + ${keyPrefix}3)) * 100`,
           usingMetrics: usingMetrics,
-          label: availabilityZoneId + " packet drop percentage",
+          label: availabilityZoneId + ' packet drop percentage',
           period: props.period,
         });
 
@@ -646,13 +645,13 @@ export class BasicServiceMultiAZObservability
         // Create an alarm for this NAT GW if packet drops exceed the specified threshold
         let packetDropImpactAlarm: IAlarm = new Alarm(
           this,
-          "AZ" + (index + 1) + "PacketDropImpactAlarm",
+          'AZ' + (index + 1) + 'PacketDropImpactAlarm',
           {
             alarmName:
               availabilityZoneId +
-              "-" +
+              '-' +
               natgw.attrNatGatewayId +
-              "-packet-drop-impact",
+              '-packet-drop-impact',
             actionsEnabled: false,
             metric: packetDropPercentage,
             threshold: threshold,
@@ -676,9 +675,9 @@ export class BasicServiceMultiAZObservability
       // Create a metric that adds up all packets drops from each
       // NAT GW in the AZ
       let packetDropsInThisAZ: IMetric = new MathExpression({
-        expression: Object.keys(packetDropMetricsForAZ).join("+"),
+        expression: Object.keys(packetDropMetricsForAZ).join('+'),
         usingMetrics: packetDropMetricsForAZ,
-        label: availabilityZoneId + " dropped packets",
+        label: availabilityZoneId + ' dropped packets',
         period: props.period,
       });
 
@@ -697,9 +696,9 @@ export class BasicServiceMultiAZObservability
 
     // Calculate total packet drops for the region
     let totalPacketDrops: IMetric = new MathExpression({
-      expression: Object.keys(tmp).join("+"),
+      expression: Object.keys(tmp).join('+'),
       usingMetrics: tmp,
-      label: Fn.ref("AWS::Region") + " dropped packets",
+      label: Fn.ref('AWS::Region') + ' dropped packets',
       period: props.period,
     });
 
@@ -724,15 +723,15 @@ export class BasicServiceMultiAZObservability
         outlierMetrics = new MathExpression({
           expression: `(${keyPrefix}1 / ${keyPrefix}2) * 100`,
           usingMetrics: usingMetrics,
-          label: availabilityZoneId + " percentage of dropped packets",
+          label: availabilityZoneId + ' percentage of dropped packets',
         });
 
         azIsOutlierForPacketDrops = new Alarm(
           this,
-          "AZ" + (index + 1) + "NATGWDroppedPacketsOutlierAlarm",
+          'AZ' + (index + 1) + 'NATGWDroppedPacketsOutlierAlarm',
           {
             metric: outlierMetrics,
-            alarmName: availabilityZoneId + "-dropped-packets-outlier",
+            alarmName: availabilityZoneId + '-dropped-packets-outlier',
             evaluationPeriods: props.evaluationPeriods,
             datapointsToAlarm: props.datapointsToAlarm,
             threshold: outlierThreshold,
@@ -748,9 +747,9 @@ export class BasicServiceMultiAZObservability
         // by making sure at least 1 NAT GW sees packet loss more than 0.01%
         let azIsOutlierAndSeesImpact: IAlarm = new CompositeAlarm(
           this,
-          "AZ" + index + "NATGWIsolatedImpact",
+          'AZ' + index + 'NATGWIsolatedImpact',
           {
-            compositeAlarmName: availabilityZoneId + "-isolated-natgw-impact",
+            compositeAlarmName: availabilityZoneId + '-isolated-natgw-impact',
             alarmRule: AlarmRule.allOf(
               azIsOutlierForPacketDrops,
               AlarmRule.anyOf(...packetDropPercentageAlarms[azLetter]),
@@ -783,7 +782,7 @@ export class BasicServiceMultiAZObservability
             index,
             props.evaluationPeriods,
             props.datapointsToAlarm,
-            "",
+            '',
           );
 
         // In addition to being an outlier for packet drops, make sure
@@ -791,9 +790,9 @@ export class BasicServiceMultiAZObservability
         // by making sure at least 1 NAT GW sees packet loss more than 0.01%
         let azIsOutlierAndSeesImpact: IAlarm = new CompositeAlarm(
           this,
-          "AZ" + index + "NATGWIsolatedImpact",
+          'AZ' + index + 'NATGWIsolatedImpact',
           {
-            compositeAlarmName: availabilityZoneId + "-isolated-natgw-impact",
+            compositeAlarmName: availabilityZoneId + '-isolated-natgw-impact',
             alarmRule: AlarmRule.allOf(
               azIsOutlierForPacketDrops,
               AlarmRule.anyOf(...packetDropPercentageAlarms[azLetter]),

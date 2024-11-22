@@ -1,6 +1,6 @@
 // Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
-import { ILogGroup } from "aws-cdk-lib/aws-logs";
+import { ILogGroup } from 'aws-cdk-lib/aws-logs';
 
 /**
  * Details for setting up Contributor Insight rules

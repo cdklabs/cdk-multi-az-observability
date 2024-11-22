@@ -1,33 +1,33 @@
 // Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
-import * as cdk from "aws-cdk-lib";
+import * as cdk from 'aws-cdk-lib';
 import {
   CfnNatGateway,
   SelectedSubnets,
   SubnetType,
   Vpc,
-} from "aws-cdk-lib/aws-ec2";
-import { ApplicationLoadBalancer } from "aws-cdk-lib/aws-elasticloadbalancingv2";
-import { BasicServiceMultiAZObservability } from "../src/services/BasicServiceMultiAZObservability";
-import { OutlierDetectionAlgorithm } from "../src/utilities/OutlierDetectionAlgorithm";
+} from 'aws-cdk-lib/aws-ec2';
+import { ApplicationLoadBalancer } from 'aws-cdk-lib/aws-elasticloadbalancingv2';
+import { BasicServiceMultiAZObservability } from '../src/services/BasicServiceMultiAZObservability';
+import { OutlierDetectionAlgorithm } from '../src/utilities/OutlierDetectionAlgorithm';
 
 const app = new cdk.App();
-const stack = new cdk.Stack(app, "TestStack", {
-  stackName: "test-stack",
+const stack = new cdk.Stack(app, 'TestStack', {
+  stackName: 'test-stack',
 });
 
 let azs: string[] = [
-  cdk.Fn.ref("AWS::Region") + "a",
-  cdk.Fn.ref("AWS::Region") + "b",
-  cdk.Fn.ref("AWS::Region") + "c",
+  cdk.Fn.ref('AWS::Region') + 'a',
+  cdk.Fn.ref('AWS::Region') + 'b',
+  cdk.Fn.ref('AWS::Region') + 'c',
 ];
 
-let vpc = new Vpc(stack, "vpc", {
+let vpc = new Vpc(stack, 'vpc', {
   availabilityZones: azs,
   subnetConfiguration: [
     {
       subnetType: SubnetType.PRIVATE_WITH_EGRESS,
-      name: "private_with_egress_subnets",
+      name: 'private_with_egress_subnets',
       cidrMask: 24,
     },
   ],
@@ -47,17 +47,17 @@ subnets.subnets.forEach((subnet, index) => {
   let subnetId = subnet.subnetId;
 
   natGateways[az] = [
-    new CfnNatGateway(stack, "AZ" + index + "NatGateway", {
+    new CfnNatGateway(stack, 'AZ' + index + 'NatGateway', {
       subnetId: subnetId,
     }),
   ];
 });
 
-new BasicServiceMultiAZObservability(stack, "MAZObservability", {
+new BasicServiceMultiAZObservability(stack, 'MAZObservability', {
   applicationLoadBalancers: [
-    new ApplicationLoadBalancer(stack, "alb", {
+    new ApplicationLoadBalancer(stack, 'alb', {
       vpc: vpc,
-      crossZoneEnabled: false,
+      crossZoneEnabled: true,
     }),
   ],
   natGateways: natGateways,
@@ -65,7 +65,7 @@ new BasicServiceMultiAZObservability(stack, "MAZObservability", {
   outlierThreshold: 0.05,
   faultCountPercentageThreshold: 1.0,
   packetLossImpactPercentageThreshold: 0.01,
-  serviceName: "test",
+  serviceName: 'test',
   period: cdk.Duration.seconds(60),
   createDashboard: true,
   datapointsToAlarm: 3,

@@ -1,11 +1,11 @@
 // Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
-import { ILoadBalancerV2 } from "aws-cdk-lib/aws-elasticloadbalancingv2";
-import { IFunction } from "aws-cdk-lib/aws-lambda";
-import { IAvailabilityZoneMapper } from "../../azmapper/IAvailabilityZoneMapper";
-import { ContributorInsightRuleDetails } from "../../services/ContributorInsightRuleDetails";
-import { Operation } from "../../services/Operation";
-import { OutlierDetectionAlgorithm } from "../../utilities/OutlierDetectionAlgorithm";
+import { ILoadBalancerV2 } from 'aws-cdk-lib/aws-elasticloadbalancingv2';
+import { IFunction } from 'aws-cdk-lib/aws-lambda';
+import { IAvailabilityZoneMapper } from '../../azmapper/IAvailabilityZoneMapper';
+import { ContributorInsightRuleDetails } from '../../services/ContributorInsightRuleDetails';
+import { Operation } from '../../services/Operation';
+import { OutlierDetectionAlgorithm } from '../../utilities/OutlierDetectionAlgorithm';
 
 /**
  * The properties for the operation alarms and rules

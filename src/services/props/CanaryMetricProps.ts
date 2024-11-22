@@ -1,6 +1,6 @@
 // Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
-import { IOperationMetricDetails } from "../IOperationMetricDetails";
+import { IOperationMetricDetails } from '../IOperationMetricDetails';
 
 /**
  * Properties for canary metrics in an operation

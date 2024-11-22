@@ -1,7 +1,7 @@
 // Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
-import { Duration } from "aws-cdk-lib";
-import { IMetric, Metric, Unit } from "aws-cdk-lib/aws-cloudwatch";
+import { Duration } from 'aws-cdk-lib';
+import { IMetric, Metric, Unit } from 'aws-cdk-lib/aws-cloudwatch';
 
 export class NetworkLoadBalancerMetrics {
   /**
@@ -15,15 +15,15 @@ export class NetworkLoadBalancerMetrics {
     period: Duration,
   ): IMetric {
     return new Metric({
-      metricName: "ProcessedBytes",
-      namespace: "AWS/NetworkELB",
+      metricName: 'ProcessedBytes',
+      namespace: 'AWS/NetworkELB',
       unit: Unit.COUNT,
       period: period,
-      statistic: "Sum",
+      statistic: 'Sum',
       dimensionsMap: {
         LoadBalancer: loadBalancerFullName,
       },
-      label: "ProcessedBytes",
+      label: 'ProcessedBytes',
     });
   }
 
@@ -40,16 +40,16 @@ export class NetworkLoadBalancerMetrics {
     period: Duration,
   ): IMetric {
     return new Metric({
-      metricName: "ProcessedBytes",
-      namespace: "AWS/NetworkELB",
+      metricName: 'ProcessedBytes',
+      namespace: 'AWS/NetworkELB',
       unit: Unit.COUNT,
       period: period,
-      statistic: "Sum",
+      statistic: 'Sum',
       dimensionsMap: {
         LoadBalancer: loadBalancerFullName,
         AvailabilityZone: availabilityZoneName,
       },
-      label: "ProcessedBytes",
+      label: 'ProcessedBytes',
     });
   }
 }

@@ -1,8 +1,8 @@
 // Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
-import { IAlarm, CfnInsightRule } from "aws-cdk-lib/aws-cloudwatch";
-import { IOperation } from "../../services/IOperation";
-import { IOperationMetricDetails } from "../../services/IOperationMetricDetails";
+import { IAlarm, CfnInsightRule } from 'aws-cdk-lib/aws-cloudwatch';
+import { IOperation } from '../../services/IOperation';
+import { IOperationMetricDetails } from '../../services/IOperationMetricDetails';
 
 /**
  * Props for creating operation dashboard availability and latency widgets

@@ -1,16 +1,15 @@
 // Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
-import { ILogGroup } from "aws-cdk-lib/aws-logs";
-import { IContributorInsightRuleDetails } from "./IContributorInsightRuleDetails";
-import { ContributorInsightRuleDetailsProps } from "./props/ContributorInsightRuleDetailsProps";
+import { ILogGroup } from 'aws-cdk-lib/aws-logs';
+import { IContributorInsightRuleDetails } from './IContributorInsightRuleDetails';
+import { ContributorInsightRuleDetailsProps } from './props/ContributorInsightRuleDetailsProps';
 
 /**
  * The contributor insight rule details for creating an
  * insight rule
  */
 export class ContributorInsightRuleDetails
-  implements IContributorInsightRuleDetails
-{
+implements IContributorInsightRuleDetails {
   /**
    * The log groups where CloudWatch logs for the operation are located. If
    * this is not provided, Contributor Insight rules cannot be created.

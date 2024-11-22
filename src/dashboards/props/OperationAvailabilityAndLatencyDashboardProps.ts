@@ -1,10 +1,10 @@
 // Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
-import { Duration } from "aws-cdk-lib";
-import { IAlarm, CfnInsightRule } from "aws-cdk-lib/aws-cloudwatch";
-import { ILoadBalancerV2 } from "aws-cdk-lib/aws-elasticloadbalancingv2";
-import { IAvailabilityZoneMapper } from "../../azmapper/IAvailabilityZoneMapper";
-import { IOperation } from "../../services/IOperation";
+import { Duration } from 'aws-cdk-lib';
+import { IAlarm, CfnInsightRule } from 'aws-cdk-lib/aws-cloudwatch';
+import { ILoadBalancerV2 } from 'aws-cdk-lib/aws-elasticloadbalancingv2';
+import { IAvailabilityZoneMapper } from '../../azmapper/IAvailabilityZoneMapper';
+import { IOperation } from '../../services/IOperation';
 
 /**
  * Properties for creating an availability and latency dashboard for

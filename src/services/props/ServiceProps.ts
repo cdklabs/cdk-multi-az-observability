@@ -1,10 +1,10 @@
 // Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
-import { Duration } from "aws-cdk-lib";
-import { ILoadBalancerV2 } from "aws-cdk-lib/aws-elasticloadbalancingv2";
-import { AddCanaryTestProps } from "../../canaries/props/AddCanaryTestProps";
-import { IContributorInsightRuleDetails } from "../IContributorInsightRuleDetails";
-import { IServiceMetricDetails } from "../IServiceMetricDetails";
+import { Duration } from 'aws-cdk-lib';
+import { ILoadBalancerV2 } from 'aws-cdk-lib/aws-elasticloadbalancingv2';
+import { AddCanaryTestProps } from '../../canaries/props/AddCanaryTestProps';
+import { IContributorInsightRuleDetails } from '../IContributorInsightRuleDetails';
+import { IServiceMetricDetails } from '../IServiceMetricDetails';
 
 /**
  * Properties to initialize a service

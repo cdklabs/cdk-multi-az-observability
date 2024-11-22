@@ -1,19 +1,18 @@
 // Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
-import { IAlarm } from "aws-cdk-lib/aws-cloudwatch";
-import { Construct } from "constructs";
-import { AvailabilityAndLatencyAlarmsAndRules } from "./AvailabilityAndLatencyAlarmsAndRules";
-import { IBaseOperationZonalAlarmsAndRules } from "./IBaseOperationZonalAlarmsAndRules";
-import { BaseOperationZonalAlarmsAndRulesProps } from "./props/BaseOperationZonalAlarmsAndRulesProps";
-import { OutlierDetectionAlgorithm } from "../utilities/OutlierDetectionAlgorithm";
+import { IAlarm } from 'aws-cdk-lib/aws-cloudwatch';
+import { Construct } from 'constructs';
+import { AvailabilityAndLatencyAlarmsAndRules } from './AvailabilityAndLatencyAlarmsAndRules';
+import { IBaseOperationZonalAlarmsAndRules } from './IBaseOperationZonalAlarmsAndRules';
+import { BaseOperationZonalAlarmsAndRulesProps } from './props/BaseOperationZonalAlarmsAndRulesProps';
+import { OutlierDetectionAlgorithm } from '../utilities/OutlierDetectionAlgorithm';
 
 /**
  * The base operation regional alarms and rules
  */
 export abstract class BaseOperationZonalAlarmsAndRules
   extends Construct
-  implements IBaseOperationZonalAlarmsAndRules
-{
+  implements IBaseOperationZonalAlarmsAndRules {
   /**
    * Composite alarm for either availabiltiy or latency impact to this operation
    */

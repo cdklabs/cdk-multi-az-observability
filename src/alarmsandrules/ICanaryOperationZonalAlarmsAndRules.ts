@@ -1,7 +1,7 @@
 // Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
-import { IAlarm } from "aws-cdk-lib/aws-cloudwatch";
-import { IBaseOperationZonalAlarmsAndRules } from "./IBaseOperationZonalAlarmsAndRules";
+import { IAlarm } from 'aws-cdk-lib/aws-cloudwatch';
+import { IBaseOperationZonalAlarmsAndRules } from './IBaseOperationZonalAlarmsAndRules';
 
 /**
  * Alarms and rules for canary metrics

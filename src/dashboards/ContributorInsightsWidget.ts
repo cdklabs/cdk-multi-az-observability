@@ -1,16 +1,15 @@
 // Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
-import { Fn } from "aws-cdk-lib";
-import { ConcreteWidget, IWidget } from "aws-cdk-lib/aws-cloudwatch";
-import { ContributorInsightWidgetProps } from "./props/ContributorInsightWidgetProps";
+import { Fn } from 'aws-cdk-lib';
+import { ConcreteWidget, IWidget } from 'aws-cdk-lib/aws-cloudwatch';
+import { ContributorInsightWidgetProps } from './props/ContributorInsightWidgetProps';
 
 /**
  * A Contributor Insight dashboard widget
  */
 export class ContributorInsightsWidget
   extends ConcreteWidget
-  implements IWidget
-{
+  implements IWidget {
   /**
    * The widget properties
    */
@@ -36,7 +35,7 @@ export class ContributorInsightsWidget
   toJson(): any[] {
     return [
       {
-        type: "metric",
+        type: 'metric',
         width: this.width,
         height: this.height,
         x: this.x,
@@ -50,11 +49,11 @@ export class ContributorInsightsWidget
           region:
             this.properties.region !== undefined
               ? this.properties.region
-              : Fn.ref("AWS::Region"),
+              : Fn.ref('AWS::Region'),
           legend: {
             position: this.properties.legendPosition,
           },
-          view: "timeSeries",
+          view: 'timeSeries',
           period: this.properties.period.toSeconds(),
           title: this.properties.title,
           accountId: this.properties.accountId,

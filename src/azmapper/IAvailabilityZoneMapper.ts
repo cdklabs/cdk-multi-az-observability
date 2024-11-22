@@ -1,9 +1,9 @@
 // Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
-import { CustomResource, Reference } from "aws-cdk-lib";
-import { IFunction } from "aws-cdk-lib/aws-lambda";
-import { ILogGroup } from "aws-cdk-lib/aws-logs";
-import { IConstruct } from "constructs";
+import { CustomResource, Reference } from 'aws-cdk-lib';
+import { IFunction } from 'aws-cdk-lib/aws-lambda';
+import { ILogGroup } from 'aws-cdk-lib/aws-logs';
+import { IConstruct } from 'constructs';
 
 /**
  * A wrapper for the Availability Zone mapper construct

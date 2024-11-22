@@ -5,8 +5,8 @@ import {
   NestedStack,
   NestedStackProps,
   Stack,
-} from "aws-cdk-lib";
-import { Construct, IConstruct } from "constructs";
+} from 'aws-cdk-lib';
+import { Construct, IConstruct } from 'constructs';
 
 export interface NestedStackWithDynamicSourceProps extends NestedStackProps {
   assetsBucketsParameterName?: string;
@@ -107,13 +107,13 @@ export class StackWithDynamicSource extends NestedStack {
     if (currentNode !== undefined) {
       if (props.assetsBucketsParameterName !== undefined) {
         new CfnParameter(currentNode, props.assetsBucketsParameterName, {
-          type: "String",
+          type: 'String',
         });
       }
 
       if (props.assetsBucketPrefixParameterName !== undefined) {
         new CfnParameter(currentNode, props.assetsBucketPrefixParameterName, {
-          type: "String",
+          type: 'String',
         });
       }
     }

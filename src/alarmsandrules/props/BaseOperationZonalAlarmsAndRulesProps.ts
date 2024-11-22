@@ -1,11 +1,11 @@
 // Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
-import { IFunction } from "aws-cdk-lib/aws-lambda";
-import { IAvailabilityZoneMapper } from "../../azmapper/IAvailabilityZoneMapper";
-import { IContributorInsightRuleDetails } from "../../services/IContributorInsightRuleDetails";
-import { IOperationMetricDetails } from "../../services/IOperationMetricDetails";
-import { Operation } from "../../services/Operation";
-import { OutlierDetectionAlgorithm } from "../../utilities/OutlierDetectionAlgorithm";
+import { IFunction } from 'aws-cdk-lib/aws-lambda';
+import { IAvailabilityZoneMapper } from '../../azmapper/IAvailabilityZoneMapper';
+import { IContributorInsightRuleDetails } from '../../services/IContributorInsightRuleDetails';
+import { IOperationMetricDetails } from '../../services/IOperationMetricDetails';
+import { Operation } from '../../services/Operation';
+import { OutlierDetectionAlgorithm } from '../../utilities/OutlierDetectionAlgorithm';
 
 /**
  * The base properties for an operation zonal alarms and rules configuration

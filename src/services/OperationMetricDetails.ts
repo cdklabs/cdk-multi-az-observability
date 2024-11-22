@@ -1,11 +1,11 @@
 // Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
-import { Duration } from "aws-cdk-lib";
-import { Unit } from "aws-cdk-lib/aws-cloudwatch";
-import { IOperationMetricDetails } from "./IOperationMetricDetails";
-import { IServiceMetricDetails } from "./IServiceMetricDetails";
-import { MetricDimensions } from "./props/MetricDimensions";
-import { OperationMetricDetailsProps } from "./props/OperationMetricDetailsProps";
+import { Duration } from 'aws-cdk-lib';
+import { Unit } from 'aws-cdk-lib/aws-cloudwatch';
+import { IOperationMetricDetails } from './IOperationMetricDetails';
+import { IServiceMetricDetails } from './IServiceMetricDetails';
+import { MetricDimensions } from './props/MetricDimensions';
+import { OperationMetricDetailsProps } from './props/OperationMetricDetailsProps';
 
 /**
  * Generic metric details for an operation

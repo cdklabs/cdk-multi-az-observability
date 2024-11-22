@@ -1,7 +1,7 @@
 // Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
-import { CfnInsightRule } from "aws-cdk-lib/aws-cloudwatch";
-import { IBaseOperationRegionalAlarmsAndRules } from "./IBaseOperationRegionalAlarmsAndRules";
+import { CfnInsightRule } from 'aws-cdk-lib/aws-cloudwatch';
+import { IBaseOperationRegionalAlarmsAndRules } from './IBaseOperationRegionalAlarmsAndRules';
 
 /**
  * The server side operation regional alarms and rules

@@ -1,9 +1,9 @@
 // Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
-import { IFunction } from "aws-cdk-lib/aws-lambda";
-import { AddCanaryTestProps } from "./AddCanaryTestProps";
-import { IAvailabilityZoneMapper } from "../../azmapper/IAvailabilityZoneMapper";
-import { IOperation } from "../../services/IOperation";
+import { IFunction } from 'aws-cdk-lib/aws-lambda';
+import { AddCanaryTestProps } from './AddCanaryTestProps';
+import { IAvailabilityZoneMapper } from '../../azmapper/IAvailabilityZoneMapper';
+import { IOperation } from '../../services/IOperation';
 
 /**
  * The props for creating a canary test on a single operation

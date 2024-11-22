@@ -1,7 +1,7 @@
 // Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
-import { Duration } from "aws-cdk-lib";
-import { Unit } from "aws-cdk-lib/aws-cloudwatch";
+import { Duration } from 'aws-cdk-lib';
+import { Unit } from 'aws-cdk-lib/aws-cloudwatch';
 
 /**
  * Details for the defaults used in a service for metrics in one perspective, such as server side latency

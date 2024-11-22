@@ -1,11 +1,11 @@
 // Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
-import { Duration } from "aws-cdk-lib";
+import { Duration } from 'aws-cdk-lib';
 import {
   MetricWidgetProps,
   CfnInsightRule,
   LegendPosition,
-} from "aws-cdk-lib/aws-cloudwatch";
+} from 'aws-cdk-lib/aws-cloudwatch';
 
 /**
  * Properties for creating a contributor insight dashboard widget

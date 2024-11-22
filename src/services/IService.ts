@@ -1,11 +1,11 @@
 // Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
-import { Duration } from "aws-cdk-lib";
-import { ILoadBalancerV2 } from "aws-cdk-lib/aws-elasticloadbalancingv2";
-import { IContributorInsightRuleDetails } from "./IContributorInsightRuleDetails";
-import { IOperation } from "./IOperation";
-import { IServiceMetricDetails } from "./IServiceMetricDetails";
-import { AddCanaryTestProps } from "../canaries/props/AddCanaryTestProps";
+import { Duration } from 'aws-cdk-lib';
+import { ILoadBalancerV2 } from 'aws-cdk-lib/aws-elasticloadbalancingv2';
+import { IContributorInsightRuleDetails } from './IContributorInsightRuleDetails';
+import { IOperation } from './IOperation';
+import { IServiceMetricDetails } from './IServiceMetricDetails';
+import { AddCanaryTestProps } from '../canaries/props/AddCanaryTestProps';
 
 /**
  * Represents a complete service composed of one or more operations

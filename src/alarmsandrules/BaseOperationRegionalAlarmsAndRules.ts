@@ -1,18 +1,17 @@
 // Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
-import { IAlarm } from "aws-cdk-lib/aws-cloudwatch";
-import { Construct } from "constructs";
-import { AvailabilityAndLatencyAlarmsAndRules } from "./AvailabilityAndLatencyAlarmsAndRules";
-import { IBaseOperationRegionalAlarmsAndRules } from "./IBaseOperationRegionalAlarmsAndRules";
-import { BaseOperationRegionalAlarmsAndRulesProps } from "./props/BaseOperationRegionalAlarmsAndRulesProps";
+import { IAlarm } from 'aws-cdk-lib/aws-cloudwatch';
+import { Construct } from 'constructs';
+import { AvailabilityAndLatencyAlarmsAndRules } from './AvailabilityAndLatencyAlarmsAndRules';
+import { IBaseOperationRegionalAlarmsAndRules } from './IBaseOperationRegionalAlarmsAndRules';
+import { BaseOperationRegionalAlarmsAndRulesProps } from './props/BaseOperationRegionalAlarmsAndRulesProps';
 
 /**
  * Base operation regional alarms and rules
  */
 export abstract class BaseOperationRegionalAlarmsAndRules
   extends Construct
-  implements IBaseOperationRegionalAlarmsAndRules
-{
+  implements IBaseOperationRegionalAlarmsAndRules {
   /**
    * Availability alarm for this operation
    */

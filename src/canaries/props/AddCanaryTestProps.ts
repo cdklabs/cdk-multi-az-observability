@@ -1,8 +1,8 @@
 // Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
-import { Duration } from "aws-cdk-lib";
-import { ILoadBalancerV2 } from "aws-cdk-lib/aws-elasticloadbalancingv2";
-import { NetworkConfigurationProps } from "./NetworkConfigurationProps";
+import { Duration } from 'aws-cdk-lib';
+import { ILoadBalancerV2 } from 'aws-cdk-lib/aws-elasticloadbalancingv2';
+import { NetworkConfigurationProps } from './NetworkConfigurationProps';
 
 /**
  * The props for requesting a canary be made for an operation

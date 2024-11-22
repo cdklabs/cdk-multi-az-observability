@@ -1,13 +1,13 @@
 // Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
-import { Duration } from "aws-cdk-lib";
-import { ILoadBalancerV2 } from "aws-cdk-lib/aws-elasticloadbalancingv2";
-import { IContributorInsightRuleDetails } from "./IContributorInsightRuleDetails";
-import { IOperation } from "./IOperation";
-import { IService } from "./IService";
-import { IServiceMetricDetails } from "./IServiceMetricDetails";
-import { ServiceProps } from "./props/ServiceProps";
-import { AddCanaryTestProps } from "../canaries/props/AddCanaryTestProps";
+import { Duration } from 'aws-cdk-lib';
+import { ILoadBalancerV2 } from 'aws-cdk-lib/aws-elasticloadbalancingv2';
+import { IContributorInsightRuleDetails } from './IContributorInsightRuleDetails';
+import { IOperation } from './IOperation';
+import { IService } from './IService';
+import { IServiceMetricDetails } from './IServiceMetricDetails';
+import { ServiceProps } from './props/ServiceProps';
+import { AddCanaryTestProps } from '../canaries/props/AddCanaryTestProps';
 
 /**
  * The representation of a service composed of multiple operations

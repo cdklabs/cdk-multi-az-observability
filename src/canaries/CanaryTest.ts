@@ -1,10 +1,10 @@
 // Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
-import { Fn } from "aws-cdk-lib";
-import { IRule, Rule, RuleTargetInput, Schedule } from "aws-cdk-lib/aws-events";
-import { LambdaFunction } from "aws-cdk-lib/aws-events-targets";
-import { Construct } from "constructs";
-import { CanaryTestProps } from "./props/CanaryTestProps";
+import { Fn } from 'aws-cdk-lib';
+import { IRule, Rule, RuleTargetInput, Schedule } from 'aws-cdk-lib/aws-events';
+import { LambdaFunction } from 'aws-cdk-lib/aws-events-targets';
+import { Construct } from 'constructs';
+import { CanaryTestProps } from './props/CanaryTestProps';
 
 export class CanaryTest extends Construct {
   timedEventRules: { [key: string]: IRule };
@@ -17,8 +17,8 @@ export class CanaryTest extends Construct {
 
     this.metricNamespace = props.operation.canaryMetricDetails
       ? props.operation.canaryMetricDetails.canaryAvailabilityMetricDetails
-          .metricNamespace
-      : "canary/metrics";
+        .metricNamespace
+      : 'canary/metrics';
 
     props.operation.service.availabilityZoneNames.forEach(
       (availabilityZoneName, index) => {
@@ -27,12 +27,12 @@ export class CanaryTest extends Construct {
             availabilityZoneName.substring(availabilityZoneName.length - 1),
           );
 
-        let scheme: string = props.operation.service.baseUrl.split(":")[0];
+        let scheme: string = props.operation.service.baseUrl.split(':')[0];
         let url: string =
           scheme +
-          "://" +
+          '://' +
           availabilityZoneName +
-          "." +
+          '.' +
           props.loadBalancer.loadBalancerDnsName +
           props.operation.path;
 
@@ -43,11 +43,11 @@ export class CanaryTest extends Construct {
                 ? props.httpMethods
                 : props.operation.httpMethods,
             url: url,
-            postData: props.postData === undefined ? "" : props.postData,
+            postData: props.postData === undefined ? '' : props.postData,
             headers: props.headers === undefined ? {} : props.headers,
             operation: props.operation.operationName,
             faultBoundaryId: availabilityZoneId,
-            faultBoundary: "az",
+            faultBoundary: 'az',
             metricNamespace: this.metricNamespace,
             requestCount: props.requestCount,
           },
@@ -55,7 +55,7 @@ export class CanaryTest extends Construct {
 
         this.timedEventRules[availabilityZoneId] = new Rule(
           this,
-          "AZ" + index + props.operation.operationName + "TimedEvent",
+          'AZ' + index + props.operation.operationName + 'TimedEvent',
           {
             schedule: Schedule.expression(props.schedule),
             enabled: true,
@@ -69,10 +69,10 @@ export class CanaryTest extends Construct {
       },
     );
 
-    let scheme: string = props.operation.service.baseUrl.split(":")[0];
+    let scheme: string = props.operation.service.baseUrl.split(':')[0];
     let url: string =
       scheme +
-      "://" +
+      '://' +
       props.loadBalancer.loadBalancerDnsName +
       props.operation.path;
 
@@ -83,19 +83,19 @@ export class CanaryTest extends Construct {
             ? props.httpMethods
             : props.operation.httpMethods,
         url: url,
-        postData: props.postData === undefined ? "" : props.postData,
+        postData: props.postData === undefined ? '' : props.postData,
         headers: props.headers === undefined ? {} : props.headers,
         operation: props.operation.operationName,
-        faultBoundaryId: Fn.ref("AWS::Region"),
-        faultBoundary: "region",
+        faultBoundaryId: Fn.ref('AWS::Region'),
+        faultBoundary: 'region',
         metricNamespace: this.metricNamespace,
         requestCount: props.regionalRequestCount,
       },
     };
 
-    this.timedEventRules[Fn.ref("AWS::Region")] = new Rule(
+    this.timedEventRules[Fn.ref('AWS::Region')] = new Rule(
       this,
-      "RegionalTimedEvent",
+      'RegionalTimedEvent',
       {
         schedule: Schedule.expression(props.schedule),
         enabled: true,

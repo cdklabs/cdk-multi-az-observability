@@ -5,20 +5,19 @@ import {
   CfnInsightRule,
   CompositeAlarm,
   AlarmRule,
-} from "aws-cdk-lib/aws-cloudwatch";
-import { Construct } from "constructs";
-import { AvailabilityAndLatencyAlarmsAndRules } from "./AvailabilityAndLatencyAlarmsAndRules";
-import { BaseOperationZonalAlarmsAndRules } from "./BaseOperationZonalAlarmsAndRules";
-import { IServerSideOperationZonalAlarmsAndRules } from "./IServerSideOperationZonalAlarmsAndRules";
-import { ServerSideOperationZonalAlarmsAndRulesProps } from "./props/ServerSideOperationZonalAlarmsAndRulesProps";
+} from 'aws-cdk-lib/aws-cloudwatch';
+import { Construct } from 'constructs';
+import { AvailabilityAndLatencyAlarmsAndRules } from './AvailabilityAndLatencyAlarmsAndRules';
+import { BaseOperationZonalAlarmsAndRules } from './BaseOperationZonalAlarmsAndRules';
+import { IServerSideOperationZonalAlarmsAndRules } from './IServerSideOperationZonalAlarmsAndRules';
+import { ServerSideOperationZonalAlarmsAndRulesProps } from './props/ServerSideOperationZonalAlarmsAndRulesProps';
 
 /**
  * The server side alarms and rules for an operation in an Availability Zone
  */
 export class ServerSideOperationZonalAlarmsAndRules
   extends BaseOperationZonalAlarmsAndRules
-  implements IServerSideOperationZonalAlarmsAndRules
-{
+  implements IServerSideOperationZonalAlarmsAndRules {
   /**
    * Alarm that triggers if either latency or availability breach the specified
    * threshold in this AZ and the AZ is an outlier for faults or latency
@@ -133,9 +132,9 @@ export class ServerSideOperationZonalAlarmsAndRules
       this.isolatedImpactAlarm = new CompositeAlarm(
         scope,
         props.operation.operationName +
-          "AZ" +
+          'AZ' +
           props.counter +
-          "IsolatedImpactAlarm" +
+          'IsolatedImpactAlarm' +
           props.nameSuffix,
         {
           compositeAlarmName:

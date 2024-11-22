@@ -1,14 +1,14 @@
 // Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
-import * as fs from "fs";
-import * as path from "path";
+import * as fs from 'fs';
+import * as path from 'path';
 import {
   CustomResource,
   Duration,
   Fn,
   Reference,
   RemovalPolicy,
-} from "aws-cdk-lib";
+} from 'aws-cdk-lib';
 import {
   Effect,
   IManagedPolicy,
@@ -17,7 +17,7 @@ import {
   PolicyStatement,
   Role,
   ServicePrincipal,
-} from "aws-cdk-lib/aws-iam";
+} from 'aws-cdk-lib/aws-iam';
 import {
   Architecture,
   Code,
@@ -25,19 +25,18 @@ import {
   IFunction,
   Runtime,
   Tracing,
-} from "aws-cdk-lib/aws-lambda";
-import { ILogGroup, LogGroup, RetentionDays } from "aws-cdk-lib/aws-logs";
-import { Construct } from "constructs";
-import { IAvailabilityZoneMapper } from "./IAvailabilityZoneMapper";
-import { AvailabilityZoneMapperProps } from "./props/AvailabilityZoneMapperProps";
+} from 'aws-cdk-lib/aws-lambda';
+import { ILogGroup, LogGroup, RetentionDays } from 'aws-cdk-lib/aws-logs';
+import { Construct } from 'constructs';
+import { IAvailabilityZoneMapper } from './IAvailabilityZoneMapper';
+import { AvailabilityZoneMapperProps } from './props/AvailabilityZoneMapperProps';
 
 /**
  * A construct that allows you to map AZ names to ids and back
  */
 export class AvailabilityZoneMapper
   extends Construct
-  implements IAvailabilityZoneMapper
-{
+  implements IAvailabilityZoneMapper {
   /**
    * The function that does the mapping
    */
@@ -76,20 +75,20 @@ export class AvailabilityZoneMapper
 
     let xrayManagedPolicy: IManagedPolicy = new ManagedPolicy(
       this,
-      "XrayManagedPolicy",
+      'XrayManagedPolicy',
       {
-        path: "/azmapper/",
+        path: '/azmapper/',
         statements: [
           new PolicyStatement({
             actions: [
-              "xray:PutTraceSegments",
-              "xray:PutTelemetryRecords",
-              "xray:GetSamplingRules",
-              "xray:GetSamplingTargets",
-              "xray:GetSamplingStatisticSummaries",
+              'xray:PutTraceSegments',
+              'xray:PutTelemetryRecords',
+              'xray:GetSamplingRules',
+              'xray:GetSamplingTargets',
+              'xray:GetSamplingStatisticSummaries',
             ],
             effect: Effect.ALLOW,
-            resources: ["*"],
+            resources: ['*'],
           }),
         ],
       },
@@ -97,75 +96,75 @@ export class AvailabilityZoneMapper
 
     let ec2ManagedPolicy: IManagedPolicy = new ManagedPolicy(
       this,
-      "EC2ManagedPolicy",
+      'EC2ManagedPolicy',
       {
-        path: "/azmapper/",
+        path: '/azmapper/',
         statements: [
           new PolicyStatement({
-            actions: ["ec2:DescribeAvailabilityZones"],
+            actions: ['ec2:DescribeAvailabilityZones'],
             effect: Effect.ALLOW,
-            resources: ["*"],
+            resources: ['*'],
           }),
         ],
       },
     );
 
-    let executionRole: IRole = new Role(this, "executionRole", {
-      assumedBy: new ServicePrincipal("lambda.amazonaws.com"),
-      path: "/azmapper/",
+    let executionRole: IRole = new Role(this, 'executionRole', {
+      assumedBy: new ServicePrincipal('lambda.amazonaws.com'),
+      path: '/azmapper/',
       managedPolicies: [xrayManagedPolicy, ec2ManagedPolicy],
     });
 
     const file: string = fs.readFileSync(
-      path.resolve(__dirname, "./../azmapper/src/index.py"),
-      "utf-8",
+      path.resolve(__dirname, './../azmapper/src/index.py'),
+      'utf-8',
     );
 
-    this.function = new Function(this, "AvailabilityZoneMapperFunction", {
+    this.function = new Function(this, 'AvailabilityZoneMapperFunction', {
       runtime: Runtime.PYTHON_3_12,
       code: Code.fromInline(file),
-      handler: "index.handler",
+      handler: 'index.handler',
       role: executionRole,
       architecture: Architecture.ARM_64,
       tracing: Tracing.ACTIVE,
       timeout: Duration.seconds(20),
       memorySize: 512,
       environment: {
-        REGION: Fn.ref("AWS::Region"),
-        PARTITION: Fn.ref("AWS::Partition"),
+        REGION: Fn.ref('AWS::Region'),
+        PARTITION: Fn.ref('AWS::Partition'),
       },
     });
 
-    this.logGroup = new LogGroup(this, "LogGroup", {
+    this.logGroup = new LogGroup(this, 'LogGroup', {
       logGroupName: `/aws/lambda/${this.function.functionName}`,
       retention: RetentionDays.ONE_DAY,
       removalPolicy: RemovalPolicy.DESTROY,
     });
 
-    new ManagedPolicy(this, "CloudWatchManagedPolicy", {
-      path: "/azmapper/",
+    new ManagedPolicy(this, 'CloudWatchManagedPolicy', {
+      path: '/azmapper/',
       statements: [
         new PolicyStatement({
-          actions: ["cloudwatch:PutMetricData"],
+          actions: ['cloudwatch:PutMetricData'],
           effect: Effect.ALLOW,
-          resources: ["*"],
+          resources: ['*'],
         }),
         new PolicyStatement({
-          actions: ["logs:CreateLogStream", "logs:PutLogEvents"],
+          actions: ['logs:CreateLogStream', 'logs:PutLogEvents'],
           effect: Effect.ALLOW,
           resources: [
             Fn.sub(
-              "arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:",
+              'arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:',
             ) +
               this.logGroup.logGroupName +
-              ":*",
+              ':*',
           ],
         }),
       ],
       roles: [executionRole],
     });
 
-    this.mapper = new CustomResource(this, "AvailabilityZoneMapper", {
+    this.mapper = new CustomResource(this, 'AvailabilityZoneMapper', {
       serviceToken: this.function.functionArn,
       properties:
         props?.availabilityZoneNames !== undefined
@@ -198,7 +197,7 @@ export class AvailabilityZoneMapper
    * @returns
    */
   regionPrefixForAvailabilityZoneIds(): string {
-    return this.mapper.getAttString(Fn.ref("AWS::Region"));
+    return this.mapper.getAttString(Fn.ref('AWS::Region'));
   }
 
   /**
@@ -233,7 +232,7 @@ export class AvailabilityZoneMapper
       ids.push(this.availabilityZoneId(availabilityZoneNames[i]));
     }
 
-    return ids.join(",");
+    return ids.join(',');
   }
 
   /**
@@ -243,7 +242,7 @@ export class AvailabilityZoneMapper
    * @returns
    */
   allAvailabilityZoneIdsAsCommaDelimitedList(): string {
-    return this.mapper.getAttString("AllAvailabilityZoneIds");
+    return this.mapper.getAttString('AllAvailabilityZoneIds');
   }
 
   /**
@@ -252,7 +251,7 @@ export class AvailabilityZoneMapper
    * @returns
    */
   allAvailabilityZoneIdsAsArray(): Reference {
-    return this.mapper.getAtt("AllAvailabilityZoneIdsArray");
+    return this.mapper.getAtt('AllAvailabilityZoneIdsArray');
   }
 
   /**
@@ -272,6 +271,6 @@ export class AvailabilityZoneMapper
    * @returns
    */
   allAvailabilityZoneNamesAsCommaDelimitedList(): string {
-    return this.mapper.getAttString("AllAvailabilityZoneNames");
+    return this.mapper.getAttString('AllAvailabilityZoneNames');
   }
 }

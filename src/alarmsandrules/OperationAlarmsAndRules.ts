@@ -1,28 +1,27 @@
 // Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
-import { Fn } from "aws-cdk-lib";
-import { AlarmRule, CompositeAlarm, IAlarm } from "aws-cdk-lib/aws-cloudwatch";
-import { BaseLoadBalancer } from "aws-cdk-lib/aws-elasticloadbalancingv2";
-import { Construct } from "constructs";
-import { CanaryOperationRegionalAlarmsAndRules } from "./CanaryOperationRegionalAlarmsAndRules";
-import { CanaryOperationZonalAlarmsAndRules } from "./CanaryOperationZonalAlarmsAndRules";
-import { ICanaryOperationRegionalAlarmsAndRules } from "./ICanaryOperationRegionalAlarmsAndRules";
-import { ICanaryOperationZonalAlarmsAndRules } from "./ICanaryOperationZonalAlarmsAndRules";
-import { IOperationAlarmsAndRules } from "./IOperationAlarmsAndRules";
-import { IServerSideOperationRegionalAlarmsAndRules } from "./IServerSideOperationRegionalAlarmsAndRules";
-import { IServerSideOperationZonalAlarmsAndRules } from "./IServerSideOperationZonalAlarmsAndRules";
-import { OperationAlarmsAndRulesProps } from "./props/OperationAlarmsAndRulesProps";
-import { ServerSideOperationRegionalAlarmsAndRules } from "./ServerSideOperationRegionalAlarmsAndRules";
-import { ServerSideOperationZonalAlarmsAndRules } from "./ServerSideOperationZonalAlarmsAndRules";
-import { IOperation } from "../services/IOperation";
+import { Fn } from 'aws-cdk-lib';
+import { AlarmRule, CompositeAlarm, IAlarm } from 'aws-cdk-lib/aws-cloudwatch';
+import { BaseLoadBalancer } from 'aws-cdk-lib/aws-elasticloadbalancingv2';
+import { Construct } from 'constructs';
+import { CanaryOperationRegionalAlarmsAndRules } from './CanaryOperationRegionalAlarmsAndRules';
+import { CanaryOperationZonalAlarmsAndRules } from './CanaryOperationZonalAlarmsAndRules';
+import { ICanaryOperationRegionalAlarmsAndRules } from './ICanaryOperationRegionalAlarmsAndRules';
+import { ICanaryOperationZonalAlarmsAndRules } from './ICanaryOperationZonalAlarmsAndRules';
+import { IOperationAlarmsAndRules } from './IOperationAlarmsAndRules';
+import { IServerSideOperationRegionalAlarmsAndRules } from './IServerSideOperationRegionalAlarmsAndRules';
+import { IServerSideOperationZonalAlarmsAndRules } from './IServerSideOperationZonalAlarmsAndRules';
+import { OperationAlarmsAndRulesProps } from './props/OperationAlarmsAndRulesProps';
+import { ServerSideOperationRegionalAlarmsAndRules } from './ServerSideOperationRegionalAlarmsAndRules';
+import { ServerSideOperationZonalAlarmsAndRules } from './ServerSideOperationZonalAlarmsAndRules';
+import { IOperation } from '../services/IOperation';
 
 /**
  * Creates alarms and rules for an operation for both regional and zonal metrics
  */
 export class OperationAlarmsAndRules
   extends Construct
-  implements IOperationAlarmsAndRules
-{
+  implements IOperationAlarmsAndRules {
   /**
    * The operation the alarms and rules are created for
    */
@@ -92,7 +91,7 @@ export class OperationAlarmsAndRules
         );
       });
 
-    let loadBalancerArn: string = "";
+    let loadBalancerArn: string = '';
 
     if (props.loadBalancer !== undefined) {
       loadBalancerArn = (props.loadBalancer as BaseLoadBalancer)
@@ -102,7 +101,7 @@ export class OperationAlarmsAndRules
     this.serverSideRegionalAlarmsAndRules =
       new ServerSideOperationRegionalAlarmsAndRules(
         this,
-        props.operation.operationName + "ServerSideRegionalAlarms",
+        props.operation.operationName + 'ServerSideRegionalAlarms',
         {
           availabilityMetricDetails:
             props.operation.serverSideAvailabilityMetricDetails,
@@ -111,7 +110,7 @@ export class OperationAlarmsAndRules
             .serverSideContributorInsightRuleDetails
             ? props.operation.serverSideContributorInsightRuleDetails
             : props.operation.service.defaultContributorInsightRuleDetails,
-          nameSuffix: "-server",
+          nameSuffix: '-server',
         },
       );
 
@@ -122,28 +121,28 @@ export class OperationAlarmsAndRules
       this.canaryRegionalAlarmsAndRules =
         new CanaryOperationRegionalAlarmsAndRules(
           this,
-          props.operation.operationName + "CanaryRegionalAlarms",
+          props.operation.operationName + 'CanaryRegionalAlarms',
           {
             availabilityMetricDetails:
               props.operation.canaryMetricDetails
                 .canaryAvailabilityMetricDetails,
             latencyMetricDetails:
               props.operation.canaryMetricDetails.canaryLatencyMetricDetails,
-            nameSuffix: "-canary",
+            nameSuffix: '-canary',
           },
         );
 
       this.aggregateRegionalAlarm = new CompositeAlarm(
         this,
-        props.operation.operationName + "AggregateRegionalAlarm",
+        props.operation.operationName + 'AggregateRegionalAlarm',
         {
           actionsEnabled: false,
           compositeAlarmName:
-            Fn.ref("AWS::Region") +
-            "-" +
+            Fn.ref('AWS::Region') +
+            '-' +
             props.operation.operationName.toLowerCase() +
-            "-" +
-            "aggregate-alarm",
+            '-' +
+            'aggregate-alarm',
           alarmRule: AlarmRule.anyOf(
             this.serverSideRegionalAlarmsAndRules.availabilityOrLatencyAlarm,
             this.canaryRegionalAlarmsAndRules.availabilityOrLatencyAlarm,
@@ -164,9 +163,9 @@ export class OperationAlarmsAndRules
         new ServerSideOperationZonalAlarmsAndRules(
           this,
           props.operation.operationName +
-            "AZ" +
+            'AZ' +
             counter +
-            "ServerSideZonalAlarmsAndRules",
+            'ServerSideZonalAlarmsAndRules',
           {
             availabilityZoneId: availabilityZoneId,
             availabilityMetricDetails:
@@ -180,7 +179,7 @@ export class OperationAlarmsAndRules
             counter: counter,
             outlierThreshold: props.outlierThreshold,
             outlierDetectionAlgorithm: props.outlierDetectionAlgorithm,
-            nameSuffix: "-server",
+            nameSuffix: '-server',
             operation: props.operation,
             azMapper: props.azMapper,
             outlierDetectionFunction: props.outlierDetectionFunction,
@@ -199,9 +198,9 @@ export class OperationAlarmsAndRules
           new CanaryOperationZonalAlarmsAndRules(
             this,
             props.operation.operationName +
-              "AZ" +
+              'AZ' +
               counter +
-              "CanaryZonalAlarmsAndRules",
+              'CanaryZonalAlarmsAndRules',
             {
               availabilityZoneId: availabilityZoneId,
               availabilityMetricDetails:
@@ -212,7 +211,7 @@ export class OperationAlarmsAndRules
               counter: counter,
               outlierThreshold: props.outlierThreshold,
               outlierDetectionAlgorithm: props.outlierDetectionAlgorithm,
-              nameSuffix: "-canary",
+              nameSuffix: '-canary',
               operation: props.operation,
               azMapper: props.azMapper,
               outlierDetectionFunction: props.outlierDetectionFunction,
@@ -224,15 +223,15 @@ export class OperationAlarmsAndRules
           new CompositeAlarm(
             this,
             props.operation.operationName +
-              "AZ" +
+              'AZ' +
               counter +
-              "AggregateZonalIsolatedImpactAlarm",
+              'AggregateZonalIsolatedImpactAlarm',
             {
               compositeAlarmName:
                 availabilityZoneId +
-                "-" +
+                '-' +
                 props.operation.operationName.toLowerCase() +
-                "-aggregate-isolated-az-impact",
+                '-aggregate-isolated-az-impact',
               alarmRule: AlarmRule.anyOf(
                 this.canaryZonalAlarmsAndRules[i].isolatedImpactAlarm,
                 this.serverSideZonalAlarmsAndRules[i].isolatedImpactAlarm,

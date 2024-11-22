@@ -1,11 +1,11 @@
 // Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
-import { Fn } from "aws-cdk-lib";
-import { IMetric, MathExpression } from "aws-cdk-lib/aws-cloudwatch";
-import { AvailabilityAndLatencyMetrics } from "./AvailabilityAndLatencyMetrics";
-import { LatencyMetricProps } from "./props/LatencyMetricProps";
-import { ServiceLatencyMetricProps } from "./props/ServiceLatencyMericProps";
-import { ZonalLatencyMetricProps } from "./props/ZonalLatencyMetricProps";
+import { Fn } from 'aws-cdk-lib';
+import { IMetric, MathExpression } from 'aws-cdk-lib/aws-cloudwatch';
+import { AvailabilityAndLatencyMetrics } from './AvailabilityAndLatencyMetrics';
+import { LatencyMetricProps } from './props/LatencyMetricProps';
+import { ServiceLatencyMetricProps } from './props/ServiceLatencyMericProps';
+import { ZonalLatencyMetricProps } from './props/ZonalLatencyMetricProps';
 
 export class ZonalLatencyMetrics {
   /**
@@ -18,7 +18,7 @@ export class ZonalLatencyMetrics {
       props,
       props.metricDetails.metricDimensions.zonalDimensions(
         props.availabilityZoneId,
-        Fn.ref("AWS::Region"),
+        Fn.ref('AWS::Region'),
       ),
     );
   }
@@ -35,7 +35,7 @@ export class ZonalLatencyMetrics {
       props,
       props.metricDetails.metricDimensions.zonalDimensions(
         props.availabilityZoneId,
-        Fn.ref("AWS::Region"),
+        Fn.ref('AWS::Region'),
       ),
     );
   }
@@ -52,7 +52,7 @@ export class ZonalLatencyMetrics {
       props,
       props.metricDetails.metricDimensions.zonalDimensions(
         props.availabilityZoneId,
-        Fn.ref("AWS::Region"),
+        Fn.ref('AWS::Region'),
       ),
     );
   }
@@ -67,7 +67,7 @@ export class ZonalLatencyMetrics {
   ): IMetric[] {
     let usingMetrics: { [key: string]: IMetric } = {};
     let operationMetrics: IMetric[] = [];
-    let keyPrefix: string = AvailabilityAndLatencyMetrics.nextChar("");
+    let keyPrefix: string = AvailabilityAndLatencyMetrics.nextChar('');
 
     props.latencyMetricProps.forEach(
       (prop: LatencyMetricProps, index: number) => {
@@ -88,7 +88,7 @@ export class ZonalLatencyMetrics {
         usingMetrics: usingMetrics,
         period: props.period,
         label: props.label,
-        expression: Object.keys(usingMetrics).join("+"),
+        expression: Object.keys(usingMetrics).join('+'),
       });
 
       operationMetrics.splice(0, 0, math);

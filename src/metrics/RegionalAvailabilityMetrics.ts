@@ -1,11 +1,11 @@
 // Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
-import { Fn } from "aws-cdk-lib";
-import { IMetric, MathExpression } from "aws-cdk-lib/aws-cloudwatch";
-import { AvailabilityAndLatencyMetrics } from "./AvailabilityAndLatencyMetrics";
-import { RegionalAvailabilityMetricProps } from "./props/RegionalAvailabilityMetricProps";
-import { ServiceAvailabilityMetricProps } from "./props/ServiceAvailabilityMetricProps";
-import { AvailabilityMetricType } from "../utilities/AvailabilityMetricType";
+import { Fn } from 'aws-cdk-lib';
+import { IMetric, MathExpression } from 'aws-cdk-lib/aws-cloudwatch';
+import { AvailabilityAndLatencyMetrics } from './AvailabilityAndLatencyMetrics';
+import { RegionalAvailabilityMetricProps } from './props/RegionalAvailabilityMetricProps';
+import { ServiceAvailabilityMetricProps } from './props/ServiceAvailabilityMetricProps';
+import { AvailabilityMetricType } from '../utilities/AvailabilityMetricType';
 
 export class RegionalAvailabilityMetrics {
   /**
@@ -19,7 +19,7 @@ export class RegionalAvailabilityMetrics {
     return AvailabilityAndLatencyMetrics.createAvailabilityMetric(
       props,
       props.metricDetails.metricDimensions.regionalDimensions(
-        Fn.ref("AWS::Region"),
+        Fn.ref('AWS::Region'),
       ),
     );
   }
@@ -40,11 +40,11 @@ export class RegionalAvailabilityMetrics {
 
     props.availabilityMetricProps.forEach((prop) => {
       let keyPrefix: string =
-        (prop.keyPrefix === undefined || prop.keyPrefix == ""
-          ? ""
-          : prop.keyPrefix.toLowerCase() + "_") +
+        (prop.keyPrefix === undefined || prop.keyPrefix == ''
+          ? ''
+          : prop.keyPrefix.toLowerCase() + '_') +
         prop.metricDetails.operationName.toLowerCase() +
-        "_" +
+        '_' +
         prop.metricType.toString().toLowerCase();
 
       let regionalOperationAvailabilityMetric: IMetric =
@@ -57,23 +57,23 @@ export class RegionalAvailabilityMetrics {
         regionalOperationAvailabilityMetric;
     });
 
-    let expression: string = "";
+    let expression: string = '';
 
     switch (props.availabilityMetricProps[0].metricType) {
       case AvailabilityMetricType.SUCCESS_RATE:
-        expression = `(${Object.keys(usingMetrics).join("+")}) / ${props.availabilityMetricProps.length}`;
+        expression = `(${Object.keys(usingMetrics).join('+')}) / ${props.availabilityMetricProps.length}`;
         break;
       case AvailabilityMetricType.REQUEST_COUNT:
-        expression = `${Object.keys(usingMetrics).join("+")}`;
+        expression = `${Object.keys(usingMetrics).join('+')}`;
         break;
       case AvailabilityMetricType.FAULT_COUNT:
-        expression = `${Object.keys(usingMetrics).join("+")}`;
+        expression = `${Object.keys(usingMetrics).join('+')}`;
         break;
       case AvailabilityMetricType.FAULT_RATE:
-        expression = `(${Object.keys(usingMetrics).join("+")}) / ${props.availabilityMetricProps.length}`;
+        expression = `(${Object.keys(usingMetrics).join('+')}) / ${props.availabilityMetricProps.length}`;
         break;
       case AvailabilityMetricType.SUCCESS_COUNT:
-        expression = `${Object.keys(usingMetrics).join("+")}`;
+        expression = `${Object.keys(usingMetrics).join('+')}`;
         break;
     }
 

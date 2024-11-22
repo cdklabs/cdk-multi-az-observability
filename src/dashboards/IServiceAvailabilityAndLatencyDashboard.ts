@@ -1,6 +1,6 @@
 // Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
-import { Dashboard } from "aws-cdk-lib/aws-cloudwatch";
+import { Dashboard } from 'aws-cdk-lib/aws-cloudwatch';
 
 /**
  * A service-level availability and latency dashboard

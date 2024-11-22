@@ -1,6 +1,6 @@
 // Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
-import { Fn } from "aws-cdk-lib";
+import { Fn } from 'aws-cdk-lib';
 import {
   Alarm,
   AlarmRule,
@@ -9,24 +9,23 @@ import {
   IAlarm,
   IMetric,
   MathExpression,
-} from "aws-cdk-lib/aws-cloudwatch";
-import { Construct } from "constructs";
-import { ICanaryOperationRegionalAlarmsAndRules } from "./ICanaryOperationRegionalAlarmsAndRules";
-import { IOperationAlarmsAndRules } from "./IOperationAlarmsAndRules";
-import { IServiceAlarmsAndRules } from "./IServiceAlarmsAndRules";
-import { ServiceAlarmsAndRulesProps } from "./props/ServiceAlarmsAndRulesProps";
-import { AvailabilityAndLatencyMetrics } from "../metrics/AvailabilityAndLatencyMetrics";
-import { RegionalAvailabilityMetrics } from "../metrics/RegionalAvailabilityMetrics";
-import { IService } from "../services/IService";
-import { AvailabilityMetricType } from "../utilities/AvailabilityMetricType";
+} from 'aws-cdk-lib/aws-cloudwatch';
+import { Construct } from 'constructs';
+import { ICanaryOperationRegionalAlarmsAndRules } from './ICanaryOperationRegionalAlarmsAndRules';
+import { IOperationAlarmsAndRules } from './IOperationAlarmsAndRules';
+import { IServiceAlarmsAndRules } from './IServiceAlarmsAndRules';
+import { ServiceAlarmsAndRulesProps } from './props/ServiceAlarmsAndRulesProps';
+import { AvailabilityAndLatencyMetrics } from '../metrics/AvailabilityAndLatencyMetrics';
+import { RegionalAvailabilityMetrics } from '../metrics/RegionalAvailabilityMetrics';
+import { IService } from '../services/IService';
+import { AvailabilityMetricType } from '../utilities/AvailabilityMetricType';
 
 /**
  * Service level alarms and rules using critical operations
  */
 export class ServiceAlarmsAndRules
   extends Construct
-  implements IServiceAlarmsAndRules
-{
+  implements IServiceAlarmsAndRules {
   /**
    * The service these alarms and rules are for
    */
@@ -97,13 +96,13 @@ export class ServiceAlarmsAndRules
       this.zonalAggregateIsolatedImpactAlarms.push(
         new CompositeAlarm(
           this,
-          "AZ" + counter + "ServiceAggregateIsolatedImpactAlarm",
+          'AZ' + counter + 'ServiceAggregateIsolatedImpactAlarm',
           {
             compositeAlarmName:
               availabilityZonedId +
-              "-" +
+              '-' +
               props.service.serviceName.toLowerCase() +
-              "-isolated-impact-aggregate-alarm",
+              '-isolated-impact-aggregate-alarm',
             alarmRule: AlarmRule.anyOf(
               ...Object.values(
                 Object.entries(props.perOperationAlarmsAndRules).reduce(
@@ -125,13 +124,13 @@ export class ServiceAlarmsAndRules
       this.zonalServerSideIsolatedImpactAlarms.push(
         new CompositeAlarm(
           this,
-          "AZ" + counter + "ServiceServerSideIsolatedImpactAlarm",
+          'AZ' + counter + 'ServiceServerSideIsolatedImpactAlarm',
           {
             compositeAlarmName:
               availabilityZonedId +
-              "-" +
+              '-' +
               props.service.serviceName.toLowerCase() +
-              "-isolated-impact-server-side-alarm",
+              '-isolated-impact-server-side-alarm',
             alarmRule: AlarmRule.anyOf(
               ...Object.values(
                 Object.entries(props.perOperationAlarmsAndRules).reduce(
@@ -153,7 +152,7 @@ export class ServiceAlarmsAndRules
       counter++;
     }
 
-    let keyPrefix: string = "";
+    let keyPrefix: string = '';
 
     let regionalOperationFaultCountMetrics: { [key: string]: IMetric } = {};
 
@@ -164,7 +163,7 @@ export class ServiceAlarmsAndRules
 
         regionalOperationFaultCountMetrics[keyPrefix] =
           RegionalAvailabilityMetrics.createRegionalAvailabilityMetric({
-            label: x.operationName + " fault count",
+            label: x.operationName + ' fault count',
             metricDetails: x.serverSideAvailabilityMetricDetails,
             metricType: AvailabilityMetricType.FAULT_COUNT,
           });
@@ -172,26 +171,26 @@ export class ServiceAlarmsAndRules
 
     let regionalFaultCount: IMetric = new MathExpression({
       usingMetrics: regionalOperationFaultCountMetrics,
-      expression: Object.keys(regionalOperationFaultCountMetrics).join("+"),
-      label: props.service.serviceName + " fault count",
+      expression: Object.keys(regionalOperationFaultCountMetrics).join('+'),
+      label: props.service.serviceName + ' fault count',
       period: props.service.period,
     });
 
     this.regionalFaultCountServerSideAlarm = new Alarm(
       this,
-      "RegionalFaultCount",
+      'RegionalFaultCount',
       {
         alarmName:
-          Fn.ref("AWS::Region") +
-          "-" +
+          Fn.ref('AWS::Region') +
+          '-' +
           props.service.serviceName.toLowerCase() +
-          "-fault-count",
+          '-fault-count',
         datapointsToAlarm: 3,
         evaluationPeriods: 5,
         comparisonOperator: ComparisonOperator.GREATER_THAN_THRESHOLD,
         threshold: props.service.faultCountThreshold,
         alarmDescription:
-          "Counts faults from all critical operation in the service",
+          'Counts faults from all critical operation in the service',
         metric: regionalFaultCount,
       },
     );
@@ -223,13 +222,13 @@ export class ServiceAlarmsAndRules
     ) {
       this.regionalAvailabilityOrLatencyCanaryAlarm = new CompositeAlarm(
         this,
-        "ServiceCanaryAvailabilityOrLatencyAggregateAlarm",
+        'ServiceCanaryAvailabilityOrLatencyAggregateAlarm',
         {
           compositeAlarmName:
-            Fn.ref("AWS::Region") +
-            "-" +
+            Fn.ref('AWS::Region') +
+            '-' +
             props.service.serviceName.toLowerCase() +
-            "-canary-availability-or-latency-aggregate-alarm",
+            '-canary-availability-or-latency-aggregate-alarm',
           alarmRule: AlarmRule.anyOf(...canaryAlarms),
         },
       );
@@ -262,13 +261,13 @@ export class ServiceAlarmsAndRules
     ) {
       this.regionalAvailabilityCanaryAlarm = new CompositeAlarm(
         this,
-        "ServiceCanaryAvailabilityAggregateAlarm",
+        'ServiceCanaryAvailabilityAggregateAlarm',
         {
           compositeAlarmName:
-            Fn.ref("AWS::Region") +
-            "-" +
+            Fn.ref('AWS::Region') +
+            '-' +
             props.service.serviceName.toLowerCase() +
-            "-canary-availability-aggregate-alarm",
+            '-canary-availability-aggregate-alarm',
           alarmRule: AlarmRule.anyOf(...canaryAvailabilityAlarms),
         },
       );
@@ -276,13 +275,13 @@ export class ServiceAlarmsAndRules
 
     this.regionalAvailabilityOrLatencyServerSideAlarm = new CompositeAlarm(
       this,
-      "ServiceServerSideAggregateIsolatedImpactAlarm",
+      'ServiceServerSideAggregateIsolatedImpactAlarm',
       {
         compositeAlarmName:
-          Fn.ref("AWS::Region") +
-          "-" +
+          Fn.ref('AWS::Region') +
+          '-' +
           props.service.serviceName.toLowerCase() +
-          "-server-side-aggregate-alarm",
+          '-server-side-aggregate-alarm',
         alarmRule: AlarmRule.anyOf(
           ...Object.values(
             Object.entries(props.perOperationAlarmsAndRules).reduce(
@@ -304,13 +303,13 @@ export class ServiceAlarmsAndRules
 
     this.regionalAvailabilityServerSideAlarm = new CompositeAlarm(
       this,
-      "ServiceServerSideAvailabilityAlarm",
+      'ServiceServerSideAvailabilityAlarm',
       {
         compositeAlarmName:
-          Fn.ref("AWS::Region") +
-          "-" +
+          Fn.ref('AWS::Region') +
+          '-' +
           props.service.serviceName.toLowerCase() +
-          "-server-side-availability-alarm",
+          '-server-side-availability-alarm',
         alarmRule: AlarmRule.anyOf(
           ...Object.values(
             Object.entries(props.perOperationAlarmsAndRules).reduce(

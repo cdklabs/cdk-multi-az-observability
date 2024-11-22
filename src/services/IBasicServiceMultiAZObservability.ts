@@ -1,9 +1,9 @@
 // Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
-import { IAlarm } from "aws-cdk-lib/aws-cloudwatch";
-import { CfnNatGateway } from "aws-cdk-lib/aws-ec2";
-import { IApplicationLoadBalancer } from "aws-cdk-lib/aws-elasticloadbalancingv2";
-import { IConstruct } from "constructs";
+import { IAlarm } from 'aws-cdk-lib/aws-cloudwatch';
+import { CfnNatGateway } from 'aws-cdk-lib/aws-ec2';
+import { IApplicationLoadBalancer } from 'aws-cdk-lib/aws-elasticloadbalancingv2';
+import { IConstruct } from 'constructs';
 
 /**
  * Properties of a basic service

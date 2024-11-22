@@ -1,31 +1,31 @@
 // Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
-import { Duration, NestedStack } from "aws-cdk-lib";
-import { Dashboard, IAlarm } from "aws-cdk-lib/aws-cloudwatch";
-import { IFunction } from "aws-cdk-lib/aws-lambda";
-import { ILogGroup } from "aws-cdk-lib/aws-logs";
-import { Construct } from "constructs";
-import { CanaryMetrics } from "./CanaryMetrics";
-import { IInstrumentedServiceMultiAZObservability } from "./IInstrumentedServiceMultiAZObservability";
-import { IOperation } from "./IOperation";
-import { IOperationMetricDetails } from "./IOperationMetricDetails";
-import { Operation } from "./Operation";
-import { OperationMetricDetails } from "./OperationMetricDetails";
-import { InstrumentedServiceMultiAZObservabilityProps } from "./props/InstrumentedServiceMultiAZObservabilityProps";
-import { MetricDimensions } from "./props/MetricDimensions";
-import { IOperationAlarmsAndRules } from "../alarmsandrules/IOperationAlarmsAndRules";
-import { IServiceAlarmsAndRules } from "../alarmsandrules/IServiceAlarmsAndRules";
-import { OperationAlarmsAndRules } from "../alarmsandrules/OperationAlarmsAndRules";
-import { ServiceAlarmsAndRules } from "../alarmsandrules/ServiceAlarmsAndRules";
-import { AvailabilityZoneMapper } from "../azmapper/AvailabilityZoneMapper";
-import { CanaryFunction } from "../canaries/CanaryFunction";
-import { CanaryTest } from "../canaries/CanaryTest";
-import { AddCanaryTestProps } from "../canaries/props/AddCanaryTestProps";
-import { OperationAvailabilityAndLatencyDashboard } from "../dashboards/OperationAvailabilityAndLatencyDashboard";
-import { ServiceAvailabilityAndLatencyDashboard } from "../dashboards/ServiceAvailabilityAndLatencyDashboard";
-import { OutlierDetectionFunction } from "../outlier-detection/OutlierDetectionFunction";
-import { OutlierDetectionAlgorithm } from "../utilities/OutlierDetectionAlgorithm";
-import { StackWithDynamicSource } from "../utilities/StackWithDynamicSource";
+import { Duration, NestedStack } from 'aws-cdk-lib';
+import { Dashboard, IAlarm } from 'aws-cdk-lib/aws-cloudwatch';
+import { IFunction } from 'aws-cdk-lib/aws-lambda';
+import { ILogGroup } from 'aws-cdk-lib/aws-logs';
+import { Construct } from 'constructs';
+import { CanaryMetrics } from './CanaryMetrics';
+import { IInstrumentedServiceMultiAZObservability } from './IInstrumentedServiceMultiAZObservability';
+import { IOperation } from './IOperation';
+import { IOperationMetricDetails } from './IOperationMetricDetails';
+import { Operation } from './Operation';
+import { OperationMetricDetails } from './OperationMetricDetails';
+import { InstrumentedServiceMultiAZObservabilityProps } from './props/InstrumentedServiceMultiAZObservabilityProps';
+import { MetricDimensions } from './props/MetricDimensions';
+import { IOperationAlarmsAndRules } from '../alarmsandrules/IOperationAlarmsAndRules';
+import { IServiceAlarmsAndRules } from '../alarmsandrules/IServiceAlarmsAndRules';
+import { OperationAlarmsAndRules } from '../alarmsandrules/OperationAlarmsAndRules';
+import { ServiceAlarmsAndRules } from '../alarmsandrules/ServiceAlarmsAndRules';
+import { AvailabilityZoneMapper } from '../azmapper/AvailabilityZoneMapper';
+import { CanaryFunction } from '../canaries/CanaryFunction';
+import { CanaryTest } from '../canaries/CanaryTest';
+import { AddCanaryTestProps } from '../canaries/props/AddCanaryTestProps';
+import { OperationAvailabilityAndLatencyDashboard } from '../dashboards/OperationAvailabilityAndLatencyDashboard';
+import { ServiceAvailabilityAndLatencyDashboard } from '../dashboards/ServiceAvailabilityAndLatencyDashboard';
+import { OutlierDetectionFunction } from '../outlier-detection/OutlierDetectionFunction';
+import { OutlierDetectionAlgorithm } from '../utilities/OutlierDetectionAlgorithm';
+import { StackWithDynamicSource } from '../utilities/StackWithDynamicSource';
 
 /**
  * An service that implements its own instrumentation to record
@@ -34,8 +34,7 @@ import { StackWithDynamicSource } from "../utilities/StackWithDynamicSource";
  */
 export class InstrumentedServiceMultiAZObservability
   extends Construct
-  implements IInstrumentedServiceMultiAZObservability
-{
+  implements IInstrumentedServiceMultiAZObservability {
   /**
    * Key represents the operation name and the value is the set
    * of zonal alarms and rules for that operation. The values themselves
@@ -116,14 +115,14 @@ export class InstrumentedServiceMultiAZObservability
       outlierThreshold = props.outlierThreshold;
     }
 
-    this.azMapper = new AvailabilityZoneMapper(this, "AZMapper", {
+    this.azMapper = new AvailabilityZoneMapper(this, 'AZMapper', {
       availabilityZoneNames: props.service.availabilityZoneNames,
     });
 
     if (props.service.canaryTestProps !== undefined) {
       let canaryStack: StackWithDynamicSource = new StackWithDynamicSource(
         this,
-        "Canary",
+        'Canary',
         {
           assetsBucketsParameterName: props.assetsBucketParameterName,
           assetsBucketPrefixParameterName:
@@ -131,7 +130,7 @@ export class InstrumentedServiceMultiAZObservability
         },
       );
 
-      let canary = new CanaryFunction(canaryStack, "CanaryFunction", {
+      let canary = new CanaryFunction(canaryStack, 'CanaryFunction', {
         vpc: props.service.canaryTestProps.networkConfiguration?.vpc,
         subnetSelection:
           props.service.canaryTestProps.networkConfiguration?.subnetSelection,
@@ -155,7 +154,7 @@ export class InstrumentedServiceMultiAZObservability
 
           let nestedStack: NestedStack = new NestedStack(
             this,
-            operation.operationName + "CanaryTest",
+            operation.operationName + 'CanaryTest',
             {},
           );
 
@@ -182,8 +181,8 @@ export class InstrumentedServiceMultiAZObservability
                 operationName: operation.operationName,
                 metricDimensions: new MetricDimensions(
                   { Operation: operation.operationName },
-                  "AZ-ID",
-                  "Region",
+                  'AZ-ID',
+                  'Region',
                 ),
                 alarmStatistic:
                   operation.canaryMetricDetails.canaryAvailabilityMetricDetails
@@ -228,12 +227,12 @@ export class InstrumentedServiceMultiAZObservability
               {
                 operationName: operation.operationName,
                 metricNamespace: test.metricNamespace,
-                successMetricNames: ["Success"],
-                faultMetricNames: ["Fault", "Failure"],
+                successMetricNames: ['Success'],
+                faultMetricNames: ['Fault', 'Failure'],
                 metricDimensions: new MetricDimensions(
                   { Operation: operation.operationName },
-                  "AZ-ID",
-                  "Region",
+                  'AZ-ID',
+                  'Region',
                 ),
 
                 alarmStatistic:
@@ -260,12 +259,12 @@ export class InstrumentedServiceMultiAZObservability
               {
                 operationName: operation.operationName,
                 metricNamespace: test.metricNamespace,
-                successMetricNames: ["Success"],
-                faultMetricNames: ["Fault", "Failure"],
+                successMetricNames: ['Success'],
+                faultMetricNames: ['Fault', 'Failure'],
                 metricDimensions: new MetricDimensions(
                   { Operation: operation.operationName },
-                  "AZ-ID",
-                  "Region",
+                  'AZ-ID',
+                  'Region',
                 ),
               },
               props.service.defaultAvailabilityMetricDetails,
@@ -278,8 +277,8 @@ export class InstrumentedServiceMultiAZObservability
                 operationName: operation.operationName,
                 metricDimensions: new MetricDimensions(
                   { Operation: operation.operationName },
-                  "AZ-ID",
-                  "Region",
+                  'AZ-ID',
+                  'Region',
                 ),
                 alarmStatistic:
                   operation.canaryMetricDetails.canaryLatencyMetricDetails
@@ -324,12 +323,12 @@ export class InstrumentedServiceMultiAZObservability
               {
                 operationName: operation.operationName,
                 metricNamespace: test.metricNamespace,
-                successMetricNames: ["SuccessLatency"],
-                faultMetricNames: ["FaultLatency"],
+                successMetricNames: ['SuccessLatency'],
+                faultMetricNames: ['FaultLatency'],
                 metricDimensions: new MetricDimensions(
                   { Operation: operation.operationName },
-                  "AZ-ID",
-                  "Region",
+                  'AZ-ID',
+                  'Region',
                 ),
 
                 alarmStatistic:
@@ -353,12 +352,12 @@ export class InstrumentedServiceMultiAZObservability
               {
                 operationName: operation.operationName,
                 metricNamespace: test.metricNamespace,
-                successMetricNames: ["SuccessLatency"],
-                faultMetricNames: ["FaultLatency"],
+                successMetricNames: ['SuccessLatency'],
+                faultMetricNames: ['FaultLatency'],
                 metricDimensions: new MetricDimensions(
                   { Operation: operation.operationName },
-                  "AZ-ID",
-                  "Region",
+                  'AZ-ID',
+                  'Region',
                 ),
               },
               props.service.defaultLatencyMetricDetails,
@@ -390,7 +389,7 @@ export class InstrumentedServiceMultiAZObservability
 
     if (props.outlierDetectionAlgorithm != OutlierDetectionAlgorithm.STATIC) {
       let outlierDetectionStack: StackWithDynamicSource =
-        new StackWithDynamicSource(this, "OutlierDetectionStack", {
+        new StackWithDynamicSource(this, 'OutlierDetectionStack', {
           assetsBucketsParameterName: props.assetsBucketParameterName,
           assetsBucketPrefixParameterName:
             props.assetsBucketPrefixParameterName,
@@ -398,7 +397,7 @@ export class InstrumentedServiceMultiAZObservability
 
       this.outlierDetectionFunction = new OutlierDetectionFunction(
         outlierDetectionStack,
-        "OutlierDetectionFunction",
+        'OutlierDetectionFunction',
         {},
       ).function;
     }
@@ -407,7 +406,7 @@ export class InstrumentedServiceMultiAZObservability
       props.service.operations.map((operation: IOperation) => {
         let nestedStack: NestedStack = new NestedStack(
           this,
-          operation.operationName + "OperationAlarmsAndRulesNestedStack",
+          operation.operationName + 'OperationAlarmsAndRulesNestedStack',
         );
 
         return [
@@ -432,7 +431,7 @@ export class InstrumentedServiceMultiAZObservability
 
     let serviceAlarmsStack: NestedStack = new NestedStack(
       this,
-      "ServiceAlarmsNestedStack",
+      'ServiceAlarmsNestedStack',
     );
 
     this.serviceAlarms = new ServiceAlarmsAndRules(
@@ -451,7 +450,7 @@ export class InstrumentedServiceMultiAZObservability
       props.service.operations.forEach((x) => {
         let dashboardStack: NestedStack = new NestedStack(
           this,
-          x.operationName + "Dashboard",
+          x.operationName + 'Dashboard',
           {},
         );
 
@@ -531,7 +530,7 @@ export class InstrumentedServiceMultiAZObservability
 
       let dashboardStack: NestedStack = new NestedStack(
         this,
-        "ServiceDashboard",
+        'ServiceDashboard',
         {},
       );
 

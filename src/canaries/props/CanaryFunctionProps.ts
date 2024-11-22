@@ -1,7 +1,7 @@
 // Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
-import { Duration } from "aws-cdk-lib";
-import { IVpc, SubnetSelection } from "aws-cdk-lib/aws-ec2";
+import { Duration } from 'aws-cdk-lib';
+import { IVpc, SubnetSelection } from 'aws-cdk-lib/aws-ec2';
 
 /**
  * Properties for the canary function

@@ -31,14 +31,14 @@ export class InsightRuleBody {
 
   constructor() {
     this.schema = {
-      name: "CloudWatchLogRule",
+      name: 'CloudWatchLogRule',
       version: 1,
     };
-    this.aggregateOn = "";
+    this.aggregateOn = '';
     this.contribution = {
       keys: [] as string[],
     } as IContributionDefinition;
-    this.logFormat = "";
+    this.logFormat = '';
     this.logGroupNames = [];
   }
 
@@ -50,7 +50,7 @@ export class InsightRuleBody {
     let objectKeysToUpperCase = function (input: { [key: string]: any }): {
       [key: string]: any;
     } {
-      if (typeof input !== "object") return input;
+      if (typeof input !== 'object') return input;
       if (Array.isArray(input)) return input.map(objectKeysToUpperCase);
       return Object.keys(input).reduce(function (
         newObj: { [key: string]: any },
@@ -58,7 +58,7 @@ export class InsightRuleBody {
       ) {
         let val = input[key];
         let newVal =
-          typeof val === "object" && val !== null
+          typeof val === 'object' && val !== null
             ? objectKeysToUpperCase(val)
             : val;
         let newKey: string = key.slice(0, 1).toUpperCase() + key.substring(1);

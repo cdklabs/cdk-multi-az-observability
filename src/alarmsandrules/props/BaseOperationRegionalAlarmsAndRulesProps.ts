@@ -1,7 +1,7 @@
 // Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
-import { IContributorInsightRuleDetails } from "../../services/IContributorInsightRuleDetails";
-import { IOperationMetricDetails } from "../../services/IOperationMetricDetails";
+import { IContributorInsightRuleDetails } from '../../services/IContributorInsightRuleDetails';
+import { IOperationMetricDetails } from '../../services/IOperationMetricDetails';
 
 /**
  * The base props for an operation regional alarms and rules configuration

@@ -1,8 +1,8 @@
 // Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
-import { Duration } from "aws-cdk-lib";
-import { IAlarm, IMetric } from "aws-cdk-lib/aws-cloudwatch";
-import { AvailabilityZoneMapper } from "../../azmapper/AvailabilityZoneMapper";
+import { Duration } from 'aws-cdk-lib';
+import { IAlarm, IMetric } from 'aws-cdk-lib/aws-cloudwatch';
+import { AvailabilityZoneMapper } from '../../azmapper/AvailabilityZoneMapper';
 
 export interface BasicServiceDashboardProps {
   readonly serviceName: string;

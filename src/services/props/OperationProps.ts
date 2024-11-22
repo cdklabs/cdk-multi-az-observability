@@ -1,11 +1,11 @@
 // Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
-import { AddCanaryTestProps } from "../../canaries/props/AddCanaryTestProps";
-import { ICanaryMetrics } from "../ICanaryMetrics";
-import { ICanaryTestMetricsOverride } from "../ICanaryTestMetricsOverride";
-import { IContributorInsightRuleDetails } from "../IContributorInsightRuleDetails";
-import { IOperationMetricDetails } from "../IOperationMetricDetails";
-import { IService } from "../IService";
+import { AddCanaryTestProps } from '../../canaries/props/AddCanaryTestProps';
+import { ICanaryMetrics } from '../ICanaryMetrics';
+import { ICanaryTestMetricsOverride } from '../ICanaryTestMetricsOverride';
+import { IContributorInsightRuleDetails } from '../IContributorInsightRuleDetails';
+import { IOperationMetricDetails } from '../IOperationMetricDetails';
+import { IService } from '../IService';
 
 /**
  * Properties for an operation

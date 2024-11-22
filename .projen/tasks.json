@@ -24,13 +24,219 @@
         }
       ]
     },
+    "build-assets": {
+      "name": "build-assets",
+      "steps": [
+        {
+          "exec": "export DOCKER_DEFAULT_PLATFORM=\"linux/arm64\""
+        },
+        {
+          "spawn": "build-canary-function"
+        },
+        {
+          "spawn": "build-outlier-detection-function"
+        },
+        {
+          "spawn": "build-scipy-layer"
+        },
+        {
+          "spawn": "build-monitoring-layer"
+        },
+        {
+          "exec": "rm -rf lib/azmapper/src"
+        },
+        {
+          "exec": "cp -R src/azmapper/src lib/azmapper"
+        }
+      ]
+    },
+    "build-canary-function": {
+      "name": "build-canary-function",
+      "steps": [
+        {
+          "exec": "rm -rf src/canaries/src/package"
+        },
+        {
+          "exec": "rm -rf lib/canaries/src"
+        },
+        {
+          "exec": "rm -f src/canaries/src/canaries.zip"
+        },
+        {
+          "exec": "mkdir -p src/canaries/src/package"
+        },
+        {
+          "exec": "mkdir -p lib/canaries/src"
+        },
+        {
+          "exec": "docker run --rm --platform \"linux/arm64\" --user \"0:0\" --volume \"$PWD/src/canaries/src:/asset-input:delegated\" --volume \"$PWD/src/canaries/src/package:/asset-output:delegated\" --workdir \"/asset-input\" \"public.ecr.aws/sam/build-python3.12\" bash -c \"pip install --no-cache --requirement requirements.txt --target /asset-output && cp --archive --update index.py /asset-output\""
+        },
+        {
+          "exec": "cd src/canaries/src/package && zip -r ../canary.zip ."
+        },
+        {
+          "exec": "cp src/canaries/src/canary.zip lib/canaries/src/canary.zip"
+        }
+      ]
+    },
+    "build-monitoring-layer": {
+      "name": "build-monitoring-layer",
+      "steps": [
+        {
+          "exec": "rm -rf src/monitoring/src/monitoring"
+        },
+        {
+          "exec": "rm -f src/monitoring/src/monitoring-layer.zip"
+        },
+        {
+          "exec": "mkdir -p src/monitoring/src/monitoring"
+        },
+        {
+          "exec": "mkdir -p lib/monitoring/src"
+        },
+        {
+          "exec": "pip3 install aws-embedded-metrics aws-xray-sdk --only-binary=:all: --target src/monitoring/src/monitoring/python/lib/python3.12/site-packages --platform manylinux2014_aarch64"
+        },
+        {
+          "exec": "cd src/monitoring/src/monitoring && zip -r ../monitoring-layer.zip ."
+        },
+        {
+          "exec": "cp src/monitoring/src/monitoring-layer.zip lib/monitoring/src/monitoring-layer.zip"
+        }
+      ]
+    },
+    "build-outlier-detection-function": {
+      "name": "build-outlier-detection-function",
+      "steps": [
+        {
+          "exec": "mkdir -p lib/outlier-detection/src"
+        },
+        {
+          "exec": "rm -f src/outlier-detection/src/outlier-detection.zip"
+        },
+        {
+          "exec": "zip src/outlier-detection/src/outlier-detection.zip src/outlier-detection/src/index.py"
+        },
+        {
+          "exec": "cp src/outlier-detection/src/outlier-detection.zip lib/outlier-detection/src/outlier-detection.zip"
+        }
+      ]
+    },
+    "build-scipy-layer": {
+      "name": "build-scipy-layer",
+      "steps": [
+        {
+          "exec": "rm -rf src/outlier-detection/src/scipy"
+        },
+        {
+          "exec": "rm -f src/outlier-detection/src/scipy-layer.zip"
+        },
+        {
+          "exec": "mkdir src/outlier-detection/src/scipy"
+        },
+        {
+          "exec": "mkdir -p lib/outlier-detection/src"
+        },
+        {
+          "exec": "pip3 install scipy --only-binary=:all: --target src/outlier-detection/src/scipy/python/lib/python3.12/site-packages --platform manylinux2014_aarch64"
+        },
+        {
+          "exec": "cd src/outlier-detection/src/scipy && zip -r ../scipy-layer.zip ."
+        },
+        {
+          "exec": "cp src/outlier-detection/src/scipy-layer.zip lib/outlier-detection/src/scipy-layer.zip"
+        }
+      ]
+    },
+    "bump": {
+      "name": "bump",
+      "description": "Bumps version based on latest git tag and generates a changelog entry",
+      "env": {
+        "OUTFILE": "package.json",
+        "CHANGELOG": "dist/changelog.md",
+        "BUMPFILE": "dist/version.txt",
+        "RELEASETAG": "dist/releasetag.txt",
+        "RELEASE_TAG_PREFIX": "",
+        "BUMP_PACKAGE": "commit-and-tag-version@^12",
+        "RELEASABLE_COMMITS": "git log --no-merges --oneline $LATEST_TAG..HEAD -E --grep \"^(feat|fix){1}(\\([^()[:space:]]+\\))?(!)?:[[:blank:]]+.+\""
+      },
+      "steps": [
+        {
+          "builtin": "release/bump-version"
+        }
+      ],
+      "condition": "git log --oneline -1 | grep -qv \"chore(release):\""
+    },
+    "clobber": {
+      "name": "clobber",
+      "description": "hard resets to HEAD of origin and cleans the local repo",
+      "env": {
+        "BRANCH": "$(git branch --show-current)"
+      },
+      "steps": [
+        {
+          "exec": "git checkout -b scratch",
+          "name": "save current HEAD in \"scratch\" branch"
+        },
+        {
+          "exec": "git checkout $BRANCH"
+        },
+        {
+          "exec": "git fetch origin",
+          "name": "fetch latest changes from origin"
+        },
+        {
+          "exec": "git reset --hard origin/$BRANCH",
+          "name": "hard reset to origin commit"
+        },
+        {
+          "exec": "git clean -fdx",
+          "name": "clean all untracked files"
+        },
+        {
+          "say": "ready to rock! (unpushed commits are under the \"scratch\" branch)"
+        }
+      ],
+      "condition": "git diff --exit-code > /dev/null"
+    },
+    "compat": {
+      "name": "compat",
+      "description": "Perform API compatibility check against latest version",
+      "steps": [
+        {
+          "exec": "jsii-diff npm:$(node -p \"require('./package.json').name\") -k --ignore-file .compatignore || (echo \"\nUNEXPECTED BREAKING CHANGES: add keys such as 'removed:constructs.Node.of' to .compatignore to skip.\n\" && exit 1)"
+        }
+      ]
+    },
     "compile": {
       "name": "compile",
-      "description": "Only compile"
+      "description": "Only compile",
+      "steps": [
+        {
+          "exec": "jsii --silence-warnings=reserved-word"
+        },
+        {
+          "spawn": "build-assets"
+        }
+      ]
     },
     "default": {
       "name": "default",
-      "description": "Synthesize project files"
+      "description": "Synthesize project files",
+      "steps": [
+        {
+          "exec": "ts-node --project tsconfig.dev.json .projenrc.ts"
+        }
+      ]
+    },
+    "docgen": {
+      "name": "docgen",
+      "description": "Generate API.md from .jsii manifest",
+      "steps": [
+        {
+          "exec": "jsii-docgen -o API.md"
+        }
+      ]
     },
     "eject": {
       "name": "eject",
@@ -44,22 +250,294 @@
         }
       ]
     },
+    "install": {
+      "name": "install",
+      "description": "Install project dependencies and update lockfile (non-frozen)",
+      "steps": [
+        {
+          "exec": "yarn install --check-files"
+        }
+      ]
+    },
+    "install:ci": {
+      "name": "install:ci",
+      "description": "Install project dependencies using frozen lockfile",
+      "steps": [
+        {
+          "exec": "yarn install --check-files --frozen-lockfile"
+        }
+      ]
+    },
+    "integ": {
+      "name": "integ",
+      "description": "Run integration snapshot tests",
+      "steps": [
+        {
+          "exec": "yarn integ-runner --language typescript",
+          "receiveArgs": true
+        }
+      ]
+    },
+    "integ:update": {
+      "name": "integ:update",
+      "description": "Run and update integration snapshot tests",
+      "steps": [
+        {
+          "exec": "yarn integ-runner --language typescript --update-on-failed",
+          "receiveArgs": true
+        }
+      ]
+    },
     "package": {
       "name": "package",
-      "description": "Creates the distribution package"
+      "description": "Creates the distribution package",
+      "steps": [
+        {
+          "spawn": "package:js",
+          "condition": "node -e \"if (!process.env.CI) process.exit(1)\""
+        },
+        {
+          "spawn": "package-all",
+          "condition": "node -e \"if (process.env.CI) process.exit(1)\""
+        }
+      ]
+    },
+    "package-all": {
+      "name": "package-all",
+      "description": "Packages artifacts for all target languages",
+      "steps": [
+        {
+          "spawn": "package:js"
+        },
+        {
+          "spawn": "package:java"
+        },
+        {
+          "spawn": "package:python"
+        },
+        {
+          "spawn": "package:dotnet"
+        },
+        {
+          "spawn": "package:go"
+        }
+      ]
+    },
+    "package:dotnet": {
+      "name": "package:dotnet",
+      "description": "Create dotnet language bindings",
+      "steps": [
+        {
+          "exec": "jsii-pacmak -v --target dotnet"
+        }
+      ]
+    },
+    "package:go": {
+      "name": "package:go",
+      "description": "Create go language bindings",
+      "steps": [
+        {
+          "exec": "jsii-pacmak -v --target go"
+        }
+      ]
+    },
+    "package:java": {
+      "name": "package:java",
+      "description": "Create java language bindings",
+      "steps": [
+        {
+          "exec": "jsii-pacmak -v --target java"
+        }
+      ]
+    },
+    "package:js": {
+      "name": "package:js",
+      "description": "Create js language bindings",
+      "steps": [
+        {
+          "exec": "jsii-pacmak -v --target js"
+        }
+      ]
+    },
+    "package:python": {
+      "name": "package:python",
+      "description": "Create python language bindings",
+      "steps": [
+        {
+          "exec": "jsii-pacmak -v --target python"
+        }
+      ]
     },
     "post-compile": {
       "name": "post-compile",
-      "description": "Runs after successful compilation"
+      "description": "Runs after successful compilation",
+      "steps": [
+        {
+          "spawn": "docgen"
+        },
+        {
+          "spawn": "rosetta:extract"
+        },
+        {
+          "exec": "npx awslint"
+        }
+      ]
+    },
+    "post-upgrade": {
+      "name": "post-upgrade",
+      "description": "Runs after upgrading dependencies"
     },
     "pre-compile": {
       "name": "pre-compile",
       "description": "Prepare the project for compilation"
     },
+    "release": {
+      "name": "release",
+      "description": "Prepare a release from \"main\" branch",
+      "env": {
+        "RELEASE": "true",
+        "MAJOR": "0",
+        "PRERELEASE": "alpha"
+      },
+      "steps": [
+        {
+          "exec": "rm -fr dist"
+        },
+        {
+          "spawn": "bump"
+        },
+        {
+          "spawn": "build"
+        },
+        {
+          "spawn": "unbump"
+        },
+        {
+          "exec": "git diff --ignore-space-at-eol --exit-code ':!tsconfig.json'"
+        }
+      ]
+    },
+    "rosetta:extract": {
+      "name": "rosetta:extract",
+      "description": "Test rosetta extract",
+      "steps": [
+        {
+          "exec": "yarn --silent jsii-rosetta extract --strict"
+        }
+      ]
+    },
     "test": {
       "name": "test",
-      "description": "Run tests"
+      "description": "Run tests",
+      "steps": [
+        {
+          "exec": "jest --passWithNoTests --updateSnapshot",
+          "receiveArgs": true
+        },
+        {
+          "spawn": "integ"
+        }
+      ]
+    },
+    "test:watch": {
+      "name": "test:watch",
+      "description": "Run jest in watch mode",
+      "steps": [
+        {
+          "exec": "jest --watch"
+        }
+      ]
+    },
+    "unbump": {
+      "name": "unbump",
+      "description": "Restores version to 0.0.0",
+      "env": {
+        "OUTFILE": "package.json",
+        "CHANGELOG": "dist/changelog.md",
+        "BUMPFILE": "dist/version.txt",
+        "RELEASETAG": "dist/releasetag.txt",
+        "RELEASE_TAG_PREFIX": "",
+        "BUMP_PACKAGE": "commit-and-tag-version@^12",
+        "RELEASABLE_COMMITS": "git log --no-merges --oneline $LATEST_TAG..HEAD -E --grep \"^(feat|fix){1}(\\([^()[:space:]]+\\))?(!)?:[[:blank:]]+.+\""
+      },
+      "steps": [
+        {
+          "builtin": "release/reset-version"
+        }
+      ]
+    },
+    "upgrade": {
+      "name": "upgrade",
+      "description": "upgrade dependencies",
+      "env": {
+        "CI": "0"
+      },
+      "steps": [
+        {
+          "exec": "echo No dependencies to upgrade."
+        }
+      ]
+    },
+    "upgrade-cdklabs-projen-project-types": {
+      "name": "upgrade-cdklabs-projen-project-types",
+      "description": "upgrade cdklabs-projen-project-types",
+      "env": {
+        "CI": "0"
+      },
+      "steps": [
+        {
+          "exec": "npx npm-check-updates@16 --upgrade --target=latest --peer --no-deprecated --dep=dev,peer,prod,optional --filter=cdklabs-projen-project-types,projen"
+        },
+        {
+          "exec": "yarn install --check-files"
+        },
+        {
+          "exec": "yarn upgrade cdklabs-projen-project-types projen"
+        },
+        {
+          "exec": "npx projen"
+        },
+        {
+          "spawn": "post-upgrade"
+        }
+      ]
+    },
+    "upgrade-dev-deps": {
+      "name": "upgrade-dev-deps",
+      "description": "upgrade dev dependencies",
+      "env": {
+        "CI": "0"
+      },
+      "steps": [
+        {
+          "exec": "npx npm-check-updates@16 --upgrade --target=minor --peer --no-deprecated --dep=dev --filter=@types/jest,jest,jsii-diff,jsii-pacmak,jsii-rosetta,prettier,ts-jest,ts-node,typescript"
+        },
+        {
+          "exec": "yarn install --check-files"
+        },
+        {
+          "exec": "yarn upgrade @types/jest @types/node aws-cdk-lib commit-and-tag-version constructs jest jest-junit jsii-diff jsii-docgen jsii-pacmak jsii-rosetta jsii prettier ts-jest ts-node typescript @aws-cdk/integ-runner @aws-cdk/integ-tests-alpha"
+        },
+        {
+          "exec": "npx projen"
+        },
+        {
+          "spawn": "post-upgrade"
+        }
+      ]
+    },
+    "watch": {
+      "name": "watch",
+      "description": "Watch & compile in the background",
+      "steps": [
+        {
+          "exec": "jsii -w --silence-warnings=reserved-word"
+        }
+      ]
     }
   },
-  "//": "~~ Generated by projen. To modify, edit .projenrc.js and run \"npx projen\"."
+  "env": {
+    "PATH": "$(npx -c \"node --print process.env.PATH\")"
+  },
+  "//": "~~ Generated by projen. To modify, edit .projenrc.ts and run \"npx projen\"."
 }

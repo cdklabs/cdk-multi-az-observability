@@ -1,10 +1,10 @@
 // Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
-import { IMetric, Metric, MathExpression } from "aws-cdk-lib/aws-cloudwatch";
-import { AvailabilityMetricProps } from "./props/AvailabilityMetricProps";
-import { LatencyMetricProps } from "./props/LatencyMetricProps";
-import { AvailabilityMetricType } from "../utilities/AvailabilityMetricType";
-import { LatencyMetricType } from "../utilities/LatencyMetricType";
+import { IMetric, Metric, MathExpression } from 'aws-cdk-lib/aws-cloudwatch';
+import { AvailabilityMetricProps } from './props/AvailabilityMetricProps';
+import { LatencyMetricProps } from './props/LatencyMetricProps';
+import { AvailabilityMetricType } from '../utilities/AvailabilityMetricType';
+import { LatencyMetricType } from '../utilities/LatencyMetricType';
 
 /**
  * Class for creating availability and latency metrics that can be used in alarms and graphs
@@ -22,15 +22,15 @@ export class AvailabilityAndLatencyMetrics {
    */
   static nextChar(str: string): string {
     if (str.length == 0) {
-      return "a";
+      return 'a';
     }
-    let charA: string[] = str.split("");
+    let charA: string[] = str.split('');
 
-    if (charA[charA.length - 1] === "z") {
+    if (charA[charA.length - 1] === 'z') {
       return (
         AvailabilityAndLatencyMetrics.nextChar(
           str.substring(0, charA.length - 1),
-        ) + "a"
+        ) + 'a'
       );
     } else {
       return (
@@ -51,7 +51,7 @@ export class AvailabilityAndLatencyMetrics {
     dimensions: { [key: string]: string },
   ): IMetric {
     let counter: number = 0;
-    let key: string = "";
+    let key: string = '';
 
     let usingMetrics: { [key: string]: IMetric } = {};
 
@@ -65,14 +65,14 @@ export class AvailabilityAndLatencyMetrics {
       props.metricDetails.successMetricNames.forEach(
         (successMetric: string) => {
           let keyPrefix =
-            (props.keyPrefix === undefined || props.keyPrefix == ""
-              ? ""
-              : props.keyPrefix.toLowerCase() + "_") +
+            (props.keyPrefix === undefined || props.keyPrefix == ''
+              ? ''
+              : props.keyPrefix.toLowerCase() + '_') +
             props.metricDetails.operationName.toLowerCase() +
-            "_" +
+            '_' +
             successMetric.toLowerCase();
 
-          key = keyPrefix + "_" + counter++;
+          key = keyPrefix + '_' + counter++;
           successKeys.push(key);
 
           usingMetrics[key] = new Metric({
@@ -94,14 +94,14 @@ export class AvailabilityAndLatencyMetrics {
     ) {
       props.metricDetails.faultMetricNames.forEach((faultMetric) => {
         let keyPrefix =
-          (props.keyPrefix === undefined || props.keyPrefix == ""
-            ? ""
-            : props.keyPrefix.toLowerCase() + "_") +
+          (props.keyPrefix === undefined || props.keyPrefix == ''
+            ? ''
+            : props.keyPrefix.toLowerCase() + '_') +
           props.metricDetails.operationName.toLowerCase() +
-          "_" +
+          '_' +
           faultMetric.toLowerCase();
 
-        key = keyPrefix + "_" + counter++;
+        key = keyPrefix + '_' + counter++;
         faultKeys.push(key);
 
         usingMetrics[key] = new Metric({
@@ -116,23 +116,23 @@ export class AvailabilityAndLatencyMetrics {
       });
     }
 
-    let expression: string = "";
+    let expression: string = '';
 
     switch (props.metricType) {
       case AvailabilityMetricType.SUCCESS_RATE:
-        expression = `((${successKeys.join("+")}) / (${successKeys.join("+")}+${faultKeys.join("+")})) * 100`;
+        expression = `((${successKeys.join('+')}) / (${successKeys.join('+')}+${faultKeys.join('+')})) * 100`;
         break;
       case AvailabilityMetricType.REQUEST_COUNT:
-        expression = `${successKeys.join("+")}+${faultKeys.join("+")}`;
+        expression = `${successKeys.join('+')}+${faultKeys.join('+')}`;
         break;
       case AvailabilityMetricType.FAULT_COUNT:
-        expression = `(${faultKeys.join("+")})`;
+        expression = `(${faultKeys.join('+')})`;
         break;
       case AvailabilityMetricType.FAULT_RATE:
-        expression = `((${faultKeys.join("+")}) / (${successKeys.join("+")}+${faultKeys.join("+")})) * 100`;
+        expression = `((${faultKeys.join('+')}) / (${successKeys.join('+')}+${faultKeys.join('+')})) * 100`;
         break;
       case AvailabilityMetricType.SUCCESS_COUNT:
-        expression = `(${successKeys.join("+")})`;
+        expression = `(${successKeys.join('+')})`;
         break;
     }
 
@@ -205,18 +205,18 @@ export class AvailabilityAndLatencyMetrics {
 
       latencyMetrics.forEach((metric: IMetric, index: number) => {
         let keyPrefix: string =
-          (props.keyPrefix === undefined || props.keyPrefix == ""
-            ? ""
-            : props.keyPrefix.toLowerCase() + "_") +
+          (props.keyPrefix === undefined || props.keyPrefix == ''
+            ? ''
+            : props.keyPrefix.toLowerCase() + '_') +
           props.metricDetails.operationName.toLowerCase() +
-          "_" +
+          '_' +
           props.metricType.toString().toLowerCase();
 
         usingMetrics[keyPrefix + index] = metric;
       });
 
       return new MathExpression({
-        expression: `(${Object.keys(usingMetrics).join("+")})/${Object.keys(usingMetrics).length}`,
+        expression: `(${Object.keys(usingMetrics).join('+')})/${Object.keys(usingMetrics).length}`,
         label: props.label,
         period: props.metricDetails.period,
         usingMetrics: usingMetrics,
@@ -245,18 +245,18 @@ export class AvailabilityAndLatencyMetrics {
 
       latencyMetrics.forEach((metric: IMetric, index: number) => {
         let keyPrefix: string =
-          (props.keyPrefix === undefined || props.keyPrefix == ""
-            ? ""
-            : props.keyPrefix.toLowerCase() + "_") +
+          (props.keyPrefix === undefined || props.keyPrefix == ''
+            ? ''
+            : props.keyPrefix.toLowerCase() + '_') +
           props.metricDetails.operationName.toLowerCase() +
-          "_" +
+          '_' +
           props.metricType.toString().toLowerCase();
 
         usingMetrics[keyPrefix + index] = metric;
       });
 
       return new MathExpression({
-        expression: Object.keys(usingMetrics).join("+"),
+        expression: Object.keys(usingMetrics).join('+'),
         label: props.label,
         period: props.metricDetails.period,
         usingMetrics: usingMetrics,

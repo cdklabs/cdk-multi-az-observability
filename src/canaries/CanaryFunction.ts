@@ -1,8 +1,8 @@
 // Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
-import * as path from "path";
-import { Duration, Fn, RemovalPolicy } from "aws-cdk-lib";
-import { ISecurityGroup, SecurityGroup } from "aws-cdk-lib/aws-ec2";
+import * as path from 'path';
+import { Duration, Fn, RemovalPolicy } from 'aws-cdk-lib';
+import { ISecurityGroup, SecurityGroup } from 'aws-cdk-lib/aws-ec2';
 import {
   Effect,
   IManagedPolicy,
@@ -11,7 +11,7 @@ import {
   PolicyStatement,
   Role,
   ServicePrincipal,
-} from "aws-cdk-lib/aws-iam";
+} from 'aws-cdk-lib/aws-iam';
 import {
   Architecture,
   Code,
@@ -21,11 +21,11 @@ import {
   LayerVersion,
   Runtime,
   Tracing,
-} from "aws-cdk-lib/aws-lambda";
-import { ILogGroup, LogGroup, RetentionDays } from "aws-cdk-lib/aws-logs";
-import { Construct } from "constructs";
-import { ICanaryFunction } from "./ICanaryFunction";
-import { CanaryFunctionProps } from "./props/CanaryFunctionProps";
+} from 'aws-cdk-lib/aws-lambda';
+import { ILogGroup, LogGroup, RetentionDays } from 'aws-cdk-lib/aws-logs';
+import { Construct } from 'constructs';
+import { ICanaryFunction } from './ICanaryFunction';
+import { CanaryFunctionProps } from './props/CanaryFunctionProps';
 
 export class CanaryFunction extends Construct implements ICanaryFunction {
   /**
@@ -43,42 +43,42 @@ export class CanaryFunction extends Construct implements ICanaryFunction {
 
     let xrayManagedPolicy: IManagedPolicy = new ManagedPolicy(
       this,
-      "xrayManagedPolicy",
+      'xrayManagedPolicy',
       {
-        path: "/canary/",
+        path: '/canary/',
         statements: [
           new PolicyStatement({
             actions: [
-              "xray:PutTraceSegments",
-              "xray:PutTelemetryRecords",
-              "xray:GetSamplingRules",
-              "xray:GetSamplingTargets",
-              "xray:GetSamplingStatisticSummaries",
+              'xray:PutTraceSegments',
+              'xray:PutTelemetryRecords',
+              'xray:GetSamplingRules',
+              'xray:GetSamplingTargets',
+              'xray:GetSamplingStatisticSummaries',
             ],
             effect: Effect.ALLOW,
-            resources: ["*"],
+            resources: ['*'],
           }),
         ],
       },
     );
-    let ec2ManagedPolicy = new ManagedPolicy(this, "ec2ManagedPolicy", {
-      path: "/canary/",
+    let ec2ManagedPolicy = new ManagedPolicy(this, 'ec2ManagedPolicy', {
+      path: '/canary/',
       statements: [
         new PolicyStatement({
           actions: [
-            "ec2:CreateNetworkInterface",
-            "ec2:DescribeNetworkInterfaces",
-            "ec2:DeleteNetworkInterface",
+            'ec2:CreateNetworkInterface',
+            'ec2:DescribeNetworkInterfaces',
+            'ec2:DeleteNetworkInterface',
           ],
           effect: Effect.ALLOW,
-          resources: ["*"],
+          resources: ['*'],
         }),
       ],
     });
 
-    let executionRole: IRole = new Role(this, "executionRole", {
-      assumedBy: new ServicePrincipal("lambda.amazonaws.com"),
-      path: "/canary/",
+    let executionRole: IRole = new Role(this, 'executionRole', {
+      assumedBy: new ServicePrincipal('lambda.amazonaws.com'),
+      path: '/canary/',
       managedPolicies: [xrayManagedPolicy, ec2ManagedPolicy],
     });
 
@@ -97,10 +97,10 @@ export class CanaryFunction extends Construct implements ICanaryFunction {
     */
     let monitoringLayer: ILayerVersion = new LayerVersion(
       this,
-      "MonitoringLayer",
+      'MonitoringLayer',
       {
         code: Code.fromAsset(
-          path.join(__dirname, "../monitoring/src/monitoring-layer.zip"),
+          path.join(__dirname, '../monitoring/src/monitoring-layer.zip'),
         ),
         compatibleArchitectures: [Architecture.ARM_64],
         compatibleRuntimes: [Runtime.PYTHON_3_12],
@@ -108,16 +108,16 @@ export class CanaryFunction extends Construct implements ICanaryFunction {
     );
 
     if (props.vpc !== undefined && props.vpc != null) {
-      let sg: ISecurityGroup = new SecurityGroup(this, "canarySecurityGroup", {
-        description: "Allow canary to communicate with load balancer",
+      let sg: ISecurityGroup = new SecurityGroup(this, 'canarySecurityGroup', {
+        description: 'Allow canary to communicate with load balancer',
         vpc: props.vpc,
         allowAllOutbound: true,
       });
 
-      this.function = new Function(this, "canary", {
+      this.function = new Function(this, 'canary', {
         runtime: Runtime.PYTHON_3_12,
-        code: Code.fromAsset(path.join(__dirname, "src/canary.zip")),
-        handler: "index.handler",
+        code: Code.fromAsset(path.join(__dirname, 'src/canary.zip')),
+        handler: 'index.handler',
         role: executionRole,
         architecture: Architecture.ARM_64,
         tracing: Tracing.ACTIVE,
@@ -125,12 +125,12 @@ export class CanaryFunction extends Construct implements ICanaryFunction {
         memorySize: 512,
         layers: [monitoringLayer],
         environment: {
-          REGION: Fn.ref("AWS::Region"),
-          PARTITION: Fn.ref("AWS::Partition"),
+          REGION: Fn.ref('AWS::Region'),
+          PARTITION: Fn.ref('AWS::Partition'),
           TIMEOUT:
             props.httpTimeout !== undefined
               ? props.httpTimeout.toSeconds().toString()
-              : "2",
+              : '2',
           IGNORE_SSL_ERRORS: (
             props.ignoreTlsErrors !== undefined && props.ignoreTlsErrors == true
           )
@@ -142,10 +142,10 @@ export class CanaryFunction extends Construct implements ICanaryFunction {
         vpcSubnets: props.subnetSelection,
       });
     } else {
-      this.function = new Function(this, "canary", {
+      this.function = new Function(this, 'canary', {
         runtime: Runtime.PYTHON_3_12,
-        code: Code.fromAsset(path.join(__dirname, "src/canary.zip")),
-        handler: "index.handler",
+        code: Code.fromAsset(path.join(__dirname, 'src/canary.zip')),
+        handler: 'index.handler',
         role: executionRole,
         architecture: Architecture.ARM_64,
         tracing: Tracing.ACTIVE,
@@ -153,12 +153,12 @@ export class CanaryFunction extends Construct implements ICanaryFunction {
         memorySize: 512,
         layers: [monitoringLayer],
         environment: {
-          REGION: Fn.ref("AWS::Region"),
-          PARTITION: Fn.ref("AWS::Partition"),
+          REGION: Fn.ref('AWS::Region'),
+          PARTITION: Fn.ref('AWS::Partition'),
           TIMEOUT:
             props.httpTimeout !== undefined
               ? props.httpTimeout.toSeconds().toString()
-              : "2",
+              : '2',
           IGNORE_SSL_ERRORS: (
             props.ignoreTlsErrors !== undefined && props.ignoreTlsErrors == true
           )
@@ -168,30 +168,30 @@ export class CanaryFunction extends Construct implements ICanaryFunction {
       });
     }
 
-    this.function.addPermission("invokePermission", {
-      action: "lambda:InvokeFunction",
-      principal: new ServicePrincipal("events.amazonaws.com"),
+    this.function.addPermission('invokePermission', {
+      action: 'lambda:InvokeFunction',
+      principal: new ServicePrincipal('events.amazonaws.com'),
       sourceArn: Fn.sub(
-        "arn:${AWS::Partition}:events:${AWS::Region}:${AWS::AccountId}:rule/*",
+        'arn:${AWS::Partition}:events:${AWS::Region}:${AWS::AccountId}:rule/*',
       ),
     });
 
-    this.logGroup = new LogGroup(this, "logGroup", {
+    this.logGroup = new LogGroup(this, 'logGroup', {
       logGroupName: `/aws/lambda/${this.function.functionName}`,
       retention: RetentionDays.ONE_WEEK,
       removalPolicy: RemovalPolicy.DESTROY,
     });
 
-    new ManagedPolicy(this, "cwManagedPolicy", {
-      path: "/canary/",
+    new ManagedPolicy(this, 'cwManagedPolicy', {
+      path: '/canary/',
       statements: [
         new PolicyStatement({
-          actions: ["cloudwatch:PutMetricData"],
+          actions: ['cloudwatch:PutMetricData'],
           effect: Effect.ALLOW,
-          resources: ["*"],
+          resources: ['*'],
         }),
         new PolicyStatement({
-          actions: ["logs:CreateLogStream", "logs:PutLogEvents"],
+          actions: ['logs:CreateLogStream', 'logs:PutLogEvents'],
           effect: Effect.ALLOW,
           resources: [this.logGroup.logGroupArn],
         }),
