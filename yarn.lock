@@ -10,33 +10,33 @@
     "@jridgewell/gen-mapping" "^0.3.5"
     "@jridgewell/trace-mapping" "^0.3.24"
 
-"@aws-cdk/aws-service-spec@0.1.34":
-  version "0.1.34"
-  resolved "https://registry.yarnpkg.com/@aws-cdk/aws-service-spec/-/aws-service-spec-0.1.34.tgz#4940a67be44e97ab31cd3511b293f51492c99f22"
-  integrity sha512-bVsNLud3H573UOAqMo16g/kXtFrA755X1ipH++VLuOK5GI4qDpM1tU3/O4UO8JF7n7AA4/fsd7luUCKuydd9cQ==
+"@aws-cdk/aws-service-spec@0.1.36":
+  version "0.1.36"
+  resolved "https://registry.yarnpkg.com/@aws-cdk/aws-service-spec/-/aws-service-spec-0.1.36.tgz#a64c518bd246c7d7ab1fdda12da6e1bbb0a34822"
+  integrity sha512-Pgs70xwtV4tUdDpslutB3+JqBp1+Q9WLd3kVkgTyUiGJU7Db6wQ9oLHNKRF41mtO31VYo+oyVmH8eomFfqvXew==
   dependencies:
-    "@aws-cdk/service-spec-types" "^0.0.101"
+    "@aws-cdk/service-spec-types" "^0.0.103"
     "@cdklabs/tskb" "^0.0.3"
 
 "@aws-cdk/integ-runner@latest":
-  version "2.171.1-alpha.0"
-  resolved "https://registry.yarnpkg.com/@aws-cdk/integ-runner/-/integ-runner-2.171.1-alpha.0.tgz#d6a0a6bc99672793c99ca97cf0c270f575c6a9cf"
-  integrity sha512-nntlE/XczcW+scwIgIgVNjsKVb7rWNshvZH6w9wzBGaO67+Omd3tbixqpGl9FEzX2fE/dnNS1fYDtewuH1HIkg==
+  version "2.172.0-alpha.0"
+  resolved "https://registry.yarnpkg.com/@aws-cdk/integ-runner/-/integ-runner-2.172.0-alpha.0.tgz#46bd211a2935d99cd30b3562776056c4f4dd14b0"
+  integrity sha512-ktcXdQ6CX/GJAtGH4NgtQdWXbAIfOupaiKKmCGBX+D2UnssQvw75us2IaJCmXRROsHzFNgCqOIWpTLRiLi7R3g==
   dependencies:
-    "@aws-cdk/aws-service-spec" "0.1.34"
-    aws-cdk "2.171.1"
+    "@aws-cdk/aws-service-spec" "0.1.36"
+    aws-cdk "2.172.0"
   optionalDependencies:
     fsevents "2.3.2"
 
 "@aws-cdk/integ-tests-alpha@latest":
-  version "2.171.1-alpha.0"
-  resolved "https://registry.yarnpkg.com/@aws-cdk/integ-tests-alpha/-/integ-tests-alpha-2.171.1-alpha.0.tgz#1878cd554931468ba93f640d700f4d1ed3995e87"
-  integrity sha512-ot9go4EZl8ua/UKYlhlxPYz+sogufPUNd9JiCB2IY0MTRUR2gUm0G8FIxw04NjU2G8wKgYse/BtPBgEeilF/YQ==
+  version "2.172.0-alpha.0"
+  resolved "https://registry.yarnpkg.com/@aws-cdk/integ-tests-alpha/-/integ-tests-alpha-2.172.0-alpha.0.tgz#f361d95ef1c4a4c0928be15c3976dbec424a1534"
+  integrity sha512-vF1YXVazgHOxdBp36Apb35XEfHWgpMt2HrNexfQKfIOi4ux6s09uj+FpDolPbzNYRS2f/jClXow2fT4h89PhfQ==
 
-"@aws-cdk/service-spec-types@^0.0.101":
-  version "0.0.101"
-  resolved "https://registry.yarnpkg.com/@aws-cdk/service-spec-types/-/service-spec-types-0.0.101.tgz#ce480d59b4eaa4ba29c78a9c53071a00966b87e1"
-  integrity sha512-a2e5dU1srewZJXSk0gR3McEE52v9pEB6u6IeozjsD9wmjFAVB+ggMFGYv5EQxhuq5/LQpo5enrlyVHZQnW1sZQ==
+"@aws-cdk/service-spec-types@^0.0.103":
+  version "0.0.103"
+  resolved "https://registry.yarnpkg.com/@aws-cdk/service-spec-types/-/service-spec-types-0.0.103.tgz#0519026090f40fb1937f84683800594662ab9f41"
+  integrity sha512-gt2mx0GpwmY0jQxDtxREskqHGtAvUwRU5YtTA65cdGwkjh/TXlw7nUXnHgG+JRQFrfvCIgqL1D+SB18UAo2zvA==
   dependencies:
     "@cdklabs/tskb" "^0.0.3"
 
@@ -1182,10 +1182,10 @@ aws-cdk-lib@2.1.0:
     semver "^7.3.5"
     yaml "1.10.2"
 
-aws-cdk@2.171.1:
-  version "2.171.1"
-  resolved "https://registry.yarnpkg.com/aws-cdk/-/aws-cdk-2.171.1.tgz#b3599bfcccfd64275f943d93cde7acaf17f2560d"
-  integrity sha512-IWENyT4F5UcLr1szLsbipUdjIHn8FD3d/RvaIvhs2+qCamkfEV5mqv/ChMvRJ8H2jebhIZ2iz74or9O5Ismp+Q==
+aws-cdk@2.172.0:
+  version "2.172.0"
+  resolved "https://registry.yarnpkg.com/aws-cdk/-/aws-cdk-2.172.0.tgz#1a32cc979452bd5cac6d4ad59cb8ea7a99a20c36"
+  integrity sha512-kacztcAl12F6zlBqKCuzCZmj4vrbMhzgDAxBB4T7fXR2amQyuu6W0nWcGWWvASXeBJcw2DJ6ulpfV4wuc9dksw==
   optionalDependencies:
     fsevents "2.3.2"
 
@@ -4159,9 +4159,9 @@ typescript@^5.7.2, typescript@~5.7:
   integrity sha512-i5t66RHxDvVN40HfDd1PsEThGNnlMCMT3jMUuoh9/0TaqWevNontacunWyN02LA9/fIbEWlcHZcgTKb9QoaLfg==
 
 typescript@next:
-  version "5.8.0-dev.20241206"
-  resolved "https://registry.yarnpkg.com/typescript/-/typescript-5.8.0-dev.20241206.tgz#b673984118648da49fbd7febde1bb5c15bc0a253"
-  integrity sha512-0tcNBmbE6ML4usuL2ksFZpxWVrTQT1kIkvIOCzpA29NrG9AlgU0/5SyNlKKiPlkzhSuP97G9E5dPULBYlWE8eA==
+  version "5.8.0-dev.20241207"
+  resolved "https://registry.yarnpkg.com/typescript/-/typescript-5.8.0-dev.20241207.tgz#b6144fdd5090da5fd9c9b7205bd96b438188dac5"
+  integrity sha512-yQ6n2+6pOnqMt7ycrcA5EQXaOxxOkoKirCdQJEF79Hjke53Y+zs9XIwBbA99Hf2CWT7lhAuv2MFifLwTLQQ1BA==
 
 typescript@~5.2:
   version "5.2.2"
