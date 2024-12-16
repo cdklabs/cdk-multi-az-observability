@@ -18,15 +18,17 @@ const project = new CdklabsConstructLibrary ({
     'aws-cdk-lib',
     'cdk-nag'
   ],
+  private: false,
   npmAccess: javascript.NpmAccess.PUBLIC,
   license: 'Apache-2.0',
   githubOptions: {
     mergify: true,
+    mergeQueue: true
   },
   autoMerge: true,
   autoApproveUpgrades: true,
   autoApproveOptions: {
-    allowedUsernames: ['cdklabs-automation'],
+    allowedUsernames: ['cdklabs-automation', "hakenmt"],
   },
   eslint: false,
   eslintOptions: {
@@ -259,7 +261,9 @@ project.tasks.tryFind('release')?.updateStep(4, {
 project.github
   ?.tryFindWorkflow('release')
   ?.file?.patch(JsonPatch.remove('/jobs/release_pypi/steps/1'));
-project.synth();
+  project.github
+  ?.tryFindWorkflow('release')
+  ?.file?.patch(JsonPatch.add('/jobs/release_maven/steps/2', {"name": " Install gpg-agent", "run": "sudo dnf install --allowerasing gnupg2"}));
 
 project.github
   ?.tryFindWorkflow('build')
