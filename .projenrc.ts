@@ -74,7 +74,6 @@ const project = new CdklabsConstructLibrary ({
     'lib/',
     'coverage/',
     'test-reports/',
-    'yarn.lock',
     '.cdk.staging',
     'cdk.out',
     '/cdk/bin/',

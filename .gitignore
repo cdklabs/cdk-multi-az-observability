@@ -36,7 +36,6 @@ node_modules/
 lib/
 coverage/
 test-reports/
-yarn.lock
 .cdk.staging
 cdk.out
 /cdk/bin/
