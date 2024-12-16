@@ -1,7 +1,7 @@
 // Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 import * as cdk from 'aws-cdk-lib';
-import { Duration } from 'aws-cdk-lib';
+import { Aspects, Duration } from 'aws-cdk-lib';
 import { Unit } from 'aws-cdk-lib/aws-cloudwatch';
 import { SelectedSubnets, SubnetType, Vpc } from 'aws-cdk-lib/aws-ec2';
 import {
@@ -17,6 +17,7 @@ import { MetricDimensions } from '../src/services/props/MetricDimensions';
 import { Service } from '../src/services/Service';
 import { ServiceMetricDetails } from '../src/services/ServiceMetricDetails';
 import { OutlierDetectionAlgorithm } from '../src/utilities/OutlierDetectionAlgorithm';
+import { AwsSolutionsChecks } from 'cdk-nag';
 
 const app = new cdk.App();
 const stack = new cdk.Stack(app, 'TestStack', {
@@ -206,3 +207,4 @@ new InstrumentedServiceMultiAZObservability(stack, 'MAZObservability', {
 });
 
 app.synth();
+Aspects.of(app).add(new AwsSolutionsChecks({ verbose: true }));
