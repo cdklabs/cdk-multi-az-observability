@@ -24,6 +24,149 @@
         }
       ]
     },
+    "build-assets": {
+      "name": "build-assets",
+      "steps": [
+        {
+          "exec": "export DOCKER_DEFAULT_PLATFORM=\"linux/arm64\""
+        },
+        {
+          "spawn": "build-canary-function"
+        },
+        {
+          "spawn": "build-outlier-detection-function"
+        },
+        {
+          "spawn": "build-scipy-layer"
+        },
+        {
+          "spawn": "build-monitoring-layer"
+        },
+        {
+          "exec": "rm -rf lib/azmapper/src"
+        },
+        {
+          "exec": "cp -R src/azmapper/src lib/azmapper"
+        }
+      ]
+    },
+    "build-canary-function": {
+      "name": "build-canary-function",
+      "steps": [
+        {
+          "exec": "rm -rf src/canaries/src/package"
+        },
+        {
+          "exec": "rm -rf lib/canaries/src"
+        },
+        {
+          "exec": "rm -f src/canaries/src/canaries.zip"
+        },
+        {
+          "exec": "mkdir -p src/canaries/src/package"
+        },
+        {
+          "exec": "mkdir -p lib/canaries/src"
+        },
+        {
+          "exec": "docker run --rm --platform \"linux/arm64\" --user \"0:0\" --volume \"$PWD/src/canaries/src:/asset-input:delegated\" --volume \"$PWD/src/canaries/src/package:/asset-output:delegated\" --workdir \"/asset-input\" \"public.ecr.aws/sam/build-python3.12\" bash -c \"pip install --no-cache --requirement requirements.txt --target /asset-output && cp --archive --update index.py /asset-output\""
+        },
+        {
+          "exec": "cd src/canaries/src/package && zip -r ../canary.zip ."
+        },
+        {
+          "exec": "cp src/canaries/src/canary.zip lib/canaries/src/canary.zip"
+        }
+      ]
+    },
+    "build-monitoring-layer": {
+      "name": "build-monitoring-layer",
+      "steps": [
+        {
+          "exec": "rm -rf src/monitoring/src/monitoring"
+        },
+        {
+          "exec": "rm -f src/monitoring/src/monitoring-layer.zip"
+        },
+        {
+          "exec": "mkdir -p src/monitoring/src/monitoring"
+        },
+        {
+          "exec": "mkdir -p lib/monitoring/src"
+        },
+        {
+          "exec": "pip3 install aws-embedded-metrics aws-xray-sdk --only-binary=:all: --target src/monitoring/src/monitoring/python/lib/python3.12/site-packages --platform manylinux2014_aarch64"
+        },
+        {
+          "exec": "cd src/monitoring/src/monitoring && zip -r ../monitoring-layer.zip ."
+        },
+        {
+          "exec": "cp src/monitoring/src/monitoring-layer.zip lib/monitoring/src/monitoring-layer.zip"
+        }
+      ]
+    },
+    "build-outlier-detection-function": {
+      "name": "build-outlier-detection-function",
+      "steps": [
+        {
+          "exec": "mkdir -p lib/outlier-detection/src"
+        },
+        {
+          "exec": "rm -f src/outlier-detection/src/outlier-detection.zip"
+        },
+        {
+          "exec": "zip src/outlier-detection/src/outlier-detection.zip src/outlier-detection/src/index.py"
+        },
+        {
+          "exec": "cp src/outlier-detection/src/outlier-detection.zip lib/outlier-detection/src/outlier-detection.zip"
+        }
+      ]
+    },
+    "build-scipy-layer": {
+      "name": "build-scipy-layer",
+      "steps": [
+        {
+          "exec": "rm -rf src/outlier-detection/src/scipy"
+        },
+        {
+          "exec": "rm -f src/outlier-detection/src/scipy-layer.zip"
+        },
+        {
+          "exec": "mkdir src/outlier-detection/src/scipy"
+        },
+        {
+          "exec": "mkdir -p lib/outlier-detection/src"
+        },
+        {
+          "exec": "pip3 install scipy --only-binary=:all: --target src/outlier-detection/src/scipy/python/lib/python3.12/site-packages --platform manylinux2014_aarch64"
+        },
+        {
+          "exec": "cd src/outlier-detection/src/scipy && zip -r ../scipy-layer.zip ."
+        },
+        {
+          "exec": "cp src/outlier-detection/src/scipy-layer.zip lib/outlier-detection/src/scipy-layer.zip"
+        }
+      ]
+    },
+    "bump": {
+      "name": "bump",
+      "description": "Bumps version based on latest git tag and generates a changelog entry",
+      "env": {
+        "OUTFILE": "package.json",
+        "CHANGELOG": "dist/changelog.md",
+        "BUMPFILE": "dist/version.txt",
+        "RELEASETAG": "dist/releasetag.txt",
+        "RELEASE_TAG_PREFIX": "",
+        "BUMP_PACKAGE": "commit-and-tag-version@^12",
+        "RELEASABLE_COMMITS": "git log --no-merges --oneline $LATEST_TAG..HEAD -E --grep \"^(feat|fix){1}(\\([^()[:space:]]+\\))?(!)?:[[:blank:]]+.+\""
+      },
+      "steps": [
+        {
+          "builtin": "release/bump-version"
+        }
+      ],
+      "condition": "git log --oneline -1 | grep -qv \"chore(release):\""
+    },
     "clobber": {
       "name": "clobber",
       "description": "hard resets to HEAD of origin and cleans the local repo",
@@ -71,6 +214,9 @@
       "steps": [
         {
           "exec": "jsii --silence-warnings=reserved-word"
+        },
+        {
+          "spawn": "build-assets"
         }
       ]
     },
@@ -101,19 +247,6 @@
       "steps": [
         {
           "spawn": "default"
-        }
-      ]
-    },
-    "eslint": {
-      "name": "eslint",
-      "description": "Runs eslint against the codebase",
-      "env": {
-        "ESLINT_USE_FLAT_CONFIG": "false"
-      },
-      "steps": [
-        {
-          "exec": "eslint --ext .ts,.tsx --fix --no-error-on-unmatched-pattern $@ src test build-tools projenrc .projenrc.ts",
-          "receiveArgs": true
         }
       ]
     },
@@ -244,6 +377,9 @@
         },
         {
           "spawn": "rosetta:extract"
+        },
+        {
+          "exec": "npx awslint"
         }
       ]
     },
@@ -254,6 +390,32 @@
     "pre-compile": {
       "name": "pre-compile",
       "description": "Prepare the project for compilation"
+    },
+    "release": {
+      "name": "release",
+      "description": "Prepare a release from \"main\" branch",
+      "env": {
+        "RELEASE": "true",
+        "MAJOR": "0",
+        "PRERELEASE": "alpha"
+      },
+      "steps": [
+        {
+          "exec": "rm -fr dist"
+        },
+        {
+          "spawn": "bump"
+        },
+        {
+          "spawn": "build"
+        },
+        {
+          "spawn": "unbump"
+        },
+        {
+          "exec": "git diff --ignore-space-at-eol --exit-code ':!tsconfig.json'"
+        }
+      ]
     },
     "rosetta:extract": {
       "name": "rosetta:extract",
@@ -273,9 +435,6 @@
           "receiveArgs": true
         },
         {
-          "spawn": "eslint"
-        },
-        {
           "spawn": "integ"
         }
       ]
@@ -286,6 +445,24 @@
       "steps": [
         {
           "exec": "jest --watch"
+        }
+      ]
+    },
+    "unbump": {
+      "name": "unbump",
+      "description": "Restores version to 0.0.0",
+      "env": {
+        "OUTFILE": "package.json",
+        "CHANGELOG": "dist/changelog.md",
+        "BUMPFILE": "dist/version.txt",
+        "RELEASETAG": "dist/releasetag.txt",
+        "RELEASE_TAG_PREFIX": "",
+        "BUMP_PACKAGE": "commit-and-tag-version@^12",
+        "RELEASABLE_COMMITS": "git log --no-merges --oneline $LATEST_TAG..HEAD -E --grep \"^(feat|fix){1}(\\([^()[:space:]]+\\))?(!)?:[[:blank:]]+.+\""
+      },
+      "steps": [
+        {
+          "builtin": "release/reset-version"
         }
       ]
     },
@@ -333,13 +510,13 @@
       },
       "steps": [
         {
-          "exec": "npx npm-check-updates@16 --upgrade --target=minor --peer --no-deprecated --dep=dev --filter=@types/jest,eslint-import-resolver-typescript,eslint-plugin-import,jest,jsii-diff,jsii-pacmak,jsii-rosetta,ts-jest,ts-node,typescript"
+          "exec": "npx npm-check-updates@16 --upgrade --target=minor --peer --no-deprecated --dep=dev --filter=@types/jest,cdk-nag,jest,jsii-diff,jsii-pacmak,jsii-rosetta,prettier,ts-jest,ts-node,typescript"
         },
         {
           "exec": "yarn install --check-files"
         },
         {
-          "exec": "yarn upgrade @stylistic/eslint-plugin @types/jest @types/node @typescript-eslint/eslint-plugin @typescript-eslint/parser eslint-import-resolver-typescript eslint-plugin-import eslint jest jest-junit jsii-diff jsii-docgen jsii-pacmak jsii-rosetta jsii ts-jest ts-node typescript @aws-cdk/integ-runner @aws-cdk/integ-tests-alpha"
+          "exec": "yarn upgrade @types/jest @types/node aws-cdk-lib cdk-nag commit-and-tag-version constructs jest jest-junit jsii-diff jsii-docgen jsii-pacmak jsii-rosetta jsii prettier ts-jest ts-node typescript @aws-cdk/integ-runner @aws-cdk/integ-tests-alpha"
         },
         {
           "exec": "npx projen"
