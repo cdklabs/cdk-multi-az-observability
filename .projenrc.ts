@@ -23,11 +23,12 @@ const project = new CdklabsConstructLibrary ({
   license: 'Apache-2.0',
   githubOptions: {
     mergify: true,
+    mergeQueue: true
   },
   autoMerge: true,
   autoApproveUpgrades: true,
   autoApproveOptions: {
-    allowedUsernames: ['cdklabs-automation'],
+    allowedUsernames: ['cdklabs-automation', "hakenmt"],
   },
   eslint: false,
   eslintOptions: {
