@@ -260,6 +260,7 @@ project.tasks.tryFind('release')?.updateStep(4, {
 project.github
   ?.tryFindWorkflow('release')
   ?.file?.patch(JsonPatch.remove('/jobs/release_pypi/steps/1'));
+
 project.github
   ?.tryFindWorkflow('release')
   ?.file?.patch(JsonPatch.add('/jobs/release_maven/steps/2', {"name": " Install gpg-agent", "run": "dnf install --assumeyes --allowerasing gnupg2"}));
