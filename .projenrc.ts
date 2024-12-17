@@ -26,9 +26,12 @@ const project = new CdklabsConstructLibrary ({
     mergeQueue: true
   },
   autoMerge: true,
+  autoMergeOptions: {
+    approvedReviews: 0
+  },
   autoApproveUpgrades: true,
   autoApproveOptions: {
-    allowedUsernames: ['cdklabs-automation', "hakenmt"],
+    allowedUsernames: ['cdklabs-automation', "hakenmt", "github-bot"]
   },
   eslint: false,
   eslintOptions: {
@@ -254,16 +257,12 @@ project.tasks.tryFind('release')?.updateStep(4, {
   exec: "git diff --ignore-space-at-eol --exit-code ':!tsconfig.json'",
 });
 
-/*project.addFields({
-  version: '0.0.1-alpha.1',
-});*/
-
 project.github
   ?.tryFindWorkflow('release')
   ?.file?.patch(JsonPatch.remove('/jobs/release_pypi/steps/1'));
-  project.github
+project.github
   ?.tryFindWorkflow('release')
-  ?.file?.patch(JsonPatch.add('/jobs/release_maven/steps/2', {"name": " Install gpg-agent", "run": "sudo dnf install --allowerasing gnupg2"}));
+  ?.file?.patch(JsonPatch.add('/jobs/release_maven/steps/2', {"name": 'Install gpg-agent', "run": 'dnf install --assumeyes --allowerasing gnupg2'}));
 
 project.github
   ?.tryFindWorkflow('build')
