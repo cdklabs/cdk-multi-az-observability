@@ -26,12 +26,9 @@ const project = new CdklabsConstructLibrary ({
     mergeQueue: true
   },
   autoMerge: true,
-  autoMergeOptions: {
-    approvedReviews: 0
-  },
   autoApproveUpgrades: true,
   autoApproveOptions: {
-    allowedUsernames: ['cdklabs-automation', "hakenmt", "github-bot"]
+    allowedUsernames: ['cdklabs-automation', "github-bot", "dependabot[bot]"]
   },
   eslint: false,
   eslintOptions: {
@@ -266,7 +263,7 @@ project.github
 
 project.github
   ?.tryFindWorkflow('auto-approve')
-  ?.file?.patch(JsonPatch.replace('/jobs/approve/if', "contains(github.event.pull_request.labels.*.name, 'auto-approve') && (github.event.pull_request.user.login == 'cdklabs-automation' || github.event.pull_request.user.login == 'hakenmt' || github.event.pull_request.user.login == 'dependabot[bot]')"));
+  ?.file?.patch(JsonPatch.replace('/jobs/approve/if', "contains(github.event.pull_request.labels.*.name, 'auto-approve') && (github.event.pull_request.user.login == 'cdklabs-automation' || github.event.pull_request.user.login == 'hakenmt' || github.event.pull_request.user.login == 'github-bot' || github.event.pull_request.user.login == 'dependabot[bot]')"));
 
 project.github
   ?.tryFindWorkflow('build')
