@@ -44,6 +44,12 @@ const project = new CdklabsConstructLibrary ({
   description:
     'A CDK construct for implementing multi-AZ observability to detect single AZ impairments',
   dependabot: false,
+  dependabotOptions: {
+    labels: [
+      "auto-approve",
+      "auto-merge"
+    ]
+  },
   buildWorkflow: true,
   depsUpgrade: true,
   release: true,
@@ -247,7 +253,7 @@ const buildAssets = project.tasks.addTask('build-assets', {
 });
 
 project.tasks.tryFind('compile')?.spawn(buildAssets);
-project.tasks.tryFind('post-compile')?.exec('npx awslint');
+project.tasks.tryFind('post-compile')?.exec('npx --yes awslint');
 
 // tsconfig.json gets the exclude list updated and isn't tracked
 project.tasks.tryFind('release')?.updateStep(4, {
