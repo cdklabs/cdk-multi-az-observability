@@ -116,7 +116,7 @@ def verify_request(context, item, method, metrics = None):
     if fault_boundary == "az":
       metrics.set_dimensions({"Operation": operation, "AZ-ID": fault_boundary_id, "Region": region })
     else:
-      metrics.set_dimensions({"Operation": operation, "Region": region })
+      metrics.set_dimensions({"Operation": operation, "Region": fault_boundary_id })
     
     verify = not (parsed_url.scheme == "https" and ignore_ssl_errors == True)
     error = False
