@@ -347,7 +347,7 @@ export class BasicServiceMultiAZObservability
 
     return new Alarm(
       scope,
-      keyprefix + "latency-outlier-alarm",
+      keyprefix + "-latency-outlier-alarm",
       {
         alarmName:
           availabilityZoneId + '-' + alb.loadBalancerArn + '-latency-impact-outlier',
@@ -550,17 +550,20 @@ export class BasicServiceMultiAZObservability
 
     let packetDropTotal: IMetric = new MathExpression({
       expression: Object.keys(packetDropCountMetrics).join("+"),
-      usingMetrics: packetDropCountMetrics
+      usingMetrics: packetDropCountMetrics,
+      period: period
     });
 
     let packetsInFromSourceTotal: IMetric = new MathExpression({
       expression: Object.keys(packetsInFromSourceMetrics).join("+"),
-      usingMetrics: packetsInFromSourceMetrics
+      usingMetrics: packetsInFromSourceMetrics,
+      period: period
     });
 
     let packetsInFromDestinationTotal: IMetric = new MathExpression({
       expression: Object.keys(packetsInFromDestinationMetrics).join("+"),
-      usingMetrics: packetsInFromDestinationMetrics
+      usingMetrics: packetsInFromDestinationMetrics,
+      period: period
     });
     
     let usingMetrics: { [key: string]: IMetric } = {};
@@ -633,7 +636,8 @@ export class BasicServiceMultiAZObservability
 
       azPacketDropCountMetrics[`${keyprefix}${natgws[az].length}`] = new MathExpression({
         expression: Object.keys(packetDropCountMetrics).join("+"),
-        usingMetrics: packetDropCountMetrics
+        usingMetrics: packetDropCountMetrics,
+        period: period
       });
 
       if (az == availabilityZone) {
@@ -649,7 +653,8 @@ export class BasicServiceMultiAZObservability
       {
          metric: new MathExpression({
             expression: `${azKey} / (${Object.keys(azPacketDropCountMetrics).join("+")})`,
-            usingMetrics: azPacketDropCountMetrics
+            usingMetrics: azPacketDropCountMetrics,
+            period: period
          }),
          threshold: threshold,
          evaluationPeriods: evaluationPeriods,

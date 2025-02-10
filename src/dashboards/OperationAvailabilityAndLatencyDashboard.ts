@@ -851,9 +851,9 @@ export class OperationAvailabilityAndLatencyDashboard
         props.operation.service.serviceName.toLowerCase() +
         '-' +
         props.operation.operationName.toLowerCase() +
-        Fn.sub('-operation-availability-and-latency-${AWS::Region}'),
+        Fn.sub('-availability-and-latency-${AWS::Region}'),
       defaultInterval: props.interval,
-      periodOverride: PeriodOverride.INHERIT,
+      periodOverride: PeriodOverride.AUTO,
       widgets: widgets,
     });
   }
