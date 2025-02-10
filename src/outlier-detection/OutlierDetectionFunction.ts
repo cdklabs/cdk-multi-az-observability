@@ -1,7 +1,7 @@
 // Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 import * as path from 'path';
-import { Duration, Fn, RemovalPolicy, Tags } from 'aws-cdk-lib';
+import { Aws, Duration, Fn, RemovalPolicy, Tags } from 'aws-cdk-lib';
 import { ISecurityGroup, SecurityGroup } from 'aws-cdk-lib/aws-ec2';
 import {
   Effect,
@@ -125,8 +125,8 @@ export class OutlierDetectionFunction
         memorySize: 512,
         layers: [sciPyLayer, monitoringLayer],
         environment: {
-          REGION: Fn.ref('AWS::Region'),
-          PARTITION: Fn.ref('AWS::Partition'),
+          REGION: Aws.REGION,
+          PARTITION: Aws.PARTITION,
         },
         vpc: props.vpc,
         securityGroups: [sg],
@@ -144,8 +144,8 @@ export class OutlierDetectionFunction
         memorySize: 512,
         layers: [sciPyLayer, monitoringLayer],
         environment: {
-          REGION: Fn.ref('AWS::Region'),
-          PARTITION: Fn.ref('AWS::Partition'),
+          REGION: Aws.REGION,
+          PARTITION: Aws.PARTITION,
         },
       });
     }

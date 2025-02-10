@@ -15,10 +15,10 @@ import { ICanaryOperationRegionalAlarmsAndRules } from './ICanaryOperationRegion
 import { IOperationAlarmsAndRules } from './IOperationAlarmsAndRules';
 import { IServiceAlarmsAndRules } from './IServiceAlarmsAndRules';
 import { ServiceAlarmsAndRulesProps } from './props/ServiceAlarmsAndRulesProps';
-import { AvailabilityAndLatencyMetrics } from '../metrics/AvailabilityAndLatencyMetrics';
 import { RegionalAvailabilityMetrics } from '../metrics/RegionalAvailabilityMetrics';
 import { IService } from '../services/IService';
 import { AvailabilityMetricType } from '../utilities/AvailabilityMetricType';
+import { MetricsHelper } from '../utilities/MetricsHelper';
 
 /**
  * Service level alarms and rules using critical operations
@@ -159,7 +159,7 @@ export class ServiceAlarmsAndRules
     props.service.operations
       .filter((x) => x.critical == true)
       .forEach((x) => {
-        keyPrefix = AvailabilityAndLatencyMetrics.nextChar(keyPrefix);
+        keyPrefix = MetricsHelper.nextChar(keyPrefix);
 
         regionalOperationFaultCountMetrics[keyPrefix] =
           RegionalAvailabilityMetrics.createRegionalAvailabilityMetric({

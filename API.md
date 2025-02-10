@@ -823,7 +823,7 @@ The currently in use Availability Zone names which constrains the list of AZ IDs
 
 ### BasicServiceMultiAZObservabilityProps <a name="BasicServiceMultiAZObservabilityProps" id="@cdklabs/multi-az-observability.BasicServiceMultiAZObservabilityProps"></a>
 
-Properties for creating a basic service.
+Properties for creating basic multi-AZ observability.
 
 #### Initializer <a name="Initializer" id="@cdklabs/multi-az-observability.BasicServiceMultiAZObservabilityProps.Initializer"></a>
 
@@ -837,32 +837,20 @@ const basicServiceMultiAZObservabilityProps: BasicServiceMultiAZObservabilityPro
 
 | **Name** | **Type** | **Description** |
 | --- | --- | --- |
-| <code><a href="#@cdklabs/multi-az-observability.BasicServiceMultiAZObservabilityProps.property.createDashboard">createDashboard</a></code> | <code>boolean</code> | Whether to create a dashboard displaying the metrics and alarms. |
 | <code><a href="#@cdklabs/multi-az-observability.BasicServiceMultiAZObservabilityProps.property.datapointsToAlarm">datapointsToAlarm</a></code> | <code>number</code> | The number of datapoints to alarm on for latency and availability alarms. |
 | <code><a href="#@cdklabs/multi-az-observability.BasicServiceMultiAZObservabilityProps.property.evaluationPeriods">evaluationPeriods</a></code> | <code>number</code> | The number of evaluation periods for latency and availabiltiy alarms. |
-| <code><a href="#@cdklabs/multi-az-observability.BasicServiceMultiAZObservabilityProps.property.outlierDetectionAlgorithm">outlierDetectionAlgorithm</a></code> | <code><a href="#@cdklabs/multi-az-observability.OutlierDetectionAlgorithm">OutlierDetectionAlgorithm</a></code> | The algorithm to use for performing outlier detection. |
-| <code><a href="#@cdklabs/multi-az-observability.BasicServiceMultiAZObservabilityProps.property.period">period</a></code> | <code>aws-cdk-lib.Duration</code> | The period to evaluate metrics. |
+| <code><a href="#@cdklabs/multi-az-observability.BasicServiceMultiAZObservabilityProps.property.faultCountPercentageThreshold">faultCountPercentageThreshold</a></code> | <code>number</code> | The percentage of faults for a single ALB to consider an AZ to be unhealthy, this should align with your availability goal. |
+| <code><a href="#@cdklabs/multi-az-observability.BasicServiceMultiAZObservabilityProps.property.latencyStatistic">latencyStatistic</a></code> | <code>string</code> | The statistic used to measure target response latency, like p99,  which can be specified using Stats.percentile(99) or "p99". |
+| <code><a href="#@cdklabs/multi-az-observability.BasicServiceMultiAZObservabilityProps.property.latencyThreshold">latencyThreshold</a></code> | <code>number</code> | The threshold in seconds for ALB targets whose responses are slower than this value at the specified percentile statistic. |
 | <code><a href="#@cdklabs/multi-az-observability.BasicServiceMultiAZObservabilityProps.property.serviceName">serviceName</a></code> | <code>string</code> | The service's name. |
 | <code><a href="#@cdklabs/multi-az-observability.BasicServiceMultiAZObservabilityProps.property.applicationLoadBalancers">applicationLoadBalancers</a></code> | <code>aws-cdk-lib.aws_elasticloadbalancingv2.IApplicationLoadBalancer[]</code> | The application load balancers being used by the service. |
 | <code><a href="#@cdklabs/multi-az-observability.BasicServiceMultiAZObservabilityProps.property.assetsBucketParameterName">assetsBucketParameterName</a></code> | <code>string</code> | If you are not using a static bucket to deploy assets, for example you are synthing this and it gets uploaded to a bucket whose name is unknown to you (maybe used as part of a central CI/CD system) and is provided as a parameter to your stack, specify that parameter name here. |
 | <code><a href="#@cdklabs/multi-az-observability.BasicServiceMultiAZObservabilityProps.property.assetsBucketPrefixParameterName">assetsBucketPrefixParameterName</a></code> | <code>string</code> | If you are not using a static bucket to deploy assets, for example you are synthing this and it gets uploaded to a bucket that uses a prefix that is unknown to you (maybe used as part of a central CI/CD system) and is provided as a parameter to your stack, specify that parameter name here. |
-| <code><a href="#@cdklabs/multi-az-observability.BasicServiceMultiAZObservabilityProps.property.faultCountPercentageThreshold">faultCountPercentageThreshold</a></code> | <code>number</code> | The percentage of faults for a single ALB to consider an AZ to be unhealthy, this should align with your availability goal. |
+| <code><a href="#@cdklabs/multi-az-observability.BasicServiceMultiAZObservabilityProps.property.createDashboard">createDashboard</a></code> | <code>boolean</code> | Whether to create a dashboard displaying the metrics and alarms. |
 | <code><a href="#@cdklabs/multi-az-observability.BasicServiceMultiAZObservabilityProps.property.interval">interval</a></code> | <code>aws-cdk-lib.Duration</code> | Dashboard interval. |
 | <code><a href="#@cdklabs/multi-az-observability.BasicServiceMultiAZObservabilityProps.property.natGateways">natGateways</a></code> | <code>{[ key: string ]: aws-cdk-lib.aws_ec2.CfnNatGateway[]}</code> | (Optional) A map of Availability Zone name to the NAT Gateways in that AZ. |
-| <code><a href="#@cdklabs/multi-az-observability.BasicServiceMultiAZObservabilityProps.property.outlierThreshold">outlierThreshold</a></code> | <code>number</code> | The outlier threshold for determining if an AZ is an outlier for latency or faults. |
 | <code><a href="#@cdklabs/multi-az-observability.BasicServiceMultiAZObservabilityProps.property.packetLossImpactPercentageThreshold">packetLossImpactPercentageThreshold</a></code> | <code>number</code> | The amount of packet loss in a NAT GW to determine if an AZ is actually impacted, recommendation is 0.01%. |
-
----
-
-##### `createDashboard`<sup>Required</sup> <a name="createDashboard" id="@cdklabs/multi-az-observability.BasicServiceMultiAZObservabilityProps.property.createDashboard"></a>
-
-```typescript
-public readonly createDashboard: boolean;
-```
-
-- *Type:* boolean
-
-Whether to create a dashboard displaying the metrics and alarms.
+| <code><a href="#@cdklabs/multi-az-observability.BasicServiceMultiAZObservabilityProps.property.period">period</a></code> | <code>aws-cdk-lib.Duration</code> | The period to evaluate metrics. |
 
 ---
 
@@ -890,27 +878,42 @@ The number of evaluation periods for latency and availabiltiy alarms.
 
 ---
 
-##### `outlierDetectionAlgorithm`<sup>Required</sup> <a name="outlierDetectionAlgorithm" id="@cdklabs/multi-az-observability.BasicServiceMultiAZObservabilityProps.property.outlierDetectionAlgorithm"></a>
+##### `faultCountPercentageThreshold`<sup>Required</sup> <a name="faultCountPercentageThreshold" id="@cdklabs/multi-az-observability.BasicServiceMultiAZObservabilityProps.property.faultCountPercentageThreshold"></a>
 
 ```typescript
-public readonly outlierDetectionAlgorithm: OutlierDetectionAlgorithm;
+public readonly faultCountPercentageThreshold: number;
 ```
 
-- *Type:* <a href="#@cdklabs/multi-az-observability.OutlierDetectionAlgorithm">OutlierDetectionAlgorithm</a>
+- *Type:* number
 
-The algorithm to use for performing outlier detection.
+The percentage of faults for a single ALB to consider an AZ to be unhealthy, this should align with your availability goal.
+
+For example
+1% or 5%, specify as 1 or 5.
 
 ---
 
-##### `period`<sup>Required</sup> <a name="period" id="@cdklabs/multi-az-observability.BasicServiceMultiAZObservabilityProps.property.period"></a>
+##### `latencyStatistic`<sup>Required</sup> <a name="latencyStatistic" id="@cdklabs/multi-az-observability.BasicServiceMultiAZObservabilityProps.property.latencyStatistic"></a>
 
 ```typescript
-public readonly period: Duration;
+public readonly latencyStatistic: string;
 ```
 
-- *Type:* aws-cdk-lib.Duration
+- *Type:* string
 
-The period to evaluate metrics.
+The statistic used to measure target response latency, like p99,  which can be specified using Stats.percentile(99) or "p99".
+
+---
+
+##### `latencyThreshold`<sup>Required</sup> <a name="latencyThreshold" id="@cdklabs/multi-az-observability.BasicServiceMultiAZObservabilityProps.property.latencyThreshold"></a>
+
+```typescript
+public readonly latencyThreshold: number;
+```
+
+- *Type:* number
+
+The threshold in seconds for ALB targets whose responses are slower than this value at the specified percentile statistic.
 
 ---
 
@@ -933,9 +936,13 @@ public readonly applicationLoadBalancers: IApplicationLoadBalancer[];
 ```
 
 - *Type:* aws-cdk-lib.aws_elasticloadbalancingv2.IApplicationLoadBalancer[]
-- *Default:* No alarms for ALBs will be created
+- *Default:* "No alarms for ALBs will be created"
 
 The application load balancers being used by the service.
+
+There will be an alarm created for 
+each AZ for each ALB. Then, there will be a composite alarm for AZ created from the input
+of all ALBs. You must either specify an ALB or a NAT GW.
 
 ---
 
@@ -946,7 +953,7 @@ public readonly assetsBucketParameterName: string;
 ```
 
 - *Type:* string
-- *Default:* The assets will be uploaded to the default defined asset location.
+- *Default:* "The assets will be uploaded to the default defined asset location."
 
 If you are not using a static bucket to deploy assets, for example you are synthing this and it gets uploaded to a bucket whose name is unknown to you (maybe used as part of a central CI/CD system) and is provided as a parameter to your stack, specify that parameter name here.
 
@@ -965,7 +972,7 @@ public readonly assetsBucketPrefixParameterName: string;
 ```
 
 - *Type:* string
-- *Default:* No object prefix will be added to your custom assets location. However, if you have overridden something like the 'BucketPrefix' property in your stack synthesizer with a variable like "${AssetsBucketPrefix", you will need to define this property so it doesn't cause a reference error even if the prefix value is blank.
+- *Default:* "No object prefix will be added to your custom assets location. However, if you have overridden something like the 'BucketPrefix' property in your stack synthesizer with a variable like '${AssetsBucketPrefix}', you will need to define this property so it doesn't cause a reference error even if the prefix value is blank."
 
 If you are not using a static bucket to deploy assets, for example you are synthing this and it gets uploaded to a bucket that uses a prefix that is unknown to you (maybe used as part of a central CI/CD system) and is provided as a parameter to your stack, specify that parameter name here.
 
@@ -978,19 +985,16 @@ value for this property.
 
 ---
 
-##### `faultCountPercentageThreshold`<sup>Optional</sup> <a name="faultCountPercentageThreshold" id="@cdklabs/multi-az-observability.BasicServiceMultiAZObservabilityProps.property.faultCountPercentageThreshold"></a>
+##### `createDashboard`<sup>Optional</sup> <a name="createDashboard" id="@cdklabs/multi-az-observability.BasicServiceMultiAZObservabilityProps.property.createDashboard"></a>
 
 ```typescript
-public readonly faultCountPercentageThreshold: number;
+public readonly createDashboard: boolean;
 ```
 
-- *Type:* number
-- *Default:* 5 (as in 5%)
+- *Type:* boolean
+- *Default:* false
 
-The percentage of faults for a single ALB to consider an AZ to be unhealthy, this should align with your availability goal.
-
-For example
-1% or 5%.
+Whether to create a dashboard displaying the metrics and alarms.
 
 ---
 
@@ -1001,7 +1005,7 @@ public readonly interval: Duration;
 ```
 
 - *Type:* aws-cdk-lib.Duration
-- *Default:* 1 hour
+- *Default:* Duration.hours(1)
 
 Dashboard interval.
 
@@ -1014,40 +1018,13 @@ public readonly natGateways: {[ key: string ]: CfnNatGateway[]};
 ```
 
 - *Type:* {[ key: string ]: aws-cdk-lib.aws_ec2.CfnNatGateway[]}
-- *Default:* No alarms for NAT Gateways will be created
+- *Default:* "No alarms for NAT Gateways will be created"
 
 (Optional) A map of Availability Zone name to the NAT Gateways in that AZ.
 
----
-
-##### `outlierThreshold`<sup>Optional</sup> <a name="outlierThreshold" id="@cdklabs/multi-az-observability.BasicServiceMultiAZObservabilityProps.property.outlierThreshold"></a>
-
-```typescript
-public readonly outlierThreshold: number;
-```
-
-- *Type:* number
-- *Default:* Depends on the outlier detection algorithm selected
-
-The outlier threshold for determining if an AZ is an outlier for latency or faults.
-
-This number is interpreted
-differently for different outlier algorithms. When used with
-STATIC, the number should be between 0 and 1 to represent the
-percentage of errors (like .7) that an AZ must be responsible
-for to be considered an outlier. When used with CHI_SQUARED, it
-represents the p value that indicates statistical significance, like
-0.05 which means the skew has less than or equal to a 5% chance of
-occuring. When used with Z_SCORE it indicates how many standard
-deviations to evaluate for an AZ being an outlier, typically 3 is
-standard for Z_SCORE.
-
-Standard defaults based on the outlier detection algorithm:
-STATIC: 0.7
-CHI_SQUARED: 0.05
-Z_SCORE: 2
-IQR: 1.5
-MAD: 3
+One alarm per NAT GW will be created. If multiple NAT GWs
+are provided for a single AZ, those alarms will be aggregated into
+a composite alarm for the AZ. You must either specify an ALB or a NAT GW.
 
 ---
 
@@ -1058,9 +1035,22 @@ public readonly packetLossImpactPercentageThreshold: number;
 ```
 
 - *Type:* number
-- *Default:* 0.01 (as in 0.01%)
+- *Default:* "0.01 (as in 0.01%)"
 
 The amount of packet loss in a NAT GW to determine if an AZ is actually impacted, recommendation is 0.01%.
+
+---
+
+##### `period`<sup>Optional</sup> <a name="period" id="@cdklabs/multi-az-observability.BasicServiceMultiAZObservabilityProps.property.period"></a>
+
+```typescript
+public readonly period: Duration;
+```
+
+- *Type:* aws-cdk-lib.Duration
+- *Default:* Duration.minutes(1)
+
+The period to evaluate metrics.
 
 ---
 

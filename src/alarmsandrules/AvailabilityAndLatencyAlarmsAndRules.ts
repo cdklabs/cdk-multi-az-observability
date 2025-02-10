@@ -32,6 +32,7 @@ import { IOperationMetricDetails } from '../services/IOperationMetricDetails';
 import { AvailabilityMetricType } from '../utilities/AvailabilityMetricType';
 import { LatencyMetricType } from '../utilities/LatencyMetricType';
 import { OutlierDetectionAlgorithm } from '../utilities/OutlierDetectionAlgorithm';
+import { MetricsHelper } from '../utilities/MetricsHelper';
 
 /**
  * Class used to create availability and latency alarms and Contributor Insight rules
@@ -185,6 +186,10 @@ export class AvailabilityAndLatencyAlarmsAndRules {
         keyPrefix: 'a',
       });
 
+    // For server-side, this metric is ok, because the AZ specific metrics are dual-reported
+    // with dimensions for both the AZ and Region. But for the canary, it produces 1 metric
+    // for testing the regional endpoint and a separate metric for each AZ. So in that case
+    // we don't want to divide by the regional metric, use per-AZ
     let regionalFaults: IMetric =
       RegionalAvailabilityMetrics.createRegionalAvailabilityMetric({
         metricDetails: metricDetails,
@@ -212,6 +217,84 @@ export class AvailabilityAndLatencyAlarmsAndRules {
       evaluationPeriods: metricDetails.evaluationPeriods,
       datapointsToAlarm: metricDetails.datapointsToAlarm,
     });
+  }
+
+    /**
+   * An alarm that compares error rate in this AZ to the overall region error based only on metric data.
+   * This is different for canaries because the metrics they test at the regional level are different
+   * requests than the ones sent to the zonal endpoints. So you have to add all of the zonal requests together
+   * to compare one AZ to the others (you can't compare a zone to the regional metrics).
+   * @param scope
+   * @param metricDetails
+   * @param availabilityZoneId
+   * @param nameSuffix
+   * @param counter
+   * @param outlierThreshold
+   * @returns
+   */
+  static createZonalFaultRateStaticOutlierAlarmForCanaries(
+      scope: Construct,
+      metricDetails: IOperationMetricDetails,
+      availabilityZoneId: string,
+      availabilityZones: string[],
+      counter: number,
+      outlierThreshold: number,
+      nameSuffix?: string,
+    ): IAlarm {
+      let zonalFaults: IMetric =
+        ZonalAvailabilityMetrics.createZonalAvailabilityMetric({
+          availabilityZoneId: availabilityZoneId,
+          metricDetails: metricDetails,
+          metricType: AvailabilityMetricType.FAULT_COUNT,
+          keyPrefix: 'a',
+        });
+
+      let prefix = 'b';
+
+      let usingMetrics: {[key: string]: IMetric} = {};
+
+      availabilityZones.forEach((az: string) => {
+        prefix = MetricsHelper.nextChar(prefix);
+        
+        let azFaults: IMetric = ZonalAvailabilityMetrics.createZonalAvailabilityMetric({
+          availabilityZoneId: az,
+          metricDetails: metricDetails,
+          metricType: AvailabilityMetricType.FAULT_COUNT,
+          keyPrefix: prefix
+        });
+
+        prefix = MetricsHelper.nextChar(prefix);
+
+        usingMetrics[`${prefix}1`] = azFaults;
+      });
+
+      prefix = MetricsHelper.nextChar(prefix);
+
+      let regionalFaultCount: IMetric = new MathExpression({
+        expression: Object.keys(usingMetrics).join("+"),
+        usingMetrics: usingMetrics
+      });
+  
+      return new Alarm(scope, 'AZ' + counter + 'IsolatedImpactAlarmStatic', {
+        alarmName:
+          availabilityZoneId +
+          `-${metricDetails.operationName.toLowerCase()}-static-majority-errors-impact` +
+          nameSuffix,
+        metric: new MathExpression({
+          expression: 'IF(m2 > 0, (m1 / m2), 0)',
+          usingMetrics: {
+            m1: zonalFaults,
+            m2: regionalFaultCount,
+          },
+          period: metricDetails.period,
+          label: availabilityZoneId + ' percent faults',
+        }),
+        threshold: outlierThreshold,
+        comparisonOperator: ComparisonOperator.GREATER_THAN_OR_EQUAL_TO_THRESHOLD,
+        treatMissingData: TreatMissingData.NOT_BREACHING,
+        evaluationPeriods: metricDetails.evaluationPeriods,
+        datapointsToAlarm: metricDetails.datapointsToAlarm,
+      });
   }
 
   static createZonalFaultRateOutlierAlarm(
@@ -524,6 +607,99 @@ export class AvailabilityAndLatencyAlarmsAndRules {
         metricType: LatencyMetricType.SUCCESS_LATENCY,
         statistic: `TC(${metricDetails.successAlarmThreshold}:)`,
         keyPrefix: 'b',
+      });
+
+    return new Alarm(
+      scope,
+      metricDetails.operationName +
+        'AZ' +
+        counter +
+        'IsolatedImpactAlarmStatic',
+      {
+        alarmName:
+          availabilityZoneId +
+          `-${metricDetails.operationName.toLowerCase()}-static-majority-high-latency-impact` +
+          nameSuffix,
+        metric: new MathExpression({
+          expression: 'IF(m2 > 0, (m1 / m2), 0)',
+          usingMetrics: {
+            m1: zonalLatency,
+            m2: regionalLatency,
+          },
+          period: metricDetails.period,
+          label: availabilityZoneId + ' percent high latency requests',
+        }),
+        threshold: outlierThreshold,
+        comparisonOperator:
+          ComparisonOperator.GREATER_THAN_OR_EQUAL_TO_THRESHOLD,
+        treatMissingData: TreatMissingData.NOT_BREACHING,
+        evaluationPeriods: metricDetails.evaluationPeriods,
+        datapointsToAlarm: metricDetails.datapointsToAlarm,
+      },
+    );
+  }
+
+  static createZonalHighLatencyStaticOutlierAlarmForCanaries(
+    scope: Construct,
+    metricDetails: IOperationMetricDetails,
+    availabilityZoneId: string,
+    availabilityZones: string[],
+    counter: number,
+    outlierThreshold: number,
+    nameSuffix?: string,
+  ): IAlarm {
+    let zonalLatency: IMetric =
+      ZonalLatencyMetrics.createZonalCountLatencyMetric({
+        availabilityZoneId: availabilityZoneId,
+        label:
+          availabilityZoneId +
+          '-' +
+          metricDetails.operationName +
+          '-high-latency-requests',
+        metricDetails: metricDetails,
+        metricType: LatencyMetricType.SUCCESS_LATENCY,
+        statistic: `TC(${metricDetails.successAlarmThreshold}:)`,
+        keyPrefix: 'a',
+      });
+
+      let prefix = 'b';
+
+      let usingMetrics: {[key: string]: IMetric} = {};
+
+      availabilityZones.forEach((az: string) => {
+        prefix =MetricsHelper.nextChar(prefix);
+        
+        let azLatencyMetrics: IMetric[] = ZonalLatencyMetrics.createZonalLatencyMetrics({
+          availabilityZoneId: az,
+          metricDetails: metricDetails,
+          metricType: LatencyMetricType.SUCCESS_LATENCY,
+          keyPrefix: prefix,
+          statistic: `TC(${metricDetails.successAlarmThreshold}:)`
+        });
+
+        prefix = MetricsHelper.nextChar(prefix);
+
+        let innerUsingMetrics: {[key: string]: IMetric} = {};
+
+        azLatencyMetrics.forEach((metric: IMetric, index: number) => {
+          innerUsingMetrics[`${prefix}${index}`] = metric
+        });
+
+        let azLatencyCount: IMetric = new MathExpression({
+          expression: Object.keys(innerUsingMetrics).join("+"),
+          usingMetrics: innerUsingMetrics
+        });
+
+        prefix = MetricsHelper.nextChar(prefix);
+
+        usingMetrics[`${prefix}1`] = azLatencyCount;
+      });
+
+      prefix = MetricsHelper.nextChar(prefix);
+
+      let regionalLatency: IMetric = new MathExpression({
+        expression: Object.keys(usingMetrics).join("+"),
+        usingMetrics: usingMetrics
       });
 
     return new Alarm(

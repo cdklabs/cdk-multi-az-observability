@@ -8,8 +8,7 @@ import {
   Vpc,
 } from 'aws-cdk-lib/aws-ec2';
 import { ApplicationLoadBalancer } from 'aws-cdk-lib/aws-elasticloadbalancingv2';
-import { BasicServiceMultiAZObservability } from '../src/services/BasicServiceMultiAZObservability';
-import { OutlierDetectionAlgorithm } from '../src/utilities/OutlierDetectionAlgorithm';
+import { BasicServiceMultiAZObservability } from '../src/basic_observability/BasicServiceMultiAZObservability';
 
 const app = new cdk.App();
 const stack = new cdk.Stack(app, 'TestStack', {
@@ -61,8 +60,6 @@ new BasicServiceMultiAZObservability(stack, 'MAZObservability', {
     }),
   ],
   natGateways: natGateways,
-  outlierDetectionAlgorithm: OutlierDetectionAlgorithm.CHI_SQUARED,
-  outlierThreshold: 0.05,
   faultCountPercentageThreshold: 1.0,
   packetLossImpactPercentageThreshold: 0.01,
   serviceName: 'test',
@@ -70,4 +67,6 @@ new BasicServiceMultiAZObservability(stack, 'MAZObservability', {
   createDashboard: true,
   datapointsToAlarm: 3,
   evaluationPeriods: 5,
+  latencyStatistic: "p99",
+  latencyThreshold: 200
 });

@@ -1,26 +1,30 @@
 // Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
+
 import { Duration } from 'aws-cdk-lib';
 import { CfnNatGateway } from 'aws-cdk-lib/aws-ec2';
 import { IApplicationLoadBalancer } from 'aws-cdk-lib/aws-elasticloadbalancingv2';
-import { OutlierDetectionAlgorithm } from '../../utilities/OutlierDetectionAlgorithm';
 
 /**
- * Properties for creating a basic service
+ * Properties for creating basic multi-AZ observability
  */
 export interface BasicServiceMultiAZObservabilityProps {
   /**
    * (Optional) A map of Availability Zone name to the NAT Gateways
-   * in that AZ
+   * in that AZ. One alarm per NAT GW will be created. If multiple NAT GWs
+   * are provided for a single AZ, those alarms will be aggregated into
+   * a composite alarm for the AZ. You must either specify an ALB or a NAT GW.
    *
-   * @default - No alarms for NAT Gateways will be created
+   * @default "No alarms for NAT Gateways will be created"
    */
   readonly natGateways?: { [key: string]: CfnNatGateway[] };
 
   /**
-   * The application load balancers being used by the service
+   * The application load balancers being used by the service. There will be an alarm created for 
+   * each AZ for each ALB. Then, there will be a composite alarm for AZ created from the input
+   * of all ALBs. You must either specify an ALB or a NAT GW.
    *
-   * @default - No alarms for ALBs will be created
+   * @default "No alarms for ALBs will be created"
    */
   readonly applicationLoadBalancers?: IApplicationLoadBalancer[];
 
@@ -30,65 +34,50 @@ export interface BasicServiceMultiAZObservabilityProps {
   readonly serviceName: string;
 
   /**
-   * The outlier threshold for determining if an AZ is an
-   * outlier for latency or faults. This number is interpreted
-   * differently for different outlier algorithms. When used with
-   * STATIC, the number should be between 0 and 1 to represent the
-   * percentage of errors (like .7) that an AZ must be responsible
-   * for to be considered an outlier. When used with CHI_SQUARED, it
-   * represents the p value that indicates statistical significance, like
-   * 0.05 which means the skew has less than or equal to a 5% chance of
-   * occuring. When used with Z_SCORE it indicates how many standard
-   * deviations to evaluate for an AZ being an outlier, typically 3 is
-   * standard for Z_SCORE.
-   *
-   * Standard defaults based on the outlier detection algorithm:
-   * STATIC: 0.7
-   * CHI_SQUARED: 0.05
-   * Z_SCORE: 2
-   * IQR: 1.5
-   * MAD: 3
-   *
-   * @default - Depends on the outlier detection algorithm selected
-   */
-  readonly outlierThreshold?: number;
-
-  /**
    * The amount of packet loss in a NAT GW to determine if an AZ
    * is actually impacted, recommendation is 0.01%
    *
-   * @default - 0.01 (as in 0.01%)
+   * @default "0.01 (as in 0.01%)"
    */
   readonly packetLossImpactPercentageThreshold?: number;
 
   /**
    * The percentage of faults for a single ALB to consider an AZ
    * to be unhealthy, this should align with your availability goal. For example
-   * 1% or 5%.
-   *
-   * @default - 5 (as in 5%)
+   * 1% or 5%, specify as 1 or 5.
    */
-  readonly faultCountPercentageThreshold?: number;
+  readonly faultCountPercentageThreshold: number;
 
   /**
-   * The algorithm to use for performing outlier detection
+   * The threshold in seconds for ALB targets whose responses are slower than this
+   * value at the specified percentile statistic.
    */
-  readonly outlierDetectionAlgorithm: OutlierDetectionAlgorithm;
+  readonly latencyThreshold: number;
+
+  /**
+   * The statistic used to measure target response latency, like p99, 
+   * which can be specified using Stats.percentile(99) or "p99".
+   */
+  readonly latencyStatistic: string;
 
   /**
    * The period to evaluate metrics
+   * 
+   * @default Duration.minutes(1)
    */
-  readonly period: Duration;
+  readonly period?: Duration;
 
   /**
    * Whether to create a dashboard displaying the metrics and alarms
+   * 
+   * @default false
    */
-  readonly createDashboard: boolean;
+  readonly createDashboard?: boolean;
 
   /**
    * Dashboard interval
    *
-   * @default - 1 hour
+   * @default Duration.hours(1)
    */
   readonly interval?: Duration;
 
@@ -103,8 +92,7 @@ export interface BasicServiceMultiAZObservabilityProps {
    * stacks in this construct that deploy assets will copy the parent stack's
    * value for this property.
    *
-   * @default - The assets will be uploaded to the default defined
-   * asset location.
+   * @default "The assets will be uploaded to the default defined asset location."
    */
   readonly assetsBucketParameterName?: string;
 
@@ -120,11 +108,7 @@ export interface BasicServiceMultiAZObservabilityProps {
    * stacks in this construct that deploy assets will copy the parent stack's
    * value for this property.
    *
-   * @default - No object prefix will be added to your custom assets location.
-   * However, if you have overridden something like the 'BucketPrefix' property
-   * in your stack synthesizer with a variable like "${AssetsBucketPrefix",
-   * you will need to define this property so it doesn't cause a reference error
-   * even if the prefix value is blank.
+   * @default "No object prefix will be added to your custom assets location. However, if you have overridden something like the 'BucketPrefix' property in your stack synthesizer with a variable like '${AssetsBucketPrefix}', you will need to define this property so it doesn't cause a reference error even if the prefix value is blank."
    */
   readonly assetsBucketPrefixParameterName?: string;
 

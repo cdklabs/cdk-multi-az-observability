@@ -6,6 +6,7 @@ import { AvailabilityAndLatencyMetrics } from './AvailabilityAndLatencyMetrics';
 import { LatencyMetricProps } from './props/LatencyMetricProps';
 import { ServiceLatencyMetricProps } from './props/ServiceLatencyMericProps';
 import { ZonalLatencyMetricProps } from './props/ZonalLatencyMetricProps';
+import { MetricsHelper } from '../utilities/MetricsHelper';
 
 export class ZonalLatencyMetrics {
   /**
@@ -67,7 +68,7 @@ export class ZonalLatencyMetrics {
   ): IMetric[] {
     let usingMetrics: { [key: string]: IMetric } = {};
     let operationMetrics: IMetric[] = [];
-    let keyPrefix: string = AvailabilityAndLatencyMetrics.nextChar('');
+    let keyPrefix: string = MetricsHelper.nextChar('');
 
     props.latencyMetricProps.forEach(
       (prop: LatencyMetricProps, index: number) => {
@@ -77,7 +78,7 @@ export class ZonalLatencyMetrics {
 
         operationMetrics.push(operationZonalMetric);
         usingMetrics[`${keyPrefix}${index}`] = operationZonalMetric;
-        keyPrefix = AvailabilityAndLatencyMetrics.nextChar(keyPrefix);
+        keyPrefix = MetricsHelper.nextChar(keyPrefix);
       },
     );
 

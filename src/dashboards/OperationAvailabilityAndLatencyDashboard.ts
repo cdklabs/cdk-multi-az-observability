@@ -16,6 +16,7 @@ import {
 import {
   BaseLoadBalancer,
   CfnLoadBalancer,
+  IApplicationLoadBalancer,
 } from 'aws-cdk-lib/aws-elasticloadbalancingv2';
 import { Construct } from 'constructs';
 import { ContributorInsightsWidget } from './ContributorInsightsWidget';
@@ -25,7 +26,6 @@ import { OperationAvailabilityWidgetProps } from './props/OperationAvailabilityW
 import { OperationLatencyWidgetProps } from './props/OperationLatencyWidgetProps';
 import { IAvailabilityZoneMapper } from '../azmapper/IAvailabilityZoneMapper';
 import { ApplicationLoadBalancerMetrics } from '../metrics/ApplicationLoadBalancerMetrics';
-import { AvailabilityAndLatencyMetrics } from '../metrics/AvailabilityAndLatencyMetrics';
 import { NetworkLoadBalancerMetrics } from '../metrics/NetworkLoadBalancerMetrics';
 import { RegionalAvailabilityMetrics } from '../metrics/RegionalAvailabilityMetrics';
 import { RegionalLatencyMetrics } from '../metrics/RegionalLatencyMetrics';
@@ -33,6 +33,7 @@ import { ZonalAvailabilityMetrics } from '../metrics/ZonalAvailabilityMetrics';
 import { ZonalLatencyMetrics } from '../metrics/ZonalLatencyMetrics';
 import { AvailabilityMetricType } from '../utilities/AvailabilityMetricType';
 import { LatencyMetricType } from '../utilities/LatencyMetricType';
+import { MetricsHelper } from '../utilities/MetricsHelper';
 
 /**
  * Creates an operation level availability and latency dashboard
@@ -78,7 +79,7 @@ export class OperationAvailabilityAndLatencyDashboard
     let zonalCanaryHighLatencyMetrics: IMetric[] = [];
     let zonalCanaryFaultCountMetrics: IMetric[] = [];
 
-    let keyPrefix: string = AvailabilityAndLatencyMetrics.nextChar('');
+    let keyPrefix: string = MetricsHelper.nextChar('');
 
     for (let i = 0; i < availabilityZoneIds.length; i++) {
       let availabilityZoneId: string = availabilityZoneIds[i];
@@ -133,7 +134,7 @@ export class OperationAvailabilityAndLatencyDashboard
         );
       }
 
-      keyPrefix = AvailabilityAndLatencyMetrics.nextChar(keyPrefix);
+      keyPrefix = MetricsHelper.nextChar(keyPrefix);
     }
 
     topLevelAggregateAlarms.push(
@@ -241,8 +242,8 @@ export class OperationAvailabilityAndLatencyDashboard
     );
 
     let rowTracker: number = 0;
-    let keyPrefix1: string = AvailabilityAndLatencyMetrics.nextChar('');
-    let keyPrefix2: string = AvailabilityAndLatencyMetrics.nextChar(keyPrefix1);
+    let keyPrefix1: string = MetricsHelper.nextChar('');
+    let keyPrefix2: string = MetricsHelper.nextChar(keyPrefix1);
 
     // Create regional availability and fault metrics and availability alarm widgets
     availabilityWidgets.push(
@@ -302,9 +303,9 @@ export class OperationAvailabilityAndLatencyDashboard
     for (let i = 0; i < props.availabilityZoneIds.length; i++) {
       let availabilityZoneId: string = props.availabilityZoneIds[i];
 
-      let keyPrefix3: string = AvailabilityAndLatencyMetrics.nextChar('');
+      let keyPrefix3: string = MetricsHelper.nextChar('');
       let keyPrefix4: string =
-        AvailabilityAndLatencyMetrics.nextChar(keyPrefix3);
+        MetricsHelper.nextChar(keyPrefix3);
 
       availabilityWidgets.push(
         new GraphWidget({
@@ -415,7 +416,7 @@ export class OperationAvailabilityAndLatencyDashboard
         : ['p99'];
 
     let latencySuccessMetrics: IMetric[] = stats.map((x) => {
-      keyPrefix = AvailabilityAndLatencyMetrics.nextChar(keyPrefix);
+      keyPrefix = MetricsHelper.nextChar(keyPrefix);
       return RegionalLatencyMetrics.createRegionalAverageLatencyMetric({
         label: x + ' Success Latency',
         metricDetails: props.latencyMetricDetails,
@@ -431,7 +432,7 @@ export class OperationAvailabilityAndLatencyDashboard
         : ['p99'];
 
     let latencyFaultMetrics: IMetric[] = stats.map((x) => {
-      keyPrefix = AvailabilityAndLatencyMetrics.nextChar(keyPrefix);
+      keyPrefix = MetricsHelper.nextChar(keyPrefix);
       return RegionalLatencyMetrics.createRegionalAverageLatencyMetric({
         label: x + ' Fault Latency',
         metricDetails: props.latencyMetricDetails,
@@ -490,7 +491,7 @@ export class OperationAvailabilityAndLatencyDashboard
         : ['p99'];
 
       let zonalSuccessLatencyMetrics: IMetric[] = stats2.map((x) => {
-        keyPrefix = AvailabilityAndLatencyMetrics.nextChar(keyPrefix);
+        keyPrefix = MetricsHelper.nextChar(keyPrefix);
         return ZonalLatencyMetrics.createZonalAverageLatencyMetric({
           label: x + ' Success Latency',
           metricDetails: props.latencyMetricDetails,
@@ -506,7 +507,7 @@ export class OperationAvailabilityAndLatencyDashboard
         : ['p99'];
 
       let zonalFaultLatencyMetrics: IMetric[] = stats2.map((x) => {
-        keyPrefix = AvailabilityAndLatencyMetrics.nextChar(keyPrefix);
+        keyPrefix = MetricsHelper.nextChar(keyPrefix);
         return ZonalLatencyMetrics.createZonalAverageLatencyMetric({
           label: x + ' Fault Latency',
           metricDetails: props.latencyMetricDetails,
@@ -594,8 +595,6 @@ export class OperationAvailabilityAndLatencyDashboard
     availabilityZoneNames: string[],
   ): IWidget[] {
     let albWidgets: IWidget[] = [];
-    let loadBalancerFullName: string = (props.loadBalancer as BaseLoadBalancer)
-      .loadBalancerFullName;
 
     albWidgets.push(new TextWidget({ height: 2, width: 24, markdown: title }));
 
@@ -606,8 +605,8 @@ export class OperationAvailabilityAndLatencyDashboard
         title: Fn.sub('${AWS::Region} Processed Bytes'),
         region: Fn.sub('${AWS::Region}'),
         left: [
-          ApplicationLoadBalancerMetrics.createRegionalApplicationLoadBalancerProcessedBytesMetric(
-            loadBalancerFullName,
+          ApplicationLoadBalancerMetrics.getRegionalProcessedBytesMetric(
+            props.loadBalancer as IApplicationLoadBalancer,
             props.operation.serverSideAvailabilityMetricDetails.period,
           ),
         ],
@@ -631,9 +630,10 @@ export class OperationAvailabilityAndLatencyDashboard
           title: availabilityZoneId + ' Processed Bytes',
           region: Fn.sub('${AWS::Region}'),
           left: [
-            ApplicationLoadBalancerMetrics.createZonalApplicationLoadBalancerProcessedBytesMetric(
-              loadBalancerFullName,
+            ApplicationLoadBalancerMetrics.getPerAZProcessedBytesMetric(
+              props.loadBalancer as IApplicationLoadBalancer,
               availabilityZoneName,
+              availabilityZoneId,
               props.operation.serverSideAvailabilityMetricDetails.period,
             ),
           ],

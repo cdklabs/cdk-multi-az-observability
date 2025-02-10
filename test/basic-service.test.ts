@@ -9,8 +9,7 @@ import {
   Vpc,
 } from 'aws-cdk-lib/aws-ec2';
 import { ApplicationLoadBalancer } from 'aws-cdk-lib/aws-elasticloadbalancingv2';
-import { BasicServiceMultiAZObservability } from '../src/services/BasicServiceMultiAZObservability';
-import { OutlierDetectionAlgorithm } from '../src/utilities/OutlierDetectionAlgorithm';
+import { BasicServiceMultiAZObservability } from '../src/basic_observability/BasicServiceMultiAZObservability';
 
 test('Basic service observability test', () => {
   const app = new cdk.App();
@@ -61,10 +60,10 @@ test('Basic service observability test', () => {
       }),
     ],
     natGateways: natGateways,
-    outlierDetectionAlgorithm: OutlierDetectionAlgorithm.STATIC,
-    outlierThreshold: 0.7,
-    faultCountPercentageThreshold: 1.0,
+    faultCountPercentageThreshold: 1,
     packetLossImpactPercentageThreshold: 0.01,
+    latencyStatistic: "p99",
+    latencyThreshold: 200,
     serviceName: 'test',
     period: cdk.Duration.seconds(60),
     createDashboard: true,
@@ -123,10 +122,10 @@ test('Basic service observability with chi-squared', () => {
       }),
     ],
     natGateways: natGateways,
-    outlierDetectionAlgorithm: OutlierDetectionAlgorithm.CHI_SQUARED,
-    outlierThreshold: 0.05,
-    faultCountPercentageThreshold: 1.0,
+    faultCountPercentageThreshold: 1,
     packetLossImpactPercentageThreshold: 0.01,
+    latencyStatistic: "p99",
+    latencyThreshold: 200,
     serviceName: 'test',
     period: cdk.Duration.seconds(60),
     createDashboard: true,

@@ -14,4 +14,9 @@ export enum LatencyMetricType {
    * Fault response latency
    */
   FAULT_LATENCY = 'Fault_Latency',
+
+  /**
+   * ALB target response time
+   */
+  TARGET_LATENCY = "TargetResponseTime"
 }
