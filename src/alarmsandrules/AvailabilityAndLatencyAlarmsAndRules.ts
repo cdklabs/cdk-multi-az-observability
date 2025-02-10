@@ -272,7 +272,8 @@ export class AvailabilityAndLatencyAlarmsAndRules {
 
       let regionalFaultCount: IMetric = new MathExpression({
         expression: Object.keys(usingMetrics).join("+"),
-        usingMetrics: usingMetrics
+        usingMetrics: usingMetrics,
+        period: metricDetails.period
       });
   
       return new Alarm(scope, 'AZ' + counter + 'IsolatedImpactAlarmStatic', {
@@ -341,7 +342,7 @@ export class AvailabilityAndLatencyAlarmsAndRules {
         '"Sum",' +
         '"Count"' +
         '))',
-      period: Duration.seconds(60),
+      period: metricDetails.period
     });
 
     return new Alarm(
@@ -374,6 +375,7 @@ export class AvailabilityAndLatencyAlarmsAndRules {
     counter: number,
     evaluationPeriods: number,
     datapointsToAlarm: number,
+    period: Duration,
     nameSuffix?: string,
   ): IAlarm {
     let metricDimensions: { [key: string]: { [key: string]: string }[] } = {};
@@ -417,7 +419,7 @@ export class AvailabilityAndLatencyAlarmsAndRules {
         '"Sum",' +
         '"Count"' +
         '))',
-      period: Duration.seconds(60),
+      period: period
     });
 
     return new Alarm(scope, 'AZ' + counter + 'AlbIsolatedImpactAlarmOutlier', {
@@ -443,6 +445,7 @@ export class AvailabilityAndLatencyAlarmsAndRules {
     counter: number,
     evaluationPeriods: number,
     datapointsToAlarm: number,
+    period: Duration,
     nameSuffix?: string,
   ): IAlarm {
     let metricDimensions: { [key: string]: { [key: string]: string }[] } = {};
@@ -485,7 +488,7 @@ export class AvailabilityAndLatencyAlarmsAndRules {
         '"Sum",' +
         '"Count"' +
         '))',
-      period: Duration.seconds(60),
+      period: period
     });
 
     return new Alarm(
@@ -549,7 +552,7 @@ export class AvailabilityAndLatencyAlarmsAndRules {
         `"TC(${metricDetails.successAlarmThreshold}:)",` +
         '"Milliseconds"' +
         '))',
-      period: Duration.seconds(60),
+      period: metricDetails.period
     });
 
     return new Alarm(
@@ -687,7 +690,8 @@ export class AvailabilityAndLatencyAlarmsAndRules {
 
         let azLatencyCount: IMetric = new MathExpression({
           expression: Object.keys(innerUsingMetrics).join("+"),
-          usingMetrics: innerUsingMetrics
+          usingMetrics: innerUsingMetrics,
+          period: metricDetails.period
         });
 
         prefix = MetricsHelper.nextChar(prefix);
@@ -699,7 +703,8 @@ export class AvailabilityAndLatencyAlarmsAndRules {
 
       let regionalLatency: IMetric = new MathExpression({
         expression: Object.keys(usingMetrics).join("+"),
-        usingMetrics: usingMetrics
+        usingMetrics: usingMetrics,
+        period: metricDetails.period
       });
 
     return new Alarm(

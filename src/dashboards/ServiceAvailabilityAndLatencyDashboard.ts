@@ -685,6 +685,7 @@ export class ServiceAvailabilityAndLatencyDashboard
         expression: Object.keys(usingMetrics).join('+'),
         label: availabilityZoneId + ' fault count',
         usingMetrics: usingMetrics,
+        period: props.service.period
       });
 
       perOperationAZFaultsMetrics.push(zonalFaultCount);
@@ -716,9 +717,9 @@ export class ServiceAvailabilityAndLatencyDashboard
     this.dashboard = new Dashboard(this, 'TopLevelDashboard', {
       dashboardName:
         props.service.serviceName.toLowerCase() +
-        Fn.sub('-service-availability-and-latency-${AWS::Region}'),
+        Fn.sub('-availability-and-latency-${AWS::Region}'),
       defaultInterval: props.interval,
-      periodOverride: PeriodOverride.INHERIT,
+      periodOverride: PeriodOverride.AUTO,
       widgets: [
         topLevelAggregateAlarmWidgets,
         azContributorWidgets,

@@ -210,7 +210,7 @@ export class BasicServiceDashboard extends Construct {
         props.serviceName.toLowerCase() +
         Fn.sub('-service-availability-${AWS::Region}'),
       defaultInterval: props.interval,
-      periodOverride: PeriodOverride.INHERIT,
+      periodOverride: PeriodOverride.AUTO,
       widgets: widgets,
     });
   }
