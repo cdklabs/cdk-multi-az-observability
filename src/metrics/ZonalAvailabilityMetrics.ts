@@ -1,6 +1,6 @@
 // Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
-import { Fn } from 'aws-cdk-lib';
+import { Aws } from 'aws-cdk-lib';
 import { IMetric, MathExpression } from 'aws-cdk-lib/aws-cloudwatch';
 import { AvailabilityAndLatencyMetrics } from './AvailabilityAndLatencyMetrics';
 import { ServiceAvailabilityMetricProps } from './props/ServiceAvailabilityMetricProps';
@@ -84,7 +84,7 @@ export class ZonalAvailabilityMetrics {
       props,
       props.metricDetails.metricDimensions.zonalDimensions(
         props.availabilityZoneId,
-        Fn.ref('AWS::Region'),
+        Aws.REGION
       ),
     );
   }

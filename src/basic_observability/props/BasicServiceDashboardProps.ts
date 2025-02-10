@@ -4,6 +4,9 @@ import { Duration } from 'aws-cdk-lib';
 import { IAlarm, IMetric } from 'aws-cdk-lib/aws-cloudwatch';
 import { AvailabilityZoneMapper } from '../../azmapper/AvailabilityZoneMapper';
 
+/**
+ * The properties for creating a dashboard with basic metrics
+ */
 export interface BasicServiceDashboardProps {
   readonly serviceName: string;
 

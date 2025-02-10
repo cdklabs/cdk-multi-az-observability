@@ -10,35 +10,6 @@ import { LatencyMetricType } from '../utilities/LatencyMetricType';
  * Class for creating availability and latency metrics that can be used in alarms and graphs
  */
 export class AvailabilityAndLatencyMetrics {
-  /**
-   * Increments a str by one char, for example
-   * a -> b
-   * z -> aa
-   * ad -> ae
-   *
-   * This wraps at z and adds a new 'a'
-   * @param str
-   * @returns
-   */
-  static nextChar(str: string): string {
-    if (str.length == 0) {
-      return 'a';
-    }
-    let charA: string[] = str.split('');
-
-    if (charA[charA.length - 1] === 'z') {
-      return (
-        AvailabilityAndLatencyMetrics.nextChar(
-          str.substring(0, charA.length - 1),
-        ) + 'a'
-      );
-    } else {
-      return (
-        str.substring(0, charA.length - 1) +
-        String.fromCharCode(charA[charA.length - 1].charCodeAt(0) + 1)
-      );
-    }
-  }
 
   /**
    * General purpose method to create availability metrics

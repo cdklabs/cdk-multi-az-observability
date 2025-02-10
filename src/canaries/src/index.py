@@ -116,7 +116,7 @@ def verify_request(context, item, method, metrics = None):
     if fault_boundary == "az":
       metrics.set_dimensions({"Operation": operation, "AZ-ID": fault_boundary_id, "Region": region })
     else:
-      metrics.set_dimensions({"Operation": operation, "Region": region })
+      metrics.set_dimensions({"Operation": operation, "Region": fault_boundary_id })
     
     verify = not (parsed_url.scheme == "https" and ignore_ssl_errors == True)
     error = False
@@ -219,7 +219,7 @@ def verify_request(context, item, method, metrics = None):
 def handler(event, context, metrics):
   start = time.perf_counter()
   metrics.set_namespace("Canaries")
-  metrics.set_dimensions({"FunctionName": context.function_name, "Region": region })
+  metrics.set_dimensions({"FunctionName": context.function_name, "Region": os.environ.get("AWS_REGION") })
   metrics.set_property("CanaryName", context.function_name)
   metrics.set_property("Event", event)
 

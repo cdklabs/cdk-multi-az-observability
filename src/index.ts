@@ -1,7 +1,7 @@
 // Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 export { OutlierDetectionAlgorithm } from './utilities/OutlierDetectionAlgorithm';
-export { BasicServiceMultiAZObservabilityProps } from './services/props/BasicServiceMultiAZObservabilityProps';
+export { BasicServiceMultiAZObservabilityProps } from './basic_observability/props/BasicServiceMultiAZObservabilityProps';
 export { InstrumentedServiceMultiAZObservabilityProps } from './services/props/InstrumentedServiceMultiAZObservabilityProps';
 export { IService } from './services/IService';
 export { Service } from './services/Service';
@@ -28,7 +28,7 @@ export { MetricDimensions } from './services/props/MetricDimensions';
 export { NetworkConfigurationProps } from './canaries/props/NetworkConfigurationProps';
 export { ServiceMetricDetailsProps } from './services/props/ServiceMetricDetailsProps';
 export { InstrumentedServiceMultiAZObservability } from './services/InstrumentedServiceMultiAZObservability';
-export { BasicServiceMultiAZObservability } from './services/BasicServiceMultiAZObservability';
+export { BasicServiceMultiAZObservability } from './basic_observability/BasicServiceMultiAZObservability';
 export { IBasicServiceMultiAZObservability } from './services/IBasicServiceMultiAZObservability';
 export { IInstrumentedServiceMultiAZObservability } from './services/IInstrumentedServiceMultiAZObservability';
 export { IServiceAlarmsAndRules } from './alarmsandrules/IServiceAlarmsAndRules';

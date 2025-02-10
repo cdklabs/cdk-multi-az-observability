@@ -1,6 +1,6 @@
 // Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
-import { Fn } from 'aws-cdk-lib';
+import { Aws, Fn } from 'aws-cdk-lib';
 import {
   AlarmStatusWidget,
   Color,
@@ -13,14 +13,13 @@ import {
   TextWidget,
 } from 'aws-cdk-lib/aws-cloudwatch';
 import {
-  BaseLoadBalancer,
   CfnLoadBalancer,
+  IApplicationLoadBalancer,
 } from 'aws-cdk-lib/aws-elasticloadbalancingv2';
 import { Construct } from 'constructs';
 import { IServiceAvailabilityAndLatencyDashboard } from './IServiceAvailabilityAndLatencyDashboard';
 import { ServiceAvailabilityAndLatencyDashboardProps } from './props/ServiceAvailabilityAndLatencyDashboardProps';
 import { ApplicationLoadBalancerMetrics } from '../metrics/ApplicationLoadBalancerMetrics';
-import { AvailabilityAndLatencyMetrics } from '../metrics/AvailabilityAndLatencyMetrics';
 import { AvailabilityMetricProps } from '../metrics/props/AvailabilityMetricProps';
 import { LatencyMetricProps } from '../metrics/props/LatencyMetricProps';
 import { RegionalAvailabilityMetrics } from '../metrics/RegionalAvailabilityMetrics';
@@ -31,6 +30,7 @@ import { IOperation } from '../services/IOperation';
 import { IOperationMetricDetails } from '../services/IOperationMetricDetails';
 import { AvailabilityMetricType } from '../utilities/AvailabilityMetricType';
 import { LatencyMetricType } from '../utilities/LatencyMetricType';
+import { MetricsHelper } from '../utilities/MetricsHelper';
 
 /**
  * Creates a service level availability and latency dashboard
@@ -528,9 +528,6 @@ export class ServiceAvailabilityAndLatencyDashboard
     availabilityZoneNames: string[],
   ): IWidget[] {
     let albWidgets: IWidget[] = [];
-    let loadBalancerFullName: string = (
-      props.service.loadBalancer as BaseLoadBalancer
-    ).loadBalancerFullName;
 
     albWidgets.push(new TextWidget({ height: 2, width: 24, markdown: title }));
     albWidgets.push(
@@ -540,10 +537,14 @@ export class ServiceAvailabilityAndLatencyDashboard
         title: Fn.sub('${AWS::Region} Fault Rate'),
         region: Fn.sub('${AWS::Region}'),
         left: [
-          ApplicationLoadBalancerMetrics.createRegionalApplicationLoadBalancerFaultRateMetric(
-            loadBalancerFullName,
-            props.service.period,
-          ),
+          ApplicationLoadBalancerMetrics.getRegionalAvailabilityMetric(
+            props.service.loadBalancer as IApplicationLoadBalancer,
+            {
+              metricType: AvailabilityMetricType.FAULT_RATE,
+              label: Aws.REGION + "-fault-rate",
+              period: props.service.period
+            }
+          )
         ],
         leftYAxis: {
           max: 35,
@@ -575,10 +576,15 @@ export class ServiceAvailabilityAndLatencyDashboard
           title: availabilityZoneId + ' Fault Rate',
           region: Fn.sub('${AWS::Region}'),
           left: [
-            ApplicationLoadBalancerMetrics.createZonalApplicationLoadBalancerFaultRateMetric(
-              loadBalancerFullName,
-              availabilityZoneName,
-              props.service.period,
+            ApplicationLoadBalancerMetrics.getPerAZAvailabilityMetric(
+              props.service.loadBalancer as IApplicationLoadBalancer,
+              {
+                availabilityZone: availabilityZoneName,
+                availabilityZoneId: availabilityZoneId,
+                metricType: AvailabilityMetricType.FAULT_RATE,
+                label: availabilityZoneId + "-fault-rate",
+                period: props.service.period
+              }
             ),
           ],
           leftYAxis: {
@@ -641,7 +647,7 @@ export class ServiceAvailabilityAndLatencyDashboard
       }),
     );
 
-    let keyPrefix: string = AvailabilityAndLatencyMetrics.nextChar('');
+    let keyPrefix: string = MetricsHelper.nextChar('');
     let perOperationAZFaultsMetrics: IMetric[] = [];
 
     for (let i = 0; i < availabilityZoneIds.length; i++) {
@@ -682,7 +688,7 @@ export class ServiceAvailabilityAndLatencyDashboard
       });
 
       perOperationAZFaultsMetrics.push(zonalFaultCount);
-      keyPrefix = AvailabilityAndLatencyMetrics.nextChar(keyPrefix);
+      keyPrefix = MetricsHelper.nextChar(keyPrefix);
     }
 
     let azContributorWidgets: IWidget[] = [
