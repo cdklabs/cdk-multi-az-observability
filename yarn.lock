@@ -53,19 +53,19 @@
     semver "^7.7.1"
 
 "@aws-cdk/integ-runner@latest":
-  version "2.178.1-alpha.0"
-  resolved "https://registry.yarnpkg.com/@aws-cdk/integ-runner/-/integ-runner-2.178.1-alpha.0.tgz#154c0b8a5ccbf0beb3102daf56fde42c3ee6515a"
-  integrity sha512-M1Q2dKoY+RX4KQk2ubD3dvmsSTFABOiPLsed0BqpF3p07sk9M2Jc/flIEWYMCzEXJhkeWmyLNsyUrGdPTH6eGQ==
+  version "2.178.2-alpha.0"
+  resolved "https://registry.yarnpkg.com/@aws-cdk/integ-runner/-/integ-runner-2.178.2-alpha.0.tgz#4dd02a3ccff6937f2d22bbc4d25b89174798b772"
+  integrity sha512-og/LViBx53ZpbiZIbstZV8otRqt+lBJ/FBrrZ9o/onnOPCibfi6NBJxhPJ9pf583svG5271gQnJ4XvhdoExPmA==
   dependencies:
     "@aws-cdk/aws-service-spec" "0.1.51"
-    aws-cdk "2.178.1"
+    aws-cdk "2.178.2"
   optionalDependencies:
     fsevents "2.3.2"
 
 "@aws-cdk/integ-tests-alpha@latest":
-  version "2.178.1-alpha.0"
-  resolved "https://registry.yarnpkg.com/@aws-cdk/integ-tests-alpha/-/integ-tests-alpha-2.178.1-alpha.0.tgz#d83383d510804955c723b374e163eac99d185a58"
-  integrity sha512-Ha/iKkIVu0CE81+oUQsyxL9ipVFMoYu45j/HjHjgqkRBIrrjl2M7BTIAXGlwcSKcnpiA8Jhj9WMYgvBDJoF/gA==
+  version "2.178.2-alpha.0"
+  resolved "https://registry.yarnpkg.com/@aws-cdk/integ-tests-alpha/-/integ-tests-alpha-2.178.2-alpha.0.tgz#510abd259029ce068aafd1f9a228726c8c6ab21c"
+  integrity sha512-QvwrIefuQZ3cjKGeVPiPg0WTzRbSLyIhcAPJI6sl1zC19UKlAUQJfikm3eJMGf+020u+pjIeVc3deJjPd/ffLw==
 
 "@aws-cdk/service-spec-types@^0.0.117":
   version "0.0.117"
@@ -1005,10 +1005,10 @@ aws-cdk-lib@2.178.1:
     table "^6.8.2"
     yaml "1.10.2"
 
-aws-cdk@2.178.1:
-  version "2.178.1"
-  resolved "https://registry.yarnpkg.com/aws-cdk/-/aws-cdk-2.178.1.tgz#b86722d1ccd2f8cba2635c0ef05785aed0e80626"
-  integrity sha512-64z9ARFI90jhX6sfjqqJghGxkfh1T4STxY3ccuRY8OxzAK1FY6XLjKBxSyXi9jJFa3v9nN57x7W32u4hZDj6gw==
+aws-cdk@2.178.2:
+  version "2.178.2"
+  resolved "https://registry.yarnpkg.com/aws-cdk/-/aws-cdk-2.178.2.tgz#bda02f8b5e2bee1d1ec4ce21477f8845f4a7675d"
+  integrity sha512-ojMCMnBGinvDUD6+BOOlUOB9pjsYXoQdFVbf4bvi3dy3nwn557r0j6qDUcJMeikzPJ6YWzfAdL0fYxBZg4xcOg==
   optionalDependencies:
     fsevents "2.3.2"
 
@@ -1165,10 +1165,10 @@ case@1.6.3, case@^1.6.3:
   resolved "https://registry.yarnpkg.com/case/-/case-1.6.3.tgz#0a4386e3e9825351ca2e6216c60467ff5f1ea1c9"
   integrity sha512-mzDSXIPaFwVDvZAHqZ9VlbyF4yyXRuX6IvB06WvPYkqJVO24kX1PPhv9bfpKNFZyxYFmmgo03HUiD8iklmJYRQ==
 
-cdk-nag@^2.35.15:
-  version "2.35.15"
-  resolved "https://registry.yarnpkg.com/cdk-nag/-/cdk-nag-2.35.15.tgz#812ad6002eaef0378b5e8f77a777facb362b5364"
-  integrity sha512-vveSZDDhPQeOQ9wlnSx6qK07EN6B6NujhnDwY2l0IPngifMgc6jvmOS5dQcDXamj8lbNnvOBmed2uhb8nrnCTA==
+cdk-nag@^2.35.17:
+  version "2.35.17"
+  resolved "https://registry.yarnpkg.com/cdk-nag/-/cdk-nag-2.35.17.tgz#69fe9eceab864715b0d3acfccc4a0a062e2c647d"
+  integrity sha512-UeCrKivWZf2e7kjFVsm8mrnpCRQ4VzFiCSTYf7B9ShV3JdP3+QA7Ul6eg3fHlheyjFnXuVRsiyQSGdmVSP7Meg==
 
 cdklabs-projen-project-types@^0.1.211:
   version "0.1.211"
@@ -3999,9 +3999,9 @@ typescript@^5.7.3, typescript@~5.7:
   integrity sha512-84MVSjMEHP+FQRPy3pX9sTVV/INIex71s9TL2Gm5FG/WG1SqXeKyZ0k7/blY/4FdOzI12CBy1vGc4og/eus0fw==
 
 typescript@next:
-  version "5.8.0-dev.20250210"
-  resolved "https://registry.yarnpkg.com/typescript/-/typescript-5.8.0-dev.20250210.tgz#f3d140c1e82e43c847c942378f131ca1ee60eac5"
-  integrity sha512-6obwAtYV+jgxdpESDO+wGAyiLKQ6tunIjP4TFHqtcL4u5j15XUG2fSjaRN1W006kxHxFigADy9uDHb50l8UxGA==
+  version "5.8.0-dev.20250212"
+  resolved "https://registry.yarnpkg.com/typescript/-/typescript-5.8.0-dev.20250212.tgz#b36b2f50e96cee77e4ee619769a741977aa4023f"
+  integrity sha512-KuSQZsJS5e7rBVbj7QY72K4kievEtZgBYyYYaxp0a3YmBlG5bpbuKJO0ltyRGkFcBgOVw4McWjKeL5+6MqRWOw==
 
 typescript@~5.5:
   version "5.5.4"
@@ -4105,9 +4105,9 @@ whatwg-mimetype@^4.0.0:
   integrity sha512-QaKxh0eNIi2mE9p2vEdzfagOKHCcj1pJ56EEHGQOVxp8r9/iszLUUV7v89x9O1p/T+NlTM5W7jW6+cz4Fq1YVg==
 
 whatwg-url@^14.0.0:
-  version "14.1.0"
-  resolved "https://registry.yarnpkg.com/whatwg-url/-/whatwg-url-14.1.0.tgz#fffebec86cc8e6c2a657e50dc606207b870f0ab3"
-  integrity sha512-jlf/foYIKywAt3x/XWKZ/3rz8OSJPiWktjmk891alJUEjiVxKX9LEO92qH3hv4aJ0mN3MWPvGMCy8jQi95xK4w==
+  version "14.1.1"
+  resolved "https://registry.yarnpkg.com/whatwg-url/-/whatwg-url-14.1.1.tgz#ce71e240c61541315833b5cdafd139a479e47058"
+  integrity sha512-mDGf9diDad/giZ/Sm9Xi2YcyzaFpbdLpJPr+E9fSkyQ7KpQD4SdFcugkRQYzhmfI4KeV4Qpnn2sKPdo+kmsgRQ==
   dependencies:
     tr46 "^5.0.0"
     webidl-conversions "^7.0.0"
