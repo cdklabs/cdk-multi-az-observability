@@ -171,7 +171,7 @@ let payOperation: Operation = {
     {
       operationName: 'pay',
       metricDimensions: new MetricDimensions(
-        { Operation: 'ride' },
+        { Operation: 'pay' },
         'AZ-ID',
         'Region',
       ),
@@ -182,7 +182,73 @@ let payOperation: Operation = {
     {
       operationName: 'pay',
       metricDimensions: new MetricDimensions(
-        { Operation: 'ride' },
+        { Operation: 'pay' },
+        'AZ-ID',
+        'Region',
+      ),
+    },
+    service.defaultLatencyMetricDetails,
+  ),
+  canaryTestLatencyMetricsOverride: {
+    successAlarmThreshold: 301,
+  },
+};
+
+let homeOperation: Operation = {
+  operationName: 'home',
+  service: service,
+  path: '/home',
+  critical: true,
+  httpMethods: ['GET'],
+  serverSideAvailabilityMetricDetails: new OperationMetricDetails(
+    {
+      operationName: 'home',
+      metricDimensions: new MetricDimensions(
+        { Operation: 'home' },
+        'AZ-ID',
+        'Region',
+      ),
+    },
+    service.defaultAvailabilityMetricDetails,
+  ),
+  serverSideLatencyMetricDetails: new OperationMetricDetails(
+    {
+      operationName: 'home',
+      metricDimensions: new MetricDimensions(
+        { Operation: 'home' },
+        'AZ-ID',
+        'Region',
+      ),
+    },
+    service.defaultLatencyMetricDetails,
+  ),
+  canaryTestLatencyMetricsOverride: {
+    successAlarmThreshold: 301,
+  },
+};
+
+let signinOperation: Operation = {
+  operationName: 'signin',
+  service: service,
+  path: '/signin',
+  critical: true,
+  httpMethods: ['GET'],
+  serverSideAvailabilityMetricDetails: new OperationMetricDetails(
+    {
+      operationName: 'signin',
+      metricDimensions: new MetricDimensions(
+        { Operation: 'signin' },
+        'AZ-ID',
+        'Region',
+      ),
+    },
+    service.defaultAvailabilityMetricDetails,
+  ),
+  serverSideLatencyMetricDetails: new OperationMetricDetails(
+    {
+      operationName: 'signin',
+      metricDimensions: new MetricDimensions(
+        { Operation: 'signin' },
         'AZ-ID',
         'Region',
       ),
@@ -196,6 +262,8 @@ let payOperation: Operation = {
 
 service.addOperation(rideOperation);
 service.addOperation(payOperation);
+service.addOperation(homeOperation);
+service.addOperation(signinOperation);
 
 new InstrumentedServiceMultiAZObservability(stack, 'MAZObservability', {
   createDashboards: true,

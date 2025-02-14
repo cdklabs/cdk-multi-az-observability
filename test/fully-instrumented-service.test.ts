@@ -145,6 +145,86 @@ test('Fully instrumented service', () => {
 
   service.addOperation(rideOperation);
 
+  let homeOperation: IOperation = new Operation({
+    operationName: 'home',
+    service: service,
+    path: '/home',
+    critical: true,
+    httpMethods: ['GET'],
+    serverSideContributorInsightRuleDetails: {
+      logGroups: [logGroup],
+      successLatencyMetricJsonPath: '$.SuccessLatency',
+      faultMetricJsonPath: '$.Faults',
+      operationNameJsonPath: '$.Operation',
+      instanceIdJsonPath: '$.InstanceId',
+      availabilityZoneIdJsonPath: '$.AZ-ID',
+    },
+    serverSideAvailabilityMetricDetails: new OperationMetricDetails(
+      {
+        operationName: 'home',
+        metricDimensions: new MetricDimensions(
+          { Operation: 'home' },
+          'AZ-ID',
+          'Region',
+        ),
+      },
+      service.defaultAvailabilityMetricDetails,
+    ),
+    serverSideLatencyMetricDetails: new OperationMetricDetails(
+      {
+        operationName: 'home',
+        metricDimensions: new MetricDimensions(
+          { Operation: 'home' },
+          'AZ-ID',
+          'Region',
+        ),
+      },
+      service.defaultLatencyMetricDetails,
+    ),
+  });
+
+  service.addOperation(homeOperation);
+
+  let payOperation: IOperation = new Operation({
+    operationName: 'pay',
+    service: service,
+    path: '/pay',
+    critical: true,
+    httpMethods: ['GET'],
+    serverSideContributorInsightRuleDetails: {
+      logGroups: [logGroup],
+      successLatencyMetricJsonPath: '$.SuccessLatency',
+      faultMetricJsonPath: '$.Faults',
+      operationNameJsonPath: '$.Operation',
+      instanceIdJsonPath: '$.InstanceId',
+      availabilityZoneIdJsonPath: '$.AZ-ID',
+    },
+    serverSideAvailabilityMetricDetails: new OperationMetricDetails(
+      {
+        operationName: 'pay',
+        metricDimensions: new MetricDimensions(
+          { Operation: 'pay' },
+          'AZ-ID',
+          'Region',
+        ),
+      },
+      service.defaultAvailabilityMetricDetails,
+    ),
+    serverSideLatencyMetricDetails: new OperationMetricDetails(
+      {
+        operationName: 'pay',
+        metricDimensions: new MetricDimensions(
+          { Operation: 'pay' },
+          'AZ-ID',
+          'Region',
+        ),
+      },
+      service.defaultLatencyMetricDetails,
+    ),
+  });
+
+  service.addOperation(payOperation);
+
   new InstrumentedServiceMultiAZObservability(stack, 'MAZObservability', {
     createDashboards: true,
     service: service,
@@ -153,7 +233,8 @@ test('Fully instrumented service', () => {
     outlierDetectionAlgorithm: OutlierDetectionAlgorithm.STATIC,
   });
 
-  Template.fromStack(stack);
+  let template: Template = Template.fromStack(stack);
+  console.log(template.toJSON());
 });
 
 test('Fully instrumented service with NLB', () => {

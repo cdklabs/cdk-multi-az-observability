@@ -176,7 +176,7 @@ export class ServiceAvailabilityAndLatencyDashboard
         height: 2,
         width: 24,
         markdown:
-          '**Server-side Latency**\n(Each critical operation is equally weighted regardless of request volume)',
+          '**Server-side Latency**\n(Counts of requests exceeding the per-operation latency threshold)',
       }),
     );
 
@@ -198,7 +198,7 @@ export class ServiceAvailabilityAndLatencyDashboard
           height: 2,
           width: 24,
           markdown:
-            '**Canary Measured Latency**\n(Each operation is equally weighted regardless of request volume)',
+            '**Canary Measured Latency**\n(Counts of requests exceeding the per-operation latency threshold)',
         }),
       );
 
@@ -340,10 +340,10 @@ export class ServiceAvailabilityAndLatencyDashboard
       new GraphWidget({
         height: 6,
         width: 24,
-        title: Fn.ref('AWS::Region') + ' Latency',
+        title: Fn.ref('AWS::Region') + ' High Latency Count',
         region: Fn.ref('AWS::Region'),
         left: RegionalLatencyMetrics.createRegionalServiceLatencyCountMetrics({
-          label: Fn.ref('AWS::Region') + ' latency',
+          label: Fn.ref('AWS::Region'),
           period: props.service.period,
           latencyMetricProps: this.createRegionalLatencyMetricProps(
             props.service.operations.filter((x) => x.critical),
@@ -375,10 +375,10 @@ export class ServiceAvailabilityAndLatencyDashboard
         new GraphWidget({
           height: 6,
           width: 8,
-          title: availabilityZoneId + ' Latency',
+          title: availabilityZoneId + ' High Latency Count',
           region: Fn.ref('AWS::Region'),
           left: ZonalLatencyMetrics.createZonalServiceLatencyMetrics({
-            label: availabilityZoneId + ' latency',
+            label: availabilityZoneId,
             period: props.service.period,
             latencyMetricProps: this.createZonalLatencyMetricProps(
               props.service.operations.filter((x) => x.critical),
@@ -513,7 +513,7 @@ export class ServiceAvailabilityAndLatencyDashboard
       .map((x) => {
         return {
           label:
-            x.operationName + ' ' + metricType.toString().replace('_', ' '),
+            x.operationName,
           metricDetails: x,
           metricType: metricType,
           availabilityZoneId: availabilityZoneId,
@@ -530,22 +530,51 @@ export class ServiceAvailabilityAndLatencyDashboard
     let albWidgets: IWidget[] = [];
 
     albWidgets.push(new TextWidget({ height: 2, width: 24, markdown: title }));
+
+    let keyprefix = MetricsHelper.nextChar('');
+
+    let metrics: IMetric[] = [
+      ApplicationLoadBalancerMetrics.getRegionalAvailabilityMetric(
+        props.service.loadBalancer as IApplicationLoadBalancer,
+        {
+          metricType: AvailabilityMetricType.FAULT_RATE,
+          label: Aws.REGION + "-fault-rate",
+          period: props.service.period,
+          keyprefix: keyprefix
+        }
+      )
+    ];
+
+    availabilityZoneNames.forEach((availabilityZoneName) => {
+      let availabilityZoneId: string =
+        props.azMapper.availabilityZoneIdFromAvailabilityZoneLetter(
+          availabilityZoneName.substring(availabilityZoneName.length - 1),
+        );
+        
+      keyprefix = MetricsHelper.nextChar(keyprefix);
+
+      let metric: IMetric = ApplicationLoadBalancerMetrics.getPerAZAvailabilityMetric(
+        props.service.loadBalancer as IApplicationLoadBalancer,
+        {
+          availabilityZone: availabilityZoneName,
+          availabilityZoneId: availabilityZoneId,
+          metricType: AvailabilityMetricType.FAULT_RATE,
+          label: availabilityZoneId,
+          period: props.service.period,
+          keyprefix: keyprefix
+        }
+      );
+
+      metrics.push(metric);
+    });
+
     albWidgets.push(
       new GraphWidget({
         height: 8,
         width: 24,
         title: Fn.sub('${AWS::Region} Fault Rate'),
         region: Fn.sub('${AWS::Region}'),
-        left: [
-          ApplicationLoadBalancerMetrics.getRegionalAvailabilityMetric(
-            props.service.loadBalancer as IApplicationLoadBalancer,
-            {
-              metricType: AvailabilityMetricType.FAULT_RATE,
-              label: Aws.REGION + "-fault-rate",
-              period: props.service.period
-            }
-          )
-        ],
+        left: metrics,
         leftYAxis: {
           max: 35,
           min: 0,
@@ -562,48 +591,6 @@ export class ServiceAvailabilityAndLatencyDashboard
         ],
       }),
     );
-
-    availabilityZoneNames.forEach((availabilityZoneName) => {
-      let availabilityZoneId: string =
-        props.azMapper.availabilityZoneIdFromAvailabilityZoneLetter(
-          availabilityZoneName.substring(availabilityZoneName.length - 1),
-        );
-
-      albWidgets.push(
-        new GraphWidget({
-          height: 6,
-          width: 8,
-          title: availabilityZoneId + ' Fault Rate',
-          region: Fn.sub('${AWS::Region}'),
-          left: [
-            ApplicationLoadBalancerMetrics.getPerAZAvailabilityMetric(
-              props.service.loadBalancer as IApplicationLoadBalancer,
-              {
-                availabilityZone: availabilityZoneName,
-                availabilityZoneId: availabilityZoneId,
-                metricType: AvailabilityMetricType.FAULT_RATE,
-                label: availabilityZoneId + "-fault-rate",
-                period: props.service.period
-              }
-            ),
-          ],
-          leftYAxis: {
-            max: 35,
-            min: 0,
-            label: 'Fault Rate',
-            showUnits: false,
-          },
-          leftAnnotations: [
-            {
-              value: 1,
-              visible: true,
-              color: Color.RED,
-              label: 'High severity',
-            },
-          ],
-        }),
-      );
-    });
 
     return albWidgets;
   }
