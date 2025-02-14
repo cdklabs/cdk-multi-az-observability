@@ -538,7 +538,7 @@ export class ServiceAvailabilityAndLatencyDashboard
         props.service.loadBalancer as IApplicationLoadBalancer,
         {
           metricType: AvailabilityMetricType.FAULT_RATE,
-          label: Aws.REGION + "-fault-rate",
+          label: Aws.REGION,
           period: props.service.period,
           keyprefix: keyprefix
         }
@@ -550,7 +550,7 @@ export class ServiceAvailabilityAndLatencyDashboard
         props.azMapper.availabilityZoneIdFromAvailabilityZoneLetter(
           availabilityZoneName.substring(availabilityZoneName.length - 1),
         );
-        
+
       keyprefix = MetricsHelper.nextChar(keyprefix);
 
       let metric: IMetric = ApplicationLoadBalancerMetrics.getPerAZAvailabilityMetric(

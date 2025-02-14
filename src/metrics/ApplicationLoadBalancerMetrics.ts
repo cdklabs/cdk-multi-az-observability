@@ -308,12 +308,12 @@ export class ApplicationLoadBalancerMetrics {
 
             case AvailabilityMetricType.FAULT_RATE:
               
+              // Request count only includes requests where a response was generated from a target
               usingMetrics[`${keyprefix}1`] = target5xx;
-              usingMetrics[`${keyprefix}2`] = elb5xx;
-              usingMetrics[`${keyprefix}3`] = requestCount;
+              usingMetrics[`${keyprefix}2`] = requestCount;
 
               return new MathExpression({
-                  expression: `((${keyprefix}1+${keyprefix}2)/${keyprefix}3)*100`,
+                  expression: `(${keyprefix}1/${keyprefix}2)*100`,
                   usingMetrics: usingMetrics,
                   label: props.label,
                   period: props.period,
@@ -334,11 +334,10 @@ export class ApplicationLoadBalancerMetrics {
             case AvailabilityMetricType.SUCCESS_RATE:
                 usingMetrics[`${keyprefix}1`] = target2xx;
                 usingMetrics[`${keyprefix}2`] = target3xx;
-                usingMetrics[`${keyprefix}3`] = elb3xx;
-                usingMetrics[`${keyprefix}4`] = requestCount;
+                usingMetrics[`${keyprefix}3`] = requestCount;
   
                 return new MathExpression({
-                    expression: `((${keyprefix}1+${keyprefix}2+${keyprefix}3)/${keyprefix}4)*100`,
+                    expression: `((${keyprefix}1+${keyprefix}2)/${keyprefix}3)*100`,
                     usingMetrics: usingMetrics,
                     label: props.label,
                     period: props.period,
@@ -462,11 +461,10 @@ export class ApplicationLoadBalancerMetrics {
             case AvailabilityMetricType.FAULT_RATE:
               
               usingMetrics[`${keyprefix}1`] = target5xx;
-              usingMetrics[`${keyprefix}2`] = elb5xx;
-              usingMetrics[`${keyprefix}3`] = requestCount;
+              usingMetrics[`${keyprefix}2`] = requestCount;
 
               return new MathExpression({
-                  expression: `((${keyprefix}1+${keyprefix}2)/${keyprefix}3)*100`,
+                  expression: `(${keyprefix}1/${keyprefix}2)*100`,
                   usingMetrics: usingMetrics,
                   label: props.label,
                   period: props.period,
@@ -487,11 +485,10 @@ export class ApplicationLoadBalancerMetrics {
             case AvailabilityMetricType.SUCCESS_RATE:
                 usingMetrics[`${keyprefix}1`] = target2xx;
                 usingMetrics[`${keyprefix}2`] = target3xx;
-                usingMetrics[`${keyprefix}3`] = elb3xx;
-                usingMetrics[`${keyprefix}4`] = requestCount;
+                usingMetrics[`${keyprefix}3`] = requestCount;
   
                 return new MathExpression({
-                    expression: `((${keyprefix}1+${keyprefix}2+${keyprefix}3)/${keyprefix}4)*100`,
+                    expression: `((${keyprefix}1+${keyprefix}2)/${keyprefix}3)*100`,
                     usingMetrics: usingMetrics,
                     label: props.label,
                     period: props.period,
