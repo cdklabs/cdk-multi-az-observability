@@ -355,7 +355,7 @@ export class ServiceAvailabilityAndLatencyDashboard
         leftYAxis: {
           max: props.service.faultCountThreshold * 1.5,
           min: 0,
-          label: 'High latency count',
+          label: 'Sum',
           showUnits: false,
         },
         leftAnnotations: [
@@ -391,7 +391,7 @@ export class ServiceAvailabilityAndLatencyDashboard
           leftYAxis: {
             max: props.service.faultCountThreshold * 1.5,
             min: 0,
-            label: 'High latency count',
+            label: 'Sum',
             showUnits: false,
           },
           leftAnnotations: [
@@ -451,7 +451,7 @@ export class ServiceAvailabilityAndLatencyDashboard
       .map((x) => {
         return {
           label:
-            x.operationName + ' ' + metricType.toString().replace('_', ' '),
+            x.operationName,
           metricDetails: x,
           metricType: metricType,
           statistic: 'TC(' + x.successAlarmThreshold + ':)',
@@ -531,9 +531,9 @@ export class ServiceAvailabilityAndLatencyDashboard
 
     albWidgets.push(new TextWidget({ height: 2, width: 24, markdown: title }));
 
-    let keyprefix = MetricsHelper.nextChar('');
+    let keyprefix = MetricsHelper.nextChar();
 
-    let metrics: IMetric[] = [
+    let faultRateMetrics: IMetric[] = [
       ApplicationLoadBalancerMetrics.getRegionalAvailabilityMetric(
         props.service.loadBalancer as IApplicationLoadBalancer,
         {
@@ -545,6 +545,27 @@ export class ServiceAvailabilityAndLatencyDashboard
       )
     ];
 
+    keyprefix = MetricsHelper.nextChar(keyprefix);
+
+    let requestCountMetrics: IMetric[] = [
+      ApplicationLoadBalancerMetrics.getRegionalAvailabilityMetric(
+        props.service.loadBalancer as IApplicationLoadBalancer,
+        {
+          metricType: AvailabilityMetricType.REQUEST_COUNT,
+          label: Aws.REGION,
+          period: props.service.period,
+          keyprefix: keyprefix
+        }
+      )
+    ];
+
+    let processedBytesMetrics: IMetric[] = [
+      ApplicationLoadBalancerMetrics.getRegionalProcessedBytesMetric(
+        props.service.loadBalancer as IApplicationLoadBalancer,
+        props.service.period
+      )
+    ];
+
     availabilityZoneNames.forEach((availabilityZoneName) => {
       let availabilityZoneId: string =
         props.azMapper.availabilityZoneIdFromAvailabilityZoneLetter(
@@ -553,7 +574,7 @@ export class ServiceAvailabilityAndLatencyDashboard
 
       keyprefix = MetricsHelper.nextChar(keyprefix);
 
-      let metric: IMetric = ApplicationLoadBalancerMetrics.getPerAZAvailabilityMetric(
+      let faultMetric: IMetric = ApplicationLoadBalancerMetrics.getPerAZAvailabilityMetric(
         props.service.loadBalancer as IApplicationLoadBalancer,
         {
           availabilityZone: availabilityZoneName,
@@ -565,31 +586,75 @@ export class ServiceAvailabilityAndLatencyDashboard
         }
       );
 
-      metrics.push(metric);
+      faultRateMetrics.push(faultMetric);
+
+      let requestCountMetric: IMetric = ApplicationLoadBalancerMetrics.getPerAZAvailabilityMetric(
+        props.service.loadBalancer as IApplicationLoadBalancer,
+        {
+          availabilityZone: availabilityZoneName,
+          availabilityZoneId: availabilityZoneId,
+          metricType: AvailabilityMetricType.REQUEST_COUNT,
+          label: availabilityZoneId,
+          period: props.service.period,
+          keyprefix: keyprefix
+        }
+      );
+
+      requestCountMetrics.push(requestCountMetric);
+
+      let processedBytesMetric: IMetric = ApplicationLoadBalancerMetrics.getPerAZProcessedBytesMetric(
+        props.service.loadBalancer as IApplicationLoadBalancer,
+        availabilityZoneName,
+        availabilityZoneId,
+        props.service.period
+      );
+
+      processedBytesMetrics.push(processedBytesMetric);
     });
 
     albWidgets.push(
       new GraphWidget({
         height: 8,
-        width: 24,
+        width: 8,
         title: Fn.sub('${AWS::Region} Fault Rate'),
         region: Fn.sub('${AWS::Region}'),
-        left: metrics,
+        left: faultRateMetrics,
         leftYAxis: {
           max: 35,
           min: 0,
           label: 'Fault Rate',
           showUnits: false,
-        },
-        leftAnnotations: [
-          {
-            value: 1,
-            visible: true,
-            color: Color.RED,
-            label: 'High severity',
-          },
-        ],
-      }),
+        }
+      })
+    );
+
+    albWidgets.push(
+      new GraphWidget({
+        height: 8,
+        width: 8,
+        title: Fn.sub('${AWS::Region} Request Count'),
+        region: Fn.sub('${AWS::Region}'),
+        left: requestCountMetrics,
+        leftYAxis: {
+          min: 0,
+          label: 'Sum',
+          showUnits: false,
+        }
+      })
+    );
+
+    albWidgets.push(
+      new GraphWidget({
+        height: 8,
+        width: 8,
+        title: Fn.sub('${AWS::Region} Processed Bytes'),
+        region: Fn.sub('${AWS::Region}'),
+        left: processedBytesMetrics,
+        leftYAxis: {
+          min: 0,
+          showUnits: true,
+        }
+      })
     );
 
     return albWidgets;
