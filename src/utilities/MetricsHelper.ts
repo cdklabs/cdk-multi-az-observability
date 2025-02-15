@@ -9,8 +9,8 @@ export class MetricsHelper {
    * @param str
    * @returns
    */
-  static nextChar(str: string): string {
-    if (str.length == 0) {
+  static nextChar(str?: string): string {
+    if (!str || str.length == 0) {
       return 'a';
     }
     let charA: string[] = str.split('');
