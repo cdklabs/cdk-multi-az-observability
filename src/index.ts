@@ -35,3 +35,4 @@ export { IServiceAlarmsAndRules } from './alarmsandrules/IServiceAlarmsAndRules'
 export { ICanaryTestMetricsOverride } from './services/ICanaryTestMetricsOverride';
 export { CanaryTestMetricsOverride } from './services/CanaryTestMetricsOverride';
 export { CanaryTestMetricsOverrideProps } from './services/props/CanaryTestMetricsOverrideProps';
+export { ApplicationLoadBalancerLatencyOutlierCalculation } from './basic_observability/props/ApplicationLoadBalancerLatencyOutlierCalculation';

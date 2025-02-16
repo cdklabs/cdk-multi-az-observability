@@ -848,6 +848,7 @@ const basicServiceMultiAZObservabilityProps: BasicServiceMultiAZObservabilityPro
 | <code><a href="#@cdklabs/multi-az-observability.BasicServiceMultiAZObservabilityProps.property.assetsBucketPrefixParameterName">assetsBucketPrefixParameterName</a></code> | <code>string</code> | If you are not using a static bucket to deploy assets, for example you are synthing this and it gets uploaded to a bucket that uses a prefix that is unknown to you (maybe used as part of a central CI/CD system) and is provided as a parameter to your stack, specify that parameter name here. |
 | <code><a href="#@cdklabs/multi-az-observability.BasicServiceMultiAZObservabilityProps.property.createDashboard">createDashboard</a></code> | <code>boolean</code> | Whether to create a dashboard displaying the metrics and alarms. |
 | <code><a href="#@cdklabs/multi-az-observability.BasicServiceMultiAZObservabilityProps.property.interval">interval</a></code> | <code>aws-cdk-lib.Duration</code> | Dashboard interval. |
+| <code><a href="#@cdklabs/multi-az-observability.BasicServiceMultiAZObservabilityProps.property.latencyOutlierCalculation">latencyOutlierCalculation</a></code> | <code><a href="#@cdklabs/multi-az-observability.ApplicationLoadBalancerLatencyOutlierCalculation">ApplicationLoadBalancerLatencyOutlierCalculation</a></code> | The method used to determine if an AZ is an outlier for latency for Application Load Balancer metrics. |
 | <code><a href="#@cdklabs/multi-az-observability.BasicServiceMultiAZObservabilityProps.property.natGateways">natGateways</a></code> | <code>{[ key: string ]: aws-cdk-lib.aws_ec2.CfnNatGateway[]}</code> | (Optional) A map of Availability Zone name to the NAT Gateways in that AZ. |
 | <code><a href="#@cdklabs/multi-az-observability.BasicServiceMultiAZObservabilityProps.property.packetLossImpactPercentageThreshold">packetLossImpactPercentageThreshold</a></code> | <code>number</code> | The amount of packet loss in a NAT GW to determine if an AZ is actually impacted, recommendation is 0.01%. |
 | <code><a href="#@cdklabs/multi-az-observability.BasicServiceMultiAZObservabilityProps.property.period">period</a></code> | <code>aws-cdk-lib.Duration</code> | The period to evaluate metrics. |
@@ -1008,6 +1009,19 @@ public readonly interval: Duration;
 - *Default:* Duration.hours(1)
 
 Dashboard interval.
+
+---
+
+##### `latencyOutlierCalculation`<sup>Optional</sup> <a name="latencyOutlierCalculation" id="@cdklabs/multi-az-observability.BasicServiceMultiAZObservabilityProps.property.latencyOutlierCalculation"></a>
+
+```typescript
+public readonly latencyOutlierCalculation: ApplicationLoadBalancerLatencyOutlierCalculation;
+```
+
+- *Type:* <a href="#@cdklabs/multi-az-observability.ApplicationLoadBalancerLatencyOutlierCalculation">ApplicationLoadBalancerLatencyOutlierCalculation</a>
+- *Default:* Z_SCORE
+
+The method used to determine if an AZ is an outlier for latency for Application Load Balancer metrics.
 
 ---
 
@@ -5042,6 +5056,40 @@ metrics this will typically just be "Sum".
 ---
 
 ## Enums <a name="Enums" id="Enums"></a>
+
+### ApplicationLoadBalancerLatencyOutlierCalculation <a name="ApplicationLoadBalancerLatencyOutlierCalculation" id="@cdklabs/multi-az-observability.ApplicationLoadBalancerLatencyOutlierCalculation"></a>
+
+The options for calculating if an AZ is an outlier for latency for ALBs.
+
+#### Members <a name="Members" id="Members"></a>
+
+| **Name** | **Description** |
+| --- | --- |
+| <code><a href="#@cdklabs/multi-az-observability.ApplicationLoadBalancerLatencyOutlierCalculation.STATIC">STATIC</a></code> | This will take the latency threshold and count the number of requests per AZ  that exceed this threshold and then calculate the percentage of requests exceeding this threshold belong to each AZ. |
+| <code><a href="#@cdklabs/multi-az-observability.ApplicationLoadBalancerLatencyOutlierCalculation.Z_SCORE">Z_SCORE</a></code> | This calculates the z score of latency in one AZ against the other AZs. |
+
+---
+
+##### `STATIC` <a name="STATIC" id="@cdklabs/multi-az-observability.ApplicationLoadBalancerLatencyOutlierCalculation.STATIC"></a>
+
+This will take the latency threshold and count the number of requests per AZ  that exceed this threshold and then calculate the percentage of requests exceeding this threshold belong to each AZ.
+
+This provides a static comparison
+of the number of high latency requests in one AZ versus the others
+
+---
+
+
+##### `Z_SCORE` <a name="Z_SCORE" id="@cdklabs/multi-az-observability.ApplicationLoadBalancerLatencyOutlierCalculation.Z_SCORE"></a>
+
+This calculates the z score of latency in one AZ against the other AZs.
+
+It uses
+the target response time of all requests to calculate the standard deviation and
+average for all AZs. This is the default.
+
+---
+
 
 ### OutlierDetectionAlgorithm <a name="OutlierDetectionAlgorithm" id="@cdklabs/multi-az-observability.OutlierDetectionAlgorithm"></a>
 

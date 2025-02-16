@@ -4,6 +4,7 @@
 import { Duration } from 'aws-cdk-lib';
 import { CfnNatGateway } from 'aws-cdk-lib/aws-ec2';
 import { IApplicationLoadBalancer } from 'aws-cdk-lib/aws-elasticloadbalancingv2';
+import { ApplicationLoadBalancerLatencyOutlierCalculation } from './ApplicationLoadBalancerLatencyOutlierCalculation';
 
 /**
  * Properties for creating basic multi-AZ observability
@@ -121,4 +122,10 @@ export interface BasicServiceMultiAZObservabilityProps {
    * The number of datapoints to alarm on for latency and availability alarms
    */
   readonly datapointsToAlarm: number;
+
+  /**
+   * The method used to determine if an AZ is an outlier for latency for Application Load Balancer metrics.
+   * @default Z_SCORE
+   */
+  readonly latencyOutlierCalculation?: ApplicationLoadBalancerLatencyOutlierCalculation;
 }
