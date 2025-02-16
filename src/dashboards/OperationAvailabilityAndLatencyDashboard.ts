@@ -79,7 +79,7 @@ export class OperationAvailabilityAndLatencyDashboard
     let zonalCanaryHighLatencyMetrics: IMetric[] = [];
     let zonalCanaryFaultCountMetrics: IMetric[] = [];
 
-    let keyPrefix: string = MetricsHelper.nextChar('');
+    let keyPrefix: string = MetricsHelper.nextChar();
 
     for (let i = 0; i < availabilityZoneIds.length; i++) {
       let availabilityZoneId: string = availabilityZoneIds[i];
@@ -242,7 +242,7 @@ export class OperationAvailabilityAndLatencyDashboard
     );
 
     let rowTracker: number = 0;
-    let keyPrefix1: string = MetricsHelper.nextChar('');
+    let keyPrefix1: string = MetricsHelper.nextChar();
     let keyPrefix2: string = MetricsHelper.nextChar(keyPrefix1);
 
     // Create regional availability and fault metrics and availability alarm widgets
@@ -303,7 +303,7 @@ export class OperationAvailabilityAndLatencyDashboard
     for (let i = 0; i < props.availabilityZoneIds.length; i++) {
       let availabilityZoneId: string = props.availabilityZoneIds[i];
 
-      let keyPrefix3: string = MetricsHelper.nextChar('');
+      let keyPrefix3: string = MetricsHelper.nextChar();
       let keyPrefix4: string =
         MetricsHelper.nextChar(keyPrefix3);
 

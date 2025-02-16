@@ -1,6 +1,6 @@
 // Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
-import { Aws, Fn } from 'aws-cdk-lib';
+import { Fn } from 'aws-cdk-lib';
 import {
   AlarmStatusWidget,
   Color,
@@ -533,38 +533,9 @@ export class ServiceAvailabilityAndLatencyDashboard
 
     let keyprefix = MetricsHelper.nextChar();
 
-    let faultRateMetrics: IMetric[] = [
-      ApplicationLoadBalancerMetrics.getRegionalAvailabilityMetric(
-        props.service.loadBalancer as IApplicationLoadBalancer,
-        {
-          metricType: AvailabilityMetricType.FAULT_RATE,
-          label: Aws.REGION,
-          period: props.service.period,
-          keyprefix: keyprefix
-        }
-      )
-    ];
-
-    keyprefix = MetricsHelper.nextChar(keyprefix);
-
-    let requestCountMetrics: IMetric[] = [
-      ApplicationLoadBalancerMetrics.getRegionalAvailabilityMetric(
-        props.service.loadBalancer as IApplicationLoadBalancer,
-        {
-          metricType: AvailabilityMetricType.REQUEST_COUNT,
-          label: Aws.REGION,
-          period: props.service.period,
-          keyprefix: keyprefix
-        }
-      )
-    ];
-
-    let processedBytesMetrics: IMetric[] = [
-      ApplicationLoadBalancerMetrics.getRegionalProcessedBytesMetric(
-        props.service.loadBalancer as IApplicationLoadBalancer,
-        props.service.period
-      )
-    ];
+    let faultRateMetrics: IMetric[] = [];
+    let requestCountMetrics: IMetric[] = [];
+    let processedBytesMetrics: IMetric[] = [];
 
     availabilityZoneNames.forEach((availabilityZoneName) => {
       let availabilityZoneId: string =
@@ -699,7 +670,7 @@ export class ServiceAvailabilityAndLatencyDashboard
       }),
     );
 
-    let keyPrefix: string = MetricsHelper.nextChar('');
+    let keyPrefix: string = MetricsHelper.nextChar();
     let perOperationAZFaultsMetrics: IMetric[] = [];
 
     for (let i = 0; i < availabilityZoneIds.length; i++) {
@@ -793,7 +764,7 @@ export class ServiceAvailabilityAndLatencyDashboard
       this.dashboard.addWidgets(
         ...ServiceAvailabilityAndLatencyDashboard.generateLoadBalancerWidgets(
           props,
-          'Application Load Balancer Metrics',
+          '**Application Load Balancer Metrics**',
           props.service.availabilityZoneNames,
         ),
       );

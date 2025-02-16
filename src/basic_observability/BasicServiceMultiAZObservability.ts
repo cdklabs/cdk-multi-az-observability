@@ -262,9 +262,10 @@ export class BasicServiceMultiAZObservability
   ) : IAlarm {
 
     let usingMetrics: { [key: string]: IMetric } = {};
-    let azMetricId: string;
+    let azMetricId: string = "";
 
     alb.vpc!.availabilityZones.forEach((az: string) => {
+
       let azFaultCount = ApplicationLoadBalancerMetrics.getPerAZAvailabilityMetric(
         alb,
         {
@@ -282,7 +283,7 @@ export class BasicServiceMultiAZObservability
       usingMetrics[`${keyprefix}1`] = azFaultCount;
 
       if (az == availabilityZone) {
-        azMetricId = Object.keys(usingMetrics)[-1];
+        azMetricId = `${keyprefix}1`;
       }
 
       keyprefix = MetricsHelper.nextChar(keyprefix);
@@ -323,7 +324,7 @@ export class BasicServiceMultiAZObservability
   ) : IAlarm {
 
     let usingMetrics: { [key: string]: IMetric } = {};
-    let azMetricId: string;
+    let azMetricId: string = "";
 
     alb.vpc!.availabilityZones.forEach((az: string, index: number) => {
 
@@ -375,7 +376,7 @@ export class BasicServiceMultiAZObservability
     // an alarm for its AZs
     let perAZImpactAlarms: { [key: string]: IAlarm[] } = {};
 
-    let keyPrefix: string = MetricsHelper.nextChar('');
+    let keyPrefix: string = MetricsHelper.nextChar();
 
     // Iterate each ALB
     this.applicationLoadBalancers!.forEach((alb) => {
@@ -499,7 +500,7 @@ export class BasicServiceMultiAZObservability
     datapointsToAlarm: number
   ) : IAlarm {
     
-    let keyprefix = MetricsHelper.nextChar('');
+    let keyprefix = MetricsHelper.nextChar();
 
     let packetDropCountMetrics: {[key: string]: IMetric} = {};
     let packetsInFromSourceMetrics: {[key: string]: IMetric} = {};
@@ -609,7 +610,7 @@ export class BasicServiceMultiAZObservability
     datapointsToAlarm: number
   ) : IAlarm {
 
-    let keyprefix = MetricsHelper.nextChar('');
+    let keyprefix = MetricsHelper.nextChar();
     let azPacketDropCountMetrics: {[key: string]: IMetric} = {};
     let azKey: string = "";
 
@@ -717,7 +718,7 @@ export class BasicServiceMultiAZObservability
   {
     let dropsPerZone: {[key: string]: IMetric} = {};
     let metricsPerAZ: {[key: string]: IMetric[]} = {};
-    let keyprefix: string = MetricsHelper.nextChar('');
+    let keyprefix: string = MetricsHelper.nextChar();
 
     Object.keys(natgws).forEach((availabilityZone: string) => {
 

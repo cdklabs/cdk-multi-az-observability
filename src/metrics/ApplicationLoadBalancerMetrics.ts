@@ -3,7 +3,7 @@ import { BaseLoadBalancer, HttpCodeElb, HttpCodeTarget, IApplicationLoadBalancer
 import { AvailabilityMetricType } from "../utilities/AvailabilityMetricType";
 import { ZonalApplicationLoadBalancerLatencyMetricProps } from "../basic_observability/props/ZonalApplicationLoadBalancerLatencyMetricProps";
 import { ZonalApplicationLoadBalancerAvailabilityMetricProps } from "../basic_observability/props/ZonalApplicationLoadBalancerAvailabilityMetricProps";
-import { Duration } from "aws-cdk-lib";
+import { Aws, Duration } from "aws-cdk-lib";
 import { RegionalApplicationLoadBalancerAvailabilityMetricProps } from "../basic_observability/props/RegionalApplicationLoadBalancerAvailabilityMetricProps";
 import { RegionalApplicationLoadBalancerLatencyMetricProps } from "../basic_observability/props/RegionalApplicationLoadBalancerLatencyMetricProps";
 import { AvailabilityZoneMapper } from "../azmapper/AvailabilityZoneMapper";
@@ -514,7 +514,7 @@ export class ApplicationLoadBalancerMetrics {
                 LoadBalancer: (props.alb as ILoadBalancerV2 as BaseLoadBalancer)
                   .loadBalancerFullName,
               },
-              label: "target-response-time",
+              label: Aws.REGION,
               period: props.period,
               statistic: props.statistic,
               unit: Unit.SECONDS
@@ -537,7 +537,7 @@ export class ApplicationLoadBalancerMetrics {
     {
       let faultsPerZone: {[key: string]: IMetric} = {};
       let metricsPerAZ: {[key: string]: IMetric[]} = {};
-      let keyprefix: string = MetricsHelper.nextChar('');
+      let keyprefix: string = MetricsHelper.nextChar();
   
       albs.forEach((alb: IApplicationLoadBalancer) => {
   
@@ -608,7 +608,7 @@ export class ApplicationLoadBalancerMetrics {
         faultsPerZone[availabilityZone] = new MathExpression({
           expression: Object.keys(usingMetrics).join("+"),
           usingMetrics: usingMetrics,
-          label: availabilityZoneId + "-total-faults",
+          label: availabilityZoneId,
           period: period
         });
       });
@@ -628,6 +628,7 @@ export class ApplicationLoadBalancerMetrics {
       availabilityZone: string,
       availabilityZoneId: string,
       period: Duration,
+      addLoadBalancerArnToLabel?: boolean
     ): IMetric {
       return alb.metrics.processedBytes({
           period: period,
@@ -635,7 +636,7 @@ export class ApplicationLoadBalancerMetrics {
               LoadBalancer: (alb as ILoadBalancerV2 as BaseLoadBalancer).loadBalancerFullName,
               AvailabilityZone: availabilityZone,
           },
-          label: availabilityZoneId + "-" + alb.loadBalancerArn + "-processed-bytes"
+          label: availabilityZoneId + (addLoadBalancerArnToLabel ? "-" + alb.loadBalancerArn : "")
       });
     }
 
@@ -649,13 +650,14 @@ export class ApplicationLoadBalancerMetrics {
     static getRegionalProcessedBytesMetric(
         alb: IApplicationLoadBalancer,
         period: Duration,
+        addLoadBalancerArn?: boolean
       ): IMetric {
         return alb.metrics.processedBytes({
             period: period,
             dimensionsMap:{
                 LoadBalancer: (alb as ILoadBalancerV2 as BaseLoadBalancer).loadBalancerFullName,
             },
-            label: alb.loadBalancerArn + "-processed-bytes"
+            label: Aws.REGION + (addLoadBalancerArn ? "-" + alb.loadBalancerArn : "")
         });
     }
 }
