@@ -71,7 +71,7 @@ export class RegionalLatencyMetrics {
   ): IMetric[] {
     let usingMetrics: { [key: string]: IMetric } = {};
     let operationMetrics: IMetric[] = [];
-    let keyPrefix: string = MetricsHelper.nextChar('');
+    let keyPrefix: string = MetricsHelper.nextChar();
 
     props.latencyMetricProps.forEach(
       (prop: LatencyMetricProps, index: number) => {
