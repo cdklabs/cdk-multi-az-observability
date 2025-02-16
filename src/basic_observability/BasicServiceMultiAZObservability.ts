@@ -31,6 +31,7 @@ import { BasicServiceDashboard } from './BasicServiceDashboard';
 import { ApplicationLoadBalancerMetrics } from '../metrics/ApplicationLoadBalancerMetrics';
 import { AvailabilityMetricType } from '../utilities/AvailabilityMetricType';
 import { MetricsHelper } from '../utilities/MetricsHelper';
+import { ApplicationLoadBalancerLatencyOutlierCalculation } from './props/ApplicationLoadBalancerLatencyOutlierCalculation';
 
 /**
  * Basic observability for a service using metrics from
@@ -314,9 +315,11 @@ export class BasicServiceMultiAZObservability
   private static isAZAnOutlierForLatencyAlb(
     scope: IConstruct,
     alb: IApplicationLoadBalancer, 
+    algorithm: ApplicationLoadBalancerLatencyOutlierCalculation,
     availabilityZoneId: string,
     availabilityZone: string,
     statistic: string,
+    threshold: number,
     period: Duration,
     evaluationPeriods: number,
     datapointsToAlarm: number,
@@ -326,46 +329,94 @@ export class BasicServiceMultiAZObservability
     let usingMetrics: { [key: string]: IMetric } = {};
     let azMetricId: string = "";
 
-    alb.vpc!.availabilityZones.forEach((az: string, index: number) => {
+    switch (algorithm)
+    {
+      case ApplicationLoadBalancerLatencyOutlierCalculation.Z_SCORE:
+      default:
 
-      // Target response time
-      let targetResponseTime: IMetric = ApplicationLoadBalancerMetrics.getPerAZLatencyMetric({
-        alb: alb,
-        availabilityZone: az,
-        label: az + "-target-response-time",
-        statistic: statistic,
-        period: period
-      });
+        alb.vpc!.availabilityZones.forEach((az: string, index: number) => {
 
-      if (az == availabilityZone) {       
-        azMetricId = `a${index}`
-        usingMetrics[`a${index}`] = targetResponseTime;
-      }
-      else {
-        usingMetrics[`b${index}`] = targetResponseTime;
-      }
-    });
+          // Target response time
+          let targetResponseTime: IMetric = ApplicationLoadBalancerMetrics.getPerAZLatencyMetric({
+            alb: alb,
+            availabilityZone: az,
+            label: az + "-target-response-time",
+            statistic: statistic,
+            period: period
+          });
 
-    return new Alarm(
-      scope,
-      keyprefix + "-latency-outlier-alarm",
-      {
-        alarmName:
-          availabilityZoneId + '-' + alb.loadBalancerArn + '-latency-impact-outlier',
-        actionsEnabled: false,
-        metric: new MathExpression({
-          expression: `(${azMetricId!} - AVG(METRICS("b"))) / AVG(STDDEV(METRICS("b")))`,
-          usingMetrics: usingMetrics,
-          label: availabilityZoneId + '-' + alb.loadBalancerArn + '-latency-z-score',
-          period: period,
-        }),
-        evaluationPeriods: evaluationPeriods,
-        datapointsToAlarm: datapointsToAlarm,
-        threshold: 3,
-        comparisonOperator: ComparisonOperator.GREATER_THAN_OR_EQUAL_TO_THRESHOLD,
-        treatMissingData: TreatMissingData.IGNORE
-      }
-    );
+          if (az == availabilityZone) {       
+            azMetricId = `a${index}`
+            usingMetrics[`a${index}`] = targetResponseTime;
+          }
+          else {
+            usingMetrics[`b${index}`] = targetResponseTime;
+          }
+        });
+
+        return new Alarm(
+          scope,
+          keyprefix + "-latency-outlier-alarm",
+          {
+            alarmName:
+              availabilityZoneId + '-' + alb.loadBalancerArn + '-latency-impact-outlier',
+            actionsEnabled: false,
+            metric: new MathExpression({
+              expression: `(${azMetricId!} - AVG(METRICS("b"))) / AVG(STDDEV(METRICS("b")))`,
+              usingMetrics: usingMetrics,
+              label: availabilityZoneId + '-' + alb.loadBalancerArn + '-latency-z-score',
+              period: period,
+            }),
+            evaluationPeriods: evaluationPeriods,
+            datapointsToAlarm: datapointsToAlarm,
+            threshold: threshold,
+            comparisonOperator: ComparisonOperator.GREATER_THAN_OR_EQUAL_TO_THRESHOLD,
+            treatMissingData: TreatMissingData.IGNORE
+          }
+        );
+      case ApplicationLoadBalancerLatencyOutlierCalculation.STATIC:
+        
+        alb.vpc!.availabilityZones.forEach((az: string, index: number) => {
+          // Target response time
+          let targetResponseTime: IMetric = ApplicationLoadBalancerMetrics.getPerAZLatencyMetric({
+            alb: alb,
+            availabilityZone: az,
+            label: az + "-target-response-time",
+            statistic: `TC(${threshold}:)`,
+            period: period
+          });
+
+          if (az == availabilityZone) {       
+            azMetricId = `a${index}`
+            usingMetrics[`a${index}`] = targetResponseTime;
+          }
+          else {
+            usingMetrics[`b${index}`] = targetResponseTime;
+          }
+
+        });
+
+        return new Alarm(
+          scope,
+          keyprefix + "-latency-outlier-alarm",
+          {
+            alarmName:
+              availabilityZoneId + '-' + alb.loadBalancerArn + '-latency-impact-outlier',
+            actionsEnabled: false,
+            metric: new MathExpression({
+              expression: `${azMetricId}/(${Object.keys(usingMetrics).join("+")})`,
+              usingMetrics: usingMetrics,
+              label: availabilityZoneId + '-' + alb.loadBalancerArn + '-latency-static',
+              period: period,
+            }),
+            evaluationPeriods: evaluationPeriods,
+            datapointsToAlarm: datapointsToAlarm,
+            threshold: .66,
+            comparisonOperator: ComparisonOperator.GREATER_THAN_OR_EQUAL_TO_THRESHOLD,
+            treatMissingData: TreatMissingData.IGNORE
+          }
+        );
+    }
   }
 
   private doAlbMetrics(
@@ -439,9 +490,11 @@ export class BasicServiceMultiAZObservability
         let latencyOutlier = BasicServiceMultiAZObservability.isAZAnOutlierForLatencyAlb(
           this,
           alb,
+          props.latencyOutlierCalculation ? props.latencyOutlierCalculation : ApplicationLoadBalancerLatencyOutlierCalculation.Z_SCORE,
           availabilityZoneId,
           az,
           props.latencyStatistic,
+          props.latencyOutlierCalculation == ApplicationLoadBalancerLatencyOutlierCalculation.Z_SCORE ? 3 : props.latencyThreshold,
           props.period ? props.period : Duration.minutes(1),
           props.evaluationPeriods,
           props.datapointsToAlarm,
