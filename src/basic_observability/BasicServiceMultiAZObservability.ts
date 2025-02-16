@@ -262,9 +262,10 @@ export class BasicServiceMultiAZObservability
   ) : IAlarm {
 
     let usingMetrics: { [key: string]: IMetric } = {};
-    let azMetricId: string;
+    let azMetricId: string = "";
 
     alb.vpc!.availabilityZones.forEach((az: string) => {
+
       let azFaultCount = ApplicationLoadBalancerMetrics.getPerAZAvailabilityMetric(
         alb,
         {
@@ -282,7 +283,7 @@ export class BasicServiceMultiAZObservability
       usingMetrics[`${keyprefix}1`] = azFaultCount;
 
       if (az == availabilityZone) {
-        azMetricId = Object.keys(usingMetrics)[-1];
+        azMetricId = `${keyprefix}1`;
       }
 
       keyprefix = MetricsHelper.nextChar(keyprefix);
@@ -323,7 +324,7 @@ export class BasicServiceMultiAZObservability
   ) : IAlarm {
 
     let usingMetrics: { [key: string]: IMetric } = {};
-    let azMetricId: string;
+    let azMetricId: string = "";
 
     alb.vpc!.availabilityZones.forEach((az: string, index: number) => {
 
