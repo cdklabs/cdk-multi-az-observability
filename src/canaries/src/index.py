@@ -105,7 +105,7 @@ def verify_request(context, item, method, metrics = None):
     metrics.set_property("RequestId", context.aws_request_id)
     
     parsed_url = urllib.parse.urlparse(url)
-    user_agent = "lambda-canary-python3.12"
+    user_agent = "lambda-canary-python3.13"
     h = copy.deepcopy(headers)
     if "User-Agent" in h:
       h["User-Agent"] = " ".join([user_agent, h["User-Agent"]])

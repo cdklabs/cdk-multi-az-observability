@@ -95,6 +95,9 @@ export class BasicServiceDashboard extends Construct {
     Object.keys(alarms).forEach((azLetter, index) => {
 
       let availabilityZoneId: string = azMapper.availabilityZoneIdFromAvailabilityZoneLetter(azLetter);
+      console.log(azLetter);
+      console.log(availabilityZoneId);
+      console.log(metrics[azLetter]);
 
       widgets.push(
         new GraphWidget({

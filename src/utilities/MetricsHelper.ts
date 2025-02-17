@@ -1,3 +1,5 @@
+import { Runtime } from "aws-cdk-lib/aws-lambda";
+
 export class MetricsHelper {
     /**
    * Increments a str by one char, for example
@@ -28,4 +30,6 @@ export class MetricsHelper {
       );
     }
   }
+
+  public static PythonRuntime: Runtime = Runtime.PYTHON_3_13;
 }

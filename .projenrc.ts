@@ -128,6 +128,8 @@ const project = new CdklabsConstructLibrary ({
   },
 });
 
+const pythonVersion = "python3.13";
+
 project.tasks.addTask('build-monitoring-layer', {
   steps: [
     {
@@ -143,7 +145,7 @@ project.tasks.addTask('build-monitoring-layer', {
       exec: 'mkdir -p lib/monitoring/src',
     },
     {
-      exec: 'pip3 install aws-embedded-metrics aws-xray-sdk --only-binary=:all: --target src/monitoring/src/monitoring/python/lib/python3.12/site-packages --platform manylinux2014_aarch64',
+      exec: `pip3 install aws-embedded-metrics aws-xray-sdk --only-binary=:all: --target src/monitoring/src/monitoring/python/lib/${pythonVersion}/site-packages --platform manylinux2014_aarch64`,
     },
     {
       exec: 'cd src/monitoring/src/monitoring && zip -r ../monitoring-layer.zip .',
@@ -172,7 +174,7 @@ project.tasks.addTask('build-canary-function', {
       exec: 'mkdir -p lib/canaries/src',
     },
     {
-      exec: 'docker run --rm --platform "linux/arm64" --user "0:0" --volume "$PWD/src/canaries/src:/asset-input:delegated" --volume "$PWD/src/canaries/src/package:/asset-output:delegated" --workdir "/asset-input" "public.ecr.aws/sam/build-python3.12" bash -c "pip install --no-cache --requirement requirements.txt --target /asset-output && cp --archive --update index.py /asset-output"',
+      exec: `docker run --rm --platform "linux/arm64" --user "0:0" --volume "$PWD/src/canaries/src:/asset-input:delegated" --volume "$PWD/src/canaries/src/package:/asset-output:delegated" --workdir "/asset-input" "public.ecr.aws/sam/build-${pythonVersion}" bash -c "pip install --no-cache --requirement requirements.txt --target /asset-output && cp --archive --update index.py /asset-output"`,
     },
     {
       exec: 'cd src/canaries/src/package && zip -r ../canary.zip .',
@@ -198,7 +200,7 @@ project.tasks.addTask('build-scipy-layer', {
       exec: 'mkdir -p lib/outlier-detection/src',
     },
     {
-      exec: 'pip3 install scipy --only-binary=:all: --target src/outlier-detection/src/scipy/python/lib/python3.12/site-packages --platform manylinux2014_aarch64',
+      exec: `pip3 install scipy --only-binary=:all: --target src/outlier-detection/src/scipy/python/lib/${pythonVersion}/site-packages --platform manylinux2014_aarch64`,
     },
     {
       exec: 'cd src/outlier-detection/src/scipy && zip -r ../scipy-layer.zip .',

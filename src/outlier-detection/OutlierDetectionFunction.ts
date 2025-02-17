@@ -19,13 +19,13 @@ import {
   IFunction,
   ILayerVersion,
   LayerVersion,
-  Runtime,
   Tracing,
 } from 'aws-cdk-lib/aws-lambda';
 import { ILogGroup, LogGroup, RetentionDays } from 'aws-cdk-lib/aws-logs';
 import { Construct } from 'constructs';
 import { IOutlierDetectionFunction } from './IOutlierDetectionFunction';
 import { OutlierDetectionFunctionProps } from './props/OutlierDetectionFunctionProps';
+import { MetricsHelper } from '../utilities/MetricsHelper';
 
 export class OutlierDetectionFunction
   extends Construct
@@ -87,7 +87,7 @@ export class OutlierDetectionFunction
     let sciPyLayer: ILayerVersion = new LayerVersion(this, 'SciPyLayer', {
       code: Code.fromAsset(path.join(__dirname, 'src/scipy-layer.zip')),
       compatibleArchitectures: [Architecture.ARM_64],
-      compatibleRuntimes: [Runtime.PYTHON_3_12],
+      compatibleRuntimes: [MetricsHelper.PythonRuntime],
     });
 
     let monitoringLayer: ILayerVersion = new LayerVersion(
@@ -98,7 +98,7 @@ export class OutlierDetectionFunction
           path.join(__dirname, '../monitoring/src/monitoring-layer.zip'),
         ),
         compatibleArchitectures: [Architecture.ARM_64],
-        compatibleRuntimes: [Runtime.PYTHON_3_12],
+        compatibleRuntimes: [MetricsHelper.PythonRuntime],
       },
     );
 
@@ -115,7 +115,7 @@ export class OutlierDetectionFunction
       );
 
       this.function = new Function(this, 'OutlierDetection', {
-        runtime: Runtime.PYTHON_3_12,
+        runtime: MetricsHelper.PythonRuntime,
         code: Code.fromAsset(path.join(__dirname, 'src/outlier-detection.zip')),
         handler: 'index.handler',
         role: executionRole,
@@ -134,7 +134,7 @@ export class OutlierDetectionFunction
       });
     } else {
       this.function = new Function(this, 'OutlierDetection', {
-        runtime: Runtime.PYTHON_3_12,
+        runtime: MetricsHelper.PythonRuntime,
         code: Code.fromAsset(path.join(__dirname, 'src/outlier-detection.zip')),
         handler: 'index.handler',
         role: executionRole,

@@ -233,8 +233,7 @@ test('Fully instrumented service', () => {
     outlierDetectionAlgorithm: OutlierDetectionAlgorithm.STATIC,
   });
 
-  let template: Template = Template.fromStack(stack);
-  console.log(template.toJSON());
+  Template.fromStack(stack);
 });
 
 test('Fully instrumented service with NLB', () => {
