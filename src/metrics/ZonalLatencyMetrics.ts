@@ -65,36 +65,45 @@ export class ZonalLatencyMetrics {
    */
   static createZonalServiceLatencyMetrics(
     props: ServiceLatencyMetricProps,
+    includeAZCountAggregate?: boolean
   ): IMetric[] {
-    let usingMetrics: { [key: string]: IMetric } = {};
-    let operationMetrics: IMetric[] = [];
-    let keyPrefix: string = MetricsHelper.nextChar();
+    if (includeAZCountAggregate)
+    {
+      let usingMetrics: { [key: string]: IMetric } = {};
+      let operationMetrics: IMetric[] = [];
+      let keyPrefix: string = MetricsHelper.nextChar();
 
-    props.latencyMetricProps.forEach(
-      (prop: LatencyMetricProps, index: number) => {
-        let operationZonalMetric: IMetric = this.createZonalCountLatencyMetric(
-          prop as ZonalLatencyMetricProps,
-        );
+      props.latencyMetricProps.forEach(
+        (prop: LatencyMetricProps, index: number) => {
+          let operationZonalMetric: IMetric = this.createZonalCountLatencyMetric(
+            prop as ZonalLatencyMetricProps,
+          );
 
-        operationMetrics.push(operationZonalMetric);
-        usingMetrics[`${keyPrefix}${index}`] = operationZonalMetric;
-        keyPrefix = MetricsHelper.nextChar(keyPrefix);
-      },
-    );
+          operationMetrics.push(operationZonalMetric);
+          usingMetrics[`${keyPrefix}${index}`] = operationZonalMetric;
+          keyPrefix = MetricsHelper.nextChar(keyPrefix);
+        },
+      );
 
-    if (Object.keys(usingMetrics).length == 1) {
-      operationMetrics.push(Object.values(usingMetrics)[0]);
-    } else {
-      let math: IMetric = new MathExpression({
-        usingMetrics: usingMetrics,
-        period: props.period,
-        label: props.label,
-        expression: Object.keys(usingMetrics).join('+'),
-      });
+      if (Object.keys(usingMetrics).length == 1) {
+        operationMetrics.push(Object.values(usingMetrics)[0]);
+      } else {
+        let math: IMetric = new MathExpression({
+          usingMetrics: usingMetrics,
+          period: props.period,
+          label: props.label,
+          expression: Object.keys(usingMetrics).join('+'),
+        });
 
-      operationMetrics.splice(0, 0, math);
+        operationMetrics.splice(0, 0, math);
+      }
+
+      return operationMetrics;
     }
-
-    return operationMetrics;
+    else {
+      return props.latencyMetricProps.map((prop: LatencyMetricProps) => {
+        return this.createZonalCountLatencyMetric(prop as ZonalLatencyMetricProps);
+      });
+    }
   }
 }

@@ -68,35 +68,44 @@ export class RegionalLatencyMetrics {
    */
   static createRegionalServiceLatencyCountMetrics(
     props: ServiceLatencyMetricProps,
+    includeRegionCountAggregate?: boolean
   ): IMetric[] {
-    let usingMetrics: { [key: string]: IMetric } = {};
-    let operationMetrics: IMetric[] = [];
-    let keyPrefix: string = MetricsHelper.nextChar();
+    
+    if (includeRegionCountAggregate) {
+      let usingMetrics: { [key: string]: IMetric } = {};
+      let operationMetrics: IMetric[] = [];
+      let keyPrefix: string = MetricsHelper.nextChar();
 
-    props.latencyMetricProps.forEach(
-      (prop: LatencyMetricProps, index: number) => {
-        let operationRegionalMetric: IMetric =
-          this.createRegionalLatencyCountMetric(prop);
-
-        operationMetrics.push(operationRegionalMetric);
-        usingMetrics[`${keyPrefix}${index}`] = operationRegionalMetric;
-        keyPrefix = MetricsHelper.nextChar(keyPrefix);
-      },
-    );
-
-    if (Object.keys(usingMetrics).length == 1) {
-      operationMetrics.push(Object.values(usingMetrics)[0]);
-    } else {
-      let math: IMetric = new MathExpression({
-        usingMetrics: usingMetrics,
-        period: props.period,
-        label: props.label,
-        expression: Object.keys(usingMetrics).join('+'),
-      });
-
-      operationMetrics.splice(0, 0, math);
+      props.latencyMetricProps.forEach(
+        (prop: LatencyMetricProps, index: number) => {
+          let operationRegionalMetric: IMetric =
+            this.createRegionalLatencyCountMetric(prop);
+  
+          operationMetrics.push(operationRegionalMetric);
+          usingMetrics[`${keyPrefix}${index}`] = operationRegionalMetric;
+          keyPrefix = MetricsHelper.nextChar(keyPrefix);
+        },
+      );
+  
+      if (Object.keys(usingMetrics).length == 1) {
+        operationMetrics.push(Object.values(usingMetrics)[0]);
+      } else {
+        let math: IMetric = new MathExpression({
+          usingMetrics: usingMetrics,
+          period: props.period,
+          label: props.label,
+          expression: Object.keys(usingMetrics).join('+'),
+        });
+  
+        operationMetrics.splice(0, 0, math);
+      }
+  
+      return operationMetrics;
     }
-
-    return operationMetrics;
+    else {
+      return props.latencyMetricProps.map((prop: LatencyMetricProps) => {
+        return this.createRegionalLatencyCountMetric(prop);
+      });
+    }
   }
 }
