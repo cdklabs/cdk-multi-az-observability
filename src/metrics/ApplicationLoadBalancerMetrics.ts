@@ -148,7 +148,7 @@ export class ApplicationLoadBalancerMetrics {
                       usingMetrics[`${keyprefix}2`] = elb5xx;
       
                       metrics.push(new MathExpression({
-                          expression: `${keyprefix}1+${keyprefix}2`,
+                          expression: `FILL(${keyprefix}1, 0) + FILL(${keyprefix}2, 0)`,
                           usingMetrics: usingMetrics,
                           label: props.availabilityZoneId + "-" + alb.loadBalancerArn + "-fault-count",
                           period: props.period,
@@ -300,7 +300,7 @@ export class ApplicationLoadBalancerMetrics {
                 usingMetrics[`${keyprefix}2`] = elb5xx;
 
                 return new MathExpression({
-                    expression: `${keyprefix}1+${keyprefix}2`,
+                    expression: `FILL(${keyprefix}1, 0) + FILL(${keyprefix}2, 0)`,
                     usingMetrics: usingMetrics,
                     label: props.label,
                     period: props.period,
@@ -452,7 +452,7 @@ export class ApplicationLoadBalancerMetrics {
                 usingMetrics[`${keyprefix}2`] = elb5xx;
 
                 return new MathExpression({
-                    expression: `${keyprefix}1+${keyprefix}2`,
+                    expression: `FILL(${keyprefix}1, 0) + FILL(${keyprefix}2, 0)`,
                     usingMetrics: usingMetrics,
                     label: props.label,
                     period: props.period,
@@ -585,8 +585,9 @@ export class ApplicationLoadBalancerMetrics {
           usingMetrics[`${keyprefix}1`] = elb5xx;
           usingMetrics[`${keyprefix}2`] = target5xx;
   
+          // This is the total number of faults per zone for this load balancer
           metricsPerAZ[availabilityZone].push(new MathExpression({
-            expression: `${keyprefix}1 + ${keyprefix}2`,
+            expression: `FILL(${keyprefix}1, 0) + FILL(${keyprefix}2, 0)`,
             usingMetrics: usingMetrics,
             period: period
           }));
@@ -595,6 +596,8 @@ export class ApplicationLoadBalancerMetrics {
         });   
       });
   
+      // We can have multiple load balancers per zone, so add their fault count
+      // metrics together
       Object.keys(metricsPerAZ).forEach((availabilityZone: string) => {
         let azLetter = availabilityZone.substring(availabilityZone.length - 1);
         let availabilityZoneId = azMapper.availabilityZoneIdFromAvailabilityZoneLetter(azLetter);
