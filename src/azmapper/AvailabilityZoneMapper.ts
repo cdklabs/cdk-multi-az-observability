@@ -23,13 +23,13 @@ import {
   Code,
   Function,
   IFunction,
-  Runtime,
   Tracing,
 } from 'aws-cdk-lib/aws-lambda';
 import { ILogGroup, LogGroup, RetentionDays } from 'aws-cdk-lib/aws-logs';
 import { Construct } from 'constructs';
 import { IAvailabilityZoneMapper } from './IAvailabilityZoneMapper';
 import { AvailabilityZoneMapperProps } from './props/AvailabilityZoneMapperProps';
+import { MetricsHelper } from '../utilities/MetricsHelper';
 
 /**
  * A construct that allows you to map AZ names to ids and back
@@ -121,7 +121,7 @@ export class AvailabilityZoneMapper
     );
 
     this.function = new Function(this, 'AvailabilityZoneMapperFunction', {
-      runtime: Runtime.PYTHON_3_12,
+      runtime: MetricsHelper.PythonRuntime,
       code: Code.fromInline(file),
       handler: 'index.handler',
       role: executionRole,

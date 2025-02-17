@@ -19,13 +19,13 @@ import {
   IFunction,
   ILayerVersion,
   LayerVersion,
-  Runtime,
   Tracing,
 } from 'aws-cdk-lib/aws-lambda';
 import { ILogGroup, LogGroup, RetentionDays } from 'aws-cdk-lib/aws-logs';
 import { Construct } from 'constructs';
 import { ICanaryFunction } from './ICanaryFunction';
 import { CanaryFunctionProps } from './props/CanaryFunctionProps';
+import { MetricsHelper } from '../utilities/MetricsHelper';
 
 export class CanaryFunction extends Construct implements ICanaryFunction {
   /**
@@ -85,8 +85,8 @@ export class CanaryFunction extends Construct implements ICanaryFunction {
     /*
     let code: AssetCode = Code.fromAsset(path.join(__dirname, "src/"), {
       bundling: {
-        //image: new Runtime('python3.12:latest-arm64', RuntimeFamily.PYTHON).bundlingImage,
-        image: Runtime.PYTHON_3_12.bundlingImage,
+        //image: new Runtime('python3.13:latest-arm64', RuntimeFamily.PYTHON).bundlingImage,
+        image: MetricsHelper.PythonRuntime.bundlingImage,
         command: [
           'bash', '-c',
           'pip install --no-cache -r requirements.txt -t /asset-output && cp --archive --update . /asset-output',
@@ -103,7 +103,7 @@ export class CanaryFunction extends Construct implements ICanaryFunction {
           path.join(__dirname, '../monitoring/src/monitoring-layer.zip'),
         ),
         compatibleArchitectures: [Architecture.ARM_64],
-        compatibleRuntimes: [Runtime.PYTHON_3_12],
+        compatibleRuntimes: [MetricsHelper.PythonRuntime],
       },
     );
 
@@ -115,7 +115,7 @@ export class CanaryFunction extends Construct implements ICanaryFunction {
       });
 
       this.function = new Function(this, 'canary', {
-        runtime: Runtime.PYTHON_3_12,
+        runtime: MetricsHelper.PythonRuntime,
         code: Code.fromAsset(path.join(__dirname, 'src/canary.zip')),
         handler: 'index.handler',
         role: executionRole,
@@ -143,7 +143,7 @@ export class CanaryFunction extends Construct implements ICanaryFunction {
       });
     } else {
       this.function = new Function(this, 'canary', {
-        runtime: Runtime.PYTHON_3_12,
+        runtime: MetricsHelper.PythonRuntime,
         code: Code.fromAsset(path.join(__dirname, 'src/canary.zip')),
         handler: 'index.handler',
         role: executionRole,

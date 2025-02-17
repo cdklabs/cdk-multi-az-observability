@@ -601,11 +601,11 @@ export class ApplicationLoadBalancerMetrics {
   
         let usingMetrics: {[key: string]: IMetric} = {};
   
-        metricsPerAZ[availabilityZone].forEach((metric: IMetric) => {
-          usingMetrics[`${keyprefix}1`] = metric;
+        metricsPerAZ[availabilityZone].forEach((metric: IMetric, index: number) => {
+          usingMetrics[`${keyprefix}${index}`] = metric;
         });
   
-        faultsPerZone[availabilityZone] = new MathExpression({
+        faultsPerZone[azLetter] = new MathExpression({
           expression: Object.keys(usingMetrics).join("+"),
           usingMetrics: usingMetrics,
           label: availabilityZoneId,

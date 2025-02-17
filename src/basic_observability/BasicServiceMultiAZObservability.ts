@@ -115,18 +115,17 @@ export class BasicServiceMultiAZObservability
 
     // Look through all of the per AZ ALB alarms, if there's also a NAT GW alarm
     // create a composite alarm if either of them trigger
-    Object.keys(this.albZonalIsolatedImpactAlarms).forEach((az: string) => {
-      let azLetter = az.substring(az.length - 1);
+    Object.keys(this.albZonalIsolatedImpactAlarms).forEach((azLetter: string) => {
       let availabilityZoneId = this._azMapper.availabilityZoneIdFromAvailabilityZoneLetter(azLetter);
-      if (az in this.natGWZonalIsolatedImpactAlarms!) {
-        this.aggregateZonalIsolatedImpactAlarms[az] = new CompositeAlarm(this, az.substring(az.length - 1) + "-isolated-impact-alarm", {
-          alarmRule: AlarmRule.anyOf(this.albZonalIsolatedImpactAlarms![az], this.natGWZonalIsolatedImpactAlarms![az]),
+      if (azLetter in this.natGWZonalIsolatedImpactAlarms!) {
+        this.aggregateZonalIsolatedImpactAlarms[azLetter] = new CompositeAlarm(this, azLetter + "-isolated-impact-alarm", {
+          alarmRule: AlarmRule.anyOf(this.albZonalIsolatedImpactAlarms![azLetter], this.natGWZonalIsolatedImpactAlarms![azLetter]),
           compositeAlarmName: availabilityZoneId + "-isolated-impact-alarm"
         });
       }
       else {
-        this.aggregateZonalIsolatedImpactAlarms[az] = new CompositeAlarm(this, az.substring(az.length - 1) + "-isolated-impact-alarm", {
-          alarmRule: AlarmRule.anyOf(this.albZonalIsolatedImpactAlarms![az]),
+        this.aggregateZonalIsolatedImpactAlarms[azLetter] = new CompositeAlarm(this, azLetter + "-isolated-impact-alarm", {
+          alarmRule: AlarmRule.anyOf(this.albZonalIsolatedImpactAlarms![azLetter]),
           compositeAlarmName: availabilityZoneId + "-isolated-impact-alarm"
         });
       }
@@ -135,13 +134,12 @@ export class BasicServiceMultiAZObservability
     // Look through all of the per AZ NAT GW alarms. If there's an AZ we haven't seen in the ALB
     // alarms yet, then it will just be a NAT GW alarm that we'll turn into the same kind of
     // composite alarm
-    Object.keys(this.natGWZonalIsolatedImpactAlarms).forEach((az: string) => {
-      if (!(az in this.aggregateZonalIsolatedImpactAlarms)) {
-        let azLetter = az.substring(az.length - 1);
+    Object.keys(this.natGWZonalIsolatedImpactAlarms).forEach((azLetter: string) => {
+      if (!(azLetter in this.aggregateZonalIsolatedImpactAlarms)) {
         let availabilityZoneId = this._azMapper.availabilityZoneIdFromAvailabilityZoneLetter(azLetter);
 
-        this.aggregateZonalIsolatedImpactAlarms[az] = new CompositeAlarm(this, az.substring(az.length - 1) + "-isolated-impact-alarm", {
-          alarmRule: AlarmRule.anyOf(this.natGWZonalIsolatedImpactAlarms![az]),
+        this.aggregateZonalIsolatedImpactAlarms[azLetter] = new CompositeAlarm(this, azLetter + "-isolated-impact-alarm", {
+          alarmRule: AlarmRule.anyOf(this.natGWZonalIsolatedImpactAlarms![azLetter]),
           compositeAlarmName: availabilityZoneId + "-isolated-impact-alarm"
         });
       }
@@ -419,6 +417,12 @@ export class BasicServiceMultiAZObservability
     }
   }
 
+  /**
+   * 
+   * @param props 
+   * @returns A composite alarm per AZ to indicate isolated zonal impact. The dictionary
+   * is keyed by the az letter, like "a", "b", "c".
+   */
   private doAlbMetrics(
     props: BasicServiceMultiAZObservabilityProps
   ) : { [key: string]: IAlarm } {
@@ -503,7 +507,7 @@ export class BasicServiceMultiAZObservability
 
         // Alarm if the AZ shows impact and is an outlier
         let azImpactAlarm: IAlarm = new CompositeAlarm(this, 
-          az.substring(az.length - 1) +  "-composite-impact-alarm", 
+          azLetter +  "-composite-impact-alarm", 
           {
             alarmRule: AlarmRule.anyOf(
               AlarmRule.allOf(availabilityImpact, availabilityOutlier), 
@@ -533,7 +537,7 @@ export class BasicServiceMultiAZObservability
       let azLetter = az.substring(az.length - 1);
       let availabilityZoneId: string = this._azMapper.availabilityZoneIdFromAvailabilityZoneLetter(azLetter);
 
-      azCompositeAlarms[az] = new CompositeAlarm(this, azLetter + "-alb-impact-composite-alarm", {
+      azCompositeAlarms[azLetter] = new CompositeAlarm(this, azLetter + "-alb-impact-composite-alarm", {
         alarmRule: AlarmRule.anyOf(...perAZImpactAlarms[az]),
         compositeAlarmName: availabilityZoneId + "-alb-impact-composite-alarm"
       });
@@ -755,7 +759,7 @@ export class BasicServiceMultiAZObservability
         props.evaluationPeriods,
         props.datapointsToAlarm
       );
-      packetLossPerAZAlarms[az] = new CompositeAlarm(this, az.substring(az.length - 1) + "-packet-loss-composite-alarm", {
+      packetLossPerAZAlarms[azLetter] = new CompositeAlarm(this, az.substring(az.length - 1) + "-packet-loss-composite-alarm", {
         alarmRule: AlarmRule.allOf(packetLossImpact, packetLossOutlier),
         compositeAlarmName: availabilityZoneId + "-packet-loss-composite-alarm"
       });
@@ -778,13 +782,13 @@ export class BasicServiceMultiAZObservability
       let azLetter = availabilityZone.substring(availabilityZone.length - 1);
       let availabilityZoneId = this._azMapper.availabilityZoneIdFromAvailabilityZoneLetter(azLetter);
 
-      if (!(availabilityZone in metricsPerAZ)) {
-        metricsPerAZ[availabilityZone] = [];
+      if (!(azLetter in metricsPerAZ)) {
+        metricsPerAZ[azLetter] = [];
       }
 
       natgws[availabilityZone].forEach((natgw: CfnNatGateway) => {
 
-        metricsPerAZ[availabilityZone].push(new Metric({
+        metricsPerAZ[azLetter].push(new Metric({
           metricName: 'PacketsDropCount',
           namespace: 'AWS/NATGateway',
           statistic: Stats.SUM,
@@ -804,7 +808,7 @@ export class BasicServiceMultiAZObservability
 
       let usingMetrics: {[key: string]: IMetric} = {};
 
-      metricsPerAZ[availabilityZone].forEach((metric: IMetric) => {
+      metricsPerAZ[azLetter].forEach((metric: IMetric) => {
         usingMetrics[`${keyprefix}1`] = metric;
         keyprefix = MetricsHelper.nextChar(keyprefix);
       });
