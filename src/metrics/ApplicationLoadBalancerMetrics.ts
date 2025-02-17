@@ -240,7 +240,7 @@ export class ApplicationLoadBalancerMetrics {
               LoadBalancer: (alb as ILoadBalancerV2 as BaseLoadBalancer)
                 .loadBalancerFullName,
             },
-            label: props.availabilityZoneId + "-request-count",
+            label: props.availabilityZoneId,
             period: props.period,
             statistic: Stats.SUM,
             unit: Unit.COUNT

@@ -706,7 +706,7 @@ export class ServiceAvailabilityAndLatencyDashboard
 
       let zonalFaultCount: IMetric = new MathExpression({
         expression: Object.keys(usingMetrics).join('+'),
-        label: availabilityZoneId + ' fault count',
+        label: availabilityZoneId,
         usingMetrics: usingMetrics,
         period: props.service.period
       });
