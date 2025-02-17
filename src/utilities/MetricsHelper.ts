@@ -31,5 +31,9 @@ export class MetricsHelper {
     }
   }
 
+  static isNotEmpty<T extends object>(obj: T | undefined | null): obj is T {
+    return obj !== undefined && obj !== null && Object.keys(obj).length > 0;
+  }
+
   public static PythonRuntime: Runtime = Runtime.PYTHON_3_13;
 }
