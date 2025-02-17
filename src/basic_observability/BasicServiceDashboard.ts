@@ -14,6 +14,7 @@ import {
 import { Construct } from 'constructs';
 import { BasicServiceDashboardProps } from './props/BasicServiceDashboardProps';
 import { AvailabilityZoneMapper } from '../azmapper/AvailabilityZoneMapper';
+import { MetricsHelper } from '../utilities/MetricsHelper';
 
 export class BasicServiceDashboard extends Construct {
 
@@ -183,8 +184,8 @@ export class BasicServiceDashboard extends Construct {
     );
 
     if (
-      props.zonalLoadBalancerIsolatedImpactAlarms !== undefined &&
-      props.zonalLoadBalancerFaultRateMetrics !== undefined
+      MetricsHelper.isNotEmpty(props.zonalLoadBalancerIsolatedImpactAlarms) &&
+      MetricsHelper.isNotEmpty(props.zonalLoadBalancerFaultRateMetrics)
     ) {
       widgets.push(
         BasicServiceDashboard.createLoadBalancerWidgets(
@@ -196,8 +197,8 @@ export class BasicServiceDashboard extends Construct {
     }
 
     if (
-      props.zonalNatGatewayIsolatedImpactAlarms !== undefined &&
-      props.zonalNatGatewayPacketDropMetrics !== undefined
+      MetricsHelper.isNotEmpty(props.zonalNatGatewayIsolatedImpactAlarms) &&
+      MetricsHelper.isNotEmpty(props.zonalNatGatewayPacketDropMetrics)
     ) {
       widgets.push(
         BasicServiceDashboard.createNatGatewayWidgets(
