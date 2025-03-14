@@ -29,10 +29,27 @@ export class BasicServiceDashboard extends Construct {
 
     albWidgets.push(new TextWidget({ height: 2, width: 24, markdown: "Load Balancer Metrics" }));
 
+    let successCountPerZone: {[key: string]: IMetric} = ApplicationLoadBalancerMetrics.getTotalAlbSuccessCountPerZone(albs, period, azMapper);
     let faultCountPerZone: {[key: string]: IMetric} = ApplicationLoadBalancerMetrics.getTotalAlbFaultCountPerZone(albs, period, azMapper);
     let processedBytesPerZone: {[key: string]: IMetric} = ApplicationLoadBalancerMetrics.getTotalAlbProcessedBytesPerZone(albs, period, azMapper);
     let latencyPerZone: {[key: string]: IMetric} = ApplicationLoadBalancerMetrics.getTotalAlbLatencyPerZone(albs, "p99", period, azMapper);
-    let requestsPerZone: {[key: string]: IMetric} = ApplicationLoadBalancerMetrics.getTotalAlbRequestsPerZone(albs, period, azMapper);
+    let requestsPerZone: {[key: string]: IMetric} = ApplicationLoadBalancerMetrics.getTotalAlbRequestsPerZone(albs, period, azMapper);  
+    let faultRatePerZone: {[key: string]: IMetric} = ApplicationLoadBalancerMetrics.getTotalAlbFaultRatePerZone(requestsPerZone, faultCountPerZone, period, azMapper);  
+
+    albWidgets.push(
+      new GraphWidget({
+        height: 8,
+        width: 8,
+        title: Fn.sub('${AWS::Region} Zonal Success Count'),
+        region: Fn.sub('${AWS::Region}'),
+        left: Object.values(successCountPerZone),
+        leftYAxis: {
+          min: 0,
+          label: 'Sum',
+          showUnits: false,
+        }
+      })
+    );
 
     albWidgets.push(
       new GraphWidget({
@@ -53,12 +70,27 @@ export class BasicServiceDashboard extends Construct {
       new GraphWidget({
         height: 8,
         width: 8,
+        title: Fn.sub('${AWS::Region} Zonal Fault Rate'),
+        region: Fn.sub('${AWS::Region}'),
+        left: Object.values(faultRatePerZone),
+        leftYAxis: {
+          min: 0,
+          label: 'Sum',
+          showUnits: false,
+        }
+      })
+    );
+
+    albWidgets.push(
+      new GraphWidget({
+        height: 8,
+        width: 8,
         title: Fn.sub('${AWS::Region} Zonal Request Count'),
         region: Fn.sub('${AWS::Region}'),
         left: Object.values(requestsPerZone),
         leftYAxis: {
           min: 0,
-          label: 'Sum',
+          label: 'Percent',
           showUnits: false,
         }
       })
@@ -82,7 +114,7 @@ export class BasicServiceDashboard extends Construct {
       new GraphWidget({
         height: 8,
         width: 8,
-        title: Fn.sub('${AWS::Region} Zonal Latency'),
+        title: Fn.sub('${AWS::Region} Zonal Target Response Time (p99)'),
         region: Fn.sub('${AWS::Region}'),
         left: Object.values(latencyPerZone),
         leftYAxis: {
@@ -96,7 +128,7 @@ export class BasicServiceDashboard extends Construct {
     return albWidgets;
   }
 
-  private static createLoadBalancerWidgets(
+  /*private static createLoadBalancerWidgets(
     alarms: { [key: string]: IAlarm },
     metrics: { [key: string]: IMetric },
     azMapper: AvailabilityZoneMapper,
@@ -152,7 +184,7 @@ export class BasicServiceDashboard extends Construct {
     });
 
     return widgets;
-  }
+  }*/
 
   private static createNatGatewayWidgets(
     alarms: { [key: string]: IAlarm },
@@ -300,7 +332,7 @@ export class BasicServiceDashboard extends Construct {
     this.dashboard = new Dashboard(this, 'BasicServiceDashboard', {
       dashboardName:
         props.serviceName.toLowerCase() +
-        Fn.sub('-service-availability-${AWS::Region}'),
+        Fn.sub('-per-az-health-${AWS::Region}'),
       defaultInterval: props.interval,
       periodOverride: PeriodOverride.AUTO,
       widgets: widgets,
