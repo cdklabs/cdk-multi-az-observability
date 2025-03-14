@@ -110,7 +110,7 @@ export class BasicServiceMultiAZObservability
 
     // Create NAT Gateway metrics and alarms per AZ
     if (this.natGateways) {
-      this.natGWZonalIsolatedImpactAlarms = this.doNatGatewayMetrics(props);
+      this.natGWZonalIsolatedImpactAlarms = this.createNatGatewayZonalImpactAlarms(props);
     }
 
     // Look through all of the per AZ ALB alarms, if there's also a NAT GW alarm
@@ -674,10 +674,7 @@ export class BasicServiceMultiAZObservability
     let azKey: string = "";
 
     Object.keys(natgws).forEach((az: string) => {
-      
       let packetDropCountMetrics: {[key: string]: IMetric} = {};
-
-      
 
       natgws[az].forEach((natgw: CfnNatGateway, index: number) => {
         packetDropCountMetrics[`${keyprefix}${index}`] = new Metric({
@@ -725,7 +722,7 @@ export class BasicServiceMultiAZObservability
     );
   }
 
-  private doNatGatewayMetrics(
+  private createNatGatewayZonalImpactAlarms(
     props: BasicServiceMultiAZObservabilityProps
   ): {[key: string]: IAlarm} {
 
@@ -814,6 +811,8 @@ export class BasicServiceMultiAZObservability
         usingMetrics[`${keyprefix}1`] = metric;
         keyprefix = MetricsHelper.nextChar(keyprefix);
       });
+
+      keyprefix = MetricsHelper.nextChar(keyprefix);
 
       dropsPerZone[availabilityZone] = new MathExpression({
         expression: Object.keys(usingMetrics).join("+"),

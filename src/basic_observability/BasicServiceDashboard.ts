@@ -34,7 +34,7 @@ export class BasicServiceDashboard extends Construct {
     let processedBytesPerZone: {[key: string]: IMetric} = ApplicationLoadBalancerMetrics.getTotalAlbProcessedBytesPerZone(albs, period, azMapper);
     let latencyPerZone: {[key: string]: IMetric} = ApplicationLoadBalancerMetrics.getTotalAlbLatencyPerZone(albs, "p99", period, azMapper);
     let requestsPerZone: {[key: string]: IMetric} = ApplicationLoadBalancerMetrics.getTotalAlbRequestsPerZone(albs, period, azMapper);  
-    let faultRatePerZone: {[key: string]: IMetric} = ApplicationLoadBalancerMetrics.getTotalAlbFaultRatePerZone(requestsPerZone, faultCountPerZone, period, azMapper);  
+    let faultRatePerZone: {[key: string]: IMetric} = ApplicationLoadBalancerMetrics.getTotalAlbFaultRatePerZone(albs, period, azMapper);  
 
     albWidgets.push(
       new GraphWidget({
@@ -70,12 +70,12 @@ export class BasicServiceDashboard extends Construct {
       new GraphWidget({
         height: 8,
         width: 8,
-        title: Fn.sub('${AWS::Region} Zonal Fault Rate'),
+        title: Fn.sub('${AWS::Region} Zonal Request Count'),
         region: Fn.sub('${AWS::Region}'),
-        left: Object.values(faultRatePerZone),
+        left: Object.values(requestsPerZone),
         leftYAxis: {
           min: 0,
-          label: 'Sum',
+          label: 'Percent',
           showUnits: false,
         }
       })
@@ -85,12 +85,12 @@ export class BasicServiceDashboard extends Construct {
       new GraphWidget({
         height: 8,
         width: 8,
-        title: Fn.sub('${AWS::Region} Zonal Request Count'),
+        title: Fn.sub('${AWS::Region} Zonal Fault Rate'),
         region: Fn.sub('${AWS::Region}'),
-        left: Object.values(requestsPerZone),
+        left: Object.values(faultRatePerZone),
         leftYAxis: {
           min: 0,
-          label: 'Percent',
+          label: 'Sum',
           showUnits: false,
         }
       })
@@ -206,9 +206,6 @@ export class BasicServiceDashboard extends Construct {
     Object.keys(alarms).forEach((azLetter, index) => {
 
       let availabilityZoneId: string = azMapper.availabilityZoneIdFromAvailabilityZoneLetter(azLetter);
-      console.log(azLetter);
-      console.log(availabilityZoneId);
-      console.log(metrics[azLetter]);
 
       widgets.push(
         new GraphWidget({
