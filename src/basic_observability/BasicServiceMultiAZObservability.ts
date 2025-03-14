@@ -159,11 +159,12 @@ export class BasicServiceMultiAZObservability
           zonalNatGatewayIsolatedImpactAlarms:
             this.natGWZonalIsolatedImpactAlarms,
           interval: props.interval,
-          zonalLoadBalancerFaultRateMetrics: ApplicationLoadBalancerMetrics.getTotalAlbFaultCountPerZone(
+          /*zonalLoadBalancerFaultRateMetrics: ApplicationLoadBalancerMetrics.getTotalAlbFaultCountPerZone(
             props.applicationLoadBalancers ? props.applicationLoadBalancers : [], 
             props.period ? props.period : Duration.minutes(1),
             this._azMapper
-          ),
+          ),*/
+          period: props.period ? props.period : Duration.minutes(1),
           zonalNatGatewayPacketDropMetrics: this.getTotalPacketDropsPerZone(
             props.natGateways ? props.natGateways : {},
             props.period ? props.period : Duration.minutes(1)

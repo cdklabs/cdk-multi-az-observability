@@ -38,6 +38,7 @@ import { MetricsHelper } from '../utilities/MetricsHelper';
 export class ServiceAvailabilityAndLatencyDashboard
   extends Construct
   implements IServiceAvailabilityAndLatencyDashboard {
+ 
   private static generateTPSWidgets(
     props: ServiceAvailabilityAndLatencyDashboardProps,
     availabilityZoneIds: string[],
@@ -536,6 +537,7 @@ export class ServiceAvailabilityAndLatencyDashboard
     let faultRateMetrics: IMetric[] = [];
     let requestCountMetrics: IMetric[] = [];
     let processedBytesMetrics: IMetric[] = [];
+    let latencyMetrics: IMetric[] = [];
 
     availabilityZoneNames.forEach((availabilityZoneName) => {
       let availabilityZoneId: string =
@@ -581,6 +583,19 @@ export class ServiceAvailabilityAndLatencyDashboard
       );
 
       processedBytesMetrics.push(processedBytesMetric);
+
+      let latencyMetric: IMetric = ApplicationLoadBalancerMetrics.getPerAZLatencyMetric(
+        {
+          availabilityZone: availabilityZoneName,
+          availabilityZoneId: availabilityZoneId,
+          alb: props.service.loadBalancer as IApplicationLoadBalancer,
+          statistic: "p99",
+          label: availabilityZoneId,
+          period: props.service.period
+        }
+      );
+
+      latencyMetrics.push(latencyMetric)
     });
 
     albWidgets.push(
@@ -621,6 +636,20 @@ export class ServiceAvailabilityAndLatencyDashboard
         title: Fn.sub('${AWS::Region} Processed Bytes'),
         region: Fn.sub('${AWS::Region}'),
         left: processedBytesMetrics,
+        leftYAxis: {
+          min: 0,
+          showUnits: true,
+        }
+      })
+    );
+
+    albWidgets.push(
+      new GraphWidget({
+        height: 8,
+        width: 8,
+        title: Fn.sub('${AWS::Region} Latency'),
+        region: Fn.sub('${AWS::Region}'),
+        left: latencyMetrics,
         leftYAxis: {
           min: 0,
           showUnits: true,
