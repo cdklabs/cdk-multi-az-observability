@@ -159,6 +159,7 @@ export class BasicServiceMultiAZObservability
           zonalNatGatewayIsolatedImpactAlarms:
             this.natGWZonalIsolatedImpactAlarms,
           interval: props.interval,
+          albs: props.applicationLoadBalancers,
           /*zonalLoadBalancerFaultRateMetrics: ApplicationLoadBalancerMetrics.getTotalAlbFaultCountPerZone(
             props.applicationLoadBalancers ? props.applicationLoadBalancers : [], 
             props.period ? props.period : Duration.minutes(1),

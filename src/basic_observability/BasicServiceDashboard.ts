@@ -306,15 +306,15 @@ export class BasicServiceDashboard extends Construct {
       );
     }*/
 
-      if (props.albs) {
-        widgets.push(
-          BasicServiceDashboard.generateLoadBalancerWidgets(
-            props.albs,
-            props.azMapper,
-            props.period
-          )
+    if (props.albs) {
+      widgets.push(
+        BasicServiceDashboard.generateLoadBalancerWidgets(
+          props.albs,
+          props.azMapper,
+          props.period
         )
-      }
+      )
+    }
 
     if (
       MetricsHelper.isNotEmpty(props.zonalNatGatewayIsolatedImpactAlarms) &&
