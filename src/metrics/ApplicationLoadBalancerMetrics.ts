@@ -998,7 +998,7 @@ export class ApplicationLoadBalancerMetrics {
         });
 
         let numerator = "(" + Object.keys(usingMetrics).join("+") + ")";
-        let index = Object.keys(usingMetrics).length;
+        //let index = Object.keys(usingMetrics).length;
 
         keyprefix = MetricsHelper.nextChar(keyprefix);
 
