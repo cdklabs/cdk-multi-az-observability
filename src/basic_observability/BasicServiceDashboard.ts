@@ -105,7 +105,8 @@ export class BasicServiceDashboard extends Construct {
         left: Object.values(processedBytesPerZone),
         leftYAxis: {
           min: 0,
-          showUnits: true,
+          showUnits: false,
+          label: 'Bytes'
         }
       })
     );
