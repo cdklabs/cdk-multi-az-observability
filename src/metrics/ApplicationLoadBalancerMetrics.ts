@@ -532,22 +532,24 @@ export class ApplicationLoadBalancerMetrics {
     static getTotalAlbFaultCountPerZone(
       albs: IApplicationLoadBalancer[],
       period: Duration,
-      azMapper: AvailabilityZoneMapper
+      azMapper: AvailabilityZoneMapper,
+      prefix?: string
     ) : {[key: string]: IMetric}
     {
       let faultsPerZone: {[key: string]: IMetric} = {};
       let metricsPerAZ: {[key: string]: IMetric[]} = {};
-      let keyprefix: string = MetricsHelper.nextChar();
+      let keyprefix: string = prefix ? prefix : MetricsHelper.nextChar();
+      console.log("USING PREFIX: " + keyprefix);
   
       albs.forEach((alb: IApplicationLoadBalancer) => {
   
         alb.vpc!.availabilityZones.forEach((availabilityZone: string) => {
-          if (!(availabilityZone in metricsPerAZ)) {
-            metricsPerAZ[availabilityZone] = [];
-          }
-  
           let azLetter = availabilityZone.substring(availabilityZone.length - 1);
           let availabilityZoneId = azMapper.availabilityZoneIdFromAvailabilityZoneLetter(azLetter);
+
+          if (!(azLetter in metricsPerAZ)) {
+            metricsPerAZ[azLetter] = [];
+          }
   
           // 5xx responses from targets
           let target5xx: IMetric = alb.metrics.httpCodeTarget(
@@ -586,7 +588,7 @@ export class ApplicationLoadBalancerMetrics {
           usingMetrics[`${keyprefix}2`] = target5xx;
   
           // This is the total number of faults per zone for this load balancer
-          metricsPerAZ[availabilityZone].push(new MathExpression({
+          metricsPerAZ[azLetter].push(new MathExpression({
             expression: `FILL(${keyprefix}1, 0) + FILL(${keyprefix}2, 0)`,
             usingMetrics: usingMetrics,
             period: period
@@ -598,15 +600,14 @@ export class ApplicationLoadBalancerMetrics {
   
       // We can have multiple load balancers per zone, so add their fault count
       // metrics together
-      Object.keys(metricsPerAZ).forEach((availabilityZone: string) => {
-        let azLetter = availabilityZone.substring(availabilityZone.length - 1);
+      Object.keys(metricsPerAZ).forEach((azLetter: string) => {
         let availabilityZoneId = azMapper.availabilityZoneIdFromAvailabilityZoneLetter(azLetter);
 
-        if (metricsPerAZ[availabilityZone].length > 1) {
+        if (metricsPerAZ[azLetter].length > 1) {
   
           let usingMetrics: {[key: string]: IMetric} = {};
           
-          metricsPerAZ[availabilityZone].forEach((metric: IMetric, index: number) => {
+          metricsPerAZ[azLetter].forEach((metric: IMetric, index: number) => {
             usingMetrics[`${keyprefix}${index}`] = metric;
           });
         
@@ -618,10 +619,11 @@ export class ApplicationLoadBalancerMetrics {
           });
         }
         else {
-          faultsPerZone[azLetter] = metricsPerAZ[availabilityZone][0];
+          faultsPerZone[azLetter] = metricsPerAZ[azLetter][0];
         }
       });
   
+      prefix = keyprefix;
       return faultsPerZone;
     }
 
@@ -645,12 +647,12 @@ export class ApplicationLoadBalancerMetrics {
       albs.forEach((alb: IApplicationLoadBalancer) => {
   
         alb.vpc!.availabilityZones.forEach((availabilityZone: string) => {
-          if (!(availabilityZone in metricsPerAZ)) {
-            metricsPerAZ[availabilityZone] = [];
-          }
-  
           let azLetter = availabilityZone.substring(availabilityZone.length - 1);
           let availabilityZoneId = azMapper.availabilityZoneIdFromAvailabilityZoneLetter(azLetter);
+
+          if (!(azLetter in metricsPerAZ)) {
+            metricsPerAZ[azLetter] = [];
+          }
   
           // 2xx responses from targets
           let target2xx: IMetric = alb.metrics.httpCodeTarget(
@@ -706,7 +708,7 @@ export class ApplicationLoadBalancerMetrics {
           usingMetrics[`${keyprefix}3`] = target3xx;
   
           // This is the total number of faults per zone for this load balancer
-          metricsPerAZ[availabilityZone].push(new MathExpression({
+          metricsPerAZ[azLetter].push(new MathExpression({
             expression: `FILL(${keyprefix}1, 0) + FILL(${keyprefix}2, 0) + FILL(${keyprefix}3, 0)`,
             usingMetrics: usingMetrics,
             period: period
@@ -718,17 +720,14 @@ export class ApplicationLoadBalancerMetrics {
   
       // We can have multiple load balancers per zone, so add their success count
       // metrics together
-      Object.keys(metricsPerAZ).forEach((availabilityZone: string) => {
+      Object.keys(metricsPerAZ).forEach((azLetter: string) => {
 
-        let azLetter = availabilityZone.substring(availabilityZone.length - 1);
         let availabilityZoneId = azMapper.availabilityZoneIdFromAvailabilityZoneLetter(azLetter);
         
-        if (metricsPerAZ[availabilityZone].length > 1) {
-          
-          
+        if (metricsPerAZ[azLetter].length > 1) {
           let usingMetrics: {[key: string]: IMetric} = {};
           
-          metricsPerAZ[availabilityZone].forEach((metric: IMetric, index: number) => {
+          metricsPerAZ[azLetter].forEach((metric: IMetric, index: number) => {
             usingMetrics[`${keyprefix}${index}`] = metric;
           });
         
@@ -740,11 +739,82 @@ export class ApplicationLoadBalancerMetrics {
           });
         }
         else {
-          successPerZone[azLetter] = metricsPerAZ[availabilityZone][0];
+          successPerZone[azLetter] = metricsPerAZ[azLetter][0];
         }
       });
     
       return successPerZone;
+    }
+
+    /**
+     * Calculates the total number of processed bytes for all ALBs in each zone
+     * @param albs 
+     * @param period 
+     * @param azMapper 
+     * @returns 
+     */
+    static getTotalAlbRequestsPerZone(
+      albs: IApplicationLoadBalancer[],
+      period: Duration,
+      azMapper: AvailabilityZoneMapper,
+      prefix?: string
+    ) : {[key: string]: IMetric}
+    {
+      let requestsPerZone: {[key: string]: IMetric} = {};
+      let metricsPerAZ: {[key: string]: IMetric[]} = {};
+      let keyprefix: string = prefix ? prefix : MetricsHelper.nextChar();
+
+      albs.forEach((alb: IApplicationLoadBalancer) => {
+  
+        alb.vpc!.availabilityZones.forEach((availabilityZone: string) => {
+          let azLetter = availabilityZone.substring(availabilityZone.length - 1);
+          let availabilityZoneId = azMapper.availabilityZoneIdFromAvailabilityZoneLetter(azLetter);
+
+          if (!(azLetter in metricsPerAZ)) {
+            metricsPerAZ[azLetter] = [];
+          }
+  
+          let requestCount: IMetric = alb.metrics.requestCount(
+            {
+              dimensionsMap: {
+                AvailabilityZone: availabilityZone,
+                LoadBalancer: (alb as ILoadBalancerV2 as BaseLoadBalancer)
+                  .loadBalancerFullName,
+              },
+              label: availabilityZoneId,
+              period: period,
+              statistic: Stats.SUM,
+              unit: Unit.COUNT
+            },
+          );
+  
+          metricsPerAZ[azLetter].push(requestCount);
+        });   
+      });
+  
+      // We can have multiple load balancers per zone, so add their processed bytes together
+      Object.keys(metricsPerAZ).forEach((azLetter: string) => {
+        let availabilityZoneId = azMapper.availabilityZoneIdFromAvailabilityZoneLetter(azLetter);
+  
+        let usingMetrics: {[key: string]: IMetric} = {};
+  
+        metricsPerAZ[azLetter].forEach((metric: IMetric, index: number) => {
+          usingMetrics[`${keyprefix}${index}`] = metric;
+        });
+
+        keyprefix = MetricsHelper.nextChar(keyprefix);
+  
+        requestsPerZone[azLetter] = new MathExpression({
+          expression: Object.keys(usingMetrics).join("+"),
+          usingMetrics: usingMetrics,
+          label: availabilityZoneId,
+          period: period
+        });
+      });
+
+      prefix = keyprefix;
+  
+      return requestsPerZone;
     }
 
     /**
@@ -767,12 +837,12 @@ export class ApplicationLoadBalancerMetrics {
       albs.forEach((alb: IApplicationLoadBalancer) => {
   
         alb.vpc!.availabilityZones.forEach((availabilityZone: string) => {
-          if (!(availabilityZone in metricsPerAZ)) {
-            metricsPerAZ[availabilityZone] = [];
-          }
-  
           let azLetter = availabilityZone.substring(availabilityZone.length - 1);
           let availabilityZoneId = azMapper.availabilityZoneIdFromAvailabilityZoneLetter(azLetter);
+
+          if (!(azLetter in metricsPerAZ)) {
+            metricsPerAZ[azLetter] = [];
+          }
   
           let processedBytes: IMetric = alb.metrics.processedBytes(
             {
@@ -789,20 +859,20 @@ export class ApplicationLoadBalancerMetrics {
           );
   
           metricsPerAZ[azLetter].push(processedBytes);
-  
-          keyprefix = MetricsHelper.nextChar(keyprefix);
         });   
       });
   
       // We can have multiple load balancers per zone, so add their processed bytes together
       Object.keys(metricsPerAZ).forEach((azLetter: string) => {
         let availabilityZoneId = azMapper.availabilityZoneIdFromAvailabilityZoneLetter(azLetter);
-  
+
         let usingMetrics: {[key: string]: IMetric} = {};
   
         metricsPerAZ[azLetter].forEach((metric: IMetric, index: number) => {
           usingMetrics[`${keyprefix}${index}`] = metric;
         });
+
+        keyprefix = MetricsHelper.nextChar(keyprefix);
   
         processedBytesPerZone[azLetter] = new MathExpression({
           expression: Object.keys(usingMetrics).join("+"),
@@ -813,74 +883,6 @@ export class ApplicationLoadBalancerMetrics {
       });
   
       return processedBytesPerZone;
-    }
-
-    /**
-     * Calculates the total number of processed bytes for all ALBs in each zone
-     * @param albs 
-     * @param period 
-     * @param azMapper 
-     * @returns 
-     */
-    static getTotalAlbRequestsPerZone(
-      albs: IApplicationLoadBalancer[],
-      period: Duration,
-      azMapper: AvailabilityZoneMapper
-    ) : {[key: string]: IMetric}
-    {
-      let requestsPerZone: {[key: string]: IMetric} = {};
-      let metricsPerAZ: {[key: string]: IMetric[]} = {};
-      let keyprefix: string = MetricsHelper.nextChar();
-  
-      albs.forEach((alb: IApplicationLoadBalancer) => {
-  
-        alb.vpc!.availabilityZones.forEach((availabilityZone: string) => {
-          if (!(availabilityZone in metricsPerAZ)) {
-            metricsPerAZ[availabilityZone] = [];
-          }
-  
-          let azLetter = availabilityZone.substring(availabilityZone.length - 1);
-          let availabilityZoneId = azMapper.availabilityZoneIdFromAvailabilityZoneLetter(azLetter);
-  
-          let requestCount: IMetric = alb.metrics.requestCount(
-            {
-              dimensionsMap: {
-                AvailabilityZone: availabilityZone,
-                LoadBalancer: (alb as ILoadBalancerV2 as BaseLoadBalancer)
-                  .loadBalancerFullName,
-              },
-              label: availabilityZoneId,
-              period: period,
-              statistic: Stats.SUM,
-              unit: Unit.COUNT
-            },
-          );
-  
-          metricsPerAZ[azLetter].push(requestCount);
-  
-          keyprefix = MetricsHelper.nextChar(keyprefix);
-        });   
-      });
-  
-      // We can have multiple load balancers per zone, so add their processed bytes together
-      Object.keys(metricsPerAZ).forEach((azLetter: string) => {
-        let availabilityZoneId = azMapper.availabilityZoneIdFromAvailabilityZoneLetter(azLetter);
-  
-        let usingMetrics: {[key: string]: IMetric} = {};
-  
-        metricsPerAZ[azLetter].forEach((metric: IMetric, index: number) => {
-          usingMetrics[`${keyprefix}${index}`] = metric;
-        });
-  
-        requestsPerZone[azLetter] = new MathExpression({
-          expression: Object.keys(usingMetrics).join("+"),
-          usingMetrics: usingMetrics,
-          label: availabilityZoneId,
-          period: period
-        });
-      });
-  
-      return requestsPerZone;
     }
 
     /**
@@ -900,7 +902,6 @@ export class ApplicationLoadBalancerMetrics {
     ) : {[key: string]: IMetric}
     {
       let latencyPerZone: {[key: string]: IMetric} = {};
-      let metricsPerAZ: {[key: string]: IMetric[]} = {};
       let keyprefix: string = MetricsHelper.nextChar();
 
       let requestCountsPerAZ: {[key: string]: IMetric[]} = {};
@@ -913,8 +914,8 @@ export class ApplicationLoadBalancerMetrics {
 
           let azLetter = availabilityZone.substring(availabilityZone.length - 1);
 
-          if (!(azLetter in metricsPerAZ)) {
-            metricsPerAZ[azLetter] = [];
+          if (!(azLetter in weightedLatencyPerAZ)) {
+            weightedLatencyPerAZ[azLetter] = [];
           }
 
           if (!(azLetter in requestCountsPerAZ)) {
@@ -1023,13 +1024,14 @@ export class ApplicationLoadBalancerMetrics {
      * @returns The fault rate per AZ using the AZ name letter as the key for each metric
      */
     static getTotalAlbFaultRatePerZone(
-      requestsPerZone: {[key: string]: IMetric},
-      faultsPerZone: {[key: string]: IMetric},
+      albs: IApplicationLoadBalancer[],
       period: Duration,
-      azMapper: AvailabilityZoneMapper
+      azMapper: AvailabilityZoneMapper,
     ) : {[key: string]: IMetric} {
 
       let faultRateMetrics: {[key: string]: IMetric} = {};
+      let requestsPerZone: {[key: string]: IMetric} = this.getTotalAlbRequestsPerZone(albs, period, azMapper, "a");
+      let faultsPerZone: {[key: string]: IMetric} = this.getTotalAlbFaultCountPerZone(albs, period, azMapper, "e");
 
       Object.keys(requestsPerZone).forEach((key: string) => {
         if (key in faultsPerZone) {
