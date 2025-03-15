@@ -68,5 +68,5 @@ new BasicServiceMultiAZObservability(stack, 'MAZObservability', {
   datapointsToAlarm: 3,
   evaluationPeriods: 5,
   latencyStatistic: "p99",
-  latencyThreshold: 200
+  latencyThreshold: .5
 });

@@ -23,18 +23,25 @@ export class BasicServiceDashboard extends Construct {
   private static generateLoadBalancerWidgets(
     albs: IApplicationLoadBalancer[],
     azMapper: AvailabilityZoneMapper,
-    period: Duration
+    period: Duration,
+    latencyStatistic: string
   ): IWidget[] {
     let albWidgets: IWidget[] = [];
 
     albWidgets.push(new TextWidget({ height: 2, width: 24, markdown: "Load Balancer Metrics" }));
 
-    let successCountPerZone: {[key: string]: IMetric} = ApplicationLoadBalancerMetrics.getTotalAlbSuccessCountPerZone(albs, period, azMapper);
-    let faultCountPerZone: {[key: string]: IMetric} = ApplicationLoadBalancerMetrics.getTotalAlbFaultCountPerZone(albs, period, azMapper);
-    let processedBytesPerZone: {[key: string]: IMetric} = ApplicationLoadBalancerMetrics.getTotalAlbProcessedBytesPerZone(albs, period, azMapper);
-    let latencyPerZone: {[key: string]: IMetric} = ApplicationLoadBalancerMetrics.getTotalAlbLatencyPerZone(albs, "p99", period, azMapper);
-    let requestsPerZone: {[key: string]: IMetric} = ApplicationLoadBalancerMetrics.getTotalAlbRequestsPerZone(albs, period, azMapper);  
-    let faultRatePerZone: {[key: string]: IMetric} = ApplicationLoadBalancerMetrics.getTotalAlbFaultRatePerZone(albs, period, azMapper);  
+    let successCountPerZone: {[key: string]: IMetric} = 
+      ApplicationLoadBalancerMetrics.getTotalAlbSuccessCountPerZone(albs, period, azMapper);
+    let faultCountPerZone: {[key: string]: IMetric} = 
+      ApplicationLoadBalancerMetrics.getTotalAlbFaultCountPerZone(albs, period, azMapper);
+    let processedBytesPerZone: {[key: string]: IMetric} = 
+      ApplicationLoadBalancerMetrics.getTotalAlbProcessedBytesPerZone(albs, period, azMapper);
+    let latencyPerZone: {[key: string]: IMetric} = 
+      ApplicationLoadBalancerMetrics.getTotalAlbLatencyPerZone(albs, latencyStatistic, period, azMapper);
+    let requestsPerZone: {[key: string]: IMetric} = 
+      ApplicationLoadBalancerMetrics.getTotalAlbRequestsPerZone(albs, period, azMapper);  
+    let faultRatePerZone: {[key: string]: IMetric} =
+      ApplicationLoadBalancerMetrics.getTotalAlbFaultRatePerZone(albs, period, azMapper);  
 
     albWidgets.push(
       new GraphWidget({
@@ -75,7 +82,7 @@ export class BasicServiceDashboard extends Construct {
         left: Object.values(requestsPerZone),
         leftYAxis: {
           min: 0,
-          label: 'Percent',
+          label: 'Sum',
           showUnits: false,
         }
       })
@@ -90,7 +97,7 @@ export class BasicServiceDashboard extends Construct {
         left: Object.values(faultRatePerZone),
         leftYAxis: {
           min: 0,
-          label: 'Sum',
+          label: 'Percent',
           showUnits: false,
         }
       })
@@ -115,7 +122,7 @@ export class BasicServiceDashboard extends Construct {
       new GraphWidget({
         height: 8,
         width: 8,
-        title: Fn.sub('${AWS::Region} Zonal Target Response Time (p99)'),
+        title: Fn.sub('${AWS::Region} Zonal Target Response Time (' + latencyStatistic + ')'),
         region: Fn.sub('${AWS::Region}'),
         left: Object.values(latencyPerZone),
         leftYAxis: {
@@ -309,7 +316,8 @@ export class BasicServiceDashboard extends Construct {
         BasicServiceDashboard.generateLoadBalancerWidgets(
           props.albs,
           props.azMapper,
-          props.period
+          props.period,
+          props.latencyStatistic
         )
       )
     }

@@ -171,6 +171,7 @@ export class BasicServiceMultiAZObservability
             props.period ? props.period : Duration.minutes(1)
           ),
           azMapper: this._azMapper,
+          latencyStatistic: props.latencyStatistic
         },
       ).dashboard;
     }
