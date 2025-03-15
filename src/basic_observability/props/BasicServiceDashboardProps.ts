@@ -28,4 +28,6 @@ export interface BasicServiceDashboardProps {
   readonly albs?: IApplicationLoadBalancer[];
 
   readonly period: Duration;
+
+  readonly latencyStatistic: string;
 }

@@ -913,7 +913,8 @@ export class ApplicationLoadBalancerMetrics {
       let latencyPerZone: {[key: string]: IMetric} = {};
       let keyprefix: string = MetricsHelper.nextChar();
 
-      let requestCountsPerAZ: {[key: string]: IMetric[]} = {};
+      //let requestCountsPerAZ: {[key: string]: IMetric[]} = {};
+      let requestCountsPerAZMetricKeys: {[key: string]: string[]} = {};
 
       let weightedLatencyPerAZ: {[key: string]: IMetric[]} = {};
   
@@ -927,8 +928,12 @@ export class ApplicationLoadBalancerMetrics {
             weightedLatencyPerAZ[azLetter] = [];
           }
 
-          if (!(azLetter in requestCountsPerAZ)) {
-            requestCountsPerAZ[azLetter] = [];
+          //if (!(azLetter in requestCountsPerAZ)) {
+          //  requestCountsPerAZ[azLetter] = [];
+          //}
+
+          if (!(azLetter in requestCountsPerAZMetricKeys)) {
+            requestCountsPerAZMetricKeys[azLetter] = [];
           }
    
           let availabilityZoneId = azMapper.availabilityZoneIdFromAvailabilityZoneLetter(azLetter);
@@ -943,7 +948,7 @@ export class ApplicationLoadBalancerMetrics {
               label: availabilityZoneId,
               period: period,
               statistic: statistic,
-              unit: Unit.MILLISECONDS
+              unit: Unit.SECONDS
             },
           );
 
@@ -974,7 +979,8 @@ export class ApplicationLoadBalancerMetrics {
 
           weightedLatencyPerAZ[azLetter].push(weightedLatency);
 
-          requestCountsPerAZ[azLetter].push(requestCount);
+          //requestCountsPerAZ[azLetter].push(requestCount);
+          requestCountsPerAZMetricKeys[azLetter].push(`${keyprefix}2`);
   
           keyprefix = MetricsHelper.nextChar(keyprefix);
         });   
@@ -996,11 +1002,13 @@ export class ApplicationLoadBalancerMetrics {
 
         keyprefix = MetricsHelper.nextChar(keyprefix);
 
-        requestCountsPerAZ[azLetter].forEach((metric: IMetric, index: number) => {
-          usingMetrics[`${keyprefix}${index}`] = metric;
-        }); 
+        // TODO: We're duplicating the same metric with 2 different keys for request count
+        //requestCountsPerAZ[azLetter].forEach((metric: IMetric, index: number) => {
+        //  usingMetrics[`${keyprefix}${index}`] = metric;
+        //}); 
 
-        let denominator: string = "(" + Object.keys(usingMetrics).slice(index).join("+") + ")";
+        //let denominator: string = "(" + Object.keys(usingMetrics).slice(index).join("+") + ")";
+        let denominator: string = "(" + requestCountsPerAZMetricKeys[azLetter].join("+") + ")";
 
         /**
          * We want to calculate this formula
@@ -1012,7 +1020,7 @@ export class ApplicationLoadBalancerMetrics {
          */
   
         latencyPerZone[azLetter] = new MathExpression({
-          expression: numerator + "/" + denominator,
+          expression: "(" + numerator + "/" + denominator + ") * 1000",
           usingMetrics: usingMetrics,
           label: availabilityZoneId,
           period: period
