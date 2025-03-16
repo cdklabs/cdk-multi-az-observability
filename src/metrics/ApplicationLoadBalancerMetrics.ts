@@ -913,7 +913,6 @@ export class ApplicationLoadBalancerMetrics {
       let latencyPerZone: {[key: string]: IMetric} = {};
       let keyprefix: string = MetricsHelper.nextChar();
 
-      //let requestCountsPerAZ: {[key: string]: IMetric[]} = {};
       let requestCountsPerAZMetricKeys: {[key: string]: string[]} = {};
 
       let weightedLatencyPerAZ: {[key: string]: IMetric[]} = {};
@@ -927,10 +926,6 @@ export class ApplicationLoadBalancerMetrics {
           if (!(azLetter in weightedLatencyPerAZ)) {
             weightedLatencyPerAZ[azLetter] = [];
           }
-
-          //if (!(azLetter in requestCountsPerAZ)) {
-          //  requestCountsPerAZ[azLetter] = [];
-          //}
 
           if (!(azLetter in requestCountsPerAZMetricKeys)) {
             requestCountsPerAZMetricKeys[azLetter] = [];
@@ -978,8 +973,6 @@ export class ApplicationLoadBalancerMetrics {
           });
 
           weightedLatencyPerAZ[azLetter].push(weightedLatency);
-
-          //requestCountsPerAZ[azLetter].push(requestCount);
           requestCountsPerAZMetricKeys[azLetter].push(`${keyprefix}2`);
   
           keyprefix = MetricsHelper.nextChar(keyprefix);
@@ -998,18 +991,11 @@ export class ApplicationLoadBalancerMetrics {
         });
 
         let numerator = "(" + Object.keys(usingMetrics).join("+") + ")";
-        //let index = Object.keys(usingMetrics).length;
+        let denominator: string = "(" + requestCountsPerAZMetricKeys[azLetter].join("+") + ")";
 
         keyprefix = MetricsHelper.nextChar(keyprefix);
 
-        // TODO: We're duplicating the same metric with 2 different keys for request count
-        //requestCountsPerAZ[azLetter].forEach((metric: IMetric, index: number) => {
-        //  usingMetrics[`${keyprefix}${index}`] = metric;
-        //}); 
-
-        //let denominator: string = "(" + Object.keys(usingMetrics).slice(index).join("+") + ")";
-        let denominator: string = "(" + requestCountsPerAZMetricKeys[azLetter].join("+") + ")";
-
+       
         /**
          * We want to calculate this formula
          * 

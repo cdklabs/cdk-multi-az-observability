@@ -154,24 +154,19 @@ export class BasicServiceMultiAZObservability
           serviceName: props.serviceName.toLowerCase(),
           zonalAggregateIsolatedImpactAlarms:
             this.aggregateZonalIsolatedImpactAlarms,
-          zonalLoadBalancerIsolatedImpactAlarms:
-            this.albZonalIsolatedImpactAlarms,
           zonalNatGatewayIsolatedImpactAlarms:
             this.natGWZonalIsolatedImpactAlarms,
           interval: props.interval,
           albs: props.applicationLoadBalancers,
-          /*zonalLoadBalancerFaultRateMetrics: ApplicationLoadBalancerMetrics.getTotalAlbFaultCountPerZone(
-            props.applicationLoadBalancers ? props.applicationLoadBalancers : [], 
-            props.period ? props.period : Duration.minutes(1),
-            this._azMapper
-          ),*/
           period: props.period ? props.period : Duration.minutes(1),
           zonalNatGatewayPacketDropMetrics: this.getTotalPacketDropsPerZone(
             props.natGateways ? props.natGateways : {},
             props.period ? props.period : Duration.minutes(1)
           ),
           azMapper: this._azMapper,
-          latencyStatistic: props.latencyStatistic
+          latencyStatistic: props.latencyStatistic,
+          latencyThreshold: props.latencyThreshold,
+          faultCountPercentageThreshold: props.faultCountPercentageThreshold
         },
       ).dashboard;
     }

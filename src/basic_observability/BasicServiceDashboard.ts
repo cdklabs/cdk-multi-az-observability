@@ -3,6 +3,7 @@
 import { Duration, Fn } from 'aws-cdk-lib';
 import {
   AlarmStatusWidget,
+  Color,
   Dashboard,
   GraphWidget,
   IAlarm,
@@ -24,7 +25,9 @@ export class BasicServiceDashboard extends Construct {
     albs: IApplicationLoadBalancer[],
     azMapper: AvailabilityZoneMapper,
     period: Duration,
-    latencyStatistic: string
+    latencyStatistic: string,
+    latencyThreshold: number,
+    faultRateThreshold: number
   ): IWidget[] {
     let albWidgets: IWidget[] = [];
 
@@ -99,7 +102,14 @@ export class BasicServiceDashboard extends Construct {
           min: 0,
           label: 'Percent',
           showUnits: false,
-        }
+        },
+        leftAnnotations: [
+          {
+            label: "High Severity",
+            value: faultRateThreshold,
+            color: Color.RED
+          }
+        ]       
       })
     );
 
@@ -129,70 +139,19 @@ export class BasicServiceDashboard extends Construct {
           min: 0,
           label: "Milliseconds",
           showUnits: false,
-        }
+        },
+        leftAnnotations: [
+          {
+            label: "High Severity",
+            value: latencyThreshold,
+            color: Color.RED
+          }
+        ]
       })
     );
 
     return albWidgets;
   }
-
-  /*private static createLoadBalancerWidgets(
-    alarms: { [key: string]: IAlarm },
-    metrics: { [key: string]: IMetric },
-    azMapper: AvailabilityZoneMapper,
-  ): IWidget[] {
-    let widgets: IWidget[] = [];
-
-    widgets.push(
-      new TextWidget({
-        markdown: 'Load Balancer Metrics',
-        height: 2,
-        width: 24,
-      }),
-    );
-
-    let rowTracker: number = 0;
-
-    Object.keys(alarms).forEach((azLetter, index) => {
-      let availabilityZoneId: string = azMapper.availabilityZoneIdFromAvailabilityZoneLetter(azLetter);
-
-      widgets.push(
-        new GraphWidget({
-          height: 6,
-          width: 8,
-          title: availabilityZoneId + ' Load Balancer Faults',
-          region: Fn.sub('${AWS::Region}'),
-          left: [metrics[azLetter]],
-          statistic: 'Sum',
-          leftYAxis: {
-            min: 0,
-            label: 'Fault Count',
-            showUnits: false,
-          },
-        }),
-      );
-
-      //We're on the third one for this set, add 3 alarms
-      //or if we're at the end, at the necessary amount
-      //of alarms, 1, 2, or 3
-      if (index % 3 == 2 || index - 1 == Object.keys(alarms).length) {
-        for (let k = rowTracker; k <= index; k++) {
-          let azId: string = Object.keys(alarms).at(k)!;
-          widgets.push(
-            new AlarmStatusWidget({
-              height: 2,
-              width: 8,
-              alarms: [alarms[azId]],
-            }),
-          );
-        }
-
-        rowTracker += index + 1;
-      }
-    });
-
-    return widgets;
-  }*/
 
   private static createNatGatewayWidgets(
     alarms: { [key: string]: IAlarm },
@@ -298,26 +257,15 @@ export class BasicServiceDashboard extends Construct {
       ),
     );
 
-    /*if (
-      MetricsHelper.isNotEmpty(props.zonalLoadBalancerIsolatedImpactAlarms) &&
-      MetricsHelper.isNotEmpty(props.zonalLoadBalancerFaultRateMetrics)
-    ) {
-      widgets.push(
-        BasicServiceDashboard.createLoadBalancerWidgets(
-          props.zonalLoadBalancerIsolatedImpactAlarms,
-          props.zonalLoadBalancerFaultRateMetrics,
-          props.azMapper,
-        ),
-      );
-    }*/
-
     if (props.albs) {
       widgets.push(
         BasicServiceDashboard.generateLoadBalancerWidgets(
           props.albs,
           props.azMapper,
           props.period,
-          props.latencyStatistic
+          props.latencyStatistic,
+          props.latencyThreshold,
+          props.faultCountPercentageThreshold
         )
       )
     }
