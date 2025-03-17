@@ -1,4 +1,4 @@
-import { Alarm, ComparisonOperator, IAlarm, IMetric, MathExpression, Stats, TreatMissingData, Unit } from "aws-cdk-lib/aws-cloudwatch";
+import { Alarm, Color, ComparisonOperator, IAlarm, IMetric, MathExpression, Stats, TreatMissingData, Unit } from "aws-cdk-lib/aws-cloudwatch";
 import { BaseLoadBalancer, HttpCodeElb, HttpCodeTarget, IApplicationLoadBalancer, ILoadBalancerV2 } from "aws-cdk-lib/aws-elasticloadbalancingv2";
 import { AvailabilityMetricType } from "../utilities/AvailabilityMetricType";
 import { ZonalApplicationLoadBalancerLatencyMetricProps } from "../basic_observability/props/ZonalApplicationLoadBalancerLatencyMetricProps";
@@ -13,6 +13,8 @@ import { ApplicationLoadBalancerAvailabilityOutlierAlgorithm } from "../outlier-
 import { ApplicationLoadBalancerLatencyOutlierAlgorithm } from "../outlier-detection/ApplicationLoadBalancerLatencyOutlierAlgorithm";
 
 export class ApplicationLoadBalancerMetrics {
+
+    private static readonly colors: string[] = [ Color.BLUE, Color.ORANGE, Color.GREEN, Color.RED, Color.BROWN, Color.PINK ];
 
     /**
      * Gets the TargetResponseTime latency for the ALB
@@ -545,7 +547,7 @@ export class ApplicationLoadBalancerMetrics {
   
       albs.forEach((alb: IApplicationLoadBalancer) => {
   
-        alb.vpc!.availabilityZones.forEach((availabilityZone: string) => {
+        alb.vpc!.availabilityZones.forEach((availabilityZone: string, index: number) => {
           let azLetter = availabilityZone.substring(availabilityZone.length - 1);
           let availabilityZoneId = azMapper.availabilityZoneIdFromAvailabilityZoneLetter(azLetter);
 
@@ -594,7 +596,8 @@ export class ApplicationLoadBalancerMetrics {
             expression: `FILL(${keyprefix}1, 0) + FILL(${keyprefix}2, 0)`,
             usingMetrics: usingMetrics,
             period: period,
-            label: availabilityZoneId
+            label: availabilityZoneId,
+            color: ApplicationLoadBalancerMetrics.colors[index]
           }));
   
           keyprefix = MetricsHelper.nextChar(keyprefix);
@@ -603,7 +606,7 @@ export class ApplicationLoadBalancerMetrics {
   
       // We can have multiple load balancers per zone, so add their fault count
       // metrics together
-      Object.keys(metricsPerAZ).forEach((azLetter: string) => {
+      Object.keys(metricsPerAZ).forEach((azLetter: string, index: number) => {
         let availabilityZoneId = azMapper.availabilityZoneIdFromAvailabilityZoneLetter(azLetter);
 
         if (metricsPerAZ[azLetter].length > 1) {
@@ -618,7 +621,8 @@ export class ApplicationLoadBalancerMetrics {
             expression: Object.keys(usingMetrics).join("+"),
             usingMetrics: usingMetrics,
             label: availabilityZoneId,
-            period: period
+            period: period,
+            color: ApplicationLoadBalancerMetrics.colors[index]
           });
         }
         else {
@@ -647,7 +651,7 @@ export class ApplicationLoadBalancerMetrics {
   
       albs.forEach((alb: IApplicationLoadBalancer) => {
   
-        alb.vpc!.availabilityZones.forEach((availabilityZone: string) => {
+        alb.vpc!.availabilityZones.forEach((availabilityZone: string, index: number) => {
           let azLetter = availabilityZone.substring(availabilityZone.length - 1);
           let availabilityZoneId = azMapper.availabilityZoneIdFromAvailabilityZoneLetter(azLetter);
 
@@ -713,7 +717,8 @@ export class ApplicationLoadBalancerMetrics {
             expression: `FILL(${keyprefix}1, 0) + FILL(${keyprefix}2, 0) + FILL(${keyprefix}3, 0)`,
             usingMetrics: usingMetrics,
             period: period,
-            label: availabilityZoneId
+            label: availabilityZoneId,
+            color: ApplicationLoadBalancerMetrics.colors[index]
           }));
   
           keyprefix = MetricsHelper.nextChar(keyprefix);
@@ -722,7 +727,7 @@ export class ApplicationLoadBalancerMetrics {
   
       // We can have multiple load balancers per zone, so add their success count
       // metrics together
-      Object.keys(metricsPerAZ).forEach((azLetter: string) => {
+      Object.keys(metricsPerAZ).forEach((azLetter: string, index: number) => {
 
         let availabilityZoneId = azMapper.availabilityZoneIdFromAvailabilityZoneLetter(azLetter);
         
@@ -737,7 +742,8 @@ export class ApplicationLoadBalancerMetrics {
             expression: Object.keys(usingMetrics).join("+"),
             usingMetrics: usingMetrics,
             label: availabilityZoneId,
-            period: period
+            period: period,
+            color: ApplicationLoadBalancerMetrics.colors[index]
           });
         }
         else {
@@ -768,7 +774,7 @@ export class ApplicationLoadBalancerMetrics {
 
       albs.forEach((alb: IApplicationLoadBalancer) => {
   
-        alb.vpc!.availabilityZones.forEach((availabilityZone: string) => {
+        alb.vpc!.availabilityZones.forEach((availabilityZone: string, index: number) => {
           let azLetter = availabilityZone.substring(availabilityZone.length - 1);
           let availabilityZoneId = azMapper.availabilityZoneIdFromAvailabilityZoneLetter(azLetter);
 
@@ -786,7 +792,8 @@ export class ApplicationLoadBalancerMetrics {
               label: availabilityZoneId,
               period: period,
               statistic: Stats.SUM,
-              unit: Unit.COUNT
+              unit: Unit.COUNT,
+              color: ApplicationLoadBalancerMetrics.colors[index]
             },
           );
   
@@ -795,7 +802,7 @@ export class ApplicationLoadBalancerMetrics {
       });
   
       // We can have multiple load balancers per zone, so add their processed bytes together
-      Object.keys(metricsPerAZ).forEach((azLetter: string) => {
+      Object.keys(metricsPerAZ).forEach((azLetter: string, index: number) => {
         let availabilityZoneId = azMapper.availabilityZoneIdFromAvailabilityZoneLetter(azLetter);
 
         if (metricsPerAZ[azLetter].length > 1) {
@@ -812,7 +819,8 @@ export class ApplicationLoadBalancerMetrics {
             expression: Object.keys(usingMetrics).join("+"),
             usingMetrics: usingMetrics,
             label: availabilityZoneId,
-            period: period
+            period: period,
+            color: ApplicationLoadBalancerMetrics.colors[index]
           });
         }
         else {
@@ -842,7 +850,7 @@ export class ApplicationLoadBalancerMetrics {
   
       albs.forEach((alb: IApplicationLoadBalancer) => {
   
-        alb.vpc!.availabilityZones.forEach((availabilityZone: string) => {
+        alb.vpc!.availabilityZones.forEach((availabilityZone: string, index: number) => {
           let azLetter = availabilityZone.substring(availabilityZone.length - 1);
           let availabilityZoneId = azMapper.availabilityZoneIdFromAvailabilityZoneLetter(azLetter);
 
@@ -860,7 +868,8 @@ export class ApplicationLoadBalancerMetrics {
               label: availabilityZoneId,
               period: period,
               statistic: Stats.SUM,
-              unit: Unit.COUNT
+              unit: Unit.COUNT,
+              color: ApplicationLoadBalancerMetrics.colors[index]
             },
           );
   
@@ -869,7 +878,7 @@ export class ApplicationLoadBalancerMetrics {
       });
   
       // We can have multiple load balancers per zone, so add their processed bytes together
-      Object.keys(metricsPerAZ).forEach((azLetter: string) => {
+      Object.keys(metricsPerAZ).forEach((azLetter: string, index: number) => {
         let availabilityZoneId = azMapper.availabilityZoneIdFromAvailabilityZoneLetter(azLetter);
 
         if (metricsPerAZ[azLetter].length > 1) {
@@ -886,7 +895,8 @@ export class ApplicationLoadBalancerMetrics {
             expression: Object.keys(usingMetrics).join("+"),
             usingMetrics: usingMetrics,
             label: availabilityZoneId,
-            period: period
+            period: period,
+            color: ApplicationLoadBalancerMetrics.colors[index]
           });
         }
         else {
@@ -982,7 +992,7 @@ export class ApplicationLoadBalancerMetrics {
   
       // We can have multiple load balancers per zone, combine their latency per zone
       // to get an average latency percentile latency, like average p99
-      Object.keys(weightedLatencyPerAZ).forEach((azLetter: string) => {
+      Object.keys(weightedLatencyPerAZ).forEach((azLetter: string, index: number) => {
         let availabilityZoneId = azMapper.availabilityZoneIdFromAvailabilityZoneLetter(azLetter);
   
         let usingMetrics: {[key: string]: IMetric} = {};
@@ -1008,7 +1018,8 @@ export class ApplicationLoadBalancerMetrics {
           expression: "(" + numerator + "/" + denominator + ") * 1000",
           usingMetrics: usingMetrics,
           label: availabilityZoneId,
-          period: period
+          period: period,
+          color: ApplicationLoadBalancerMetrics.colors[index]
         });
 
         keyprefix = MetricsHelper.nextChar(keyprefix);
@@ -1035,7 +1046,7 @@ export class ApplicationLoadBalancerMetrics {
       let requestsPerZone: {[key: string]: IMetric} = this.getTotalAlbRequestsPerZone(albs, period, azMapper, "a");
       let faultsPerZone: {[key: string]: IMetric} = this.getTotalAlbFaultCountPerZone(albs, period, azMapper, "e");
 
-      Object.keys(requestsPerZone).forEach((key: string) => {
+      Object.keys(requestsPerZone).forEach((key: string, index: number) => {
         if (key in faultsPerZone) {
           let usingMetrics: {[key: string]: IMetric} = {};
           let keyprefix = 'z' + key;
@@ -1047,7 +1058,8 @@ export class ApplicationLoadBalancerMetrics {
             expression: `(${keyprefix}1/${keyprefix}2) * 100`,
             usingMetrics: usingMetrics,
             period: period,
-            label: azMapper.availabilityZoneIdFromAvailabilityZoneLetter(key)
+            label: azMapper.availabilityZoneIdFromAvailabilityZoneLetter(key),
+            color: ApplicationLoadBalancerMetrics.colors[index]
           });
 
           faultRateMetrics[key] = zonalFaultRate;
