@@ -1,3 +1,5 @@
+![Build Workflow](https://github.com/cdklabs/cdk-multi-az-observability/actions/workflows/build.yml/badge.svg) ![Release Workflow](https://github.com/cdklabs/cdk-multi-az-observability/actions/workflows/release.yml/badge.svg)
+
 # multi-az-observability
 This is a CDK construct for multi-AZ observability to help detect single-AZ impairments. This is currently an `alpha` version, but is being used in the AWS [Advanced Multi-AZ Resilience Patterns](https://catalog.workshops.aws/multi-az-gray-failures/en-US) workshop.
 
@@ -151,22 +153,27 @@ You define some characteristics of the service, default values for metrics and a
 If you don't have service specific logs and custom metrics with per-AZ dimensions, you can still use the construct to evaluate ALB and NAT Gateway metrics to find single AZ faults.
 
 ```csharp
-BasicServiceMultiAZObservability multiAvailabilityZoneObservability = new BasicServiceMultiAZObservability(this, "MultiAZObservability", new BasicServiceMultiAZObservabilityProps() {
-    ApplicationLoadBalancers = new IApplicationLoadBalancer[] { loadBalancer },
-    NatGateways = new Dictionary<string, CfnNatGateway>() {
-        { "us-east-1a", natGateway1},
-        { "us-east-1b", natGateway2},
-        { "us-east-1c", natGateway3},
+BasicServiceMultiAZObservability multiAZObservability = new BasicServiceMultiAZObservability(this, "basic-service-", new BasicServiceMultiAZObservabilityProps() {  
+    ApplicationLoadBalancerProps = new ApplicationLoadBalancerDetectionProps() {
+        ApplicationLoadBalancers = [ myALB ],
+        LatencyStatistic = Stats.Percentile(99),
+        FaultCountPercentThreshold = 1,
+        LatencyThreshold = 500
+    },
+    NatGatewayProps = new NatGatewayDetectionProps() {     
+        PacketLossPercentThreshold = 0.01,
+        NatGateways = {
+           { "us-east-1a", [ natGateway1 ] },
+           { "us-east-1b", [ natGateway2 ] },
+           { "us-east-1c", [ natGateway3 ] }
+        },
     },
     CreateDashboard = true,
-    OutlierDetectionAlgorithm = OutlierDetectionAlgorithm.STATIC,
-    FaultCountPercentageThreshold = 1.0, // The fault rate to alarm on for errors seen from the ALBs in the same AZ
-    PacketLossImpactPercentageThreshold = 0.01, // The percentage of packet loss to alarm on for the NAT Gateways in the same AZ
+    DatapointsToAlarm = 2,
+    EvaluationPeriods = 3,
     ServiceName = "WildRydes",
-    Period = Duration.Seconds(60), // The period for metric evaluation
-    Interval = Duration.Minutes(60) // The interval for the dashboards
-    EvaluationPeriods = 5,
-    DatapointsToAlarm = 3
+    Period = Duration.Seconds(60),
+    Interval = Duration.Minutes(60),          
 });
 ```
 
