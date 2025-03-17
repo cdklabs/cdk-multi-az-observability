@@ -523,142 +523,6 @@ export class ServiceAvailabilityAndLatencyDashboard
       });
   }
 
-  private static generateLoadBalancerWidgets(
-    props: ServiceAvailabilityAndLatencyDashboardProps,
-    title: string,
-    availabilityZoneNames: string[],
-  ): IWidget[] {
-    let albWidgets: IWidget[] = [];
-
-    albWidgets.push(new TextWidget({ height: 2, width: 24, markdown: title }));
-
-    let keyprefix = MetricsHelper.nextChar();
-
-    let faultRateMetrics: IMetric[] = [];
-    let requestCountMetrics: IMetric[] = [];
-    let processedBytesMetrics: IMetric[] = [];
-    let latencyMetrics: IMetric[] = [];
-
-    availabilityZoneNames.forEach((availabilityZoneName) => {
-      let availabilityZoneId: string =
-        props.azMapper.availabilityZoneIdFromAvailabilityZoneLetter(
-          availabilityZoneName.substring(availabilityZoneName.length - 1),
-        );
-
-      keyprefix = MetricsHelper.nextChar(keyprefix);
-
-      let faultMetric: IMetric = ApplicationLoadBalancerMetrics.getPerAZAvailabilityMetric(
-        props.service.loadBalancer as IApplicationLoadBalancer,
-        {
-          availabilityZone: availabilityZoneName,
-          availabilityZoneId: availabilityZoneId,
-          metricType: AvailabilityMetricType.FAULT_RATE,
-          label: availabilityZoneId,
-          period: props.service.period,
-          keyprefix: keyprefix
-        }
-      );
-
-      faultRateMetrics.push(faultMetric);
-
-      let requestCountMetric: IMetric = ApplicationLoadBalancerMetrics.getPerAZAvailabilityMetric(
-        props.service.loadBalancer as IApplicationLoadBalancer,
-        {
-          availabilityZone: availabilityZoneName,
-          availabilityZoneId: availabilityZoneId,
-          metricType: AvailabilityMetricType.REQUEST_COUNT,
-          label: availabilityZoneId,
-          period: props.service.period,
-          keyprefix: keyprefix
-        }
-      );
-
-      requestCountMetrics.push(requestCountMetric);
-
-      let processedBytesMetric: IMetric = ApplicationLoadBalancerMetrics.getPerAZProcessedBytesMetric(
-        props.service.loadBalancer as IApplicationLoadBalancer,
-        availabilityZoneName,
-        availabilityZoneId,
-        props.service.period
-      );
-
-      processedBytesMetrics.push(processedBytesMetric);
-
-      let latencyMetric: IMetric = ApplicationLoadBalancerMetrics.getPerAZLatencyMetric(
-        {
-          availabilityZone: availabilityZoneName,
-          availabilityZoneId: availabilityZoneId,
-          alb: props.service.loadBalancer as IApplicationLoadBalancer,
-          statistic: "p99",
-          label: availabilityZoneId,
-          period: props.service.period
-        }
-      );
-
-      latencyMetrics.push(latencyMetric)
-    });
-
-    albWidgets.push(
-      new GraphWidget({
-        height: 8,
-        width: 8,
-        title: Fn.sub('${AWS::Region} Fault Rate'),
-        region: Fn.sub('${AWS::Region}'),
-        left: faultRateMetrics,
-        leftYAxis: {
-          max: 35,
-          min: 0,
-          label: 'Fault Rate',
-          showUnits: false,
-        }
-      })
-    );
-
-    albWidgets.push(
-      new GraphWidget({
-        height: 8,
-        width: 8,
-        title: Fn.sub('${AWS::Region} Request Count'),
-        region: Fn.sub('${AWS::Region}'),
-        left: requestCountMetrics,
-        leftYAxis: {
-          min: 0,
-          label: 'Sum',
-          showUnits: false,
-        }
-      })
-    );
-
-    albWidgets.push(
-      new GraphWidget({
-        height: 8,
-        width: 8,
-        title: Fn.sub('${AWS::Region} Processed Bytes'),
-        region: Fn.sub('${AWS::Region}'),
-        left: processedBytesMetrics,
-        leftYAxis: {
-          min: 0,
-          showUnits: true,
-        }
-      })
-    );
-
-    albWidgets.push(
-      new GraphWidget({
-        height: 8,
-        width: 8,
-        title: Fn.sub('${AWS::Region} Latency'),
-        region: Fn.sub('${AWS::Region}'),
-        left: latencyMetrics,
-        leftYAxis: {
-          min: 0,
-          showUnits: true,
-        }
-      })
-    );
-
-    return albWidgets;
-  }
   /**
    * The service level dashboard
    */
@@ -789,13 +653,20 @@ export class ServiceAvailabilityAndLatencyDashboard
     let lb: CfnLoadBalancer = props.service.loadBalancer?.node
       .defaultChild as CfnLoadBalancer;
 
-    if (lb !== undefined && lb != null && lb.type == 'application') {
+    if (lb && lb.type == 'application') {
       this.dashboard.addWidgets(
-        ...ServiceAvailabilityAndLatencyDashboard.generateLoadBalancerWidgets(
-          props,
-          '**Application Load Balancer Metrics**',
-          props.service.availabilityZoneNames,
-        ),
+        new TextWidget({ height: 2, width: 24, markdown: "Load Balancer Metrics" })
+      );
+
+      this.dashboard.addWidgets(
+        ...ApplicationLoadBalancerMetrics.generateLoadBalancerWidgets(
+          [ props.service.loadBalancer as IApplicationLoadBalancer ],
+          props.azMapper,
+          props.service.period,
+          props.service.defaultLatencyMetricDetails.alarmStatistic,
+          props.service.defaultLatencyMetricDetails.successAlarmThreshold,
+          props.service.defaultLatencyMetricDetails.faultAlarmThreshold
+        )
       );
     }
   }

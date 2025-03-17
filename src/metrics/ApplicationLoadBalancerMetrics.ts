@@ -1,9 +1,9 @@
-import { Alarm, Color, ComparisonOperator, IAlarm, IMetric, MathExpression, Stats, TreatMissingData, Unit } from "aws-cdk-lib/aws-cloudwatch";
+import { Alarm, Color, ComparisonOperator, GraphWidget, IAlarm, IMetric, IWidget, MathExpression, Stats, TreatMissingData, Unit } from "aws-cdk-lib/aws-cloudwatch";
 import { BaseLoadBalancer, HttpCodeElb, HttpCodeTarget, IApplicationLoadBalancer, ILoadBalancerV2 } from "aws-cdk-lib/aws-elasticloadbalancingv2";
 import { AvailabilityMetricType } from "../utilities/AvailabilityMetricType";
 import { ZonalApplicationLoadBalancerLatencyMetricProps } from "../basic_observability/props/ZonalApplicationLoadBalancerLatencyMetricProps";
 import { ZonalApplicationLoadBalancerAvailabilityMetricProps } from "../basic_observability/props/ZonalApplicationLoadBalancerAvailabilityMetricProps";
-import { Aws, Duration } from "aws-cdk-lib";
+import { Aws, Duration, Fn } from "aws-cdk-lib";
 import { RegionalApplicationLoadBalancerAvailabilityMetricProps } from "../basic_observability/props/RegionalApplicationLoadBalancerAvailabilityMetricProps";
 import { RegionalApplicationLoadBalancerLatencyMetricProps } from "../basic_observability/props/RegionalApplicationLoadBalancerLatencyMetricProps";
 import { AvailabilityZoneMapper } from "../azmapper/AvailabilityZoneMapper";
@@ -1371,4 +1371,134 @@ export class ApplicationLoadBalancerMetrics {
           );
       }
     }
+
+    static generateLoadBalancerWidgets(
+        albs: IApplicationLoadBalancer[],
+        azMapper: AvailabilityZoneMapper,
+        period: Duration,
+        latencyStatistic: string,
+        latencyThreshold: number,
+        faultRateThreshold: number
+      ): IWidget[] {
+        let albWidgets: IWidget[] = [];
+    
+        let successCountPerZone: {[key: string]: IMetric} = 
+          ApplicationLoadBalancerMetrics.getTotalAlbSuccessCountPerZone(albs, period, azMapper);
+        let faultCountPerZone: {[key: string]: IMetric} = 
+          ApplicationLoadBalancerMetrics.getTotalAlbFaultCountPerZone(albs, period, azMapper);
+        let processedBytesPerZone: {[key: string]: IMetric} = 
+          ApplicationLoadBalancerMetrics.getTotalAlbProcessedBytesPerZone(albs, period, azMapper);
+        let latencyPerZone: {[key: string]: IMetric} = 
+          ApplicationLoadBalancerMetrics.getTotalAlbLatencyPerZone(albs, latencyStatistic, period, azMapper);
+        let requestsPerZone: {[key: string]: IMetric} = 
+          ApplicationLoadBalancerMetrics.getTotalAlbRequestsPerZone(albs, period, azMapper);  
+        let faultRatePerZone: {[key: string]: IMetric} =
+          ApplicationLoadBalancerMetrics.getTotalAlbFaultRatePerZone(albs, period, azMapper);  
+    
+        albWidgets.push(
+          new GraphWidget({
+            height: 8,
+            width: 8,
+            title: Fn.sub('${AWS::Region} Zonal Success Count'),
+            region: Aws.REGION,
+            left: Object.values(successCountPerZone),
+            leftYAxis: {
+              min: 0,
+              label: 'Sum',
+              showUnits: false,
+            }
+          })
+        );
+    
+        albWidgets.push(
+          new GraphWidget({
+            height: 8,
+            width: 8,
+            title: Fn.sub('${AWS::Region} Zonal Fault Count'),
+            region: Aws.REGION,
+            left: Object.values(faultCountPerZone),
+            leftYAxis: {
+              min: 0,
+              label: 'Sum',
+              showUnits: false,
+            }
+          })
+        );
+    
+        albWidgets.push(
+          new GraphWidget({
+            height: 8,
+            width: 8,
+            title: Fn.sub('${AWS::Region} Zonal Request Count'),
+            region: Aws.REGION,
+            left: Object.values(requestsPerZone),
+            leftYAxis: {
+              min: 0,
+              label: 'Sum',
+              showUnits: false,
+            }
+          })
+        );
+    
+        albWidgets.push(
+          new GraphWidget({
+            height: 8,
+            width: 8,
+            title: Fn.sub('${AWS::Region} Zonal Fault Rate'),
+            region: Aws.REGION,
+            left: Object.values(faultRatePerZone),
+            leftYAxis: {
+              min: 0,
+              label: 'Percent',
+              showUnits: false,
+            },
+            leftAnnotations: [
+              {
+                label: "High Severity",
+                value: faultRateThreshold,
+                color: Color.RED
+              }
+            ]       
+          })
+        );
+    
+        albWidgets.push(
+          new GraphWidget({
+            height: 8,
+            width: 8,
+            title: Fn.sub('${AWS::Region} Zonal Processed Bytes'),
+            region: Aws.REGION,
+            left: Object.values(processedBytesPerZone),
+            leftYAxis: {
+              min: 0,
+              showUnits: false,
+              label: 'Bytes'
+            }
+          })
+        );
+    
+        albWidgets.push(
+          new GraphWidget({
+            height: 8,
+            width: 8,
+            title: Fn.sub('${AWS::Region} Zonal Target Response Time (' + latencyStatistic + ')'),
+            region: Aws.REGION,
+            left: Object.values(latencyPerZone),
+            leftYAxis: {
+              min: 0,
+              label: "Milliseconds",
+              showUnits: false,
+            },
+            leftAnnotations: [
+              {
+                label: "High Severity",
+                value: latencyThreshold,
+                color: Color.RED
+              }
+            ]
+          })
+        );
+    
+        return albWidgets;
+      }
 }
