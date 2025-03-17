@@ -1,6 +1,6 @@
 import { CfnNatGateway } from "aws-cdk-lib/aws-ec2";
 import { MetricsHelper } from "../utilities/MetricsHelper";
-import { Alarm, ComparisonOperator, IAlarm, IMetric, MathExpression, Metric, Stats, TreatMissingData, Unit } from "aws-cdk-lib/aws-cloudwatch";
+import { Alarm, Color, ComparisonOperator, IAlarm, IMetric, MathExpression, Metric, Stats, TreatMissingData, Unit } from "aws-cdk-lib/aws-cloudwatch";
 import { Duration } from "aws-cdk-lib";
 import { IConstruct } from "constructs";
 import { IAvailabilityZoneMapper } from "../azmapper/IAvailabilityZoneMapper";
@@ -10,6 +10,8 @@ import { PacketLossOutlierAlgorithm } from "../outlier-detection/PacketLossOutli
  * Provides functions for getting CloudWatch metrics and alarms for NAT Gateways.
  */
 export class NatGatewayMetrics {
+
+    private static readonly colors: string[] = [ Color.BLUE, Color.ORANGE, Color.GREEN, Color.RED, Color.BROWN, Color.PINK ];
 
     /**
      * Gets the count of packet drops for all NAT Gateways that belong to the provided AZ
@@ -22,7 +24,8 @@ export class NatGatewayMetrics {
         natgws: CfnNatGateway[],
         availabilityZoneId: string,
         period: Duration,
-        prefix?: string
+        prefix?: string,
+        color?: string
     ) : IMetric 
     {
         let keyprefix: string = prefix ? prefix : MetricsHelper.nextChar();
@@ -47,7 +50,8 @@ export class NatGatewayMetrics {
           expression: Object.keys(packetDropCountMetrics).join("+"),
           usingMetrics: packetDropCountMetrics,
           period: period,
-          label: availabilityZoneId
+          label: availabilityZoneId, 
+          color: color
         });
     }
 
@@ -62,7 +66,8 @@ export class NatGatewayMetrics {
         natgws: CfnNatGateway[],
         availabilityZoneId: string,
         period: Duration,
-        prefix?: string
+        prefix?: string,
+        color?: string
     ) : IMetric 
     {
         
@@ -144,6 +149,7 @@ export class NatGatewayMetrics {
           usingMetrics: usingMetrics,
           label: availabilityZoneId,
           period: period,
+          color: color
         });
     }
 
@@ -158,10 +164,10 @@ export class NatGatewayMetrics {
         natgws: CfnNatGateway[],
         availabilityZoneId: string,
         period: Duration,
-        prefix?: string
+        prefix?: string,
+        color?: string
     ) : IMetric 
     {
-        
         let keyprefix = prefix ? prefix : MetricsHelper.nextChar();
         let usingMetrics: {[key: string]: IMetric} = {};
         
@@ -200,6 +206,7 @@ export class NatGatewayMetrics {
           usingMetrics: usingMetrics,
           label: availabilityZoneId,
           period: period,
+          color: color
         });
     }
 
@@ -332,11 +339,11 @@ export class NatGatewayMetrics {
         let usingMetrics: {[key: string]: IMetric} = {};
         let keyprefix: string = MetricsHelper.nextChar();
 
-        Object.keys(natgws).forEach((availabilityZone: string) => {
+        Object.keys(natgws).forEach((availabilityZone: string, index: number) => {
             let azLetter: string = availabilityZone.substring(availabilityZone.length - 1);
             let availabilityZoneId = azMapper.availabilityZoneIdFromAvailabilityZoneLetter(azLetter);
 
-            usingMetrics[azLetter] = this.getTotalPacketCountMetricForAZ(natgws[availabilityZone], availabilityZoneId, period, keyprefix);
+            usingMetrics[azLetter] = this.getTotalPacketCountMetricForAZ(natgws[availabilityZone], availabilityZoneId, period, keyprefix, NatGatewayMetrics.colors[index]);
 
             keyprefix = MetricsHelper.nextChar(keyprefix);
         });
@@ -360,11 +367,11 @@ export class NatGatewayMetrics {
         let usingMetrics: {[key: string]: IMetric} = {};
         let keyprefix: string = MetricsHelper.nextChar();
 
-        Object.keys(natgws).forEach((availabilityZone: string) => {
+        Object.keys(natgws).forEach((availabilityZone: string, index: number) => {
             let azLetter: string = availabilityZone.substring(availabilityZone.length - 1);
             let availabilityZoneId = azMapper.availabilityZoneIdFromAvailabilityZoneLetter(azLetter);
 
-            usingMetrics[azLetter] = this.getDroppedPacketCountMetricForAZ(natgws[availabilityZone], availabilityZoneId, period, keyprefix);
+            usingMetrics[azLetter] = this.getDroppedPacketCountMetricForAZ(natgws[availabilityZone], availabilityZoneId, period, keyprefix, NatGatewayMetrics.colors[index]);
 
             keyprefix = MetricsHelper.nextChar(keyprefix);
         });
@@ -388,11 +395,11 @@ export class NatGatewayMetrics {
         let usingMetrics: {[key: string]: IMetric} = {};
         let keyprefix: string = MetricsHelper.nextChar();
 
-        Object.keys(natgws).forEach((availabilityZone: string) => {
+        Object.keys(natgws).forEach((availabilityZone: string, index: number) => {
             let azLetter: string = availabilityZone.substring(availabilityZone.length - 1);
             let availabilityZoneId = azMapper.availabilityZoneIdFromAvailabilityZoneLetter(azLetter);
 
-            usingMetrics[azLetter] = this.getDroppedPacketRateMetricForAZ(natgws[availabilityZone], availabilityZoneId, period, keyprefix);
+            usingMetrics[azLetter] = this.getDroppedPacketRateMetricForAZ(natgws[availabilityZone], availabilityZoneId, period, keyprefix, NatGatewayMetrics.colors[index]);
 
             keyprefix = MetricsHelper.nextChar(keyprefix);
         });
