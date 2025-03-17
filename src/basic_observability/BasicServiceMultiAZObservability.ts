@@ -3,18 +3,10 @@
 
 import { Duration } from 'aws-cdk-lib';
 import {
-  Alarm,
   AlarmRule,
-  ComparisonOperator,
   CompositeAlarm,
   Dashboard,
-  IAlarm,
-  IMetric,
-  MathExpression,
-  Metric,
-  Stats,
-  TreatMissingData,
-  Unit,
+  IAlarm
 } from 'aws-cdk-lib/aws-cloudwatch';
 import { CfnNatGateway } from 'aws-cdk-lib/aws-ec2';
 import {
@@ -22,16 +14,18 @@ import {
   IApplicationLoadBalancer,
   ILoadBalancerV2,
 } from 'aws-cdk-lib/aws-elasticloadbalancingv2';
-import { Construct, IConstruct } from 'constructs';
+import { Construct } from 'constructs';
 import { IBasicServiceMultiAZObservability } from './IBasicServiceMultiAZObservability';
 import { BasicServiceMultiAZObservabilityProps } from './props/BasicServiceMultiAZObservabilityProps';
 import { AvailabilityZoneMapper } from '../azmapper/AvailabilityZoneMapper';
 import { IAvailabilityZoneMapper } from '../azmapper/IAvailabilityZoneMapper';
 import { BasicServiceDashboard } from './BasicServiceDashboard';
 import { ApplicationLoadBalancerMetrics } from '../metrics/ApplicationLoadBalancerMetrics';
-import { AvailabilityMetricType } from '../utilities/AvailabilityMetricType';
 import { MetricsHelper } from '../utilities/MetricsHelper';
-import { ApplicationLoadBalancerLatencyOutlierCalculation } from './props/ApplicationLoadBalancerLatencyOutlierCalculation';
+import { ApplicationLoadBalancerLatencyOutlierAlgorithm } from '../outlier-detection/ApplicationLoadBalancerLatencyOutlierAlgorithm';
+import { NatGatewayMetrics } from '../metrics/NatGatewayMetrics';
+import { ApplicationLoadBalancerAvailabilityOutlierAlgorithm } from '../outlier-detection/ApplicationLoadBalancerAvailabilityOutlierAlgorithm';
+import { PacketLossOutlierAlgorithm } from '../outlier-detection/PacketLossOutlierAlgorithm';
 
 /**
  * Basic observability for a service using metrics from
@@ -91,10 +85,14 @@ export class BasicServiceMultiAZObservability
   ) {
     super(scope, id);
 
+    if (!(props.applicationLoadBalancerProps) && !(props.natGatewayProps)) {
+      throw new Error("You must define either ALBs or NAT Gateways for this service in order to create a dashboard.");
+    }
+
     // Initialize class properties
     this.serviceName = props.serviceName;
-    this.applicationLoadBalancers = props.applicationLoadBalancers;
-    this.natGateways = props.natGateways;
+    this.applicationLoadBalancers = props.applicationLoadBalancerProps?.applicationLoadBalancers;
+    this.natGateways = props.natGatewayProps?.natGateways;
 
     this.aggregateZonalIsolatedImpactAlarms = {};
     this.albZonalIsolatedImpactAlarms = {};
@@ -105,7 +103,7 @@ export class BasicServiceMultiAZObservability
 
     // Create ALB metrics and alarms per AZ
     if (this.applicationLoadBalancers) {
-      this.albZonalIsolatedImpactAlarms = this.doAlbMetrics(props);
+      this.albZonalIsolatedImpactAlarms = this.createAlbZonalImpactAlarms(props);
     }
 
     // Create NAT Gateway metrics and alarms per AZ
@@ -154,264 +152,13 @@ export class BasicServiceMultiAZObservability
           serviceName: props.serviceName.toLowerCase(),
           zonalAggregateIsolatedImpactAlarms:
             this.aggregateZonalIsolatedImpactAlarms,
-          zonalNatGatewayIsolatedImpactAlarms:
-            this.natGWZonalIsolatedImpactAlarms,
           interval: props.interval,
-          albs: props.applicationLoadBalancers,
+          natgws: props.natGatewayProps,
+          albs: props.applicationLoadBalancerProps,
           period: props.period ? props.period : Duration.minutes(1),
-          zonalNatGatewayPacketDropMetrics: this.getTotalPacketDropsPerZone(
-            props.natGateways ? props.natGateways : {},
-            props.period ? props.period : Duration.minutes(1)
-          ),
-          azMapper: this._azMapper,
-          latencyStatistic: props.latencyStatistic,
-          latencyThreshold: props.latencyThreshold,
-          faultCountPercentageThreshold: props.faultCountPercentageThreshold
+          azMapper: this._azMapper
         },
       ).dashboard;
-    }
-  }
-
-  private static isThereAnAZAvailabilityImpactAlb(
-    scope: IConstruct,
-    alb: IApplicationLoadBalancer, 
-    availabilityZoneId: string,
-    availabilityZone: string,
-    threshold: number,
-    keyprefix: string,
-    period: Duration,
-    evaluationPeriods: number,
-    datapointsToAlarm: number
-  ) : IAlarm {
-   
-    // Create a fault rate alarm for the ALB in the specified AZ
-    return new Alarm(
-      scope,
-      keyprefix + '-fault-rate-alarm',
-      {
-        alarmName:
-          availabilityZoneId + '-' + alb.loadBalancerArn + '-fault-rate',
-        actionsEnabled: false,
-        metric: ApplicationLoadBalancerMetrics.getPerAZAvailabilityMetric(alb, {
-          period: period,
-          label: availabilityZoneId + '-' + alb.loadBalancerArn + '-fault-rate',
-          availabilityZone: availabilityZone,
-          availabilityZoneId: availabilityZoneId,
-          metricType: AvailabilityMetricType.FAULT_RATE
-        }),
-        evaluationPeriods: evaluationPeriods,
-        datapointsToAlarm: datapointsToAlarm,
-        threshold: threshold,
-        comparisonOperator: ComparisonOperator.GREATER_THAN_THRESHOLD,
-        treatMissingData: TreatMissingData.IGNORE
-      }
-    );
-  }
-
-  private static isThereAZLatencyImpactAlb(
-    scope: IConstruct,
-    alb: IApplicationLoadBalancer, 
-    availabilityZoneId: string,
-    availabilityZone: string,
-    threshold: number,
-    statistic: string,
-    keyprefix: string,
-    period: Duration,
-    evaluationPeriods: number,
-    datapointsToAlarm: number
-  ): IAlarm {
-    
-    // Create a fault rate alarm for the ALB in the specified AZ
-    return new Alarm(
-      scope,
-      keyprefix + '-latency-alarm',
-      {
-        alarmName:
-          availabilityZoneId + '-' + alb.loadBalancerArn + '-latency',
-        actionsEnabled: false,
-        metric: ApplicationLoadBalancerMetrics.getPerAZLatencyMetric({
-          alb: alb,
-          availabilityZone: availabilityZone,
-          availabilityZoneId: availabilityZoneId,
-          label: availabilityZoneId + "-" + alb.loadBalancerArn + "-target-latency",
-          period: period,
-          statistic: statistic
-        }),
-        evaluationPeriods: evaluationPeriods,
-        datapointsToAlarm: datapointsToAlarm,
-        threshold: threshold,
-        comparisonOperator: ComparisonOperator.GREATER_THAN_THRESHOLD,
-        treatMissingData: TreatMissingData.IGNORE
-      }
-    );
-  }
-
-  private static isAZAnOutlierForAvailabilityAlb(
-    scope: IConstruct,
-    alb: IApplicationLoadBalancer, 
-    availabilityZoneId: string,
-    availabilityZone: string,
-    threshold: number,
-    keyprefix: string,
-    period: Duration,
-    evaluationPeriods: number,
-    datapointsToAlarm: number
-  ) : IAlarm {
-
-    let usingMetrics: { [key: string]: IMetric } = {};
-    let azMetricId: string = "";
-
-    alb.vpc!.availabilityZones.forEach((az: string) => {
-
-      let azFaultCount = ApplicationLoadBalancerMetrics.getPerAZAvailabilityMetric(
-        alb,
-        {
-          metricType: AvailabilityMetricType.FAULT_COUNT,
-          availabilityZone: availabilityZone,
-          availabilityZoneId: availabilityZoneId,
-          period: period,
-          label: availabilityZoneId + "-" + alb.loadBalancerArn + "-fault-count",
-          keyprefix: keyprefix
-        }
-      );
-
-      keyprefix = MetricsHelper.nextChar(keyprefix);
-
-      usingMetrics[`${keyprefix}1`] = azFaultCount;
-
-      if (az == availabilityZone) {
-        azMetricId = `${keyprefix}1`;
-      }
-
-      keyprefix = MetricsHelper.nextChar(keyprefix);
-    });
-
-    return new Alarm(
-      scope,
-      keyprefix + '-availability-outlier-alarm',
-      {
-        alarmName:
-          availabilityZoneId + '-' + alb.loadBalancerArn + '-availability-impact-outlier',
-        actionsEnabled: false,
-        metric: new MathExpression({
-          expression: `${azMetricId!}/(${Object.keys(usingMetrics).join("+")})`,
-          usingMetrics: usingMetrics,
-          label: availabilityZoneId + '-' + alb.loadBalancerArn + '-percent-of-faults',
-          period: period,
-        }),
-        evaluationPeriods: evaluationPeriods,
-        datapointsToAlarm: datapointsToAlarm,
-        threshold: threshold,
-        comparisonOperator: ComparisonOperator.GREATER_THAN_THRESHOLD,
-        treatMissingData: TreatMissingData.IGNORE
-      }
-    );
-  }
-
-  private static isAZAnOutlierForLatencyAlb(
-    scope: IConstruct,
-    alb: IApplicationLoadBalancer, 
-    algorithm: ApplicationLoadBalancerLatencyOutlierCalculation,
-    availabilityZoneId: string,
-    availabilityZone: string,
-    statistic: string,
-    threshold: number,
-    period: Duration,
-    evaluationPeriods: number,
-    datapointsToAlarm: number,
-    keyprefix: string
-  ) : IAlarm {
-
-    let usingMetrics: { [key: string]: IMetric } = {};
-    let azMetricId: string = "";
-
-    switch (algorithm)
-    {
-      case ApplicationLoadBalancerLatencyOutlierCalculation.Z_SCORE:
-      default:
-
-        alb.vpc!.availabilityZones.forEach((az: string, index: number) => {
-
-          // Target response time
-          let targetResponseTime: IMetric = ApplicationLoadBalancerMetrics.getPerAZLatencyMetric({
-            alb: alb,
-            availabilityZone: az,
-            label: az + "-target-response-time",
-            statistic: statistic,
-            period: period
-          });
-
-          if (az == availabilityZone) {       
-            azMetricId = `a${index}`
-            usingMetrics[`a${index}`] = targetResponseTime;
-          }
-          else {
-            usingMetrics[`b${index}`] = targetResponseTime;
-          }
-        });
-
-        return new Alarm(
-          scope,
-          keyprefix + "-latency-outlier-alarm",
-          {
-            alarmName:
-              availabilityZoneId + '-' + alb.loadBalancerArn + '-latency-impact-outlier',
-            actionsEnabled: false,
-            metric: new MathExpression({
-              expression: `(${azMetricId!} - AVG(METRICS("b"))) / AVG(STDDEV(METRICS("b")))`,
-              usingMetrics: usingMetrics,
-              label: availabilityZoneId + '-' + alb.loadBalancerArn + '-latency-z-score',
-              period: period,
-            }),
-            evaluationPeriods: evaluationPeriods,
-            datapointsToAlarm: datapointsToAlarm,
-            threshold: threshold,
-            comparisonOperator: ComparisonOperator.GREATER_THAN_OR_EQUAL_TO_THRESHOLD,
-            treatMissingData: TreatMissingData.IGNORE
-          }
-        );
-      case ApplicationLoadBalancerLatencyOutlierCalculation.STATIC:
-        
-        alb.vpc!.availabilityZones.forEach((az: string, index: number) => {
-          // Target response time
-          let targetResponseTime: IMetric = ApplicationLoadBalancerMetrics.getPerAZLatencyMetric({
-            alb: alb,
-            availabilityZone: az,
-            label: az + "-target-response-time",
-            statistic: `TC(${threshold}:)`,
-            period: period
-          });
-
-          if (az == availabilityZone) {       
-            azMetricId = `a${index}`
-            usingMetrics[`a${index}`] = targetResponseTime;
-          }
-          else {
-            usingMetrics[`b${index}`] = targetResponseTime;
-          }
-
-        });
-
-        return new Alarm(
-          scope,
-          keyprefix + "-latency-outlier-alarm",
-          {
-            alarmName:
-              availabilityZoneId + '-' + alb.loadBalancerArn + '-latency-impact-outlier',
-            actionsEnabled: false,
-            metric: new MathExpression({
-              expression: `${azMetricId}/(${Object.keys(usingMetrics).join("+")})`,
-              usingMetrics: usingMetrics,
-              label: availabilityZoneId + '-' + alb.loadBalancerArn + '-latency-static',
-              period: period,
-            }),
-            evaluationPeriods: evaluationPeriods,
-            datapointsToAlarm: datapointsToAlarm,
-            threshold: .66,
-            comparisonOperator: ComparisonOperator.GREATER_THAN_OR_EQUAL_TO_THRESHOLD,
-            treatMissingData: TreatMissingData.IGNORE
-          }
-        );
     }
   }
 
@@ -421,7 +168,7 @@ export class BasicServiceMultiAZObservability
    * @returns A composite alarm per AZ to indicate isolated zonal impact. The dictionary
    * is keyed by the az letter, like "a", "b", "c".
    */
-  private doAlbMetrics(
+  private createAlbZonalImpactAlarms(
     props: BasicServiceMultiAZObservabilityProps
   ) : { [key: string]: IAlarm } {
 
@@ -430,6 +177,48 @@ export class BasicServiceMultiAZObservability
     let perAZImpactAlarms: { [key: string]: IAlarm[] } = {};
 
     let keyPrefix: string = MetricsHelper.nextChar();
+
+    let availabilityOutlierDetectionAlgorithm: ApplicationLoadBalancerAvailabilityOutlierAlgorithm = 
+      props.applicationLoadBalancerProps?.availabilityOutlierAlgorithm ?
+      props.applicationLoadBalancerProps.availabilityOutlierAlgorithm :
+      ApplicationLoadBalancerAvailabilityOutlierAlgorithm.STATIC;
+
+    let latencyOutlierDetectionAlgorithm: ApplicationLoadBalancerLatencyOutlierAlgorithm =
+      props.applicationLoadBalancerProps?.latencyOutlierAlgorithm ? 
+      props.applicationLoadBalancerProps.latencyOutlierAlgorithm :
+      ApplicationLoadBalancerLatencyOutlierAlgorithm.Z_SCORE;
+
+    let availabilityOutlierThreshold: number;
+    if (props.applicationLoadBalancerProps?.availabilityOutlierThreshold) {
+      availabilityOutlierThreshold = props.applicationLoadBalancerProps.availabilityOutlierThreshold;
+    }
+    else {
+      switch (availabilityOutlierDetectionAlgorithm) {
+        case ApplicationLoadBalancerAvailabilityOutlierAlgorithm.STATIC:
+        default:
+          availabilityOutlierThreshold = 0.66;
+          break;
+      }
+    }
+
+    let latencyOutlierThreshold: number;
+
+    if (props.applicationLoadBalancerProps?.latencyOutlierThreshold) {
+      latencyOutlierThreshold = props.applicationLoadBalancerProps.latencyOutlierThreshold;
+    }
+    else {
+      switch (latencyOutlierDetectionAlgorithm) {
+        case ApplicationLoadBalancerLatencyOutlierAlgorithm.Z_SCORE:
+        default:
+          latencyOutlierThreshold = 3;
+          break;
+        case ApplicationLoadBalancerLatencyOutlierAlgorithm.STATIC:
+          latencyOutlierThreshold = 0.66;
+          break;
+      }
+    }
+
+    let period: Duration = props.period ? props.period : Duration.minutes(1);
 
     // Iterate each ALB
     this.applicationLoadBalancers!.forEach((alb) => {
@@ -449,55 +238,57 @@ export class BasicServiceMultiAZObservability
           this._azMapper.availabilityZoneIdFromAvailabilityZoneLetter(azLetter);
 
         // Is there availability impact in this AZ?
-        let availabilityImpact: IAlarm = BasicServiceMultiAZObservability.isThereAnAZAvailabilityImpactAlb(
+        let availabilityImpact: IAlarm = ApplicationLoadBalancerMetrics.createAZAvailabilityImpactAlarm(
           this,
           alb,
           availabilityZoneId,
           az,
-          props.faultCountPercentageThreshold ? props.faultCountPercentageThreshold : 0.05,
+          props.applicationLoadBalancerProps!.faultCountPercentThreshold,
           keyPrefix,
-          props.period ? props.period : Duration.minutes(1),
+          period,
           props.evaluationPeriods,
           props.datapointsToAlarm
         );
 
         // Is there latency impact in this AZ?
-        let latencyImpact: IAlarm = BasicServiceMultiAZObservability.isThereAZLatencyImpactAlb(
+        let latencyImpact: IAlarm = ApplicationLoadBalancerMetrics.createAZLatencyImpactAlarm(
           this,
           alb,
           availabilityZoneId,
           az,
-          props.latencyThreshold,
-          props.latencyStatistic,
+          (props.applicationLoadBalancerProps!.latencyThreshold / 1000), // threshold is provided in milliseconds, but latency is provided in seconds
+          props.applicationLoadBalancerProps!.latencyStatistic,
           keyPrefix,
-          props.period ? props.period : Duration.minutes(1),
+          period,
           props.evaluationPeriods,
           props.datapointsToAlarm
         );
 
         // Is the AZ an outlier for faults
-        let availabilityOutlier = BasicServiceMultiAZObservability.isAZAnOutlierForAvailabilityAlb(
+        let availabilityOutlier = ApplicationLoadBalancerMetrics.createAZAvailabilityOutlierAlarm(
           this,
           alb,
+          availabilityOutlierDetectionAlgorithm,
           availabilityZoneId,
           az,
-          props.faultCountPercentageThreshold ? props.faultCountPercentageThreshold : 0.05,
+          availabilityOutlierThreshold,
           keyPrefix,
-          props.period ? props.period : Duration.minutes(1),
+          period,
           props.evaluationPeriods,
           props.datapointsToAlarm
         );
 
         // Is the AZ an outlier for latency
-        let latencyOutlier = BasicServiceMultiAZObservability.isAZAnOutlierForLatencyAlb(
+        let latencyOutlier = ApplicationLoadBalancerMetrics.createAZLatencyOutlierAlarm(
           this,
           alb,
-          props.latencyOutlierCalculation ? props.latencyOutlierCalculation : ApplicationLoadBalancerLatencyOutlierCalculation.Z_SCORE,
+          latencyOutlierDetectionAlgorithm,
           availabilityZoneId,
           az,
-          props.latencyStatistic,
-          props.latencyOutlierCalculation == ApplicationLoadBalancerLatencyOutlierCalculation.Z_SCORE ? 3 : props.latencyThreshold,
-          props.period ? props.period : Duration.minutes(1),
+          props.applicationLoadBalancerProps!.latencyStatistic,
+          (props.applicationLoadBalancerProps!.latencyThreshold / 1000), // threshold is provided in milliseconds, but latency is provided in seconds
+          latencyOutlierThreshold,
+          period,
           props.evaluationPeriods,
           props.datapointsToAlarm,
           azLetter
@@ -544,186 +335,37 @@ export class BasicServiceMultiAZObservability
     return azCompositeAlarms;
   }
 
-  private static isThereAnAZPacketLossImpactNATGW(
-    scope: IConstruct,
-    natgws: CfnNatGateway[], 
-    availabilityZoneId: string,
-    availabilityZone: string,
-    threshold: number,
-    period: Duration,
-    evaluationPeriods: number,
-    datapointsToAlarm: number
-  ) : IAlarm {
-    
-    let keyprefix = MetricsHelper.nextChar();
-
-    let packetDropCountMetrics: {[key: string]: IMetric} = {};
-    let packetsInFromSourceMetrics: {[key: string]: IMetric} = {};
-    let packetsInFromDestinationMetrics: {[key: string]: IMetric} = {};
-   
-    natgws.forEach((natgw: CfnNatGateway)=> {
-
-      packetDropCountMetrics[`${keyprefix}1`] = new Metric({
-        metricName: 'PacketsDropCount',
-        namespace: 'AWS/NATGateway',
-        statistic: Stats.SUM,
-        unit: Unit.COUNT,
-        label: availabilityZoneId + ' packet drops',
-        dimensionsMap: {
-          NatGatewayId: natgw.attrNatGatewayId,
-        },
-        period: period,
-      });
-  
-      // Calculate packets in from source
-      packetsInFromSourceMetrics[`${keyprefix}2`] = new Metric({
-        metricName: 'PacketsInFromSource',
-        namespace: 'AWS/NATGateway',
-        statistic: Stats.SUM,
-        unit: Unit.COUNT,
-        label: availabilityZoneId + ' packets in from source',
-        dimensionsMap: {
-          NatGatewayId: natgw.attrNatGatewayId,
-        },
-        period: period,
-      });
-  
-      // Calculate packets in from destination
-      packetsInFromDestinationMetrics[`${keyprefix}3`] = new Metric({
-        metricName: 'PacketsInFromDestination',
-        namespace: 'AWS/NATGateway',
-        statistic: Stats.SUM,
-        unit: Unit.COUNT,
-        label: availabilityZoneId + ' packets in from destination',
-        dimensionsMap: {
-          NatGatewayId: natgw.attrNatGatewayId,
-        },
-        period: period,
-      });
-
-      keyprefix = MetricsHelper.nextChar(keyprefix);
-    });
-
-    let packetDropTotal: IMetric = new MathExpression({
-      expression: Object.keys(packetDropCountMetrics).join("+"),
-      usingMetrics: packetDropCountMetrics,
-      period: period
-    });
-
-    let packetsInFromSourceTotal: IMetric = new MathExpression({
-      expression: Object.keys(packetsInFromSourceMetrics).join("+"),
-      usingMetrics: packetsInFromSourceMetrics,
-      period: period
-    });
-
-    let packetsInFromDestinationTotal: IMetric = new MathExpression({
-      expression: Object.keys(packetsInFromDestinationMetrics).join("+"),
-      usingMetrics: packetsInFromDestinationMetrics,
-      period: period
-    });
-    
-    let usingMetrics: { [key: string]: IMetric } = {};
-    usingMetrics[`${keyprefix}1`] = packetDropTotal;
-    usingMetrics[`${keyprefix}2`] = packetsInFromSourceTotal;
-    usingMetrics[`${keyprefix}3`] = packetsInFromDestinationTotal;
-
-    // Calculate a percentage of dropped packets for the NAT GW
-    let packetDropPercentage: IMetric = new MathExpression({
-      expression: `(${keyprefix}1 / (${keyprefix}2 + ${keyprefix}3))`,
-      usingMetrics: usingMetrics,
-      label: availabilityZoneId + ' packet drop percentage',
-      period: period,
-    });
-
-    // Create an alarm for this NAT GW if packet drops exceed the specified threshold
-    return new Alarm(
-      scope,
-      availabilityZone.substring(availabilityZone.length - 1) + "-packet-drop-impact-alarm",
-      {
-        alarmName:
-          availabilityZoneId +
-          '-packet-drop-impact',
-        actionsEnabled: false,
-        metric: packetDropPercentage,
-        threshold: threshold,
-        comparisonOperator: ComparisonOperator.GREATER_THAN_THRESHOLD,
-        evaluationPeriods: evaluationPeriods,
-        datapointsToAlarm: datapointsToAlarm,
-        treatMissingData: TreatMissingData.IGNORE
-      }
-    );
-  }
-
-  private static isAZAnOutlierForPacketLossNATGW(
-    scope: IConstruct,
-    natgws: {[key: string]: CfnNatGateway[]}, 
-    availabilityZoneId: string,
-    availabilityZone: string,
-    threshold: number,
-    period: Duration,
-    evaluationPeriods: number,
-    datapointsToAlarm: number
-  ) : IAlarm {
-
-    let keyprefix = MetricsHelper.nextChar();
-    let azPacketDropCountMetrics: {[key: string]: IMetric} = {};
-    let azKey: string = "";
-
-    Object.keys(natgws).forEach((az: string) => {
-      let packetDropCountMetrics: {[key: string]: IMetric} = {};
-
-      natgws[az].forEach((natgw: CfnNatGateway, index: number) => {
-        packetDropCountMetrics[`${keyprefix}${index}`] = new Metric({
-          metricName: 'PacketsDropCount',
-          namespace: 'AWS/NATGateway',
-          statistic: Stats.SUM,
-          unit: Unit.COUNT,
-          label: availabilityZoneId + ' packet drops',
-          dimensionsMap: {
-            NatGatewayId: natgw.attrNatGatewayId,
-          },
-          period: period,
-        });
-        keyprefix = MetricsHelper.nextChar(keyprefix);
-      });
-
-      azPacketDropCountMetrics[`${keyprefix}${natgws[az].length}`] = new MathExpression({
-        expression: Object.keys(packetDropCountMetrics).join("+"),
-        usingMetrics: packetDropCountMetrics,
-        period: period
-      });
-
-      if (az == availabilityZone) {
-        azKey = `${keyprefix}${natgws[az].length}`;
-      }
-
-      keyprefix = MetricsHelper.nextChar(keyprefix);
-    });
-
-    return new Alarm(
-      scope, 
-      availabilityZone.substring(availabilityZone.length - 1) + "-packet-loss-outlier", 
-      {
-         metric: new MathExpression({
-            expression: `${azKey} / (${Object.keys(azPacketDropCountMetrics).join("+")})`,
-            usingMetrics: azPacketDropCountMetrics,
-            period: period
-         }),
-         threshold: threshold,
-         evaluationPeriods: evaluationPeriods,
-         datapointsToAlarm: datapointsToAlarm,
-         comparisonOperator: ComparisonOperator.GREATER_THAN_THRESHOLD,
-         treatMissingData: TreatMissingData.IGNORE
-      }
-    );
-  }
-
   private createNatGatewayZonalImpactAlarms(
     props: BasicServiceMultiAZObservabilityProps
   ): {[key: string]: IAlarm} {
 
     // Collect alarms for packet drops exceeding a threshold per NAT GW
     let packetLossPerAZAlarms: { [key: string]: IAlarm } = {};
+
+    let packetLossOutlierAlgorithm: PacketLossOutlierAlgorithm = props.natGatewayProps?.packetLossOutlierAlgorithm ?
+      props.natGatewayProps?.packetLossOutlierAlgorithm :
+      PacketLossOutlierAlgorithm.STATIC;
+
+    let packetLossThreshold: number = props.natGatewayProps?.packetLossPercentThreshold ? 
+      props.natGatewayProps.packetLossPercentThreshold :
+      0.01;
+
+    let outlierThreshold: number;
+
+    if (props.natGatewayProps?.packetLossOutlierThreshold) {
+      outlierThreshold = props.natGatewayProps.packetLossOutlierThreshold;
+    }
+    else {
+      switch (packetLossOutlierAlgorithm) {
+        case PacketLossOutlierAlgorithm.STATIC:
+        default:
+          outlierThreshold = 0.66;
+          break;
+      }
+    }
+      
+
+    let period: Duration = props.period ? props.period : Duration.minutes(1);
 
     // For each AZ, create metrics for each NAT GW
     Object.keys(this.natGateways!).forEach((az: string) => {
@@ -733,27 +375,30 @@ export class BasicServiceMultiAZObservability
         this._azMapper.availabilityZoneIdFromAvailabilityZoneLetter(azLetter);
 
       // Is there packet loss impact?
-      let packetLossImpact: IAlarm = BasicServiceMultiAZObservability.isThereAnAZPacketLossImpactNATGW(
+      let packetLossImpact: IAlarm = NatGatewayMetrics.isThereAnAZPacketLossImpactNATGW(
         this,
         this.natGateways![az],
         availabilityZoneId,
         az,
-        props.packetLossImpactPercentageThreshold ? props.packetLossImpactPercentageThreshold : 0.01,
-        props.period ? props.period : Duration.minutes(1),
+        packetLossThreshold,
+        period,
         props.evaluationPeriods,
         props.datapointsToAlarm
       );
+
       // Is this AZ an outlier for this NATGW?
-      let packetLossOutlier: IAlarm = BasicServiceMultiAZObservability.isAZAnOutlierForPacketLossNATGW(
+      let packetLossOutlier: IAlarm = NatGatewayMetrics.isAZAnOutlierForPacketLossNATGW(
         this,
         this.natGateways!,
-        availabilityZoneId,
+        packetLossOutlierAlgorithm,
         az,
-        0.66,
+        this._azMapper,
+        outlierThreshold,
         props.period ? props.period : Duration.minutes(1),
         props.evaluationPeriods,
         props.datapointsToAlarm
       );
+
       packetLossPerAZAlarms[azLetter] = new CompositeAlarm(this, az.substring(az.length - 1) + "-packet-loss-composite-alarm", {
         alarmRule: AlarmRule.allOf(packetLossImpact, packetLossOutlier),
         compositeAlarmName: availabilityZoneId + "-packet-loss-composite-alarm"
@@ -761,63 +406,5 @@ export class BasicServiceMultiAZObservability
     });
 
     return packetLossPerAZAlarms;
-  }
-
-  private getTotalPacketDropsPerZone(
-    natgws: {[key: string]: CfnNatGateway[]},
-    period: Duration
-  ) : {[key: string]: IMetric}
-  {
-    let dropsPerZone: {[key: string]: IMetric} = {};
-    let metricsPerAZ: {[key: string]: IMetric[]} = {};
-    let keyprefix: string = MetricsHelper.nextChar();
-
-    Object.keys(natgws).forEach((availabilityZone: string) => {
-
-      let azLetter = availabilityZone.substring(availabilityZone.length - 1);
-      let availabilityZoneId = this._azMapper.availabilityZoneIdFromAvailabilityZoneLetter(azLetter);
-
-      if (!(azLetter in metricsPerAZ)) {
-        metricsPerAZ[azLetter] = [];
-      }
-
-      natgws[availabilityZone].forEach((natgw: CfnNatGateway) => {
-
-        metricsPerAZ[azLetter].push(new Metric({
-          metricName: 'PacketsDropCount',
-          namespace: 'AWS/NATGateway',
-          statistic: Stats.SUM,
-          unit: Unit.COUNT,
-          label: availabilityZoneId + ' packet drops',
-          dimensionsMap: {
-            NatGatewayId: natgw.attrNatGatewayId,
-          },
-          period: period,
-        }));
-      });   
-    });
-
-    Object.keys(metricsPerAZ).forEach((availabilityZone: string) => {
-      let azLetter = availabilityZone.substring(availabilityZone.length - 1);
-      let availabilityZoneId = this._azMapper.availabilityZoneIdFromAvailabilityZoneLetter(azLetter);
-
-      let usingMetrics: {[key: string]: IMetric} = {};
-
-      metricsPerAZ[azLetter].forEach((metric: IMetric) => {
-        usingMetrics[`${keyprefix}1`] = metric;
-        keyprefix = MetricsHelper.nextChar(keyprefix);
-      });
-
-      keyprefix = MetricsHelper.nextChar(keyprefix);
-
-      dropsPerZone[availabilityZone] = new MathExpression({
-        expression: Object.keys(usingMetrics).join("+"),
-        usingMetrics: usingMetrics,
-        label: availabilityZoneId + " total packet drops",
-        period: period
-      });
-    });
-
-    return dropsPerZone;
   }
 }

@@ -1,4 +1,4 @@
-import { IMetric, MathExpression, Stats, Unit } from "aws-cdk-lib/aws-cloudwatch";
+import { Alarm, ComparisonOperator, IAlarm, IMetric, MathExpression, Stats, TreatMissingData, Unit } from "aws-cdk-lib/aws-cloudwatch";
 import { BaseLoadBalancer, HttpCodeElb, HttpCodeTarget, IApplicationLoadBalancer, ILoadBalancerV2 } from "aws-cdk-lib/aws-elasticloadbalancingv2";
 import { AvailabilityMetricType } from "../utilities/AvailabilityMetricType";
 import { ZonalApplicationLoadBalancerLatencyMetricProps } from "../basic_observability/props/ZonalApplicationLoadBalancerLatencyMetricProps";
@@ -8,6 +8,9 @@ import { RegionalApplicationLoadBalancerAvailabilityMetricProps } from "../basic
 import { RegionalApplicationLoadBalancerLatencyMetricProps } from "../basic_observability/props/RegionalApplicationLoadBalancerLatencyMetricProps";
 import { AvailabilityZoneMapper } from "../azmapper/AvailabilityZoneMapper";
 import { MetricsHelper } from "../utilities/MetricsHelper";
+import { IConstruct } from "constructs";
+import { ApplicationLoadBalancerAvailabilityOutlierAlgorithm } from "../outlier-detection/ApplicationLoadBalancerAvailabilityOutlierAlgorithm";
+import { ApplicationLoadBalancerLatencyOutlierAlgorithm } from "../outlier-detection/ApplicationLoadBalancerLatencyOutlierAlgorithm";
 
 export class ApplicationLoadBalancerMetrics {
 
@@ -1110,5 +1113,254 @@ export class ApplicationLoadBalancerMetrics {
             },
             label: Aws.REGION + (addLoadBalancerArn ? "-" + alb.loadBalancerArn : "")
         });
+    }
+
+    static createAZAvailabilityImpactAlarm(
+      scope: IConstruct,
+      alb: IApplicationLoadBalancer, 
+      availabilityZoneId: string,
+      availabilityZone: string,
+      threshold: number,
+      keyprefix: string,
+      period: Duration,
+      evaluationPeriods: number,
+      datapointsToAlarm: number
+    ) : IAlarm {
+     
+      // Create a fault rate alarm for the ALB in the specified AZ
+      return new Alarm(
+        scope,
+        keyprefix + '-fault-rate-alarm',
+        {
+          alarmName:
+            availabilityZoneId + '-' + alb.loadBalancerArn + '-fault-rate',
+          actionsEnabled: false,
+          metric: ApplicationLoadBalancerMetrics.getPerAZAvailabilityMetric(alb, {
+            period: period,
+            label: availabilityZoneId + '-' + alb.loadBalancerArn + '-fault-rate',
+            availabilityZone: availabilityZone,
+            availabilityZoneId: availabilityZoneId,
+            metricType: AvailabilityMetricType.FAULT_RATE
+          }),
+          evaluationPeriods: evaluationPeriods,
+          datapointsToAlarm: datapointsToAlarm,
+          threshold: threshold,
+          comparisonOperator: ComparisonOperator.GREATER_THAN_THRESHOLD,
+          treatMissingData: TreatMissingData.IGNORE
+        }
+      );
+    }
+  
+    static createAZLatencyImpactAlarm(
+      scope: IConstruct,
+      alb: IApplicationLoadBalancer, 
+      availabilityZoneId: string,
+      availabilityZone: string,
+      threshold: number,
+      statistic: string,
+      keyprefix: string,
+      period: Duration,
+      evaluationPeriods: number,
+      datapointsToAlarm: number
+    ): IAlarm {
+      
+      // Create a fault rate alarm for the ALB in the specified AZ
+      return new Alarm(
+        scope,
+        keyprefix + '-latency-alarm',
+        {
+          alarmName:
+            availabilityZoneId + '-' + alb.loadBalancerArn + '-latency',
+          actionsEnabled: false,
+          metric: ApplicationLoadBalancerMetrics.getPerAZLatencyMetric({
+            alb: alb,
+            availabilityZone: availabilityZone,
+            availabilityZoneId: availabilityZoneId,
+            label: availabilityZoneId + "-" + alb.loadBalancerArn + "-target-latency",
+            period: period,
+            statistic: statistic
+          }),
+          evaluationPeriods: evaluationPeriods,
+          datapointsToAlarm: datapointsToAlarm,
+          threshold: threshold,
+          comparisonOperator: ComparisonOperator.GREATER_THAN_THRESHOLD,
+          treatMissingData: TreatMissingData.IGNORE
+        }
+      );
+    }
+  
+    static createAZAvailabilityOutlierAlarm(
+      scope: IConstruct,
+      alb: IApplicationLoadBalancer, 
+      algorithm: ApplicationLoadBalancerAvailabilityOutlierAlgorithm,
+      availabilityZoneId: string,
+      availabilityZone: string,
+      threshold: number,
+      keyprefix: string,
+      period: Duration,
+      evaluationPeriods: number,
+      datapointsToAlarm: number   
+    ) : IAlarm {
+  
+      let usingMetrics: { [key: string]: IMetric } = {};
+      let azMetricId: string = "";
+  
+      alb.vpc!.availabilityZones.forEach((az: string) => {
+  
+        let azFaultCount = ApplicationLoadBalancerMetrics.getPerAZAvailabilityMetric(
+          alb,
+          {
+            metricType: AvailabilityMetricType.FAULT_COUNT,
+            availabilityZone: availabilityZone,
+            availabilityZoneId: availabilityZoneId,
+            period: period,
+            label: availabilityZoneId + "-" + alb.loadBalancerArn + "-fault-count",
+            keyprefix: keyprefix
+          }
+        );
+  
+        keyprefix = MetricsHelper.nextChar(keyprefix);
+  
+        usingMetrics[`${keyprefix}1`] = azFaultCount;
+  
+        if (az == availabilityZone) {
+          azMetricId = `${keyprefix}1`;
+        }
+  
+        keyprefix = MetricsHelper.nextChar(keyprefix);
+      });
+  
+      switch (algorithm) {
+        case ApplicationLoadBalancerAvailabilityOutlierAlgorithm.STATIC:
+        default:
+          return new Alarm(
+            scope,
+            keyprefix + '-availability-outlier-alarm',
+            {
+              alarmName:
+                availabilityZoneId + '-' + alb.loadBalancerArn + '-availability-impact-outlier',
+              actionsEnabled: false,
+              metric: new MathExpression({
+                expression: `${azMetricId!}/(${Object.keys(usingMetrics).join("+")})`,
+                usingMetrics: usingMetrics,
+                label: availabilityZoneId + '-' + alb.loadBalancerArn + '-percent-of-faults',
+                period: period,
+              }),
+              evaluationPeriods: evaluationPeriods,
+              datapointsToAlarm: datapointsToAlarm,
+              threshold: threshold,
+              comparisonOperator: ComparisonOperator.GREATER_THAN_OR_EQUAL_TO_THRESHOLD,
+              treatMissingData: TreatMissingData.IGNORE
+            }
+          );
+      }
+    }
+  
+    static createAZLatencyOutlierAlarm(
+      scope: IConstruct,
+      alb: IApplicationLoadBalancer, 
+      algorithm: ApplicationLoadBalancerLatencyOutlierAlgorithm,
+      availabilityZoneId: string,
+      availabilityZone: string,
+      statistic: string,
+      latencyThresold: number,
+      outlierThreshold: number,
+      period: Duration,
+      evaluationPeriods: number,
+      datapointsToAlarm: number,
+      keyprefix: string
+    ) : IAlarm {
+  
+      let usingMetrics: { [key: string]: IMetric } = {};
+      let azMetricId: string = "";
+  
+      switch (algorithm)
+      {
+        case ApplicationLoadBalancerLatencyOutlierAlgorithm.Z_SCORE:
+        default:
+  
+          alb.vpc!.availabilityZones.forEach((az: string, index: number) => {
+  
+            // Target response time
+            let targetResponseTime: IMetric = ApplicationLoadBalancerMetrics.getPerAZLatencyMetric({
+              alb: alb,
+              availabilityZone: az,
+              label: az + "-target-response-time",
+              statistic: statistic,
+              period: period
+            });
+  
+            if (az == availabilityZone) {       
+              azMetricId = `a${index}`
+              usingMetrics[`a${index}`] = targetResponseTime;
+            }
+            else {
+              usingMetrics[`b${index}`] = targetResponseTime;
+            }
+          });
+  
+          return new Alarm(
+            scope,
+            keyprefix + "-latency-outlier-alarm",
+            {
+              alarmName:
+                availabilityZoneId + '-' + alb.loadBalancerArn + '-latency-impact-outlier',
+              actionsEnabled: false,
+              metric: new MathExpression({
+                expression: `(${azMetricId!} - AVG(METRICS("b"))) / AVG(STDDEV(METRICS("b")))`,
+                usingMetrics: usingMetrics,
+                label: availabilityZoneId + '-' + alb.loadBalancerArn + '-latency-z-score',
+                period: period,
+              }),
+              evaluationPeriods: evaluationPeriods,
+              datapointsToAlarm: datapointsToAlarm,
+              threshold: outlierThreshold,
+              comparisonOperator: ComparisonOperator.GREATER_THAN_OR_EQUAL_TO_THRESHOLD,
+              treatMissingData: TreatMissingData.IGNORE
+            }
+          );
+        case ApplicationLoadBalancerLatencyOutlierAlgorithm.STATIC:
+          
+          alb.vpc!.availabilityZones.forEach((az: string, index: number) => {
+            // Target response time
+            let targetResponseTime: IMetric = ApplicationLoadBalancerMetrics.getPerAZLatencyMetric({
+              alb: alb,
+              availabilityZone: az,
+              label: az + "-target-response-time",
+              statistic: `TC(${latencyThresold}:)`,
+              period: period
+            });
+  
+            if (az == availabilityZone) {       
+              azMetricId = `a${index}`
+              usingMetrics[`a${index}`] = targetResponseTime;
+            }
+            else {
+              usingMetrics[`b${index}`] = targetResponseTime;
+            }
+  
+          });
+  
+          return new Alarm(
+            scope,
+            keyprefix + "-latency-outlier-alarm",
+            {
+              alarmName:
+                availabilityZoneId + '-' + alb.loadBalancerArn + '-latency-impact-outlier',
+              actionsEnabled: false,
+              metric: new MathExpression({
+                expression: `${azMetricId}/(${Object.keys(usingMetrics).join("+")})`,
+                usingMetrics: usingMetrics,
+                label: availabilityZoneId + '-' + alb.loadBalancerArn + '-latency-static',
+                period: period,
+              }),
+              evaluationPeriods: evaluationPeriods,
+              datapointsToAlarm: datapointsToAlarm,
+              threshold: outlierThreshold,
+              comparisonOperator: ComparisonOperator.GREATER_THAN_OR_EQUAL_TO_THRESHOLD,
+              treatMissingData: TreatMissingData.IGNORE
+            }
+          );
+      }
     }
 }

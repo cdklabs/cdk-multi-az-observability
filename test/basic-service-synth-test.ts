@@ -53,20 +53,24 @@ subnets.subnets.forEach((subnet, index) => {
 });
 
 new BasicServiceMultiAZObservability(stack, 'MAZObservability', {
-  applicationLoadBalancers: [
-    new ApplicationLoadBalancer(stack, 'alb', {
-      vpc: vpc,
-      crossZoneEnabled: true,
-    }),
-  ],
-  natGateways: natGateways,
-  faultCountPercentageThreshold: 1.0,
-  packetLossImpactPercentageThreshold: 0.01,
-  serviceName: 'test',
-  period: cdk.Duration.seconds(60),
-  createDashboard: true,
-  datapointsToAlarm: 3,
-  evaluationPeriods: 5,
-  latencyStatistic: "p99",
-  latencyThreshold: .5
-});
+    applicationLoadBalancerProps: {
+      applicationLoadBalancers: [
+        new ApplicationLoadBalancer(stack, 'alb', {
+          vpc: vpc,
+          crossZoneEnabled: true,
+        }),
+      ],
+      faultCountPercentThreshold: 0.01,
+      latencyStatistic: "p99",
+      latencyThreshold: 200,
+    },
+    natGatewayProps: {
+       natGateways: natGateways,
+       packetLossPercentThreshold: 0.01,
+    },
+    serviceName: 'test',
+    period: cdk.Duration.seconds(60),
+    createDashboard: true,
+    evaluationPeriods: 5,
+    datapointsToAlarm: 3,
+  });

@@ -788,6 +788,136 @@ The timeout for each individual HTTP request.
 
 ---
 
+### ApplicationLoadBalancerDetectionProps <a name="ApplicationLoadBalancerDetectionProps" id="@cdklabs/multi-az-observability.ApplicationLoadBalancerDetectionProps"></a>
+
+The properties for performing zonal impact detection with ALB(s).
+
+#### Initializer <a name="Initializer" id="@cdklabs/multi-az-observability.ApplicationLoadBalancerDetectionProps.Initializer"></a>
+
+```typescript
+import { ApplicationLoadBalancerDetectionProps } from '@cdklabs/multi-az-observability'
+
+const applicationLoadBalancerDetectionProps: ApplicationLoadBalancerDetectionProps = { ... }
+```
+
+#### Properties <a name="Properties" id="Properties"></a>
+
+| **Name** | **Type** | **Description** |
+| --- | --- | --- |
+| <code><a href="#@cdklabs/multi-az-observability.ApplicationLoadBalancerDetectionProps.property.applicationLoadBalancers">applicationLoadBalancers</a></code> | <code>aws-cdk-lib.aws_elasticloadbalancingv2.IApplicationLoadBalancer[]</code> | The application load balancers to collect metrics from. |
+| <code><a href="#@cdklabs/multi-az-observability.ApplicationLoadBalancerDetectionProps.property.faultCountPercentThreshold">faultCountPercentThreshold</a></code> | <code>number</code> | The percentage of faults for a single ALB to consider an AZ to be unhealthy, this should align with your availability goal. |
+| <code><a href="#@cdklabs/multi-az-observability.ApplicationLoadBalancerDetectionProps.property.latencyStatistic">latencyStatistic</a></code> | <code>string</code> | The statistic used to measure target response latency, like p99,  which can be specified using Stats.percentile(99) or "p99". |
+| <code><a href="#@cdklabs/multi-az-observability.ApplicationLoadBalancerDetectionProps.property.latencyThreshold">latencyThreshold</a></code> | <code>number</code> | The threshold in milliseconds for ALB targets whose responses are slower than this value at the specified percentile statistic. |
+| <code><a href="#@cdklabs/multi-az-observability.ApplicationLoadBalancerDetectionProps.property.availabilityOutlierAlgorithm">availabilityOutlierAlgorithm</a></code> | <code><a href="#@cdklabs/multi-az-observability.ApplicationLoadBalancerAvailabilityOutlierAlgorithm">ApplicationLoadBalancerAvailabilityOutlierAlgorithm</a></code> | The method used to determine if an AZ is an outlier for availability for Application Load Balancer metrics. |
+| <code><a href="#@cdklabs/multi-az-observability.ApplicationLoadBalancerDetectionProps.property.availabilityOutlierThreshold">availabilityOutlierThreshold</a></code> | <code>number</code> | The threshold for the outlier detection algorithm. |
+| <code><a href="#@cdklabs/multi-az-observability.ApplicationLoadBalancerDetectionProps.property.latencyOutlierAlgorithm">latencyOutlierAlgorithm</a></code> | <code><a href="#@cdklabs/multi-az-observability.ApplicationLoadBalancerLatencyOutlierAlgorithm">ApplicationLoadBalancerLatencyOutlierAlgorithm</a></code> | The method used to determine if an AZ is an outlier for latency for Application Load Balancer metrics. |
+| <code><a href="#@cdklabs/multi-az-observability.ApplicationLoadBalancerDetectionProps.property.latencyOutlierThreshold">latencyOutlierThreshold</a></code> | <code>number</code> | The threshold for the outlier detection algorithm. |
+
+---
+
+##### `applicationLoadBalancers`<sup>Required</sup> <a name="applicationLoadBalancers" id="@cdklabs/multi-az-observability.ApplicationLoadBalancerDetectionProps.property.applicationLoadBalancers"></a>
+
+```typescript
+public readonly applicationLoadBalancers: IApplicationLoadBalancer[];
+```
+
+- *Type:* aws-cdk-lib.aws_elasticloadbalancingv2.IApplicationLoadBalancer[]
+
+The application load balancers to collect metrics from.
+
+---
+
+##### `faultCountPercentThreshold`<sup>Required</sup> <a name="faultCountPercentThreshold" id="@cdklabs/multi-az-observability.ApplicationLoadBalancerDetectionProps.property.faultCountPercentThreshold"></a>
+
+```typescript
+public readonly faultCountPercentThreshold: number;
+```
+
+- *Type:* number
+
+The percentage of faults for a single ALB to consider an AZ to be unhealthy, this should align with your availability goal.
+
+For example
+1% or 5%, 0.01 or 0.05.
+
+---
+
+##### `latencyStatistic`<sup>Required</sup> <a name="latencyStatistic" id="@cdklabs/multi-az-observability.ApplicationLoadBalancerDetectionProps.property.latencyStatistic"></a>
+
+```typescript
+public readonly latencyStatistic: string;
+```
+
+- *Type:* string
+
+The statistic used to measure target response latency, like p99,  which can be specified using Stats.percentile(99) or "p99".
+
+---
+
+##### `latencyThreshold`<sup>Required</sup> <a name="latencyThreshold" id="@cdklabs/multi-az-observability.ApplicationLoadBalancerDetectionProps.property.latencyThreshold"></a>
+
+```typescript
+public readonly latencyThreshold: number;
+```
+
+- *Type:* number
+
+The threshold in milliseconds for ALB targets whose responses are slower than this value at the specified percentile statistic.
+
+---
+
+##### `availabilityOutlierAlgorithm`<sup>Optional</sup> <a name="availabilityOutlierAlgorithm" id="@cdklabs/multi-az-observability.ApplicationLoadBalancerDetectionProps.property.availabilityOutlierAlgorithm"></a>
+
+```typescript
+public readonly availabilityOutlierAlgorithm: ApplicationLoadBalancerAvailabilityOutlierAlgorithm;
+```
+
+- *Type:* <a href="#@cdklabs/multi-az-observability.ApplicationLoadBalancerAvailabilityOutlierAlgorithm">ApplicationLoadBalancerAvailabilityOutlierAlgorithm</a>
+- *Default:* STATIC
+
+The method used to determine if an AZ is an outlier for availability for Application Load Balancer metrics.
+
+---
+
+##### `availabilityOutlierThreshold`<sup>Optional</sup> <a name="availabilityOutlierThreshold" id="@cdklabs/multi-az-observability.ApplicationLoadBalancerDetectionProps.property.availabilityOutlierThreshold"></a>
+
+```typescript
+public readonly availabilityOutlierThreshold: number;
+```
+
+- *Type:* number
+- *Default:* "This depends on the algorithm used. STATIC: 0.66."
+
+The threshold for the outlier detection algorithm.
+
+---
+
+##### `latencyOutlierAlgorithm`<sup>Optional</sup> <a name="latencyOutlierAlgorithm" id="@cdklabs/multi-az-observability.ApplicationLoadBalancerDetectionProps.property.latencyOutlierAlgorithm"></a>
+
+```typescript
+public readonly latencyOutlierAlgorithm: ApplicationLoadBalancerLatencyOutlierAlgorithm;
+```
+
+- *Type:* <a href="#@cdklabs/multi-az-observability.ApplicationLoadBalancerLatencyOutlierAlgorithm">ApplicationLoadBalancerLatencyOutlierAlgorithm</a>
+- *Default:* Z_SCORE
+
+The method used to determine if an AZ is an outlier for latency for Application Load Balancer metrics.
+
+---
+
+##### `latencyOutlierThreshold`<sup>Optional</sup> <a name="latencyOutlierThreshold" id="@cdklabs/multi-az-observability.ApplicationLoadBalancerDetectionProps.property.latencyOutlierThreshold"></a>
+
+```typescript
+public readonly latencyOutlierThreshold: number;
+```
+
+- *Type:* number
+- *Default:* "This depends on the algorithm used. STATIC: 0.66. Z_SCORE: 3."
+
+The threshold for the outlier detection algorithm.
+
+---
+
 ### AvailabilityZoneMapperProps <a name="AvailabilityZoneMapperProps" id="@cdklabs/multi-az-observability.AvailabilityZoneMapperProps"></a>
 
 Properties for the AZ mapper.
@@ -839,18 +969,13 @@ const basicServiceMultiAZObservabilityProps: BasicServiceMultiAZObservabilityPro
 | --- | --- | --- |
 | <code><a href="#@cdklabs/multi-az-observability.BasicServiceMultiAZObservabilityProps.property.datapointsToAlarm">datapointsToAlarm</a></code> | <code>number</code> | The number of datapoints to alarm on for latency and availability alarms. |
 | <code><a href="#@cdklabs/multi-az-observability.BasicServiceMultiAZObservabilityProps.property.evaluationPeriods">evaluationPeriods</a></code> | <code>number</code> | The number of evaluation periods for latency and availabiltiy alarms. |
-| <code><a href="#@cdklabs/multi-az-observability.BasicServiceMultiAZObservabilityProps.property.faultCountPercentageThreshold">faultCountPercentageThreshold</a></code> | <code>number</code> | The percentage of faults for a single ALB to consider an AZ to be unhealthy, this should align with your availability goal. |
-| <code><a href="#@cdklabs/multi-az-observability.BasicServiceMultiAZObservabilityProps.property.latencyStatistic">latencyStatistic</a></code> | <code>string</code> | The statistic used to measure target response latency, like p99,  which can be specified using Stats.percentile(99) or "p99". |
-| <code><a href="#@cdklabs/multi-az-observability.BasicServiceMultiAZObservabilityProps.property.latencyThreshold">latencyThreshold</a></code> | <code>number</code> | The threshold in seconds for ALB targets whose responses are slower than this value at the specified percentile statistic. |
 | <code><a href="#@cdklabs/multi-az-observability.BasicServiceMultiAZObservabilityProps.property.serviceName">serviceName</a></code> | <code>string</code> | The service's name. |
-| <code><a href="#@cdklabs/multi-az-observability.BasicServiceMultiAZObservabilityProps.property.applicationLoadBalancers">applicationLoadBalancers</a></code> | <code>aws-cdk-lib.aws_elasticloadbalancingv2.IApplicationLoadBalancer[]</code> | The application load balancers being used by the service. |
+| <code><a href="#@cdklabs/multi-az-observability.BasicServiceMultiAZObservabilityProps.property.applicationLoadBalancerProps">applicationLoadBalancerProps</a></code> | <code><a href="#@cdklabs/multi-az-observability.ApplicationLoadBalancerDetectionProps">ApplicationLoadBalancerDetectionProps</a></code> | Properties for ALBs to detect single AZ impact. |
 | <code><a href="#@cdklabs/multi-az-observability.BasicServiceMultiAZObservabilityProps.property.assetsBucketParameterName">assetsBucketParameterName</a></code> | <code>string</code> | If you are not using a static bucket to deploy assets, for example you are synthing this and it gets uploaded to a bucket whose name is unknown to you (maybe used as part of a central CI/CD system) and is provided as a parameter to your stack, specify that parameter name here. |
 | <code><a href="#@cdklabs/multi-az-observability.BasicServiceMultiAZObservabilityProps.property.assetsBucketPrefixParameterName">assetsBucketPrefixParameterName</a></code> | <code>string</code> | If you are not using a static bucket to deploy assets, for example you are synthing this and it gets uploaded to a bucket that uses a prefix that is unknown to you (maybe used as part of a central CI/CD system) and is provided as a parameter to your stack, specify that parameter name here. |
 | <code><a href="#@cdklabs/multi-az-observability.BasicServiceMultiAZObservabilityProps.property.createDashboard">createDashboard</a></code> | <code>boolean</code> | Whether to create a dashboard displaying the metrics and alarms. |
 | <code><a href="#@cdklabs/multi-az-observability.BasicServiceMultiAZObservabilityProps.property.interval">interval</a></code> | <code>aws-cdk-lib.Duration</code> | Dashboard interval. |
-| <code><a href="#@cdklabs/multi-az-observability.BasicServiceMultiAZObservabilityProps.property.latencyOutlierCalculation">latencyOutlierCalculation</a></code> | <code><a href="#@cdklabs/multi-az-observability.ApplicationLoadBalancerLatencyOutlierCalculation">ApplicationLoadBalancerLatencyOutlierCalculation</a></code> | The method used to determine if an AZ is an outlier for latency for Application Load Balancer metrics. |
-| <code><a href="#@cdklabs/multi-az-observability.BasicServiceMultiAZObservabilityProps.property.natGateways">natGateways</a></code> | <code>{[ key: string ]: aws-cdk-lib.aws_ec2.CfnNatGateway[]}</code> | (Optional) A map of Availability Zone name to the NAT Gateways in that AZ. |
-| <code><a href="#@cdklabs/multi-az-observability.BasicServiceMultiAZObservabilityProps.property.packetLossImpactPercentageThreshold">packetLossImpactPercentageThreshold</a></code> | <code>number</code> | The amount of packet loss in a NAT GW to determine if an AZ is actually impacted, recommendation is 0.01%. |
+| <code><a href="#@cdklabs/multi-az-observability.BasicServiceMultiAZObservabilityProps.property.natGatewayProps">natGatewayProps</a></code> | <code><a href="#@cdklabs/multi-az-observability.NatGatewayDetectionProps">NatGatewayDetectionProps</a></code> | Properties for NAT Gateways to detect single AZ impact. |
 | <code><a href="#@cdklabs/multi-az-observability.BasicServiceMultiAZObservabilityProps.property.period">period</a></code> | <code>aws-cdk-lib.Duration</code> | The period to evaluate metrics. |
 
 ---
@@ -879,45 +1004,6 @@ The number of evaluation periods for latency and availabiltiy alarms.
 
 ---
 
-##### `faultCountPercentageThreshold`<sup>Required</sup> <a name="faultCountPercentageThreshold" id="@cdklabs/multi-az-observability.BasicServiceMultiAZObservabilityProps.property.faultCountPercentageThreshold"></a>
-
-```typescript
-public readonly faultCountPercentageThreshold: number;
-```
-
-- *Type:* number
-
-The percentage of faults for a single ALB to consider an AZ to be unhealthy, this should align with your availability goal.
-
-For example
-1% or 5%, specify as 1 or 5.
-
----
-
-##### `latencyStatistic`<sup>Required</sup> <a name="latencyStatistic" id="@cdklabs/multi-az-observability.BasicServiceMultiAZObservabilityProps.property.latencyStatistic"></a>
-
-```typescript
-public readonly latencyStatistic: string;
-```
-
-- *Type:* string
-
-The statistic used to measure target response latency, like p99,  which can be specified using Stats.percentile(99) or "p99".
-
----
-
-##### `latencyThreshold`<sup>Required</sup> <a name="latencyThreshold" id="@cdklabs/multi-az-observability.BasicServiceMultiAZObservabilityProps.property.latencyThreshold"></a>
-
-```typescript
-public readonly latencyThreshold: number;
-```
-
-- *Type:* number
-
-The threshold in seconds for ALB targets whose responses are slower than this value at the specified percentile statistic.
-
----
-
 ##### `serviceName`<sup>Required</sup> <a name="serviceName" id="@cdklabs/multi-az-observability.BasicServiceMultiAZObservabilityProps.property.serviceName"></a>
 
 ```typescript
@@ -930,20 +1016,19 @@ The service's name.
 
 ---
 
-##### `applicationLoadBalancers`<sup>Optional</sup> <a name="applicationLoadBalancers" id="@cdklabs/multi-az-observability.BasicServiceMultiAZObservabilityProps.property.applicationLoadBalancers"></a>
+##### `applicationLoadBalancerProps`<sup>Optional</sup> <a name="applicationLoadBalancerProps" id="@cdklabs/multi-az-observability.BasicServiceMultiAZObservabilityProps.property.applicationLoadBalancerProps"></a>
 
 ```typescript
-public readonly applicationLoadBalancers: IApplicationLoadBalancer[];
+public readonly applicationLoadBalancerProps: ApplicationLoadBalancerDetectionProps;
 ```
 
-- *Type:* aws-cdk-lib.aws_elasticloadbalancingv2.IApplicationLoadBalancer[]
-- *Default:* "No alarms for ALBs will be created"
+- *Type:* <a href="#@cdklabs/multi-az-observability.ApplicationLoadBalancerDetectionProps">ApplicationLoadBalancerDetectionProps</a>
+- *Default:* "No ALBs will be used to calculate impact."
 
-The application load balancers being used by the service.
+Properties for ALBs to detect single AZ impact.
 
-There will be an alarm created for 
-each AZ for each ALB. Then, there will be a composite alarm for AZ created from the input
-of all ALBs. You must either specify an ALB or a NAT GW.
+You must specify this
+and/or natGatewayProps.
 
 ---
 
@@ -1012,46 +1097,19 @@ Dashboard interval.
 
 ---
 
-##### `latencyOutlierCalculation`<sup>Optional</sup> <a name="latencyOutlierCalculation" id="@cdklabs/multi-az-observability.BasicServiceMultiAZObservabilityProps.property.latencyOutlierCalculation"></a>
+##### `natGatewayProps`<sup>Optional</sup> <a name="natGatewayProps" id="@cdklabs/multi-az-observability.BasicServiceMultiAZObservabilityProps.property.natGatewayProps"></a>
 
 ```typescript
-public readonly latencyOutlierCalculation: ApplicationLoadBalancerLatencyOutlierCalculation;
+public readonly natGatewayProps: NatGatewayDetectionProps;
 ```
 
-- *Type:* <a href="#@cdklabs/multi-az-observability.ApplicationLoadBalancerLatencyOutlierCalculation">ApplicationLoadBalancerLatencyOutlierCalculation</a>
-- *Default:* Z_SCORE
+- *Type:* <a href="#@cdklabs/multi-az-observability.NatGatewayDetectionProps">NatGatewayDetectionProps</a>
+- *Default:* "No NAT Gateways will be used to calculate impact."
 
-The method used to determine if an AZ is an outlier for latency for Application Load Balancer metrics.
+Properties for NAT Gateways to detect single AZ impact.
 
----
-
-##### `natGateways`<sup>Optional</sup> <a name="natGateways" id="@cdklabs/multi-az-observability.BasicServiceMultiAZObservabilityProps.property.natGateways"></a>
-
-```typescript
-public readonly natGateways: {[ key: string ]: CfnNatGateway[]};
-```
-
-- *Type:* {[ key: string ]: aws-cdk-lib.aws_ec2.CfnNatGateway[]}
-- *Default:* "No alarms for NAT Gateways will be created"
-
-(Optional) A map of Availability Zone name to the NAT Gateways in that AZ.
-
-One alarm per NAT GW will be created. If multiple NAT GWs
-are provided for a single AZ, those alarms will be aggregated into
-a composite alarm for the AZ. You must either specify an ALB or a NAT GW.
-
----
-
-##### `packetLossImpactPercentageThreshold`<sup>Optional</sup> <a name="packetLossImpactPercentageThreshold" id="@cdklabs/multi-az-observability.BasicServiceMultiAZObservabilityProps.property.packetLossImpactPercentageThreshold"></a>
-
-```typescript
-public readonly packetLossImpactPercentageThreshold: number;
-```
-
-- *Type:* number
-- *Default:* "0.01 (as in 0.01%)"
-
-The amount of packet loss in a NAT GW to determine if an AZ is actually impacted, recommendation is 0.01%.
+You must specify
+this and/or applicationLoadBalancerProps.
 
 ---
 
@@ -1462,6 +1520,80 @@ CHI_SQUARED: 0.05
 Z_SCORE: 2
 IQR: 1.5
 MAD: 3
+
+---
+
+### NatGatewayDetectionProps <a name="NatGatewayDetectionProps" id="@cdklabs/multi-az-observability.NatGatewayDetectionProps"></a>
+
+The properties for performing zonal impact detection with NAT Gateway(s).
+
+#### Initializer <a name="Initializer" id="@cdklabs/multi-az-observability.NatGatewayDetectionProps.Initializer"></a>
+
+```typescript
+import { NatGatewayDetectionProps } from '@cdklabs/multi-az-observability'
+
+const natGatewayDetectionProps: NatGatewayDetectionProps = { ... }
+```
+
+#### Properties <a name="Properties" id="Properties"></a>
+
+| **Name** | **Type** | **Description** |
+| --- | --- | --- |
+| <code><a href="#@cdklabs/multi-az-observability.NatGatewayDetectionProps.property.natGateways">natGateways</a></code> | <code>{[ key: string ]: aws-cdk-lib.aws_ec2.CfnNatGateway[]}</code> | A list of NAT Gateways per Availability Zone (using the AZ name as the key). |
+| <code><a href="#@cdklabs/multi-az-observability.NatGatewayDetectionProps.property.packetLossOutlierAlgorithm">packetLossOutlierAlgorithm</a></code> | <code><a href="#@cdklabs/multi-az-observability.PacketLossOutlierAlgorithm">PacketLossOutlierAlgorithm</a></code> | The algorithm to use to calculate an AZ as an outlier for packet loss. |
+| <code><a href="#@cdklabs/multi-az-observability.NatGatewayDetectionProps.property.packetLossOutlierThreshold">packetLossOutlierThreshold</a></code> | <code>number</code> | The threshold used with the outlier calculation. |
+| <code><a href="#@cdklabs/multi-az-observability.NatGatewayDetectionProps.property.packetLossPercentThreshold">packetLossPercentThreshold</a></code> | <code>number</code> | The percentage of packet loss at which you consider there to be impact. |
+
+---
+
+##### `natGateways`<sup>Required</sup> <a name="natGateways" id="@cdklabs/multi-az-observability.NatGatewayDetectionProps.property.natGateways"></a>
+
+```typescript
+public readonly natGateways: {[ key: string ]: CfnNatGateway[]};
+```
+
+- *Type:* {[ key: string ]: aws-cdk-lib.aws_ec2.CfnNatGateway[]}
+
+A list of NAT Gateways per Availability Zone (using the AZ name as the key).
+
+---
+
+##### `packetLossOutlierAlgorithm`<sup>Optional</sup> <a name="packetLossOutlierAlgorithm" id="@cdklabs/multi-az-observability.NatGatewayDetectionProps.property.packetLossOutlierAlgorithm"></a>
+
+```typescript
+public readonly packetLossOutlierAlgorithm: PacketLossOutlierAlgorithm;
+```
+
+- *Type:* <a href="#@cdklabs/multi-az-observability.PacketLossOutlierAlgorithm">PacketLossOutlierAlgorithm</a>
+- *Default:* PacketLossOutlierAlgorithm.STATIC
+
+The algorithm to use to calculate an AZ as an outlier for packet loss.
+
+---
+
+##### `packetLossOutlierThreshold`<sup>Optional</sup> <a name="packetLossOutlierThreshold" id="@cdklabs/multi-az-observability.NatGatewayDetectionProps.property.packetLossOutlierThreshold"></a>
+
+```typescript
+public readonly packetLossOutlierThreshold: number;
+```
+
+- *Type:* number
+- *Default:* "This depends on the outlier algorithm. STATIC: 0.66. Z-SCORE: 3."
+
+The threshold used with the outlier calculation.
+
+---
+
+##### `packetLossPercentThreshold`<sup>Optional</sup> <a name="packetLossPercentThreshold" id="@cdklabs/multi-az-observability.NatGatewayDetectionProps.property.packetLossPercentThreshold"></a>
+
+```typescript
+public readonly packetLossPercentThreshold: number;
+```
+
+- *Type:* number
+- *Default:* 0.01 (as in 0.01%)
+
+The percentage of packet loss at which you consider there to be impact.
 
 ---
 
@@ -5057,7 +5189,26 @@ metrics this will typically just be "Sum".
 
 ## Enums <a name="Enums" id="Enums"></a>
 
-### ApplicationLoadBalancerLatencyOutlierCalculation <a name="ApplicationLoadBalancerLatencyOutlierCalculation" id="@cdklabs/multi-az-observability.ApplicationLoadBalancerLatencyOutlierCalculation"></a>
+### ApplicationLoadBalancerAvailabilityOutlierAlgorithm <a name="ApplicationLoadBalancerAvailabilityOutlierAlgorithm" id="@cdklabs/multi-az-observability.ApplicationLoadBalancerAvailabilityOutlierAlgorithm"></a>
+
+The options for calculating if an ALB is an outlier for availability.
+
+#### Members <a name="Members" id="Members"></a>
+
+| **Name** | **Description** |
+| --- | --- |
+| <code><a href="#@cdklabs/multi-az-observability.ApplicationLoadBalancerAvailabilityOutlierAlgorithm.STATIC">STATIC</a></code> | This will take the availability threshold and calculate if one AZ is responsible for that percentage of errors. |
+
+---
+
+##### `STATIC` <a name="STATIC" id="@cdklabs/multi-az-observability.ApplicationLoadBalancerAvailabilityOutlierAlgorithm.STATIC"></a>
+
+This will take the availability threshold and calculate if one AZ is responsible for that percentage of errors.
+
+---
+
+
+### ApplicationLoadBalancerLatencyOutlierAlgorithm <a name="ApplicationLoadBalancerLatencyOutlierAlgorithm" id="@cdklabs/multi-az-observability.ApplicationLoadBalancerLatencyOutlierAlgorithm"></a>
 
 The options for calculating if an AZ is an outlier for latency for ALBs.
 
@@ -5065,12 +5216,12 @@ The options for calculating if an AZ is an outlier for latency for ALBs.
 
 | **Name** | **Description** |
 | --- | --- |
-| <code><a href="#@cdklabs/multi-az-observability.ApplicationLoadBalancerLatencyOutlierCalculation.STATIC">STATIC</a></code> | This will take the latency threshold and count the number of requests per AZ  that exceed this threshold and then calculate the percentage of requests exceeding this threshold belong to each AZ. |
-| <code><a href="#@cdklabs/multi-az-observability.ApplicationLoadBalancerLatencyOutlierCalculation.Z_SCORE">Z_SCORE</a></code> | This calculates the z score of latency in one AZ against the other AZs. |
+| <code><a href="#@cdklabs/multi-az-observability.ApplicationLoadBalancerLatencyOutlierAlgorithm.STATIC">STATIC</a></code> | This will take the latency threshold and count the number of requests per AZ  that exceed this threshold and then calculate the percentage of requests exceeding this threshold belong to each AZ. |
+| <code><a href="#@cdklabs/multi-az-observability.ApplicationLoadBalancerLatencyOutlierAlgorithm.Z_SCORE">Z_SCORE</a></code> | This calculates the z score of latency in one AZ against the other AZs. |
 
 ---
 
-##### `STATIC` <a name="STATIC" id="@cdklabs/multi-az-observability.ApplicationLoadBalancerLatencyOutlierCalculation.STATIC"></a>
+##### `STATIC` <a name="STATIC" id="@cdklabs/multi-az-observability.ApplicationLoadBalancerLatencyOutlierAlgorithm.STATIC"></a>
 
 This will take the latency threshold and count the number of requests per AZ  that exceed this threshold and then calculate the percentage of requests exceeding this threshold belong to each AZ.
 
@@ -5080,7 +5231,7 @@ of the number of high latency requests in one AZ versus the others
 ---
 
 
-##### `Z_SCORE` <a name="Z_SCORE" id="@cdklabs/multi-az-observability.ApplicationLoadBalancerLatencyOutlierCalculation.Z_SCORE"></a>
+##### `Z_SCORE` <a name="Z_SCORE" id="@cdklabs/multi-az-observability.ApplicationLoadBalancerLatencyOutlierAlgorithm.Z_SCORE"></a>
 
 This calculates the z score of latency in one AZ against the other AZs.
 
@@ -5152,6 +5303,25 @@ No threshold is required for this method and will be ignored
 Median Absolute Deviation (MAD) to determine an outlier for faults or latency.
 
 A common default value threshold 3
+
+---
+
+
+### PacketLossOutlierAlgorithm <a name="PacketLossOutlierAlgorithm" id="@cdklabs/multi-az-observability.PacketLossOutlierAlgorithm"></a>
+
+The options for calculating if a NAT Gateway is an outlier for packet loss.
+
+#### Members <a name="Members" id="Members"></a>
+
+| **Name** | **Description** |
+| --- | --- |
+| <code><a href="#@cdklabs/multi-az-observability.PacketLossOutlierAlgorithm.STATIC">STATIC</a></code> | This will take the availability threshold and calculate if one AZ is responsible for that percentage of packet loss. |
+
+---
+
+##### `STATIC` <a name="STATIC" id="@cdklabs/multi-az-observability.PacketLossOutlierAlgorithm.STATIC"></a>
+
+This will take the availability threshold and calculate if one AZ is responsible for that percentage of packet loss.
 
 ---
 

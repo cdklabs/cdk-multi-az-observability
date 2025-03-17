@@ -2,64 +2,33 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { Duration } from 'aws-cdk-lib';
-import { CfnNatGateway } from 'aws-cdk-lib/aws-ec2';
-import { IApplicationLoadBalancer } from 'aws-cdk-lib/aws-elasticloadbalancingv2';
-import { ApplicationLoadBalancerLatencyOutlierCalculation } from './ApplicationLoadBalancerLatencyOutlierCalculation';
+import { ApplicationLoadBalancerDetectionProps } from './ApplicationLoadBalancerDetectionProps';
+import { NatGatewayDetectionProps } from './NatGatewayDetectionProps';
 
 /**
  * Properties for creating basic multi-AZ observability
  */
 export interface BasicServiceMultiAZObservabilityProps {
   /**
-   * (Optional) A map of Availability Zone name to the NAT Gateways
-   * in that AZ. One alarm per NAT GW will be created. If multiple NAT GWs
-   * are provided for a single AZ, those alarms will be aggregated into
-   * a composite alarm for the AZ. You must either specify an ALB or a NAT GW.
-   *
-   * @default "No alarms for NAT Gateways will be created"
+   * Properties for NAT Gateways to detect single AZ impact. You must specify
+   * this and/or applicationLoadBalancerProps.
+   * 
+   * @default "No NAT Gateways will be used to calculate impact."
    */
-  readonly natGateways?: { [key: string]: CfnNatGateway[] };
+  readonly natGatewayProps?: NatGatewayDetectionProps;
 
   /**
-   * The application load balancers being used by the service. There will be an alarm created for 
-   * each AZ for each ALB. Then, there will be a composite alarm for AZ created from the input
-   * of all ALBs. You must either specify an ALB or a NAT GW.
-   *
-   * @default "No alarms for ALBs will be created"
+   * Properties for ALBs to detect single AZ impact. You must specify this
+   * and/or natGatewayProps.
+   * 
+   * @default "No ALBs will be used to calculate impact."
    */
-  readonly applicationLoadBalancers?: IApplicationLoadBalancer[];
+  readonly applicationLoadBalancerProps?: ApplicationLoadBalancerDetectionProps;
 
   /**
    * The service's name
    */
   readonly serviceName: string;
-
-  /**
-   * The amount of packet loss in a NAT GW to determine if an AZ
-   * is actually impacted, recommendation is 0.01%
-   *
-   * @default "0.01 (as in 0.01%)"
-   */
-  readonly packetLossImpactPercentageThreshold?: number;
-
-  /**
-   * The percentage of faults for a single ALB to consider an AZ
-   * to be unhealthy, this should align with your availability goal. For example
-   * 1% or 5%, specify as 1 or 5.
-   */
-  readonly faultCountPercentageThreshold: number;
-
-  /**
-   * The threshold in seconds for ALB targets whose responses are slower than this
-   * value at the specified percentile statistic.
-   */
-  readonly latencyThreshold: number;
-
-  /**
-   * The statistic used to measure target response latency, like p99, 
-   * which can be specified using Stats.percentile(99) or "p99".
-   */
-  readonly latencyStatistic: string;
 
   /**
    * The period to evaluate metrics
@@ -122,10 +91,4 @@ export interface BasicServiceMultiAZObservabilityProps {
    * The number of datapoints to alarm on for latency and availability alarms
    */
   readonly datapointsToAlarm: number;
-
-  /**
-   * The method used to determine if an AZ is an outlier for latency for Application Load Balancer metrics.
-   * @default Z_SCORE
-   */
-  readonly latencyOutlierCalculation?: ApplicationLoadBalancerLatencyOutlierCalculation;
 }
