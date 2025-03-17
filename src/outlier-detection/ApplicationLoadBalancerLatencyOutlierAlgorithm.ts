@@ -1,7 +1,7 @@
 /**
  * The options for calculating if an AZ is an outlier for latency for ALBs
  */
-export enum ApplicationLoadBalancerLatencyOutlierCalculation
+export enum ApplicationLoadBalancerLatencyOutlierAlgorithm
 {
     /**
      * This will take the latency threshold and count the number of requests per AZ 

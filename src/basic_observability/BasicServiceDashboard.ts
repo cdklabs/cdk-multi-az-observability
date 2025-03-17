@@ -1,8 +1,9 @@
 // Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
-import { Duration, Fn } from 'aws-cdk-lib';
+import { Aws, Duration, Fn } from 'aws-cdk-lib';
 import {
   AlarmStatusWidget,
+  Color,
   Dashboard,
   GraphWidget,
   IAlarm,
@@ -14,9 +15,10 @@ import {
 import { Construct } from 'constructs';
 import { BasicServiceDashboardProps } from './props/BasicServiceDashboardProps';
 import { AvailabilityZoneMapper } from '../azmapper/AvailabilityZoneMapper';
-import { MetricsHelper } from '../utilities/MetricsHelper';
 import { ApplicationLoadBalancerMetrics } from '../metrics/ApplicationLoadBalancerMetrics';
 import { IApplicationLoadBalancer } from 'aws-cdk-lib/aws-elasticloadbalancingv2';
+import { CfnNatGateway } from 'aws-cdk-lib/aws-ec2';
+import { NatGatewayMetrics } from '../metrics/NatGatewayMetrics';
 
 export class BasicServiceDashboard extends Construct {
 
@@ -24,7 +26,9 @@ export class BasicServiceDashboard extends Construct {
     albs: IApplicationLoadBalancer[],
     azMapper: AvailabilityZoneMapper,
     period: Duration,
-    latencyStatistic: string
+    latencyStatistic: string,
+    latencyThreshold: number,
+    faultRateThreshold: number
   ): IWidget[] {
     let albWidgets: IWidget[] = [];
 
@@ -99,7 +103,14 @@ export class BasicServiceDashboard extends Construct {
           min: 0,
           label: 'Percent',
           showUnits: false,
-        }
+        },
+        leftAnnotations: [
+          {
+            label: "High Severity",
+            value: faultRateThreshold,
+            color: Color.RED
+          }
+        ]       
       })
     );
 
@@ -129,126 +140,92 @@ export class BasicServiceDashboard extends Construct {
           min: 0,
           label: "Milliseconds",
           showUnits: false,
-        }
+        },
+        leftAnnotations: [
+          {
+            label: "High Severity",
+            value: latencyThreshold,
+            color: Color.RED
+          }
+        ]
       })
     );
 
     return albWidgets;
   }
 
-  /*private static createLoadBalancerWidgets(
-    alarms: { [key: string]: IAlarm },
-    metrics: { [key: string]: IMetric },
+  private static generateNatGatewayWidgets(
+    natgws: {[key: string]: CfnNatGateway[]},
     azMapper: AvailabilityZoneMapper,
+    period: Duration,
+    packetDropRateThreshold: number,
   ): IWidget[] {
     let widgets: IWidget[] = [];
 
     widgets.push(
       new TextWidget({
-        markdown: 'Load Balancer Metrics',
+        markdown: 'NAT Gateway Metrics',
         height: 2,
         width: 24,
       }),
     );
 
-    let rowTracker: number = 0;
-
-    Object.keys(alarms).forEach((azLetter, index) => {
-      let availabilityZoneId: string = azMapper.availabilityZoneIdFromAvailabilityZoneLetter(azLetter);
-
-      widgets.push(
-        new GraphWidget({
-          height: 6,
-          width: 8,
-          title: availabilityZoneId + ' Load Balancer Faults',
-          region: Fn.sub('${AWS::Region}'),
-          left: [metrics[azLetter]],
-          statistic: 'Sum',
-          leftYAxis: {
-            min: 0,
-            label: 'Fault Count',
-            showUnits: false,
-          },
-        }),
-      );
-
-      //We're on the third one for this set, add 3 alarms
-      //or if we're at the end, at the necessary amount
-      //of alarms, 1, 2, or 3
-      if (index % 3 == 2 || index - 1 == Object.keys(alarms).length) {
-        for (let k = rowTracker; k <= index; k++) {
-          let azId: string = Object.keys(alarms).at(k)!;
-          widgets.push(
-            new AlarmStatusWidget({
-              height: 2,
-              width: 8,
-              alarms: [alarms[azId]],
-            }),
-          );
-        }
-
-        rowTracker += index + 1;
-      }
-    });
-
-    return widgets;
-  }*/
-
-  private static createNatGatewayWidgets(
-    alarms: { [key: string]: IAlarm },
-    metrics: { [key: string]: IMetric },
-    azMapper: AvailabilityZoneMapper,
-  ): IWidget[] {
-    let widgets: IWidget[] = [];
+    let totalPacketsMetrics: {[key: string]: IMetric} = NatGatewayMetrics.getTotalPacketCountForEveryAZ(natgws, azMapper, period);
+    let packetDropMetrics: {[key: string]: IMetric} = NatGatewayMetrics.getTotalPacketDropsForEveryAZ(natgws, azMapper, period);
+    let packetDropRateMetrics: {[key: string]: IMetric} = NatGatewayMetrics.getTotalPacketDropRateForEveryAZ(natgws, azMapper, period);
 
     widgets.push(
-      new TextWidget({
-        markdown: 'NAT Gateway Dropped Packet Metrics',
-        height: 2,
-        width: 24,
+      new GraphWidget({
+        height: 6,
+        width: 8,
+        title: Aws.REGION + ' NAT Gateway Total Packets',
+        region: Aws.REGION,
+        left: Object.values(totalPacketsMetrics),
+        statistic: 'Sum',
+        leftYAxis: {
+          min: 0,
+          label: 'Count',
+          showUnits: false,
+        }
       }),
     );
 
-    let rowTracker: number = 0;
-
-    Object.keys(alarms).forEach((azLetter, index) => {
-
-      let availabilityZoneId: string = azMapper.availabilityZoneIdFromAvailabilityZoneLetter(azLetter);
-
-      widgets.push(
-        new GraphWidget({
-          height: 6,
-          width: 8,
-          title: availabilityZoneId + ' NAT Gateway Dropped Packets',
-          region: Fn.sub('${AWS::Region}'),
-          left: [metrics[azLetter]],
-          statistic: 'Sum',
-          leftYAxis: {
-            min: 0,
-            label: 'Dropped packets',
-            showUnits: false,
-          },
-        }),
-      );
-
-      //We're on the third one for this set, add 3 alarms
-      //or if we're at the end, at the necessary amount
-      //of alarms, 1, 2, or 3
-      if (index % 3 == 2 || index - 1 == Object.keys(alarms).length) {
-        for (let k = rowTracker; k <= index; k++) {
-          let azId: string = Object.keys(alarms).at(k)!;
-          widgets.push(
-            new AlarmStatusWidget({
-              height: 2,
-              width: 8,
-              alarms: [alarms[azId]],
-            }),
-          );
+    widgets.push(
+      new GraphWidget({
+        height: 6,
+        width: 8,
+        title: Aws.REGION + ' NAT Gateway Dropped Packets',
+        region: Aws.REGION,
+        left: Object.values(packetDropMetrics),
+        statistic: 'Sum',
+        leftYAxis: {
+          min: 0,
+          label: 'Count',
+          showUnits: false,
         }
+      }),
+    );
 
-        rowTracker += index + 1;
-      }
-    });
+    widgets.push(
+      new GraphWidget({
+        height: 6,
+        width: 8,
+        title: Aws.REGION + ' NAT Gateway Dropped Packet Rate',
+        region: Aws.REGION,
+        left: Object.values(packetDropRateMetrics),
+        leftYAxis: {
+          min: 0,
+          label: 'Percent',
+          showUnits: false,
+        },
+        leftAnnotations: [
+          {
+            label: "High Severity",
+            value: packetDropRateThreshold
+          }
+        ]
+      }),
+    );
 
     return widgets;
   }
@@ -289,6 +266,10 @@ export class BasicServiceDashboard extends Construct {
   constructor(scope: Construct, id: string, props: BasicServiceDashboardProps) {
     super(scope, id);
 
+    if (!(props.albs) && !(props.natgws)) {
+      throw new Error("You must define either ALBs or NAT Gateways for this service in order to create a dashboard.");
+    }
+
     let widgets: IWidget[][] = [];
 
     widgets.push(
@@ -298,39 +279,26 @@ export class BasicServiceDashboard extends Construct {
       ),
     );
 
-    /*if (
-      MetricsHelper.isNotEmpty(props.zonalLoadBalancerIsolatedImpactAlarms) &&
-      MetricsHelper.isNotEmpty(props.zonalLoadBalancerFaultRateMetrics)
-    ) {
-      widgets.push(
-        BasicServiceDashboard.createLoadBalancerWidgets(
-          props.zonalLoadBalancerIsolatedImpactAlarms,
-          props.zonalLoadBalancerFaultRateMetrics,
-          props.azMapper,
-        ),
-      );
-    }*/
-
     if (props.albs) {
       widgets.push(
         BasicServiceDashboard.generateLoadBalancerWidgets(
-          props.albs,
+          props.albs.applicationLoadBalancers,
           props.azMapper,
           props.period,
-          props.latencyStatistic
+          props.albs.latencyStatistic,
+          props.albs.latencyThreshold,
+          props.albs.faultCountPercentThreshold
         )
       )
     }
 
-    if (
-      MetricsHelper.isNotEmpty(props.zonalNatGatewayIsolatedImpactAlarms) &&
-      MetricsHelper.isNotEmpty(props.zonalNatGatewayPacketDropMetrics)
-    ) {
+    if (props.natgws) {
       widgets.push(
-        BasicServiceDashboard.createNatGatewayWidgets(
-          props.zonalNatGatewayIsolatedImpactAlarms,
-          props.zonalNatGatewayPacketDropMetrics,
+        BasicServiceDashboard.generateNatGatewayWidgets(
+          props.natgws.natGateways,
           props.azMapper,
+          props.period,
+          props.natgws.packetLossPercentThreshold ? props.natgws.packetLossPercentThreshold : 0.01
         ),
       );
     }

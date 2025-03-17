@@ -35,4 +35,8 @@ export { IServiceAlarmsAndRules } from './alarmsandrules/IServiceAlarmsAndRules'
 export { ICanaryTestMetricsOverride } from './services/ICanaryTestMetricsOverride';
 export { CanaryTestMetricsOverride } from './services/CanaryTestMetricsOverride';
 export { CanaryTestMetricsOverrideProps } from './services/props/CanaryTestMetricsOverrideProps';
-export { ApplicationLoadBalancerLatencyOutlierCalculation } from './basic_observability/props/ApplicationLoadBalancerLatencyOutlierCalculation';
+export { ApplicationLoadBalancerLatencyOutlierAlgorithm } from './outlier-detection/ApplicationLoadBalancerLatencyOutlierAlgorithm';
+export { ApplicationLoadBalancerAvailabilityOutlierAlgorithm } from './outlier-detection/ApplicationLoadBalancerAvailabilityOutlierAlgorithm';
+export { NatGatewayDetectionProps } from './basic_observability/props/NatGatewayDetectionProps';
+export { ApplicationLoadBalancerDetectionProps } from './basic_observability/props/ApplicationLoadBalancerDetectionProps';
+export { PacketLossOutlierAlgorithm } from './outlier-detection/PacketLossOutlierAlgorithm';

@@ -10,6 +10,7 @@ import {
 } from 'aws-cdk-lib/aws-ec2';
 import { ApplicationLoadBalancer } from 'aws-cdk-lib/aws-elasticloadbalancingv2';
 import { BasicServiceMultiAZObservability } from '../src/basic_observability/BasicServiceMultiAZObservability';
+import { ApplicationLoadBalancerLatencyOutlierAlgorithm } from '../src/outlier-detection/ApplicationLoadBalancerLatencyOutlierAlgorithm';
 
 test('Basic service observability test', () => {
   const app = new cdk.App();
@@ -53,17 +54,21 @@ test('Basic service observability test', () => {
   });
 
   new BasicServiceMultiAZObservability(stack, 'MAZObservability', {
-    applicationLoadBalancers: [
-      new ApplicationLoadBalancer(stack, 'alb', {
-        vpc: vpc,
-        crossZoneEnabled: true,
-      }),
-    ],
-    natGateways: natGateways,
-    faultCountPercentageThreshold: 1,
-    packetLossImpactPercentageThreshold: 0.01,
-    latencyStatistic: "p99",
-    latencyThreshold: 200,
+    applicationLoadBalancerProps: {
+      applicationLoadBalancers: [
+        new ApplicationLoadBalancer(stack, 'alb', {
+          vpc: vpc,
+          crossZoneEnabled: true,
+        }),
+      ],
+      faultCountPercentThreshold: 0.01,
+      latencyStatistic: "p99",
+      latencyThreshold: 200,
+    },
+    natGatewayProps: {
+       natGateways: natGateways,
+       packetLossPercentThreshold: 0.01,
+    },
     serviceName: 'test',
     period: cdk.Duration.seconds(60),
     createDashboard: true,
@@ -74,7 +79,7 @@ test('Basic service observability test', () => {
   Template.fromStack(stack);
 });
 
-test('Basic service observability with chi-squared', () => {
+test('Basic service observability with static latency outlier detection', () => {
   const app = new cdk.App();
   const stack = new cdk.Stack(app, 'TestStack');
 
@@ -115,17 +120,22 @@ test('Basic service observability with chi-squared', () => {
   });
 
   new BasicServiceMultiAZObservability(stack, 'MAZObservability', {
-    applicationLoadBalancers: [
-      new ApplicationLoadBalancer(stack, 'alb', {
-        vpc: vpc,
-        crossZoneEnabled: true,
-      }),
-    ],
-    natGateways: natGateways,
-    faultCountPercentageThreshold: 1,
-    packetLossImpactPercentageThreshold: 0.01,
-    latencyStatistic: "p99",
-    latencyThreshold: 200,
+    applicationLoadBalancerProps: {
+      applicationLoadBalancers: [
+        new ApplicationLoadBalancer(stack, 'alb', {
+          vpc: vpc,
+          crossZoneEnabled: true,
+        }),
+      ],
+      faultCountPercentThreshold: 0.01,
+      latencyStatistic: "p99",
+      latencyThreshold: 200,
+      latencyOutlierAlgorithm: ApplicationLoadBalancerLatencyOutlierAlgorithm.STATIC
+    },
+    natGatewayProps: {
+       natGateways: natGateways,
+       packetLossPercentThreshold: 0.01,
+    },
     serviceName: 'test',
     period: cdk.Duration.seconds(60),
     createDashboard: true,
