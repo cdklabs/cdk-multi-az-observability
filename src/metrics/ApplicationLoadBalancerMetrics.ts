@@ -915,9 +915,7 @@ export class ApplicationLoadBalancerMetrics {
     {
       let latencyPerZone: {[key: string]: IMetric} = {};
       let keyprefix: string = MetricsHelper.nextChar();
-
       let requestCountsPerAZMetricKeys: {[key: string]: string[]} = {};
-
       let weightedLatencyPerAZ: {[key: string]: IMetric[]} = {};
   
       albs.forEach((alb: IApplicationLoadBalancer) => {
@@ -997,8 +995,7 @@ export class ApplicationLoadBalancerMetrics {
         let denominator: string = "(" + requestCountsPerAZMetricKeys[azLetter].join("+") + ")";
 
         keyprefix = MetricsHelper.nextChar(keyprefix);
-
-       
+        
         /**
          * We want to calculate this formula
          * 
@@ -1006,8 +1003,7 @@ export class ApplicationLoadBalancerMetrics {
          * 
          * This will provide a request weighted approximation of the p99
          * latency per AZ
-         */
-  
+         */ 
         latencyPerZone[azLetter] = new MathExpression({
           expression: "(" + numerator + "/" + denominator + ") * 1000",
           usingMetrics: usingMetrics,
