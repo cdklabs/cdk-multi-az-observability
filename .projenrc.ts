@@ -18,6 +18,9 @@ const project = new CdklabsConstructLibrary ({
     'aws-cdk-lib',
     'cdk-nag'
   ],
+  peerDeps: [
+    'aws-cdk-lib@^2.184.1',
+  ],
   private: false,
   npmAccess: javascript.NpmAccess.PUBLIC,
   license: 'Apache-2.0',

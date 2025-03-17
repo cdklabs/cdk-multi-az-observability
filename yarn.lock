@@ -23,12 +23,12 @@
 
 "@aws-cdk/asset-awscli-v1@^2.2.208":
   version "2.2.227"
-  resolved "https://registry.npmjs.org/@aws-cdk/asset-awscli-v1/-/asset-awscli-v1-2.2.227.tgz"
+  resolved "https://registry.yarnpkg.com/@aws-cdk/asset-awscli-v1/-/asset-awscli-v1-2.2.227.tgz#f5c0e4b31094cd20d440cc77db746463db17c7e0"
   integrity sha512-BAZwZGtX166K9KRYnRBbRj/fU0FY00LOnki11OsDQMfZ9H6tno+LIhv/ZY5U4LGIaI8yP881pAhbrVxpKQnYLg==
 
 "@aws-cdk/asset-kubectl-v20@^2.1.3":
   version "2.1.4"
-  resolved "https://registry.npmjs.org/@aws-cdk/asset-kubectl-v20/-/asset-kubectl-v20-2.1.4.tgz"
+  resolved "https://registry.yarnpkg.com/@aws-cdk/asset-kubectl-v20/-/asset-kubectl-v20-2.1.4.tgz#5b76656f651a192e8d28766a5bdf04c444905363"
   integrity sha512-Ps2MkmjYgMyflagqQ4dgTElc7Vwpqj8spw8dQVFiSeaaMPsuDSNsPax3/HjuDuwqsmLdaCZc6umlxYLpL0kYDA==
 
 "@aws-cdk/asset-node-proxy-agent-v6@^2.1.0":
@@ -46,7 +46,7 @@
 
 "@aws-cdk/cloud-assembly-schema@^38.0.1":
   version "38.0.1"
-  resolved "https://registry.npmjs.org/@aws-cdk/cloud-assembly-schema/-/cloud-assembly-schema-38.0.1.tgz"
+  resolved "https://registry.yarnpkg.com/@aws-cdk/cloud-assembly-schema/-/cloud-assembly-schema-38.0.1.tgz#cdf4684ae8778459e039cd44082ea644a3504ca9"
   integrity sha512-KvPe+NMWAulfNVwY7jenFhzhuLhLqJ/OPy5jx7wUstbjnYnjRVLpUHPU3yCjXFE0J8cuJVdx95BJ4rOs66Pi9w==
   dependencies:
     jsonschema "^1.4.1"
@@ -640,14 +640,6 @@
     "@jridgewell/resolve-uri" "^3.1.0"
     "@jridgewell/sourcemap-codec" "^1.4.14"
 
-"@jsii/check-node@1.108.0":
-  version "1.108.0"
-  resolved "https://registry.npmjs.org/@jsii/check-node/-/check-node-1.108.0.tgz"
-  integrity sha512-wa8AGH31Cl0x1jU/KtM6JB32IurBmK1YiX5ZnCndifRCehLnS8DmJCPYrzJbKD4xqmHigaq6696fAnM/L7qIsw==
-  dependencies:
-    chalk "^4.1.2"
-    semver "^7.6.3"
-
 "@jsii/check-node@1.109.0":
   version "1.109.0"
   resolved "https://registry.npmjs.org/@jsii/check-node/-/check-node-1.109.0.tgz"
@@ -656,7 +648,7 @@
     chalk "^4.1.2"
     semver "^7.7.1"
 
-"@jsii/spec@^1.108.0", "@jsii/spec@^1.109.0":
+"@jsii/spec@^1.109.0":
   version "1.109.0"
   resolved "https://registry.npmjs.org/@jsii/spec/-/spec-1.109.0.tgz"
   integrity sha512-+IQT4DN7/ZjaheFuwKgfpVdDIF+Reb8Hq4nO43Lu0hjeVugelOL0P22cXL229BjQ5yDRr44Fr64FuI/WUNGRKA==
@@ -981,7 +973,7 @@ asynckit@^0.4.0:
 
 aws-cdk-lib@2.170.0:
   version "2.170.0"
-  resolved "https://registry.npmjs.org/aws-cdk-lib/-/aws-cdk-lib-2.170.0.tgz"
+  resolved "https://registry.yarnpkg.com/aws-cdk-lib/-/aws-cdk-lib-2.170.0.tgz#bb5e8720a4da36074b2a05941bb58eaae1677a36"
   integrity sha512-hlfoOJUZmAY3TjOXjWhAYKlrPcfGNTXA24NirwkEYOX+t1HD8OLSrYZvluMc7nWgIZf1Mq1g6M0xNEZJqykPrA==
   dependencies:
     "@aws-cdk/asset-awscli-v1" "^2.2.208"
@@ -1160,7 +1152,7 @@ camelcase@^6.2.0, camelcase@^6.3.0:
 
 caniuse-lite@^1.0.30001688:
   version "1.0.30001705"
-  resolved "https://registry.yarnpkg.com/caniuse-lite/-/caniuse-lite-1.0.30001705.tgz#dc3510bcdef261444ca944b7be9c8d0bb7fafeef"
+  resolved "https://registry.npmjs.org/caniuse-lite/-/caniuse-lite-1.0.30001705.tgz"
   integrity sha512-S0uyMMiYvA7CxNgomYBwwwPUnWzFD83f3B1ce5jHUfHTH//QL6hHsreI8RVC5606R4ssqravelYO5TU6t8sEyg==
 
 case@1.6.3, case@^1.6.3:
@@ -1170,15 +1162,15 @@ case@1.6.3, case@^1.6.3:
 
 cdk-nag@^2.35.47:
   version "2.35.47"
-  resolved "https://registry.yarnpkg.com/cdk-nag/-/cdk-nag-2.35.47.tgz#938a11cced8cbb96c5093aa868a7d119561cdd73"
+  resolved "https://registry.npmjs.org/cdk-nag/-/cdk-nag-2.35.47.tgz"
   integrity sha512-F/AB9W3QMZZhAH4OZLuoEPSRK3jVZeClEBKLon5QLnLReqrXAm44CDbRbhQ9XfQTJB1q1I9oAseGMfNc9X8SPA==
 
 cdklabs-projen-project-types@^0.1.211:
-  version "0.1.211"
-  resolved "https://registry.npmjs.org/cdklabs-projen-project-types/-/cdklabs-projen-project-types-0.1.211.tgz"
-  integrity sha512-54LEo76oQZw6gtrEV5YTzxhsFbVXm0KGLhePNJGyWHghpSAMpJiTqIPyTE3luj3nur5Fp/+IK8S0YCgT+CO/fg==
+  version "0.1.234"
+  resolved "https://registry.npmjs.org/cdklabs-projen-project-types/-/cdklabs-projen-project-types-0.1.234.tgz"
+  integrity sha512-fx7FQ9s4C1gici/dQRIE0bKaaYqrMJn2AcwVYrCynXhsQ4pRZRtOCRLfDSFFVrqABPAvLgEcVu45sW3mSxU5yg==
   dependencies:
-    yaml "^2.6.1"
+    yaml "^2.7.0"
 
 chalk@^2.4.2:
   version "2.4.2"
@@ -1679,7 +1671,7 @@ ejs@^3.1.10:
 
 electron-to-chromium@^1.5.73:
   version "1.5.119"
-  resolved "https://registry.yarnpkg.com/electron-to-chromium/-/electron-to-chromium-1.5.119.tgz#4e105e419209b33e1c44b4d1b5fc6fb27fac0209"
+  resolved "https://registry.npmjs.org/electron-to-chromium/-/electron-to-chromium-1.5.119.tgz"
   integrity sha512-Ku4NMzUjz3e3Vweh7PhApPrZSS4fyiCIbcIrG9eKrriYVLmbMepETR/v6SU7xPm98QTqMSYiCwfO89QNjXLkbQ==
 
 emittery@^0.13.1:
@@ -1935,15 +1927,10 @@ fs.realpath@^1.0.0:
   resolved "https://registry.npmjs.org/fs.realpath/-/fs.realpath-1.0.0.tgz"
   integrity sha512-OO0pH2lK6a0hZnAdau5ItzHPI6pUlvI7jMVnxUQRtw4owF2wk8lOSabtGDCTP4Ggrg2MbGnWO9X8K1t4+fGMDw==
 
-fsevents@2.3.2:
+fsevents@2.3.2, fsevents@^2.3.2:
   version "2.3.2"
-  resolved "https://registry.yarnpkg.com/fsevents/-/fsevents-2.3.2.tgz#8a526f78b8fdf4623b709e0b975c52c24c02fd1a"
+  resolved "https://registry.npmjs.org/fsevents/-/fsevents-2.3.2.tgz"
   integrity sha512-xiqMQR4xAeHTuB9uWm+fFRcIOgKBMiOBP+eXiyT7jsgVCq1bkVygt00oASowB7EdtpOHaaPgKt812P9ab+DDKA==
-
-fsevents@^2.3.2:
-  version "2.3.3"
-  resolved "https://registry.yarnpkg.com/fsevents/-/fsevents-2.3.3.tgz#cac6407785d03675a2a5e1a5305c697b347d90d6"
-  integrity sha512-5xoDfX+fL7faATnagmWPpbFtwh/R77WmMMqqHGS65C3vvB0YHrgF+B1YmZ3441tMj5n63k0212XNoJwzlhffQw==
 
 function-bind@^1.1.2:
   version "1.1.2"
@@ -2850,7 +2837,7 @@ jsii-reflect@^1.109.0:
 
 jsii-rosetta@~5.8.1:
   version "5.8.1"
-  resolved "https://registry.yarnpkg.com/jsii-rosetta/-/jsii-rosetta-5.8.1.tgz#618582edfeb345ea01e28710a4ca16905d4b1543"
+  resolved "https://registry.npmjs.org/jsii-rosetta/-/jsii-rosetta-5.8.1.tgz"
   integrity sha512-Yp9rc/iJvEclV95waSK2BGurmRHp2po51a3kdsfcvIqeknXkvMvmGvGweXMQMaPNnCf66OOd5MKlJHlaQR5jnw==
   dependencies:
     "@jsii/check-node" "1.109.0"
@@ -2868,12 +2855,12 @@ jsii-rosetta@~5.8.1:
     yargs "^17.7.2"
 
 jsii@~5.5.0:
-  version "5.5.24"
-  resolved "https://registry.npmjs.org/jsii/-/jsii-5.5.24.tgz"
-  integrity sha512-ZpMBjLRO0dZ7A3UX5wFrSqOwS7Yn8mZizbMUDBzhwJ6OficlZF4qZDUh/fxcO/LHaehvrim7nPvJfN6/1l8ivQ==
+  version "5.5.25"
+  resolved "https://registry.npmjs.org/jsii/-/jsii-5.5.25.tgz"
+  integrity sha512-ro9NkQORVBd6j88GyvRuIAnYelQIZXSVulMOsqM6YK5XG6P9ptr+KiuIPBXPwD/7Mnu/UFBuncXg9ZG6IkjUxQ==
   dependencies:
-    "@jsii/check-node" "1.108.0"
-    "@jsii/spec" "^1.108.0"
+    "@jsii/check-node" "1.109.0"
+    "@jsii/spec" "^1.109.0"
     case "^1.6.3"
     chalk "^4"
     downlevel-dts "^0.11.0"
@@ -2887,9 +2874,9 @@ jsii@~5.5.0:
     yargs "^17.7.2"
 
 jsii@~5.8.0:
-  version "5.8.0"
-  resolved "https://registry.npmjs.org/jsii/-/jsii-5.8.0.tgz"
-  integrity sha512-aFcGir8GAQu5ZNzuvqLxLSvMeSSFsHeh1enoXt7Vp23lvQ7eBvUXMfxmsJ8exq7SuIAVhmx0dWjrJyekOCmAFA==
+  version "5.8.1"
+  resolved "https://registry.npmjs.org/jsii/-/jsii-5.8.1.tgz"
+  integrity sha512-h3K9z0NOlxe+/vqnbG2Axy00TYN70UasxVCQ3/qAUb4qSI1yWjPbqclGNw493xySB4EYG/fyXtLC9ZbkpuDGmg==
   dependencies:
     "@jsii/check-node" "1.109.0"
     "@jsii/spec" "^1.109.0"
@@ -3443,9 +3430,9 @@ process-nextick-args@~2.0.0:
   integrity sha512-3ouUOpQhtgrbOa17J7+uxOTpITYWaGP7/AhoR3+A+/1e9skrzelGi/dXzEYyvbxubEF6Wn2ypscTKiKJFFn1ag==
 
 projen@^0.90.5:
-  version "0.90.5"
-  resolved "https://registry.npmjs.org/projen/-/projen-0.90.5.tgz"
-  integrity sha512-MfywqL+8e1gTHblreaxJOxW/Cyvm6dcY/Sg0tBwS6xCAsnlqO0qx+MQSPpPEIouVqcDNKLx8Jsd7BwTqGuQBBQ==
+  version "0.90.6"
+  resolved "https://registry.npmjs.org/projen/-/projen-0.90.6.tgz"
+  integrity sha512-y1mUfVsqswwOnTfgJs3GhVDlYe+0o8Wtk/ydbZGdkJ6SzKqSk2ASTEOnuzwpl+jBjeqnnjL7N93wI78TanXiyQ==
   dependencies:
     "@iarna/toml" "^2.2.5"
     case "^1.6.3"
@@ -4000,7 +3987,7 @@ tough-cookie@^5.0.0:
 
 tr46@^5.1.0:
   version "5.1.0"
-  resolved "https://registry.yarnpkg.com/tr46/-/tr46-5.1.0.tgz#4a077922360ae807e172075ce5beb79b36e4a101"
+  resolved "https://registry.npmjs.org/tr46/-/tr46-5.1.0.tgz"
   integrity sha512-IUWnUK7ADYR5Sl1fZlO1INDUhVhatWl7BtJWsIhwJ0UAK7ilzzIa8uIqOO/aYVWHZPJkKbEL+362wrzoeRF7bw==
   dependencies:
     punycode "^2.3.1"
@@ -4074,15 +4061,10 @@ typedarray@^0.0.6:
   resolved "https://registry.npmjs.org/typedarray/-/typedarray-0.0.6.tgz"
   integrity sha512-/aCDEGatGvZ2BIk+HmLf4ifCJFwvKFNb9/JeZPMulfgFracn9QFcAf5GO8B/mweUjSoblS5In0cWhqpfs/5PQA==
 
-typescript@^5.8.2, typescript@~5.8:
+typescript@^5.8.2, typescript@next, typescript@~5.8:
   version "5.8.2"
   resolved "https://registry.npmjs.org/typescript/-/typescript-5.8.2.tgz"
   integrity sha512-aJn6wq13/afZp/jT9QZmwEjDqqvSGp1VT5GVg+f/t6/oVyrgXM6BY1h9BRh/O5p3PlUPAe+WuiEZOmb/49RqoQ==
-
-typescript@next:
-  version "5.9.0-dev.20250316"
-  resolved "https://registry.yarnpkg.com/typescript/-/typescript-5.9.0-dev.20250316.tgz#992d8874dac1fe212dc5797c6c423f73aebf0109"
-  integrity sha512-UmfN0N0+BNaF43agcV7pJdXkGofnGu7MDdoB6wANOPJyBjc9t6AUSiM7Ud4yj4ftGhpJwsF5NygXyy2U3kXdFQ==
 
 typescript@~5.5:
   version "5.5.4"
@@ -4182,7 +4164,7 @@ whatwg-mimetype@^4.0.0:
 
 whatwg-url@^14.0.0:
   version "14.2.0"
-  resolved "https://registry.yarnpkg.com/whatwg-url/-/whatwg-url-14.2.0.tgz#4ee02d5d725155dae004f6ae95c73e7ef5d95663"
+  resolved "https://registry.npmjs.org/whatwg-url/-/whatwg-url-14.2.0.tgz"
   integrity sha512-De72GdQZzNTUBBChsXueQUnPKDkg/5A5zp7pFDuQAj5UFoENpiACU0wlCvzpAGnTkj++ihpKwKyYewn/XNUbKw==
   dependencies:
     tr46 "^5.1.0"
@@ -4287,14 +4269,14 @@ yaml@1.10.2:
   resolved "https://registry.npmjs.org/yaml/-/yaml-1.10.2.tgz"
   integrity sha512-r3vXyErRCYJ7wg28yvBY5VSoAF8ZvlcW9/BwUzEtUsjvX/DKs24dIkuwjtuprwJJHsbyUbLApepYTR1BN4uHrg==
 
-yaml@^2.2.2, yaml@^2.6.1:
+yaml@^2.2.2:
   version "2.6.1"
   resolved "https://registry.npmjs.org/yaml/-/yaml-2.6.1.tgz"
   integrity sha512-7r0XPzioN/Q9kXBro/XPnA6kznR73DHq+GXh5ON7ZozRO6aMjbmiBuKste2wslTFkC5d1dw0GooOCepZXJ2SAg==
 
-yaml@^2.4.1:
+yaml@^2.4.1, yaml@^2.7.0:
   version "2.7.0"
-  resolved "https://registry.npmjs.org/yaml/-/yaml-2.7.0.tgz"
+  resolved "https://registry.yarnpkg.com/yaml/-/yaml-2.7.0.tgz#aef9bb617a64c937a9a748803786ad8d3ffe1e98"
   integrity sha512-+hSoy/QHluxmC9kCIJyL/uyFmLmc+e5CFR5Wa+bpIhIj85LVb9ZH2nVnqrHoSvKogwODv0ClqZkmiSSaIH5LTA==
 
 yargs-parser@^20.2.2, yargs-parser@^20.2.3:
