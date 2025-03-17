@@ -256,7 +256,7 @@ export class NatGatewayMetrics {
               availabilityZone.substring(availabilityZone.length - 1) + "-packet-loss-outlier", 
               {
                  metric: new MathExpression({
-                    expression: `${availabilityZone.substring(availabilityZone.length - 1)} / (${Object.keys(azPacketDropCountMetrics).join("+")})`,
+                    expression: `(${availabilityZone.substring(availabilityZone.length - 1)} / (${Object.keys(azPacketDropCountMetrics).join("+")})) * 100`,
                     usingMetrics: azPacketDropCountMetrics,
                     period: period,
                     label: availabilityZoneId + "-packet-loss-percentage-of-total"
@@ -307,7 +307,7 @@ export class NatGatewayMetrics {
               '-packet-drop-impact',
             actionsEnabled: false,
             metric: packetDropPercentage,
-            threshold: (threshold * 100),
+            threshold: threshold,
             comparisonOperator: ComparisonOperator.GREATER_THAN_THRESHOLD,
             evaluationPeriods: evaluationPeriods,
             datapointsToAlarm: datapointsToAlarm,

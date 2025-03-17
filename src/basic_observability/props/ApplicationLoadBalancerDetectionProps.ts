@@ -14,8 +14,8 @@ export interface ApplicationLoadBalancerDetectionProps {
 
   /**
    * The percentage of faults for a single ALB to consider an AZ
-   * to be unhealthy, this should align with your availability goal. For example
-   * 1% or 5%, 0.01 or 0.05.
+   * to be unhealthy, a number between 0 and 100. This should align with your availability goal. For example
+   * 1% or 5%, provided as 1 or 5.
    */
   readonly faultCountPercentThreshold: number;
 
@@ -46,14 +46,14 @@ export interface ApplicationLoadBalancerDetectionProps {
   /**
    * The threshold for the outlier detection algorithm.
    * 
-   * @default "This depends on the algorithm used. STATIC: 0.66."
+   * @default "This depends on the algorithm used. STATIC: 66"
    */
   readonly availabilityOutlierThreshold?: number;
 
   /**
    * The threshold for the outlier detection algorithm.
    * 
-   * @default "This depends on the algorithm used. STATIC: 0.66. Z_SCORE: 3."
+   * @default "This depends on the algorithm used. STATIC: 66. Z_SCORE: 3."
    */
   readonly latencyOutlierThreshold?: number;
   

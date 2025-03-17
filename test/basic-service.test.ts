@@ -61,7 +61,7 @@ test('Basic service observability test', () => {
           crossZoneEnabled: true,
         }),
       ],
-      faultCountPercentThreshold: 0.01,
+      faultCountPercentThreshold: 1,
       latencyStatistic: "p99",
       latencyThreshold: 200,
     },
@@ -127,10 +127,11 @@ test('Basic service observability with static latency outlier detection', () => 
           crossZoneEnabled: true,
         }),
       ],
-      faultCountPercentThreshold: 0.01,
+      faultCountPercentThreshold: 1,
       latencyStatistic: "p99",
       latencyThreshold: 200,
-      latencyOutlierAlgorithm: ApplicationLoadBalancerLatencyOutlierAlgorithm.STATIC
+      latencyOutlierAlgorithm: ApplicationLoadBalancerLatencyOutlierAlgorithm.STATIC,
+      latencyOutlierThreshold: 45
     },
     natGatewayProps: {
        natGateways: natGateways,

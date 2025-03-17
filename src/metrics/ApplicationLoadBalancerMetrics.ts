@@ -1237,7 +1237,7 @@ export class ApplicationLoadBalancerMetrics {
                 availabilityZoneId + '-' + alb.loadBalancerArn + '-availability-impact-outlier',
               actionsEnabled: false,
               metric: new MathExpression({
-                expression: `${azMetricId!}/(${Object.keys(usingMetrics).join("+")})`,
+                expression: `(${azMetricId!}/(${Object.keys(usingMetrics).join("+")})) * 100`,
                 usingMetrics: usingMetrics,
                 label: availabilityZoneId + '-' + alb.loadBalancerArn + '-percent-of-faults',
                 period: period,
@@ -1345,7 +1345,7 @@ export class ApplicationLoadBalancerMetrics {
                 availabilityZoneId + '-' + alb.loadBalancerArn + '-latency-impact-outlier',
               actionsEnabled: false,
               metric: new MathExpression({
-                expression: `${azMetricId}/(${Object.keys(usingMetrics).join("+")})`,
+                expression: `(${azMetricId}/(${Object.keys(usingMetrics).join("+")})) * 100`,
                 usingMetrics: usingMetrics,
                 label: availabilityZoneId + '-' + alb.loadBalancerArn + '-latency-static',
                 period: period,

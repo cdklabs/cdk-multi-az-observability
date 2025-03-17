@@ -28,7 +28,7 @@ export interface NatGatewayDetectionProps {
     /**
      * The threshold used with the outlier calculation.
      * 
-     * @default "This depends on the outlier algorithm. STATIC: 0.66. Z-SCORE: 3."
+     * @default "This depends on the outlier algorithm. STATIC: 66. Z-SCORE: 3."
      */
     readonly packetLossOutlierThreshold?: number;
 }

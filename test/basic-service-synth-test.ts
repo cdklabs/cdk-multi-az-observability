@@ -60,7 +60,7 @@ new BasicServiceMultiAZObservability(stack, 'MAZObservability', {
           crossZoneEnabled: true,
         }),
       ],
-      faultCountPercentThreshold: 0.01,
+      faultCountPercentThreshold: 1,
       latencyStatistic: "p99",
       latencyThreshold: 200,
     },
