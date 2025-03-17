@@ -196,7 +196,7 @@ export class BasicServiceMultiAZObservability
       switch (availabilityOutlierDetectionAlgorithm) {
         case ApplicationLoadBalancerAvailabilityOutlierAlgorithm.STATIC:
         default:
-          availabilityOutlierThreshold = 0.66;
+          availabilityOutlierThreshold = 66;
           break;
       }
     }
@@ -213,7 +213,7 @@ export class BasicServiceMultiAZObservability
           latencyOutlierThreshold = 3;
           break;
         case ApplicationLoadBalancerLatencyOutlierAlgorithm.STATIC:
-          latencyOutlierThreshold = 0.66;
+          latencyOutlierThreshold = 66;
           break;
       }
     }
@@ -359,7 +359,7 @@ export class BasicServiceMultiAZObservability
       switch (packetLossOutlierAlgorithm) {
         case PacketLossOutlierAlgorithm.STATIC:
         default:
-          outlierThreshold = 0.66;
+          outlierThreshold = 66;
           break;
       }
     }

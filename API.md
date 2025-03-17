@@ -805,7 +805,7 @@ const applicationLoadBalancerDetectionProps: ApplicationLoadBalancerDetectionPro
 | **Name** | **Type** | **Description** |
 | --- | --- | --- |
 | <code><a href="#@cdklabs/multi-az-observability.ApplicationLoadBalancerDetectionProps.property.applicationLoadBalancers">applicationLoadBalancers</a></code> | <code>aws-cdk-lib.aws_elasticloadbalancingv2.IApplicationLoadBalancer[]</code> | The application load balancers to collect metrics from. |
-| <code><a href="#@cdklabs/multi-az-observability.ApplicationLoadBalancerDetectionProps.property.faultCountPercentThreshold">faultCountPercentThreshold</a></code> | <code>number</code> | The percentage of faults for a single ALB to consider an AZ to be unhealthy, this should align with your availability goal. |
+| <code><a href="#@cdklabs/multi-az-observability.ApplicationLoadBalancerDetectionProps.property.faultCountPercentThreshold">faultCountPercentThreshold</a></code> | <code>number</code> | The percentage of faults for a single ALB to consider an AZ to be unhealthy, a number between 0 and 100. |
 | <code><a href="#@cdklabs/multi-az-observability.ApplicationLoadBalancerDetectionProps.property.latencyStatistic">latencyStatistic</a></code> | <code>string</code> | The statistic used to measure target response latency, like p99,  which can be specified using Stats.percentile(99) or "p99". |
 | <code><a href="#@cdklabs/multi-az-observability.ApplicationLoadBalancerDetectionProps.property.latencyThreshold">latencyThreshold</a></code> | <code>number</code> | The threshold in milliseconds for ALB targets whose responses are slower than this value at the specified percentile statistic. |
 | <code><a href="#@cdklabs/multi-az-observability.ApplicationLoadBalancerDetectionProps.property.availabilityOutlierAlgorithm">availabilityOutlierAlgorithm</a></code> | <code><a href="#@cdklabs/multi-az-observability.ApplicationLoadBalancerAvailabilityOutlierAlgorithm">ApplicationLoadBalancerAvailabilityOutlierAlgorithm</a></code> | The method used to determine if an AZ is an outlier for availability for Application Load Balancer metrics. |
@@ -835,10 +835,10 @@ public readonly faultCountPercentThreshold: number;
 
 - *Type:* number
 
-The percentage of faults for a single ALB to consider an AZ to be unhealthy, this should align with your availability goal.
+The percentage of faults for a single ALB to consider an AZ to be unhealthy, a number between 0 and 100.
 
-For example
-1% or 5%, 0.01 or 0.05.
+This should align with your availability goal. For example
+1% or 5%, provided as 1 or 5.
 
 ---
 
@@ -886,7 +886,7 @@ public readonly availabilityOutlierThreshold: number;
 ```
 
 - *Type:* number
-- *Default:* "This depends on the algorithm used. STATIC: 0.66."
+- *Default:* "This depends on the algorithm used. STATIC: 66"
 
 The threshold for the outlier detection algorithm.
 
@@ -912,7 +912,7 @@ public readonly latencyOutlierThreshold: number;
 ```
 
 - *Type:* number
-- *Default:* "This depends on the algorithm used. STATIC: 0.66. Z_SCORE: 3."
+- *Default:* "This depends on the algorithm used. STATIC: 66. Z_SCORE: 3."
 
 The threshold for the outlier detection algorithm.
 
@@ -1578,7 +1578,7 @@ public readonly packetLossOutlierThreshold: number;
 ```
 
 - *Type:* number
-- *Default:* "This depends on the outlier algorithm. STATIC: 0.66. Z-SCORE: 3."
+- *Default:* "This depends on the outlier algorithm. STATIC: 66. Z-SCORE: 3."
 
 The threshold used with the outlier calculation.
 
