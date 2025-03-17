@@ -45,6 +45,4 @@ export interface BasicServiceDashboardProps {
    * The period for metric measurement
    */
   readonly period: Duration;
-
-  readonly latencyStatistic: string;
 }
