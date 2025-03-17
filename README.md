@@ -152,7 +152,7 @@ You define some characteristics of the service, default values for metrics and a
 
 If you don't have service specific logs and custom metrics with per-AZ dimensions, you can still use the construct to evaluate ALB and NAT Gateway metrics to find single AZ faults.
 
-```typescript
+```ts
 let subnets: SelectedSubnets = vpc.selectSubnets({
     subnetType: SubnetType.PRIVATE_WITH_EGRESS,
   });
