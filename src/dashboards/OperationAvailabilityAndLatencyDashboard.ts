@@ -41,7 +41,8 @@ import { MetricsHelper } from '../utilities/MetricsHelper';
 export class OperationAvailabilityAndLatencyDashboard
   extends Construct
   implements IOperationAvailabilityAndLatencyDashboard {
-  private static createTopLevelAggregateAlarmWidgets(
+  
+    private static createTopLevelAggregateAlarmWidgets(
     props: OperationAvailabilityAndLatencyDashboardProps,
     title: string,
     availabilityZoneIds: string[],
@@ -88,7 +89,7 @@ export class OperationAvailabilityAndLatencyDashboard
         ZonalLatencyMetrics.createZonalCountLatencyMetric({
           availabilityZoneId: availabilityZoneId,
           metricDetails: props.operation.serverSideLatencyMetricDetails,
-          label: availabilityZoneId + ' high latency responses',
+          label: availabilityZoneId,
           metricType: LatencyMetricType.SUCCESS_LATENCY,
           statistic: `TC(${props.operation.serverSideLatencyMetricDetails.successAlarmThreshold}:)`,
           keyPrefix: keyPrefix,
@@ -99,7 +100,7 @@ export class OperationAvailabilityAndLatencyDashboard
         ZonalAvailabilityMetrics.createZonalAvailabilityMetric({
           availabilityZoneId: availabilityZoneId,
           metricDetails: props.operation.serverSideAvailabilityMetricDetails,
-          label: availabilityZoneId + ' fault count',
+          label: availabilityZoneId,
           metricType: AvailabilityMetricType.FAULT_COUNT,
           keyPrefix: keyPrefix,
         }),
@@ -114,7 +115,7 @@ export class OperationAvailabilityAndLatencyDashboard
             availabilityZoneId: availabilityZoneId,
             metricDetails:
               props.operation.canaryMetricDetails.canaryLatencyMetricDetails,
-            label: availabilityZoneId + ' high latency responses',
+            label: availabilityZoneId,
             metricType: LatencyMetricType.SUCCESS_LATENCY,
             statistic: `TC(${props.operation.canaryMetricDetails.canaryLatencyMetricDetails.successAlarmThreshold}:)`,
             keyPrefix: keyPrefix,
@@ -127,7 +128,7 @@ export class OperationAvailabilityAndLatencyDashboard
             metricDetails:
               props.operation.canaryMetricDetails
                 .canaryAvailabilityMetricDetails,
-            label: availabilityZoneId + ' fault count',
+            label: availabilityZoneId,
             metricType: AvailabilityMetricType.FAULT_COUNT,
             keyPrefix: keyPrefix,
           }),
@@ -189,7 +190,7 @@ export class OperationAvailabilityAndLatencyDashboard
         region: Fn.sub('${AWS::Region}'),
         left: [
           RegionalAvailabilityMetrics.createRegionalAvailabilityMetric({
-            label: Fn.ref('AWS::Region') + ' tps',
+            label: Fn.ref('AWS::Region'),
             metricDetails: props.operation.serverSideAvailabilityMetricDetails,
             metricType: AvailabilityMetricType.REQUEST_COUNT,
           }),
@@ -214,7 +215,7 @@ export class OperationAvailabilityAndLatencyDashboard
           left: [
             ZonalAvailabilityMetrics.createZonalAvailabilityMetric({
               availabilityZoneId: availabilityZoneId,
-              label: availabilityZoneId + ' tps',
+              label: availabilityZoneId,
               metricDetails:
                 props.operation.serverSideAvailabilityMetricDetails,
               metricType: AvailabilityMetricType.REQUEST_COUNT,
@@ -254,7 +255,7 @@ export class OperationAvailabilityAndLatencyDashboard
         region: Fn.sub('${AWS::Region}'),
         left: [
           RegionalAvailabilityMetrics.createRegionalAvailabilityMetric({
-            label: Fn.ref('AWS::Region') + ' availability',
+            label: Fn.ref('AWS::Region'),
             metricDetails: props.availabilityMetricDetails,
             metricType: AvailabilityMetricType.SUCCESS_RATE,
             keyPrefix: keyPrefix1,
@@ -316,7 +317,7 @@ export class OperationAvailabilityAndLatencyDashboard
           left: [
             ZonalAvailabilityMetrics.createZonalAvailabilityMetric({
               availabilityZoneId: availabilityZoneId,
-              label: availabilityZoneId + ' availability',
+              label: availabilityZoneId,
               metricDetails: props.availabilityMetricDetails,
               metricType: AvailabilityMetricType.SUCCESS_RATE,
               keyPrefix: keyPrefix3,
