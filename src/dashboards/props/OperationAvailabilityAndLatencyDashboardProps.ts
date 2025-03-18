@@ -2,7 +2,6 @@
 // SPDX-License-Identifier: Apache-2.0
 import { Duration } from 'aws-cdk-lib';
 import { IAlarm, CfnInsightRule } from 'aws-cdk-lib/aws-cloudwatch';
-import { ILoadBalancerV2 } from 'aws-cdk-lib/aws-elasticloadbalancingv2';
 import { IAvailabilityZoneMapper } from '../../azmapper/IAvailabilityZoneMapper';
 import { IOperation } from '../../services/IOperation';
 
@@ -20,14 +19,6 @@ export interface OperationAvailabilityAndLatencyDashboardProps {
    * The interval of the dashboard
    */
   readonly interval: Duration;
-
-  /**
-   * The load balancer supporting this operation, if this is not
-   * provided, no load balancer metrics will be shown
-   *
-   * @default - No load balancer metrics will be shown on the dashboard
-   */
-  readonly loadBalancer?: ILoadBalancerV2;
 
   /**
    * Per AZ server-side availability alarms

@@ -466,7 +466,6 @@ export class InstrumentedServiceMultiAZObservability
                 interval: props.interval
                   ? props.interval
                   : Duration.minutes(60),
-                loadBalancer: props.service.loadBalancer,
 
                 regionalEndpointCanaryAvailabilityAlarm:
                   this.perOperationAlarmsAndRules[x.operationName]
