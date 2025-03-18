@@ -1179,7 +1179,7 @@ export class AvailabilityAndLatencyAlarmsAndRules {
         actionsEnabled: false,
         treatMissingData: TreatMissingData.IGNORE,
         metric: RegionalAvailabilityMetrics.createRegionalAvailabilityMetric({
-          label: Fn.ref('AWS::Region') + ' availability',
+          label: Aws.REGION,
           metricDetails: metricDetails,
           metricType: AvailabilityMetricType.SUCCESS_RATE,
         }),
