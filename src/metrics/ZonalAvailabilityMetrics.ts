@@ -34,7 +34,7 @@ export class ZonalAvailabilityMetrics {
         );
 
       operationMetrics.push(zonalOperationAvailabilityMetric);
-      usingMetrics[`${prop.availabilityZone.substring(prop.availabilityZone.length - 1)}_${prop.metricDetails.operationName}_${index}`] =
+      usingMetrics[`${prop.availabilityZone.substring(prop.availabilityZone.length - 1)}_${prop.metricDetails.operationName}_${ prop.metricType.toString().toLowerCase() }_${index}`] =
         zonalOperationAvailabilityMetric;
     });
 
