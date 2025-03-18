@@ -99,4 +99,9 @@ export interface OperationAvailabilityAndLatencyDashboardProps {
    * The AZ Mapper
    */
   readonly azMapper: IAvailabilityZoneMapper;
+
+  /**
+   * The Availability Zones used for this operation
+   */
+  readonly availabilityZones: string[];
 }

@@ -1,6 +1,6 @@
 // Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
-import { Duration, Fn } from 'aws-cdk-lib';
+import { Aws, Duration, Fn } from 'aws-cdk-lib';
 import {
   IAlarm,
   Alarm,
@@ -24,7 +24,6 @@ import { IContributionDefinition, InsightRuleBody } from './InsightRuleBody';
 import { IAvailabilityZoneMapper } from '../azmapper/IAvailabilityZoneMapper';
 import { RegionalAvailabilityMetrics } from '../metrics/RegionalAvailabilityMetrics';
 import { RegionalLatencyMetrics } from '../metrics/RegionalLatencyMetrics';
-import { ZonalAvailabilityMetrics } from '../metrics/ZonalAvailabilityMetrics';
 import { ZonalLatencyMetrics } from '../metrics/ZonalLatencyMetrics';
 import { IContributorInsightRuleDetails } from '../services/IContributorInsightRuleDetails';
 import { IOperation } from '../services/IOperation';
@@ -33,6 +32,7 @@ import { AvailabilityMetricType } from '../utilities/AvailabilityMetricType';
 import { LatencyMetricType } from '../utilities/LatencyMetricType';
 import { OutlierDetectionAlgorithm } from '../utilities/OutlierDetectionAlgorithm';
 import { MetricsHelper } from '../utilities/MetricsHelper';
+import { AvailabilityAndLatencyMetrics } from '../metrics/AvailabilityAndLatencyMetrics';
 
 /**
  * Class used to create availability and latency alarms and Contributor Insight rules
@@ -50,6 +50,7 @@ export class AvailabilityAndLatencyAlarmsAndRules {
   static createZonalAvailabilityAlarm(
     scope: Construct,
     metricDetails: IOperationMetricDetails,
+    availabilityZone: string,
     availabilityZoneId: string,
     counter: number,
     nameSuffix?: string,
@@ -70,12 +71,17 @@ export class AvailabilityAndLatencyAlarmsAndRules {
         threshold: metricDetails.successAlarmThreshold,
         actionsEnabled: false,
         treatMissingData: TreatMissingData.IGNORE,
-        metric: ZonalAvailabilityMetrics.createZonalAvailabilityMetric({
+        metric: AvailabilityAndLatencyMetrics.createZonalAvailabilityMetric({
           availabilityZoneId: availabilityZoneId,
-          label: availabilityZoneId + ' availability',
+          label: availabilityZoneId,
           metricDetails: metricDetails,
           metricType: AvailabilityMetricType.SUCCESS_RATE,
-        }),
+          availabilityZone: availabilityZone
+        },
+        metricDetails.metricDimensions.zonalDimensions(
+          availabilityZoneId,
+          Aws.REGION
+        ))
       },
     );
   }
@@ -92,6 +98,7 @@ export class AvailabilityAndLatencyAlarmsAndRules {
   static createZonalLatencyAlarm(
     scope: Construct,
     metricDetails: IOperationMetricDetails,
+    availabilityZone: string,
     availabilityZoneId: string,
     counter: number,
     nameSuffix?: string,
@@ -114,6 +121,7 @@ export class AvailabilityAndLatencyAlarmsAndRules {
         treatMissingData: TreatMissingData.IGNORE,
         metric: ZonalLatencyMetrics.createZonalAverageLatencyMetric({
           availabilityZoneId: availabilityZoneId,
+          availabilityZone: availabilityZone,
           label:
             availabilityZoneId +
             ' ' +
@@ -173,18 +181,23 @@ export class AvailabilityAndLatencyAlarmsAndRules {
   static createZonalFaultRateStaticOutlierAlarm(
     scope: Construct,
     metricDetails: IOperationMetricDetails,
+    availabilityZone: string,
     availabilityZoneId: string,
     counter: number,
     outlierThreshold: number,
     nameSuffix?: string,
   ): IAlarm {
     let zonalFaults: IMetric =
-      ZonalAvailabilityMetrics.createZonalAvailabilityMetric({
+      AvailabilityAndLatencyMetrics.createZonalAvailabilityMetric({
         availabilityZoneId: availabilityZoneId,
+        availabilityZone: availabilityZone,
         metricDetails: metricDetails,
-        metricType: AvailabilityMetricType.FAULT_COUNT,
-        keyPrefix: 'a',
-      });
+        metricType: AvailabilityMetricType.FAULT_COUNT
+      },
+      metricDetails.metricDimensions.zonalDimensions(
+        availabilityZoneId,
+        Aws.REGION
+      ));
 
     // For server-side, this metric is ok, because the AZ specific metrics are dual-reported
     // with dimensions for both the AZ and Region. But for the canary, it produces 1 metric
@@ -235,33 +248,42 @@ export class AvailabilityAndLatencyAlarmsAndRules {
   static createZonalFaultRateStaticOutlierAlarmForCanaries(
       scope: Construct,
       metricDetails: IOperationMetricDetails,
+      availabilityZone: string,
       availabilityZoneId: string,
-      availabilityZones: string[],
+      availabilityZoneIds: string[],
       counter: number,
       outlierThreshold: number,
       nameSuffix?: string,
     ): IAlarm {
       let zonalFaults: IMetric =
-        ZonalAvailabilityMetrics.createZonalAvailabilityMetric({
+        AvailabilityAndLatencyMetrics.createZonalAvailabilityMetric({
           availabilityZoneId: availabilityZoneId,
+          availabilityZone: availabilityZone,
           metricDetails: metricDetails,
-          metricType: AvailabilityMetricType.FAULT_COUNT,
-          keyPrefix: 'a',
-        });
+          metricType: AvailabilityMetricType.FAULT_COUNT
+        },
+        metricDetails.metricDimensions.zonalDimensions(
+          availabilityZoneId,
+          Aws.REGION
+        ));
 
       let prefix = 'b';
 
       let usingMetrics: {[key: string]: IMetric} = {};
 
-      availabilityZones.forEach((az: string) => {
+      availabilityZoneIds.forEach((az: string) => {
         prefix = MetricsHelper.nextChar(prefix);
         
-        let azFaults: IMetric = ZonalAvailabilityMetrics.createZonalAvailabilityMetric({
+        let azFaults: IMetric = AvailabilityAndLatencyMetrics.createZonalAvailabilityMetric({
           availabilityZoneId: az,
+          availabilityZone: availabilityZone,
           metricDetails: metricDetails,
-          metricType: AvailabilityMetricType.FAULT_COUNT,
-          keyPrefix: prefix
-        });
+          metricType: AvailabilityMetricType.FAULT_COUNT
+        },
+        metricDetails.metricDimensions.zonalDimensions(
+          availabilityZoneId,
+          Aws.REGION
+        ));
 
         prefix = MetricsHelper.nextChar(prefix);
 
@@ -580,6 +602,7 @@ export class AvailabilityAndLatencyAlarmsAndRules {
   static createZonalHighLatencyStaticOutlierAlarm(
     scope: Construct,
     metricDetails: IOperationMetricDetails,
+    availabilityZone: string,
     availabilityZoneId: string,
     counter: number,
     outlierThreshold: number,
@@ -588,6 +611,7 @@ export class AvailabilityAndLatencyAlarmsAndRules {
     let zonalLatency: IMetric =
       ZonalLatencyMetrics.createZonalCountLatencyMetric({
         availabilityZoneId: availabilityZoneId,
+        availabilityZone: availabilityZone,
         label:
           availabilityZoneId +
           '-' +
@@ -595,8 +619,7 @@ export class AvailabilityAndLatencyAlarmsAndRules {
           '-high-latency-requests',
         metricDetails: metricDetails,
         metricType: LatencyMetricType.SUCCESS_LATENCY,
-        statistic: `TC(${metricDetails.successAlarmThreshold}:)`,
-        keyPrefix: 'a',
+        statistic: `TC(${metricDetails.successAlarmThreshold}:)`
       });
 
     let regionalLatency: IMetric =
@@ -645,6 +668,7 @@ export class AvailabilityAndLatencyAlarmsAndRules {
   static createZonalHighLatencyStaticOutlierAlarmForCanaries(
     scope: Construct,
     metricDetails: IOperationMetricDetails,
+    availabilityZone: string,
     availabilityZoneId: string,
     availabilityZones: string[],
     counter: number,
@@ -654,6 +678,7 @@ export class AvailabilityAndLatencyAlarmsAndRules {
     let zonalLatency: IMetric =
       ZonalLatencyMetrics.createZonalCountLatencyMetric({
         availabilityZoneId: availabilityZoneId,
+        availabilityZone: availabilityZone,
         label:
           availabilityZoneId +
           '-' +
@@ -661,8 +686,7 @@ export class AvailabilityAndLatencyAlarmsAndRules {
           '-high-latency-requests',
         metricDetails: metricDetails,
         metricType: LatencyMetricType.SUCCESS_LATENCY,
-        statistic: `TC(${metricDetails.successAlarmThreshold}:)`,
-        keyPrefix: 'a',
+        statistic: `TC(${metricDetails.successAlarmThreshold}:)`
       });
 
       let prefix = 'b';
@@ -674,6 +698,7 @@ export class AvailabilityAndLatencyAlarmsAndRules {
         
         let azLatencyMetrics: IMetric[] = ZonalLatencyMetrics.createZonalLatencyMetrics({
           availabilityZoneId: az,
+          availabilityZone: availabilityZone,
           metricDetails: metricDetails,
           metricType: LatencyMetricType.SUCCESS_LATENCY,
           keyPrefix: prefix,

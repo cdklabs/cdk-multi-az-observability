@@ -3,6 +3,7 @@
 import { IAlarm, CfnInsightRule } from 'aws-cdk-lib/aws-cloudwatch';
 import { IOperation } from '../../services/IOperation';
 import { IOperationMetricDetails } from '../../services/IOperationMetricDetails';
+import { IAvailabilityZoneMapper } from '../../azmapper/IAvailabilityZoneMapper';
 
 /**
  * Props for creating operation dashboard availability and latency widgets
@@ -19,9 +20,9 @@ export interface OperationLatencyWidgetProps {
   readonly latencyMetricDetails: IOperationMetricDetails;
 
   /**
-   * The number of AZs being used
+   * The Availability Zones being used
    */
-  readonly availabilityZoneIds: string[];
+  readonly availabilityZones: string[];
 
   /**
    * An alarm per AZ for latency
@@ -43,4 +44,9 @@ export interface OperationLatencyWidgetProps {
    * Is this widget for the canary metrics
    */
   readonly isCanary: boolean;
+
+  /**
+   * The AZ Mapper to use
+   */
+  readonly azMapper: IAvailabilityZoneMapper;
 }

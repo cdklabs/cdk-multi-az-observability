@@ -5,6 +5,8 @@ import { AvailabilityMetricProps } from './props/AvailabilityMetricProps';
 import { LatencyMetricProps } from './props/LatencyMetricProps';
 import { AvailabilityMetricType } from '../utilities/AvailabilityMetricType';
 import { LatencyMetricType } from '../utilities/LatencyMetricType';
+import { ZonalAvailabilityMetricProps } from './props/ZonalAvailabilityMetricProps';
+import { ZonalLatencyMetricProps } from './props/ZonalLatencyMetricProps';
 
 /**
  * Class for creating availability and latency metrics that can be used in alarms and graphs
@@ -21,9 +23,6 @@ export class AvailabilityAndLatencyMetrics {
     props: AvailabilityMetricProps,
     dimensions: { [key: string]: string },
   ): IMetric {
-    let counter: number = 0;
-    let key: string = '';
-
     let usingMetrics: { [key: string]: IMetric } = {};
 
     let successKeys: string[] = [];
@@ -33,17 +32,9 @@ export class AvailabilityAndLatencyMetrics {
       props.metricDetails.successMetricNames !== undefined &&
       props.metricType != AvailabilityMetricType.FAULT_COUNT
     ) {
-      props.metricDetails.successMetricNames.forEach(
-        (successMetric: string) => {
-          let keyPrefix =
-            (props.keyPrefix === undefined || props.keyPrefix == ''
-              ? ''
-              : props.keyPrefix.toLowerCase() + '_') +
-            props.metricDetails.operationName.toLowerCase() +
-            '_' +
-            successMetric.toLowerCase();
+      props.metricDetails.successMetricNames.forEach((successMetric: string) => {
+          let key: string = `${props.metricDetails.operationName.toLowerCase()}_${props.metricType.toString().toLowerCase()}_${successMetric.toLowerCase()}`;
 
-          key = keyPrefix + '_' + counter++;
           successKeys.push(key);
 
           usingMetrics[key] = new Metric({
@@ -64,15 +55,8 @@ export class AvailabilityAndLatencyMetrics {
       props.metricType != AvailabilityMetricType.SUCCESS_COUNT
     ) {
       props.metricDetails.faultMetricNames.forEach((faultMetric) => {
-        let keyPrefix =
-          (props.keyPrefix === undefined || props.keyPrefix == ''
-            ? ''
-            : props.keyPrefix.toLowerCase() + '_') +
-          props.metricDetails.operationName.toLowerCase() +
-          '_' +
-          faultMetric.toLowerCase();
+        let key: string = `${props.metricDetails.operationName.toLowerCase()}_${props.metricType.toString().toLowerCase()}_${faultMetric.toLowerCase()}`;
 
-        key = keyPrefix + '_' + counter++;
         faultKeys.push(key);
 
         usingMetrics[key] = new Metric({
@@ -112,6 +96,94 @@ export class AvailabilityAndLatencyMetrics {
       label: props.label,
       period: props.metricDetails.period,
       usingMetrics: usingMetrics,
+      color: props.color
+    });
+  }
+
+  /**
+   *  Creates availability metrics for a specific AZ
+   * @param props 
+   * @param dimensions 
+   * @returns 
+   */
+  static createZonalAvailabilityMetric(
+    props: ZonalAvailabilityMetricProps,
+    dimensions: { [key: string]: string },
+  ): IMetric {
+    let usingMetrics: { [key: string]: IMetric } = {};
+
+    let successKeys: string[] = [];
+    let faultKeys: string[] = [];
+
+    if (
+      props.metricDetails.successMetricNames !== undefined &&
+      props.metricType != AvailabilityMetricType.FAULT_COUNT
+    ) {
+      props.metricDetails.successMetricNames.forEach((successMetric: string) => {
+          let key: string = `${props.availabilityZone.substring(props.availabilityZone.length - 1)}_${props.metricDetails.operationName.toLowerCase()}_${props.metricType.toString().toLowerCase()}_${successMetric.toLowerCase()}`;
+
+          successKeys.push(key);
+
+          usingMetrics[key] = new Metric({
+            namespace: props.metricDetails.metricNamespace,
+            metricName: successMetric,
+            unit: props.metricDetails.unit,
+            period: props.metricDetails.period,
+            statistic: props.metricDetails.alarmStatistic,
+            dimensionsMap: dimensions,
+            label: successMetric,
+          });
+        },
+      );
+    }
+
+    if (
+      props.metricDetails.faultMetricNames !== undefined &&
+      props.metricType != AvailabilityMetricType.SUCCESS_COUNT
+    ) {
+      props.metricDetails.faultMetricNames.forEach((faultMetric) => {
+        let key: string = `${props.availabilityZone.substring(props.availabilityZone.length - 1)}_${props.metricDetails.operationName.toLowerCase()}_${props.metricType.toString().toLowerCase()}_${faultMetric.toLowerCase()}`;
+
+        faultKeys.push(key);
+
+        usingMetrics[key] = new Metric({
+          namespace: props.metricDetails.metricNamespace,
+          metricName: faultMetric,
+          unit: props.metricDetails.unit,
+          period: props.metricDetails.period,
+          statistic: props.metricDetails.alarmStatistic,
+          dimensionsMap: dimensions,
+          label: faultMetric,
+        });
+      });
+    }
+
+    let expression: string = '';
+
+    switch (props.metricType) {
+      case AvailabilityMetricType.SUCCESS_RATE:
+        expression = `((${successKeys.join('+')}) / (${successKeys.join('+')}+${faultKeys.join('+')})) * 100`;
+        break;
+      case AvailabilityMetricType.REQUEST_COUNT:
+        expression = `${successKeys.join('+')}+${faultKeys.join('+')}`;
+        break;
+      case AvailabilityMetricType.FAULT_COUNT:
+        expression = `(${faultKeys.join('+')})`;
+        break;
+      case AvailabilityMetricType.FAULT_RATE:
+        expression = `((${faultKeys.join('+')}) / (${successKeys.join('+')}+${faultKeys.join('+')})) * 100`;
+        break;
+      case AvailabilityMetricType.SUCCESS_COUNT:
+        expression = `(${successKeys.join('+')})`;
+        break;
+    }
+
+    return new MathExpression({
+      expression: expression,
+      label: props.label,
+      period: props.metricDetails.period,
+      usingMetrics: usingMetrics,
+      color: props.color
     });
   }
 
@@ -215,15 +287,8 @@ export class AvailabilityAndLatencyMetrics {
       let usingMetrics: { [key: string]: IMetric } = {};
 
       latencyMetrics.forEach((metric: IMetric, index: number) => {
-        let keyPrefix: string =
-          (props.keyPrefix === undefined || props.keyPrefix == ''
-            ? ''
-            : props.keyPrefix.toLowerCase() + '_') +
-          props.metricDetails.operationName.toLowerCase() +
-          '_' +
-          props.metricType.toString().toLowerCase();
-
-        usingMetrics[keyPrefix + index] = metric;
+        let key: string = `${props.metricDetails.operationName.toLowerCase()}_${props.metricType.toString().toLowerCase()}_${index}`;
+        usingMetrics[key] = metric;
       });
 
       return new MathExpression({
@@ -231,6 +296,34 @@ export class AvailabilityAndLatencyMetrics {
         label: props.label,
         period: props.metricDetails.period,
         usingMetrics: usingMetrics,
+        color: props.color
+      });
+    }
+  }
+
+  static createZonalLatencyCountMetric(
+    props: ZonalLatencyMetricProps,
+    dimensions: { [key: string]: string },
+  ): IMetric {
+    let latencyMetrics: IMetric[] =
+      AvailabilityAndLatencyMetrics.createLatencyMetrics(props, dimensions);
+
+    if (latencyMetrics.length == 1) {
+      return latencyMetrics[0];
+    } else {
+      let usingMetrics: { [key: string]: IMetric } = {};
+
+      latencyMetrics.forEach((metric: IMetric, index: number) => {
+        let key: string = `${props.availabilityZone.substring(props.availabilityZone.length - 1)}_${props.metricDetails.operationName.toLowerCase()}_${props.metricType.toString().toLowerCase()}_${index}`;
+        usingMetrics[key] = metric;
+      });
+
+      return new MathExpression({
+        expression: Object.keys(usingMetrics).join('+'),
+        label: props.label,
+        period: props.metricDetails.period,
+        usingMetrics: usingMetrics,
+        color: props.color
       });
     }
   }
