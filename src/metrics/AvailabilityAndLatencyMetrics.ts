@@ -229,6 +229,31 @@ export class AvailabilityAndLatencyMetrics {
   }
 
   /**
+   * Creates a latency metric with the provided name
+   * @param props 
+   * @param dimensions 
+   * @returns 
+   */
+  static createLatencyMetric(
+    props: LatencyMetricProps,
+    dimensions: { [key: string]: string }
+  ): IMetric {
+    if (!(props.metricName)) {
+      throw new Error("You must provide a metric name.");
+    }
+
+    return new Metric({
+      metricName: props.metricName!,
+      namespace: props.metricDetails.metricNamespace,
+      unit: props.metricDetails.unit,
+      period: props.metricDetails.period,
+      statistic: props.statistic,
+      dimensionsMap: dimensions,
+      label: props.label,
+    });
+  }
+
+  /**
    * Takes all of the success or failure latency metric names and creates an average of those
    * names, if there's only 1 name, it just returns that metric
    * @param props

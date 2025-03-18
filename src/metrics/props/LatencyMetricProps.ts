@@ -16,4 +16,11 @@ export interface LatencyMetricProps extends AvailabilityAndLatencyMetricProps {
    * The latency statistic like p99, tm99, or TC(100:)
    */
   readonly statistic: string;
+
+  /**
+   * Provide this to target only a specific metric
+   * 
+   * @default All metrics of the specified type will be returned
+   */
+  readonly metricName?: string;
 }
