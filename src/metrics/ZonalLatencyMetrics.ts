@@ -1,6 +1,6 @@
 // Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
-import { Fn } from 'aws-cdk-lib';
+import { Aws } from 'aws-cdk-lib';
 import { IMetric, MathExpression } from 'aws-cdk-lib/aws-cloudwatch';
 import { AvailabilityAndLatencyMetrics } from './AvailabilityAndLatencyMetrics';
 import { LatencyMetricProps } from './props/LatencyMetricProps';
@@ -19,8 +19,18 @@ export class ZonalLatencyMetrics {
       props,
       props.metricDetails.metricDimensions.zonalDimensions(
         props.availabilityZoneId,
-        Fn.ref('AWS::Region'),
+        Aws.REGION
       ),
+    );
+  }
+
+  static createZonalLatencyMetric(props: ZonalLatencyMetricProps): IMetric {
+    return AvailabilityAndLatencyMetrics.createLatencyMetric(
+      props,
+      props.metricDetails.metricDimensions.zonalDimensions(
+        props.availabilityZoneId,
+        Aws.REGION
+      )
     );
   }
 
@@ -36,7 +46,7 @@ export class ZonalLatencyMetrics {
       props,
       props.metricDetails.metricDimensions.zonalDimensions(
         props.availabilityZoneId,
-        Fn.ref('AWS::Region'),
+        Aws.REGION
       ),
     );
   }
@@ -53,7 +63,7 @@ export class ZonalLatencyMetrics {
       props,
       props.metricDetails.metricDimensions.zonalDimensions(
         props.availabilityZoneId,
-        Fn.ref('AWS::Region'),
+        Aws.REGION
       ),
     );
   }
