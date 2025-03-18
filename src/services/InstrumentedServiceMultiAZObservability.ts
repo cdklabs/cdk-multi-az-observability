@@ -462,6 +462,7 @@ export class InstrumentedServiceMultiAZObservability
               {
                 operation: x,
                 azMapper: this.azMapper,
+                availabilityZones: props.service.availabilityZoneNames,
                 interval: props.interval
                   ? props.interval
                   : Duration.minutes(60),

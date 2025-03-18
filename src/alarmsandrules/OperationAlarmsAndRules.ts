@@ -84,13 +84,6 @@ export class OperationAlarmsAndRules
     this.aggregateZonalAlarmsMap = {};
     this.serverSideZonalAlarmsMap = {};
 
-    let availabilityZoneIds: string[] =
-      props.operation.service.availabilityZoneNames.map((x) => {
-        return props.azMapper.availabilityZoneIdFromAvailabilityZoneLetter(
-          x.substring(x.length - 1),
-        );
-      });
-
     let loadBalancerArn: string = '';
 
     if (props.loadBalancer !== undefined) {
@@ -156,8 +149,9 @@ export class OperationAlarmsAndRules
 
     let counter: number = 1;
 
-    for (let i = 0; i < availabilityZoneIds.length; i++) {
-      let availabilityZoneId: string = availabilityZoneIds[i];
+    props.operation.service.availabilityZoneNames.forEach((availabilityZone: string, index: number) => {
+      let azLetter: string = availabilityZone.substring(availabilityZone.length - 1);
+      let availabilityZoneId: string = props.azMapper.availabilityZoneIdFromAvailabilityZoneLetter(azLetter);
 
       this.serverSideZonalAlarmsAndRules.push(
         new ServerSideOperationZonalAlarmsAndRules(
@@ -167,7 +161,7 @@ export class OperationAlarmsAndRules
             counter +
             'ServerSideZonalAlarmsAndRules',
           {
-            availabilityZoneId: availabilityZoneId,
+            availabilityZone: availabilityZone,
             availabilityMetricDetails:
               props.operation.serverSideAvailabilityMetricDetails,
             latencyMetricDetails:
@@ -188,13 +182,13 @@ export class OperationAlarmsAndRules
       );
 
       this.serverSideZonalAlarmsMap[availabilityZoneId] =
-        this.serverSideZonalAlarmsAndRules[i].isolatedImpactAlarm;
+        this.serverSideZonalAlarmsAndRules[index].isolatedImpactAlarm;
 
       if (
         props.operation.canaryMetricDetails !== undefined &&
         props.operation.canaryMetricDetails != null
       ) {
-        this.canaryZonalAlarmsAndRules.push(
+        this.canaryZonalAlarmsAndRules!.push(
           new CanaryOperationZonalAlarmsAndRules(
             this,
             props.operation.operationName +
@@ -202,7 +196,7 @@ export class OperationAlarmsAndRules
               counter +
               'CanaryZonalAlarmsAndRules',
             {
-              availabilityZoneId: availabilityZoneId,
+              availabilityZone: availabilityZone,
               availabilityMetricDetails:
                 props.operation.canaryMetricDetails
                   .canaryAvailabilityMetricDetails,
@@ -233,8 +227,8 @@ export class OperationAlarmsAndRules
                 props.operation.operationName.toLowerCase() +
                 '-aggregate-isolated-az-impact',
               alarmRule: AlarmRule.anyOf(
-                this.canaryZonalAlarmsAndRules[i].isolatedImpactAlarm,
-                this.serverSideZonalAlarmsAndRules[i].isolatedImpactAlarm,
+                this.canaryZonalAlarmsAndRules![index].isolatedImpactAlarm,
+                this.serverSideZonalAlarmsAndRules[index].isolatedImpactAlarm,
               ),
               actionsEnabled: false,
               alarmDescription:
@@ -248,7 +242,7 @@ export class OperationAlarmsAndRules
         );
       } else {
         this.aggregateZonalAlarms.push(
-          this.serverSideZonalAlarmsAndRules[i].isolatedImpactAlarm,
+          this.serverSideZonalAlarmsAndRules[index].isolatedImpactAlarm,
         );
       }
 
@@ -256,6 +250,6 @@ export class OperationAlarmsAndRules
         this.aggregateZonalAlarms[-1];
 
       counter++;
-    }
+    });
   }
 }

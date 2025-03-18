@@ -30,9 +30,4 @@ export interface IBaseOperationZonalAlarmsAndRules {
    * Alarm that indicates this AZ is an outlier for high latency
    */
   availabilityZoneIsOutlierForLatency: IAlarm;
-
-  /**
-   * The Availability Zone Id for the alarms and rules
-   */
-  availabilityZoneId: string;
 }

@@ -37,23 +37,22 @@ export abstract class BaseOperationZonalAlarmsAndRules
    */
   abstract availabilityZoneIsOutlierForLatency: IAlarm;
 
-  /**
-   * The Availability Zone Id for the alarms and rules
-   */
-  availabilityZoneId: string;
-
   constructor(
     scope: Construct,
     id: string,
     props: BaseOperationZonalAlarmsAndRulesProps,
   ) {
     super(scope, id);
-    this.availabilityZoneId = props.availabilityZoneId;
+    
+    let azLetter: string = props.availabilityZone.substring(props.availabilityZone.length - 1);
+    let availabilityZoneId: string = props.azMapper.availabilityZoneIdFromAvailabilityZoneLetter(azLetter);
+
     this.availabilityAlarm =
       AvailabilityAndLatencyAlarmsAndRules.createZonalAvailabilityAlarm(
         this,
         props.availabilityMetricDetails,
-        props.availabilityZoneId,
+        props.availabilityZone,
+        availabilityZoneId,
         props.counter,
         props.nameSuffix,
       );
@@ -61,7 +60,8 @@ export abstract class BaseOperationZonalAlarmsAndRules
       AvailabilityAndLatencyAlarmsAndRules.createZonalLatencyAlarm(
         this,
         props.latencyMetricDetails,
-        props.availabilityZoneId,
+        props.availabilityZone,
+        availabilityZoneId,
         props.counter,
         props.nameSuffix,
       );
@@ -69,7 +69,7 @@ export abstract class BaseOperationZonalAlarmsAndRules
       AvailabilityAndLatencyAlarmsAndRules.createZonalAvailabilityOrLatencyCompositeAlarm(
         this,
         props.availabilityMetricDetails.operationName,
-        props.availabilityZoneId,
+        availabilityZoneId,
         props.counter,
         this.availabilityAlarm,
         this.latencyAlarm,

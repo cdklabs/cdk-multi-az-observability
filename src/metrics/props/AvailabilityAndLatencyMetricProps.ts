@@ -26,4 +26,9 @@ export interface AvailabilityAndLatencyMetricProps {
    * The Region for the metrics
    */
   readonly region?: string;
+
+  /**
+   * The color for the metric to be displayed on a graph
+   */
+  readonly color?: string;
 }

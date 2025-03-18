@@ -1,9 +1,8 @@
 // Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
-import { Aws } from 'aws-cdk-lib';
+import { Aws, Duration } from 'aws-cdk-lib';
 import { IMetric, MathExpression } from 'aws-cdk-lib/aws-cloudwatch';
 import { AvailabilityAndLatencyMetrics } from './AvailabilityAndLatencyMetrics';
-import { ServiceAvailabilityMetricProps } from './props/ServiceAvailabilityMetricProps';
 import { ZonalAvailabilityMetricProps } from './props/ZonalAvailabilityMetricProps';
 import { AvailabilityMetricType } from '../utilities/AvailabilityMetricType';
 
@@ -16,36 +15,34 @@ export class ZonalAvailabilityMetrics {
    * are the metrics for each operation included in the request availability metric props.
    */
   static createZonalServiceAvailabilityMetrics(
-    props: ServiceAvailabilityMetricProps,
+    metrics: ZonalAvailabilityMetricProps[],
+    period: Duration,
+    label: string
   ): IMetric[] {
     let usingMetrics: { [key: string]: IMetric } = {};
     let operationMetrics: IMetric[] = [];
-    let counter: number = 0;
 
-    props.availabilityMetricProps.forEach((prop) => {
-      let keyPrefix: string =
-        (prop.keyPrefix === undefined || prop.keyPrefix == ''
-          ? ''
-          : prop.keyPrefix.toLowerCase() + '_') +
-        prop.metricDetails.operationName.toLowerCase() +
-        '_' +
-        prop.metricType.toString().toLowerCase();
+    metrics.forEach((prop: ZonalAvailabilityMetricProps, index: number) => {
 
       let zonalOperationAvailabilityMetric: IMetric =
-        this.createZonalAvailabilityMetric(
-          prop as ZonalAvailabilityMetricProps,
+        AvailabilityAndLatencyMetrics.createZonalAvailabilityMetric(
+          prop,
+          prop.metricDetails.metricDimensions.zonalDimensions(
+            prop.availabilityZoneId,
+            Aws.REGION
+          )
         );
 
       operationMetrics.push(zonalOperationAvailabilityMetric);
-      usingMetrics[`${keyPrefix}${counter++}`] =
+      usingMetrics[`${prop.availabilityZone.substring(prop.availabilityZone.length - 1)}_${prop.metricDetails.operationName}_${index}`] =
         zonalOperationAvailabilityMetric;
     });
 
     let expression: string = '';
 
-    switch (props.availabilityMetricProps[0].metricType) {
+    switch (metrics[0].metricType) {
       case AvailabilityMetricType.SUCCESS_RATE:
-        expression = `(${Object.keys(usingMetrics).join('+')}) / ${props.availabilityMetricProps.length}`;
+        expression = `(${Object.keys(usingMetrics).join('+')}) / ${metrics.length}`;
         break;
       case AvailabilityMetricType.REQUEST_COUNT:
         expression = `${Object.keys(usingMetrics).join('+')}`;
@@ -54,7 +51,7 @@ export class ZonalAvailabilityMetrics {
         expression = `${Object.keys(usingMetrics).join('+')}`;
         break;
       case AvailabilityMetricType.FAULT_RATE:
-        expression = `(${Object.keys(usingMetrics).join('+')}) / ${props.availabilityMetricProps.length}`;
+        expression = `(${Object.keys(usingMetrics).join('+')}) / ${metrics.length}`;
         break;
       case AvailabilityMetricType.SUCCESS_COUNT:
         expression = `${Object.keys(usingMetrics).join('+')}`;
@@ -62,30 +59,13 @@ export class ZonalAvailabilityMetrics {
     }
     let math: IMetric = new MathExpression({
       usingMetrics: usingMetrics,
-      period: props.period,
-      label: props.label,
+      period: period,
+      label: label,
       expression: expression,
     });
 
     operationMetrics.splice(0, 0, math);
 
     return operationMetrics;
-  }
-
-  /**
-   * Creates a zonal availability metric
-   * @param props
-   * @returns
-   */
-  static createZonalAvailabilityMetric(
-    props: ZonalAvailabilityMetricProps,
-  ): IMetric {
-    return AvailabilityAndLatencyMetrics.createAvailabilityMetric(
-      props,
-      props.metricDetails.metricDimensions.zonalDimensions(
-        props.availabilityZoneId,
-        Aws.REGION
-      ),
-    );
   }
 }

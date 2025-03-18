@@ -27,9 +27,9 @@ export interface BaseOperationZonalAlarmsAndRulesProps {
   readonly latencyMetricDetails: IOperationMetricDetails;
 
   /**
-   * The Availability Zone Id the alarms and rules are being created for
+   * The Availability Zone the alarms and rules are being created for
    */
-  readonly availabilityZoneId: string;
+  readonly availabilityZone: string;
 
   /**
    * A counter used to name the CDK constructs uniquely

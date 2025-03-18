@@ -71,12 +71,16 @@ export class ServerSideOperationZonalAlarmsAndRules
   ) {
     super(scope, id, props);
 
+    let azLetter: string = props.availabilityZone.substring(props.availabilityZone.length - 1);
+    let availabilityZoneId: string = props.azMapper.availabilityZoneIdFromAvailabilityZoneLetter(azLetter);
+
     if (props.outlierDetectionAlgorithm == OutlierDetectionAlgorithm.STATIC) {
       this.availabilityZoneIsOutlierForFaults =
         AvailabilityAndLatencyAlarmsAndRules.createZonalFaultRateStaticOutlierAlarm(
           this,
           props.availabilityMetricDetails,
-          props.availabilityZoneId,
+          props.availabilityZone,
+          availabilityZoneId,
           props.counter,
           props.outlierThreshold,
           props.nameSuffix,
@@ -85,7 +89,8 @@ export class ServerSideOperationZonalAlarmsAndRules
         AvailabilityAndLatencyAlarmsAndRules.createZonalHighLatencyStaticOutlierAlarm(
           this,
           props.latencyMetricDetails,
-          props.availabilityZoneId,
+          props.availabilityZone,
+          availabilityZoneId,
           props.counter,
           props.outlierThreshold,
           props.nameSuffix,
@@ -95,7 +100,7 @@ export class ServerSideOperationZonalAlarmsAndRules
         AvailabilityAndLatencyAlarmsAndRules.createZonalFaultRateOutlierAlarm(
           this,
           props.availabilityMetricDetails,
-          props.availabilityZoneId,
+          availabilityZoneId,
           props.operation.service.availabilityZoneNames.map((az) => {
             return props.azMapper.availabilityZoneIdFromAvailabilityZoneLetter(
               az.substring(az.length - 1),
@@ -111,7 +116,7 @@ export class ServerSideOperationZonalAlarmsAndRules
         AvailabilityAndLatencyAlarmsAndRules.createZonalHighLatencyOutlierAlarm(
           this,
           props.latencyMetricDetails,
-          props.availabilityZoneId,
+          availabilityZoneId,
           props.operation.service.availabilityZoneNames.map((az) => {
             return props.azMapper.availabilityZoneIdFromAvailabilityZoneLetter(
               az.substring(az.length - 1),
@@ -133,7 +138,7 @@ export class ServerSideOperationZonalAlarmsAndRules
         AvailabilityAndLatencyAlarmsAndRules.createServerSideInstancesHandlingRequestsInThisAZRule(
           this,
           props.availabilityMetricDetails.operationName,
-          props.availabilityZoneId,
+          availabilityZoneId,
           props.contributorInsightRuleDetails,
           props.counter,
           props.nameSuffix,
@@ -142,7 +147,7 @@ export class ServerSideOperationZonalAlarmsAndRules
         AvailabilityAndLatencyAlarmsAndRules.createServerSideInstanceFaultContributorsInThisAZRule(
           this,
           props.availabilityMetricDetails.operationName,
-          props.availabilityZoneId,
+          availabilityZoneId,
           props.contributorInsightRuleDetails,
           props.counter,
           props.nameSuffix,
@@ -151,7 +156,7 @@ export class ServerSideOperationZonalAlarmsAndRules
         AvailabilityAndLatencyAlarmsAndRules.createServerSideZonalMoreThanOneInstanceProducingFaultsAlarm(
           this,
           props.availabilityMetricDetails,
-          props.availabilityZoneId,
+          availabilityZoneId,
           props.counter,
           props.outlierThreshold,
           this.instanceContributorsToFaultsInThisAZ,
@@ -162,7 +167,7 @@ export class ServerSideOperationZonalAlarmsAndRules
         AvailabilityAndLatencyAlarmsAndRules.createServerSideInstanceHighLatencyContributorsInThisAZRule(
           this,
           props.latencyMetricDetails,
-          props.availabilityZoneId,
+          availabilityZoneId,
           props.contributorInsightRuleDetails,
           props.counter,
           props.nameSuffix,
@@ -171,7 +176,7 @@ export class ServerSideOperationZonalAlarmsAndRules
         AvailabilityAndLatencyAlarmsAndRules.createServerSideZonalMoreThanOneInstanceProducingHighLatencyAlarm(
           this,
           props.latencyMetricDetails,
-          props.availabilityZoneId,
+          availabilityZoneId,
           props.counter,
           props.outlierThreshold,
           this.instanceContributorsToHighLatencyInThisAZ,
@@ -183,7 +188,7 @@ export class ServerSideOperationZonalAlarmsAndRules
         AvailabilityAndLatencyAlarmsAndRules.createServerSideIsolatedAZImpactAlarm(
           this,
           props.availabilityMetricDetails.operationName,
-          props.availabilityZoneId,
+          availabilityZoneId,
           props.counter,
           this.availabilityZoneIsOutlierForFaults,
           this.availabilityAlarm,
@@ -203,7 +208,7 @@ export class ServerSideOperationZonalAlarmsAndRules
           props.nameSuffix,
         {
           compositeAlarmName:
-            props.availabilityZoneId +
+            availabilityZoneId +
             `-${props.operation.operationName.toLowerCase()}-isolated-impact-alarm` +
             props.nameSuffix,
           alarmRule: AlarmRule.anyOf(

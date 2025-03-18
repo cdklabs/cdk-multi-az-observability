@@ -14,8 +14,6 @@ import { ApplicationLoadBalancerLatencyOutlierAlgorithm } from "../outlier-detec
 
 export class ApplicationLoadBalancerMetrics {
 
-    private static readonly colors: string[] = [ Color.BLUE, Color.ORANGE, Color.GREEN, Color.RED, Color.BROWN, Color.PINK ];
-
     /**
      * Gets the TargetResponseTime latency for the ALB
      * targets
@@ -597,7 +595,7 @@ export class ApplicationLoadBalancerMetrics {
             usingMetrics: usingMetrics,
             period: period,
             label: availabilityZoneId,
-            color: ApplicationLoadBalancerMetrics.colors[index]
+            color: MetricsHelper.colors[index]
           }));
   
           keyprefix = MetricsHelper.nextChar(keyprefix);
@@ -622,7 +620,7 @@ export class ApplicationLoadBalancerMetrics {
             usingMetrics: usingMetrics,
             label: availabilityZoneId,
             period: period,
-            color: ApplicationLoadBalancerMetrics.colors[index]
+            color: MetricsHelper.colors[index]
           });
         }
         else {
@@ -718,7 +716,7 @@ export class ApplicationLoadBalancerMetrics {
             usingMetrics: usingMetrics,
             period: period,
             label: availabilityZoneId,
-            color: ApplicationLoadBalancerMetrics.colors[index]
+            color: MetricsHelper.colors[index]
           }));
   
           keyprefix = MetricsHelper.nextChar(keyprefix);
@@ -743,7 +741,7 @@ export class ApplicationLoadBalancerMetrics {
             usingMetrics: usingMetrics,
             label: availabilityZoneId,
             period: period,
-            color: ApplicationLoadBalancerMetrics.colors[index]
+            color: MetricsHelper.colors[index]
           });
         }
         else {
@@ -793,7 +791,7 @@ export class ApplicationLoadBalancerMetrics {
               period: period,
               statistic: Stats.SUM,
               unit: Unit.COUNT,
-              color: ApplicationLoadBalancerMetrics.colors[index]
+              color: MetricsHelper.colors[index]
             },
           );
   
@@ -820,7 +818,7 @@ export class ApplicationLoadBalancerMetrics {
             usingMetrics: usingMetrics,
             label: availabilityZoneId,
             period: period,
-            color: ApplicationLoadBalancerMetrics.colors[index]
+            color: MetricsHelper.colors[index]
           });
         }
         else {
@@ -869,7 +867,7 @@ export class ApplicationLoadBalancerMetrics {
               period: period,
               statistic: Stats.SUM,
               unit: Unit.COUNT,
-              color: ApplicationLoadBalancerMetrics.colors[index]
+              color: MetricsHelper.colors[index]
             },
           );
   
@@ -896,7 +894,7 @@ export class ApplicationLoadBalancerMetrics {
             usingMetrics: usingMetrics,
             label: availabilityZoneId,
             period: period,
-            color: ApplicationLoadBalancerMetrics.colors[index]
+            color: MetricsHelper.colors[index]
           });
         }
         else {
@@ -1019,7 +1017,7 @@ export class ApplicationLoadBalancerMetrics {
           usingMetrics: usingMetrics,
           label: availabilityZoneId,
           period: period,
-          color: ApplicationLoadBalancerMetrics.colors[index]
+          color: MetricsHelper.colors[index]
         });
 
         keyprefix = MetricsHelper.nextChar(keyprefix);
@@ -1059,7 +1057,7 @@ export class ApplicationLoadBalancerMetrics {
             usingMetrics: usingMetrics,
             period: period,
             label: azMapper.availabilityZoneIdFromAvailabilityZoneLetter(key),
-            color: ApplicationLoadBalancerMetrics.colors[index]
+            color: MetricsHelper.colors[index]
           });
 
           faultRateMetrics[key] = zonalFaultRate;

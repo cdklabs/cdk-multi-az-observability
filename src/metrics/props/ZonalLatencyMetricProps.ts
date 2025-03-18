@@ -10,4 +10,9 @@ export interface ZonalLatencyMetricProps extends LatencyMetricProps {
    * The Availability Zone Id for the metrics
    */
   readonly availabilityZoneId: string;
+
+  /**
+   * The Availability Zone name for the metrics
+   */
+  readonly availabilityZone: string;
 }
