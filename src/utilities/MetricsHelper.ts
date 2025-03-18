@@ -4,6 +4,8 @@ import { Runtime } from "aws-cdk-lib/aws-lambda";
 export class MetricsHelper {
   static readonly colors: string[] = [ Color.BLUE, Color.ORANGE, Color.GREEN, Color.RED, Color.BROWN, Color.PINK ];
 
+  static readonly regionColor: string = Color.PURPLE;
+
    /**
    * Increments a str by one char, for example
    * a -> b

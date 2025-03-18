@@ -4,7 +4,7 @@ import { Duration, NestedStack } from 'aws-cdk-lib';
 import { Dashboard, IAlarm } from 'aws-cdk-lib/aws-cloudwatch';
 import { IFunction } from 'aws-cdk-lib/aws-lambda';
 import { ILogGroup } from 'aws-cdk-lib/aws-logs';
-import { Construct } from 'constructs';
+import { Construct, IConstruct } from 'constructs';
 import { CanaryMetrics } from './CanaryMetrics';
 import { IInstrumentedServiceMultiAZObservability } from './IInstrumentedServiceMultiAZObservability';
 import { IOperation } from './IOperation';
@@ -82,7 +82,275 @@ export class InstrumentedServiceMultiAZObservability
    */
   readonly canaryLogGroup?: ILogGroup;
 
+  /**
+   * The Lambda function that performs the outlier detection calculation
+   */
   private readonly outlierDetectionFunction?: IFunction;
+
+  /**
+   * Sets up the canary testing function and test
+   * events
+   * @param scope 
+   * @param props 
+   */
+  private setupCanaryTests(
+    scope: IConstruct,
+    props: InstrumentedServiceMultiAZObservabilityProps,
+  ) : void {
+
+
+    let canary = new CanaryFunction(scope, 'CanaryFunction', {
+      vpc: props.service.canaryTestProps!.networkConfiguration?.vpc,
+      subnetSelection:
+       props.service.canaryTestProps!.networkConfiguration?.subnetSelection,
+      httpTimeout: props.service.canaryTestProps!.timeout
+        ? props.service.canaryTestProps!.timeout
+        : Duration.seconds(2),
+      ignoreTlsErrors: props.service.canaryTestProps!.ignoreTlsErrors
+        ? props.service.canaryTestProps!.ignoreTlsErrors
+        : false,
+    });
+
+    props.service.operations.forEach((operation: IOperation, index: number) => {
+      if (operation.optOutOfServiceCreatedCanary != true) {
+        let testProps: AddCanaryTestProps = operation.canaryTestProps
+          ? operation.canaryTestProps
+          : (props.service.canaryTestProps as AddCanaryTestProps);
+
+        let nestedStack: NestedStack = new NestedStack(
+          this,
+          operation.operationName + 'CanaryTest',
+          {},
+        );
+
+        let test = new CanaryTest(nestedStack, operation.operationName, {
+          function: canary.function,
+          requestCount: testProps.requestCount,
+          regionalRequestCount: testProps.regionalRequestCount
+            ? testProps.regionalRequestCount
+            : testProps.requestCount,
+          schedule: testProps.schedule,
+          operation: operation,
+          loadBalancer: testProps.loadBalancer,
+          headers: testProps.headers,
+          postData: testProps.postData,
+          azMapper: this.azMapper,
+        });
+
+        let defaultAvailabilityMetricDetails: IOperationMetricDetails;
+        let defaultLatencyMetricDetails: IOperationMetricDetails;
+
+        if (operation.canaryMetricDetails?.canaryAvailabilityMetricDetails) {
+          defaultAvailabilityMetricDetails = new OperationMetricDetails(
+            {
+              operationName: operation.operationName,
+              metricDimensions: new MetricDimensions(
+                { Operation: operation.operationName },
+                'AZ-ID',
+                'Region',
+              ),
+              alarmStatistic:
+                operation.canaryMetricDetails.canaryAvailabilityMetricDetails
+                  .alarmStatistic,
+              datapointsToAlarm:
+                operation.canaryMetricDetails.canaryAvailabilityMetricDetails
+                  .datapointsToAlarm,
+              evaluationPeriods:
+                operation.canaryMetricDetails.canaryAvailabilityMetricDetails
+                  .evaluationPeriods,
+              faultAlarmThreshold:
+                operation.canaryMetricDetails.canaryAvailabilityMetricDetails
+                  .faultAlarmThreshold,
+              faultMetricNames:
+                operation.canaryMetricDetails.canaryAvailabilityMetricDetails
+                  .faultMetricNames,
+              graphedFaultStatistics:
+                operation.canaryMetricDetails.canaryAvailabilityMetricDetails
+                  .graphedFaultStatistics,
+              graphedSuccessStatistics:
+                operation.canaryMetricDetails.canaryAvailabilityMetricDetails
+                  .graphedSuccessStatistics,
+              metricNamespace:
+                operation.canaryMetricDetails.canaryAvailabilityMetricDetails
+                  .metricNamespace,
+              period:
+                operation.canaryMetricDetails.canaryAvailabilityMetricDetails
+                  .period,
+              successAlarmThreshold:
+                operation.canaryMetricDetails.canaryAvailabilityMetricDetails
+                  .successAlarmThreshold,
+              successMetricNames:
+                operation.canaryMetricDetails.canaryAvailabilityMetricDetails
+                  .successMetricNames,
+              unit: operation.canaryMetricDetails
+                .canaryAvailabilityMetricDetails.unit,
+            },
+            operation.service.defaultAvailabilityMetricDetails,
+          );
+        } else if (operation.canaryTestAvailabilityMetricsOverride) {
+          defaultAvailabilityMetricDetails = new OperationMetricDetails(
+            {
+              operationName: operation.operationName,
+              metricNamespace: test.metricNamespace,
+              successMetricNames: ['Success'],
+              faultMetricNames: ['Fault', 'Failure'],
+              metricDimensions: new MetricDimensions(
+                { Operation: operation.operationName },
+                'AZ-ID',
+                'Region',
+              ),
+
+              alarmStatistic:
+                operation.canaryTestAvailabilityMetricsOverride
+                  .alarmStatistic,
+              datapointsToAlarm:
+                operation.canaryTestAvailabilityMetricsOverride
+                  .datapointsToAlarm,
+              evaluationPeriods:
+                operation.canaryTestAvailabilityMetricsOverride
+                  .evaluationPeriods,
+              faultAlarmThreshold:
+                operation.canaryTestAvailabilityMetricsOverride
+                  .faultAlarmThreshold,
+              period: operation.canaryTestAvailabilityMetricsOverride.period,
+              successAlarmThreshold:
+                operation.canaryTestAvailabilityMetricsOverride
+                  .successAlarmThreshold,
+            },
+            props.service.defaultAvailabilityMetricDetails,
+          );
+        } else {
+          defaultAvailabilityMetricDetails = new OperationMetricDetails(
+            {
+              operationName: operation.operationName,
+              metricNamespace: test.metricNamespace,
+              successMetricNames: ['Success'],
+              faultMetricNames: ['Fault', 'Failure'],
+              metricDimensions: new MetricDimensions(
+                { Operation: operation.operationName },
+                'AZ-ID',
+                'Region',
+              ),
+            },
+            props.service.defaultAvailabilityMetricDetails,
+          );
+        }
+
+        if (operation.canaryMetricDetails?.canaryLatencyMetricDetails) {
+          defaultLatencyMetricDetails = new OperationMetricDetails(
+            {
+              operationName: operation.operationName,
+              metricDimensions: new MetricDimensions(
+                { Operation: operation.operationName },
+                'AZ-ID',
+                'Region',
+              ),
+              alarmStatistic:
+                operation.canaryMetricDetails.canaryLatencyMetricDetails
+                  .alarmStatistic,
+              datapointsToAlarm:
+                operation.canaryMetricDetails.canaryLatencyMetricDetails
+                  .datapointsToAlarm,
+              evaluationPeriods:
+                operation.canaryMetricDetails.canaryLatencyMetricDetails
+                  .evaluationPeriods,
+              faultAlarmThreshold:
+                operation.canaryMetricDetails.canaryLatencyMetricDetails
+                  .faultAlarmThreshold,
+              faultMetricNames:
+                operation.canaryMetricDetails.canaryLatencyMetricDetails
+                  .faultMetricNames,
+              graphedFaultStatistics:
+                operation.canaryMetricDetails.canaryLatencyMetricDetails
+                  .graphedFaultStatistics,
+              graphedSuccessStatistics:
+                operation.canaryMetricDetails.canaryLatencyMetricDetails
+                  .graphedSuccessStatistics,
+              metricNamespace:
+                operation.canaryMetricDetails.canaryLatencyMetricDetails
+                  .metricNamespace,
+              period:
+                operation.canaryMetricDetails.canaryLatencyMetricDetails
+                  .period,
+              successAlarmThreshold:
+                operation.canaryMetricDetails.canaryLatencyMetricDetails
+                  .successAlarmThreshold,
+              successMetricNames:
+                operation.canaryMetricDetails.canaryLatencyMetricDetails
+                  .successMetricNames,
+              unit: operation.canaryMetricDetails.canaryLatencyMetricDetails
+                .unit,
+            },
+            operation.service.defaultLatencyMetricDetails,
+          );
+        } else if (operation.canaryTestLatencyMetricsOverride) {
+          defaultLatencyMetricDetails = new OperationMetricDetails(
+            {
+              operationName: operation.operationName,
+              metricNamespace: test.metricNamespace,
+              successMetricNames: ['SuccessLatency'],
+              faultMetricNames: ['FaultLatency'],
+              metricDimensions: new MetricDimensions(
+                { Operation: operation.operationName },
+                'AZ-ID',
+                'Region',
+              ),
+
+              alarmStatistic:
+                operation.canaryTestLatencyMetricsOverride.alarmStatistic,
+              datapointsToAlarm:
+                operation.canaryTestLatencyMetricsOverride.datapointsToAlarm,
+              evaluationPeriods:
+                operation.canaryTestLatencyMetricsOverride.evaluationPeriods,
+              faultAlarmThreshold:
+                operation.canaryTestLatencyMetricsOverride
+                  .faultAlarmThreshold,
+              period: operation.canaryTestLatencyMetricsOverride.period,
+              successAlarmThreshold:
+                operation.canaryTestLatencyMetricsOverride
+                  .successAlarmThreshold,
+            },
+            props.service.defaultLatencyMetricDetails,
+          );
+        } else {
+          defaultLatencyMetricDetails = new OperationMetricDetails(
+            {
+              operationName: operation.operationName,
+              metricNamespace: test.metricNamespace,
+              successMetricNames: ['SuccessLatency'],
+              faultMetricNames: ['FaultLatency'],
+              metricDimensions: new MetricDimensions(
+                { Operation: operation.operationName },
+                'AZ-ID',
+                'Region',
+              ),
+            },
+            props.service.defaultLatencyMetricDetails,
+          );
+        }
+
+        let newOperation = new Operation({
+          serverSideAvailabilityMetricDetails:
+            operation.serverSideAvailabilityMetricDetails,
+          serverSideLatencyMetricDetails:
+            operation.serverSideLatencyMetricDetails,
+          serverSideContributorInsightRuleDetails:
+            operation.serverSideContributorInsightRuleDetails,
+          service: operation.service,
+          operationName: operation.operationName,
+          path: operation.path,
+          critical: operation.critical,
+          httpMethods: operation.httpMethods,
+          canaryMetricDetails: new CanaryMetrics({
+            canaryAvailabilityMetricDetails: defaultAvailabilityMetricDetails,
+            canaryLatencyMetricDetails: defaultLatencyMetricDetails,
+          }),
+        });
+
+        props.service.operations[index] = newOperation;
+      }
+    });
+  }
 
   constructor(
     scope: Construct,
@@ -93,6 +361,7 @@ export class InstrumentedServiceMultiAZObservability
 
     let outlierThreshold: number;
 
+    // Set defaults
     if (!props.outlierThreshold) {
       switch (props.outlierDetectionAlgorithm) {
         case OutlierDetectionAlgorithm.CHI_SQUARED:
@@ -115,11 +384,14 @@ export class InstrumentedServiceMultiAZObservability
       outlierThreshold = props.outlierThreshold;
     }
 
+    // Create the AZ mapper resource that all of the resources
+    // will share
     this.azMapper = new AvailabilityZoneMapper(this, 'AZMapper', {
       availabilityZoneNames: props.service.availabilityZoneNames,
     });
 
-    if (props.service.canaryTestProps !== undefined) {
+    // Create the canary testing stack if the user provided input
+    if (props.service.canaryTestProps) {
       let canaryStack: StackWithDynamicSource = new StackWithDynamicSource(
         this,
         'Canary',
@@ -130,263 +402,11 @@ export class InstrumentedServiceMultiAZObservability
         },
       );
 
-      let canary = new CanaryFunction(canaryStack, 'CanaryFunction', {
-        vpc: props.service.canaryTestProps.networkConfiguration?.vpc,
-        subnetSelection:
-          props.service.canaryTestProps.networkConfiguration?.subnetSelection,
-        httpTimeout: props.service.canaryTestProps.timeout
-          ? props.service.canaryTestProps.timeout
-          : Duration.seconds(2),
-        ignoreTlsErrors: props.service.canaryTestProps.ignoreTlsErrors
-          ? props.service.canaryTestProps.ignoreTlsErrors
-          : false,
-      });
-
-      this.canaryLogGroup = canary.logGroup;
-
-      for (let i = 0; i < props.service.operations.length; i++) {
-        let operation: IOperation = props.service.operations[i];
-
-        if (operation.optOutOfServiceCreatedCanary != true) {
-          let testProps: AddCanaryTestProps = operation.canaryTestProps
-            ? operation.canaryTestProps
-            : (props.service.canaryTestProps as AddCanaryTestProps);
-
-          let nestedStack: NestedStack = new NestedStack(
-            this,
-            operation.operationName + 'CanaryTest',
-            {},
-          );
-
-          let test = new CanaryTest(nestedStack, operation.operationName, {
-            function: canary.function,
-            requestCount: testProps.requestCount,
-            regionalRequestCount: testProps.regionalRequestCount
-              ? testProps.regionalRequestCount
-              : testProps.requestCount,
-            schedule: testProps.schedule,
-            operation: operation,
-            loadBalancer: testProps.loadBalancer,
-            headers: testProps.headers,
-            postData: testProps.postData,
-            azMapper: this.azMapper,
-          });
-
-          let defaultAvailabilityMetricDetails: IOperationMetricDetails;
-          let defaultLatencyMetricDetails: IOperationMetricDetails;
-
-          if (operation.canaryMetricDetails?.canaryAvailabilityMetricDetails) {
-            defaultAvailabilityMetricDetails = new OperationMetricDetails(
-              {
-                operationName: operation.operationName,
-                metricDimensions: new MetricDimensions(
-                  { Operation: operation.operationName },
-                  'AZ-ID',
-                  'Region',
-                ),
-                alarmStatistic:
-                  operation.canaryMetricDetails.canaryAvailabilityMetricDetails
-                    .alarmStatistic,
-                datapointsToAlarm:
-                  operation.canaryMetricDetails.canaryAvailabilityMetricDetails
-                    .datapointsToAlarm,
-                evaluationPeriods:
-                  operation.canaryMetricDetails.canaryAvailabilityMetricDetails
-                    .evaluationPeriods,
-                faultAlarmThreshold:
-                  operation.canaryMetricDetails.canaryAvailabilityMetricDetails
-                    .faultAlarmThreshold,
-                faultMetricNames:
-                  operation.canaryMetricDetails.canaryAvailabilityMetricDetails
-                    .faultMetricNames,
-                graphedFaultStatistics:
-                  operation.canaryMetricDetails.canaryAvailabilityMetricDetails
-                    .graphedFaultStatistics,
-                graphedSuccessStatistics:
-                  operation.canaryMetricDetails.canaryAvailabilityMetricDetails
-                    .graphedSuccessStatistics,
-                metricNamespace:
-                  operation.canaryMetricDetails.canaryAvailabilityMetricDetails
-                    .metricNamespace,
-                period:
-                  operation.canaryMetricDetails.canaryAvailabilityMetricDetails
-                    .period,
-                successAlarmThreshold:
-                  operation.canaryMetricDetails.canaryAvailabilityMetricDetails
-                    .successAlarmThreshold,
-                successMetricNames:
-                  operation.canaryMetricDetails.canaryAvailabilityMetricDetails
-                    .successMetricNames,
-                unit: operation.canaryMetricDetails
-                  .canaryAvailabilityMetricDetails.unit,
-              },
-              operation.service.defaultAvailabilityMetricDetails,
-            );
-          } else if (operation.canaryTestAvailabilityMetricsOverride) {
-            defaultAvailabilityMetricDetails = new OperationMetricDetails(
-              {
-                operationName: operation.operationName,
-                metricNamespace: test.metricNamespace,
-                successMetricNames: ['Success'],
-                faultMetricNames: ['Fault', 'Failure'],
-                metricDimensions: new MetricDimensions(
-                  { Operation: operation.operationName },
-                  'AZ-ID',
-                  'Region',
-                ),
-
-                alarmStatistic:
-                  operation.canaryTestAvailabilityMetricsOverride
-                    .alarmStatistic,
-                datapointsToAlarm:
-                  operation.canaryTestAvailabilityMetricsOverride
-                    .datapointsToAlarm,
-                evaluationPeriods:
-                  operation.canaryTestAvailabilityMetricsOverride
-                    .evaluationPeriods,
-                faultAlarmThreshold:
-                  operation.canaryTestAvailabilityMetricsOverride
-                    .faultAlarmThreshold,
-                period: operation.canaryTestAvailabilityMetricsOverride.period,
-                successAlarmThreshold:
-                  operation.canaryTestAvailabilityMetricsOverride
-                    .successAlarmThreshold,
-              },
-              props.service.defaultAvailabilityMetricDetails,
-            );
-          } else {
-            defaultAvailabilityMetricDetails = new OperationMetricDetails(
-              {
-                operationName: operation.operationName,
-                metricNamespace: test.metricNamespace,
-                successMetricNames: ['Success'],
-                faultMetricNames: ['Fault', 'Failure'],
-                metricDimensions: new MetricDimensions(
-                  { Operation: operation.operationName },
-                  'AZ-ID',
-                  'Region',
-                ),
-              },
-              props.service.defaultAvailabilityMetricDetails,
-            );
-          }
-
-          if (operation.canaryMetricDetails?.canaryLatencyMetricDetails) {
-            defaultLatencyMetricDetails = new OperationMetricDetails(
-              {
-                operationName: operation.operationName,
-                metricDimensions: new MetricDimensions(
-                  { Operation: operation.operationName },
-                  'AZ-ID',
-                  'Region',
-                ),
-                alarmStatistic:
-                  operation.canaryMetricDetails.canaryLatencyMetricDetails
-                    .alarmStatistic,
-                datapointsToAlarm:
-                  operation.canaryMetricDetails.canaryLatencyMetricDetails
-                    .datapointsToAlarm,
-                evaluationPeriods:
-                  operation.canaryMetricDetails.canaryLatencyMetricDetails
-                    .evaluationPeriods,
-                faultAlarmThreshold:
-                  operation.canaryMetricDetails.canaryLatencyMetricDetails
-                    .faultAlarmThreshold,
-                faultMetricNames:
-                  operation.canaryMetricDetails.canaryLatencyMetricDetails
-                    .faultMetricNames,
-                graphedFaultStatistics:
-                  operation.canaryMetricDetails.canaryLatencyMetricDetails
-                    .graphedFaultStatistics,
-                graphedSuccessStatistics:
-                  operation.canaryMetricDetails.canaryLatencyMetricDetails
-                    .graphedSuccessStatistics,
-                metricNamespace:
-                  operation.canaryMetricDetails.canaryLatencyMetricDetails
-                    .metricNamespace,
-                period:
-                  operation.canaryMetricDetails.canaryLatencyMetricDetails
-                    .period,
-                successAlarmThreshold:
-                  operation.canaryMetricDetails.canaryLatencyMetricDetails
-                    .successAlarmThreshold,
-                successMetricNames:
-                  operation.canaryMetricDetails.canaryLatencyMetricDetails
-                    .successMetricNames,
-                unit: operation.canaryMetricDetails.canaryLatencyMetricDetails
-                  .unit,
-              },
-              operation.service.defaultLatencyMetricDetails,
-            );
-          } else if (operation.canaryTestLatencyMetricsOverride) {
-            defaultLatencyMetricDetails = new OperationMetricDetails(
-              {
-                operationName: operation.operationName,
-                metricNamespace: test.metricNamespace,
-                successMetricNames: ['SuccessLatency'],
-                faultMetricNames: ['FaultLatency'],
-                metricDimensions: new MetricDimensions(
-                  { Operation: operation.operationName },
-                  'AZ-ID',
-                  'Region',
-                ),
-
-                alarmStatistic:
-                  operation.canaryTestLatencyMetricsOverride.alarmStatistic,
-                datapointsToAlarm:
-                  operation.canaryTestLatencyMetricsOverride.datapointsToAlarm,
-                evaluationPeriods:
-                  operation.canaryTestLatencyMetricsOverride.evaluationPeriods,
-                faultAlarmThreshold:
-                  operation.canaryTestLatencyMetricsOverride
-                    .faultAlarmThreshold,
-                period: operation.canaryTestLatencyMetricsOverride.period,
-                successAlarmThreshold:
-                  operation.canaryTestLatencyMetricsOverride
-                    .successAlarmThreshold,
-              },
-              props.service.defaultLatencyMetricDetails,
-            );
-          } else {
-            defaultLatencyMetricDetails = new OperationMetricDetails(
-              {
-                operationName: operation.operationName,
-                metricNamespace: test.metricNamespace,
-                successMetricNames: ['SuccessLatency'],
-                faultMetricNames: ['FaultLatency'],
-                metricDimensions: new MetricDimensions(
-                  { Operation: operation.operationName },
-                  'AZ-ID',
-                  'Region',
-                ),
-              },
-              props.service.defaultLatencyMetricDetails,
-            );
-          }
-
-          let newOperation = new Operation({
-            serverSideAvailabilityMetricDetails:
-              operation.serverSideAvailabilityMetricDetails,
-            serverSideLatencyMetricDetails:
-              operation.serverSideLatencyMetricDetails,
-            serverSideContributorInsightRuleDetails:
-              operation.serverSideContributorInsightRuleDetails,
-            service: operation.service,
-            operationName: operation.operationName,
-            path: operation.path,
-            critical: operation.critical,
-            httpMethods: operation.httpMethods,
-            canaryMetricDetails: new CanaryMetrics({
-              canaryAvailabilityMetricDetails: defaultAvailabilityMetricDetails,
-              canaryLatencyMetricDetails: defaultLatencyMetricDetails,
-            }),
-          });
-
-          props.service.operations[i] = newOperation;
-        }
-      }
+      this.setupCanaryTests(canaryStack, props);
     }
 
+    // Create the outlier detection lambda function stack if we're not
+    // using static outlier detection
     if (props.outlierDetectionAlgorithm != OutlierDetectionAlgorithm.STATIC) {
       let outlierDetectionStack: StackWithDynamicSource =
         new StackWithDynamicSource(this, 'OutlierDetectionStack', {
@@ -394,7 +414,7 @@ export class InstrumentedServiceMultiAZObservability
           assetsBucketPrefixParameterName:
             props.assetsBucketPrefixParameterName,
         });
-
+  
       this.outlierDetectionFunction = new OutlierDetectionFunction(
         outlierDetectionStack,
         'OutlierDetectionFunction',
@@ -402,6 +422,7 @@ export class InstrumentedServiceMultiAZObservability
       ).function;
     }
 
+    // Create the per operation alarms and contributor insight rules
     this.perOperationAlarmsAndRules = Object.fromEntries(
       props.service.operations.map((operation: IOperation) => {
         let nestedStack: NestedStack = new NestedStack(

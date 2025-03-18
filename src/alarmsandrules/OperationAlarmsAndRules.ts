@@ -86,7 +86,7 @@ export class OperationAlarmsAndRules
 
     let loadBalancerArn: string = '';
 
-    if (props.loadBalancer !== undefined) {
+    if (props.loadBalancer) {
       loadBalancerArn = (props.loadBalancer as BaseLoadBalancer)
         .loadBalancerArn;
     }
