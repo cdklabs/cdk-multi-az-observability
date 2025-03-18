@@ -2,235 +2,261 @@
 // SPDX-License-Identifier: Apache-2.0
 import { Aws, Fn } from 'aws-cdk-lib';
 import {
-  AlarmStatusWidget,
-  Color,
   Dashboard,
-  GraphWidget,
   IMetric,
-  IWidget,
-  MathExpression,
   PeriodOverride,
+  IWidget,
   TextWidget,
+  AlarmStatusWidget,
+  GraphWidget,
+  Color,
+  AlarmWidget,
+  LegendPosition,
 } from 'aws-cdk-lib/aws-cloudwatch';
-import {
-  CfnLoadBalancer,
-  IApplicationLoadBalancer,
-} from 'aws-cdk-lib/aws-elasticloadbalancingv2';
 import { Construct } from 'constructs';
-import { IServiceAvailabilityAndLatencyDashboard } from './IServiceAvailabilityAndLatencyDashboard';
-import { ServiceAvailabilityAndLatencyDashboardProps } from './props/ServiceAvailabilityAndLatencyDashboardProps';
-import { ApplicationLoadBalancerMetrics } from '../metrics/ApplicationLoadBalancerMetrics';
-import { AvailabilityMetricProps } from '../metrics/props/AvailabilityMetricProps';
-import { LatencyMetricProps } from '../metrics/props/LatencyMetricProps';
-import { RegionalAvailabilityMetrics } from '../metrics/RegionalAvailabilityMetrics';
+import { ContributorInsightsWidget } from './ContributorInsightsWidget';
+import { IOperationAvailabilityAndLatencyDashboard } from './IOperationAvailabilityAndLatencyDashboard';
+import { OperationAvailabilityAndLatencyDashboardProps } from './props/OperationAvailabilityAndLatencyDashboardProps';
+import { OperationAvailabilityWidgetProps } from './props/OperationAvailabilityWidgetProps';
+import { OperationLatencyWidgetProps } from './props/OperationLatencyWidgetProps';
 import { RegionalLatencyMetrics } from '../metrics/RegionalLatencyMetrics';
-import { ZonalAvailabilityMetrics } from '../metrics/ZonalAvailabilityMetrics';
 import { ZonalLatencyMetrics } from '../metrics/ZonalLatencyMetrics';
-import { IOperation } from '../services/IOperation';
-import { IOperationMetricDetails } from '../services/IOperationMetricDetails';
 import { AvailabilityMetricType } from '../utilities/AvailabilityMetricType';
 import { LatencyMetricType } from '../utilities/LatencyMetricType';
 import { MetricsHelper } from '../utilities/MetricsHelper';
 import { AvailabilityAndLatencyMetrics } from '../metrics/AvailabilityAndLatencyMetrics';
-import { ZonalAvailabilityMetricProps } from '../metrics/props/ZonalAvailabilityMetricProps';
 
 /**
- * Creates a service level availability and latency dashboard
+ * Creates an operation level availability and latency dashboard
  */
-export class ServiceAvailabilityAndLatencyDashboard
+export class OperationAvailabilityAndLatencyDashboard
   extends Construct
-  implements IServiceAvailabilityAndLatencyDashboard {
- 
-  private static generateTPSWidgets(
-    props: ServiceAvailabilityAndLatencyDashboardProps
+  implements IOperationAvailabilityAndLatencyDashboard {
+  
+  private static createTopLevelAggregateAlarmWidgets(
+    props: OperationAvailabilityAndLatencyDashboardProps
   ): IWidget[] {
-    let widgets: IWidget[] = [];
 
-    widgets.push(
-      new TextWidget({ height: 2, width: 24, markdown: '**TPS Metrics**' }),
-    );
+    let topLevelOperationAlarmsAndMetrics: IWidget[] = [
+      new AlarmStatusWidget({
+        height: 2,
+        width: 24,
+        alarms: [
+          props.regionalImpactAlarm,
+        ...props.isolatedAZImpactAlarms
+        ],
+        title: "Aggregate Alarms"
+      }),
+    ];
 
-    widgets.push(
+    let zonalServerSideHighLatencyMetrics: IMetric[] = [];
+    let zonalServerSideFaultCountMetrics: IMetric[] = [];
+
+    let zonalCanaryHighLatencyMetrics: IMetric[] = [];
+    let zonalCanaryFaultCountMetrics: IMetric[] = [];
+
+    let keyPrefix: string = MetricsHelper.nextChar();
+
+    props.availabilityZones.forEach((availabilityZone: string, index: number) => {
+      let azLetter: string = availabilityZone.substring(availabilityZone.length - 1);
+      let availabilityZoneId: string = props.azMapper.availabilityZoneIdFromAvailabilityZoneLetter(azLetter);
+
+      zonalServerSideHighLatencyMetrics.push(
+        ZonalLatencyMetrics.createZonalCountLatencyMetric({
+          availabilityZoneId: availabilityZoneId,
+          availabilityZone: availabilityZone,
+          metricDetails: props.operation.serverSideLatencyMetricDetails,
+          label: availabilityZoneId,
+          metricType: LatencyMetricType.SUCCESS_LATENCY,
+          statistic: `TC(${props.operation.serverSideLatencyMetricDetails.successAlarmThreshold}:)`,
+          keyPrefix: keyPrefix,
+          color: MetricsHelper.colors[index]
+        })
+      );
+
+      zonalServerSideHighLatencyMetrics.push(
+        ZonalLatencyMetrics.createZonalCountLatencyMetric({
+          availabilityZoneId: availabilityZoneId,
+          availabilityZone: availabilityZone,
+          metricDetails: props.operation.serverSideLatencyMetricDetails,
+          label: availabilityZoneId,
+          metricType: LatencyMetricType.SUCCESS_LATENCY,
+          statistic: `TC(${props.operation.serverSideLatencyMetricDetails.successAlarmThreshold}:)`,
+          keyPrefix: keyPrefix,
+          color: MetricsHelper.colors[index]
+        }),
+      );
+
+      zonalServerSideFaultCountMetrics.push(
+        AvailabilityAndLatencyMetrics.createZonalAvailabilityMetric({
+          availabilityZoneId: availabilityZoneId,
+          availabilityZone: availabilityZone,
+          metricDetails: props.operation.serverSideAvailabilityMetricDetails,
+          label: availabilityZoneId,
+          metricType: AvailabilityMetricType.FAULT_COUNT,
+          keyPrefix: keyPrefix,
+          color: MetricsHelper.colors[index]
+        },
+        props.operation.serverSideLatencyMetricDetails.metricDimensions.zonalDimensions(
+          availabilityZoneId,
+          Aws.REGION
+        ))
+      );
+
+      if (
+        props.operation.canaryMetricDetails !== undefined &&
+        props.operation.canaryMetricDetails != null
+      ) {
+        zonalCanaryHighLatencyMetrics.push(
+          ZonalLatencyMetrics.createZonalCountLatencyMetric({
+            availabilityZoneId: availabilityZoneId,
+            availabilityZone: availabilityZone,
+            metricDetails:
+              props.operation.canaryMetricDetails.canaryLatencyMetricDetails,
+            label: availabilityZoneId,
+            metricType: LatencyMetricType.SUCCESS_LATENCY,
+            statistic: `TC(${props.operation.canaryMetricDetails.canaryLatencyMetricDetails.successAlarmThreshold}:)`,
+            keyPrefix: keyPrefix,
+            color: MetricsHelper.colors[index]
+          }),
+        );
+
+        zonalCanaryFaultCountMetrics.push(
+          AvailabilityAndLatencyMetrics.createZonalAvailabilityMetric({
+            availabilityZoneId: availabilityZoneId,
+            availabilityZone: availabilityZone,
+            metricDetails:
+              props.operation.canaryMetricDetails
+                .canaryAvailabilityMetricDetails,
+            label: availabilityZoneId,
+            metricType: AvailabilityMetricType.FAULT_COUNT,
+            keyPrefix: keyPrefix,
+            color: MetricsHelper.colors[index]
+          },
+          props.operation.serverSideLatencyMetricDetails.metricDimensions.zonalDimensions(
+            availabilityZoneId,
+            Aws.REGION
+          )),
+        );
+      }
+    });
+
+    topLevelOperationAlarmsAndMetrics.push(
       new GraphWidget({
         height: 6,
-        width: 24,
-        title: Fn.ref('AWS::Region') + ' TPS',
-        region: Fn.ref('AWS::Region'),
-        left: RegionalAvailabilityMetrics.createRegionalServiceAvailabilityMetrics(
-          {
-            label: Fn.ref('AWS::Region') + ' tps',
-            period: props.service.period,
-            availabilityMetricProps: props.service.operations
-              .filter((x) => x.critical)
-              .map((x) => {
-                return {
-                  label: x.operationName,
-                  metricDetails: x.serverSideAvailabilityMetricDetails,
-                  metricType: AvailabilityMetricType.REQUEST_COUNT,
-                };
-              }),
+        width: 6,
+        title: "Request Count",
+        region: Aws.REGION,
+        left: props.availabilityZones.map((availabilityZone: string, index: number) => {
+          let azLetter: string = availabilityZone.substring(availabilityZone.length - 1);
+          let availabilityZoneId: string = props.azMapper.availabilityZoneIdFromAvailabilityZoneLetter(azLetter);
+
+          return AvailabilityAndLatencyMetrics.createZonalAvailabilityMetric({
+            availabilityZoneId: availabilityZoneId,
+            availabilityZone: availabilityZone,
+            label: availabilityZoneId,
+            metricDetails:
+              props.operation.serverSideAvailabilityMetricDetails,
+            metricType: AvailabilityMetricType.REQUEST_COUNT,
+            color: MetricsHelper.colors[index]
           },
-        ),
+          props.operation.serverSideLatencyMetricDetails.metricDimensions.zonalDimensions(
+            availabilityZoneId,
+            Aws.REGION
+          ))
+        }),
         statistic: 'Sum',
         leftYAxis: {
-          label: 'TPS',
+          label: 'Count',
           showUnits: false,
         },
       }),
     );
 
-    props.service.availabilityZoneNames.forEach((availabilityZone: string) => {
-      let azLetter: string = availabilityZone.substring(availabilityZone.length - 1);
-      let availabilityZoneId: string = props.azMapper.availabilityZoneIdFromAvailabilityZoneLetter(azLetter);
+    topLevelOperationAlarmsAndMetrics.push(
+      new GraphWidget({
+        height: 6,
+        width: 6,
+        title: 'Server-side Fault Count',
+        left: zonalServerSideFaultCountMetrics,
+        leftYAxis: {
+          min: 0,
+          showUnits: false,
+          label: "Count"
+        }
+      }),
+    );
 
-      widgets.push(
+    if (zonalCanaryFaultCountMetrics.length > 0) {
+      topLevelOperationAlarmsAndMetrics.push(
         new GraphWidget({
           height: 6,
-          width: 8,
-          title: availabilityZoneId + ' TPS',
-          region: Fn.ref('AWS::Region'),
-          left: ZonalAvailabilityMetrics.createZonalServiceAvailabilityMetrics(
-            props.service.operations
-            .filter((x) => x.critical)
-            .map((x) => {
-              return {
-                availabilityZoneId: availabilityZoneId,
-                availabilityZone: availabilityZone,
-                label: x.operationName,
-                metricDetails: x.serverSideAvailabilityMetricDetails,
-                metricType: AvailabilityMetricType.REQUEST_COUNT,
-              };
-            }),
-            props.service.period,
-            availabilityZoneId
-          ),
-          statistic: 'Sum',
+          width: 6,
+          title: 'Canary Fault Count',
+          left: zonalCanaryFaultCountMetrics,
           leftYAxis: {
-            label: 'TPS',
+            min: 0,
             showUnits: false,
-          },
+            label: "Count"
+          }
         }),
-      );
-    });
-
-    return widgets;
-  }
-
-  private static generateServerSideAndCanaryAvailabilityWidgets(
-    props: ServiceAvailabilityAndLatencyDashboardProps
-  ): IWidget[] {
-    let widgets: IWidget[] = [];
-
-    widgets.push(
-      new TextWidget({
-        height: 2,
-        width: 24,
-        markdown:
-          '**Server-side Availability**\n(Each critical operation is equally weighted regardless of request volume)',
-      }),
-    );
-
-    widgets.push(
-      ...ServiceAvailabilityAndLatencyDashboard.generateAvailabilityWidgets(
-        props,
-        false
-      )
-    );
-
-    if (
-      props.service.operations.filter(
-        (x) => x.critical && x.canaryMetricDetails !== undefined,
-      ).length > 0
-    ) {
-      widgets.push(
-        new TextWidget({
-          height: 2,
-          width: 24,
-          markdown:
-            '**Canary Measured Availability**\n(Each operation is equally weighted regardless of request volume)',
-        }),
-      );
-
-      widgets.push(
-        ...ServiceAvailabilityAndLatencyDashboard.generateAvailabilityWidgets(
-          props,
-          true
-        ),
       );
     }
 
-    return widgets;
-  }
-
-  private static generateServerSideAndCanaryLatencyWidgets(
-    props: ServiceAvailabilityAndLatencyDashboardProps
-  ): IWidget[] {
-    let widgets: IWidget[] = [];
-
-    widgets.push(
-      new TextWidget({
-        height: 2,
-        width: 24,
-        markdown:
-          '**Server-side Latency**\n(Counts of requests exceeding the per-operation latency threshold)',
+    topLevelOperationAlarmsAndMetrics.push(
+      new GraphWidget({
+        height: 6,
+        width: 6,
+        title: 'Server-side High Latency Request Count',
+        left: zonalServerSideHighLatencyMetrics,
       }),
     );
 
-    widgets = widgets.concat(
-      ServiceAvailabilityAndLatencyDashboard.generateLatencyMetricWidgets(
-        props,
-        false
-      ),
-    );
-
-    if (
-      props.service.operations.filter(
-        (x) => x.critical && x.canaryMetricDetails !== undefined,
-      ).length > 0
-    ) {
-      widgets.push(
-        new TextWidget({
-          height: 2,
-          width: 24,
-          markdown:
-            '**Canary Measured Latency**\n(Counts of requests exceeding the per-operation latency threshold)',
+    if (zonalCanaryHighLatencyMetrics.length > 0) {
+      topLevelOperationAlarmsAndMetrics.push(
+        new GraphWidget({
+          height: 6,
+          width: 6,
+          title: 'Canary High Latency Request count',
+          left: zonalCanaryHighLatencyMetrics,
         }),
-      );
-
-      widgets = widgets.concat(
-        ServiceAvailabilityAndLatencyDashboard.generateLatencyMetricWidgets(
-          props,
-          true
-        ),
       );
     }
 
-    return widgets;
+    return topLevelOperationAlarmsAndMetrics;
   }
 
-  private static generateAvailabilityWidgets(
-    props: ServiceAvailabilityAndLatencyDashboardProps,
-    isCanary: boolean
+  private static createAvailabilityWidgets(
+    props: OperationAvailabilityWidgetProps,
+    title: string,
   ): IWidget[] {
-    let widgets: IWidget[] = [];
+    let availabilityWidgets: IWidget[] = [];
+    availabilityWidgets.push(
+      new TextWidget({ height: 2, width: 24, markdown: title }),
+    );
 
-    widgets.push(
+    availabilityWidgets.push(
       new GraphWidget({
         height: 6,
         width: 24,
-        title: Fn.ref('AWS::Region') + ' Availability',
-        region: Fn.ref('AWS::Region'),
-        left: RegionalAvailabilityMetrics.createRegionalServiceAvailabilityMetrics(
-          {
-            label: Fn.ref('AWS::Region') + ' availability',
-            period: props.service.period,
-            availabilityMetricProps: this.createRegionalAvailabilityMetricProps(
-              props.service.operations.filter((x) => x.critical),
-              isCanary,
-              AvailabilityMetricType.SUCCESS_RATE,
-            ),
+        title: 'Server-side Availability',
+        region: Aws.REGION,
+        left: props.availabilityZones.map((availabilityZone: string) => {
+          let azLetter: string = availabilityZone.substring(availabilityZone.length - 1);
+          let availabilityZoneId: string = props.azMapper.availabilityZoneIdFromAvailabilityZoneLetter(azLetter);
+
+          return AvailabilityAndLatencyMetrics.createZonalAvailabilityMetric({
+            availabilityZoneId: availabilityZoneId,
+            availabilityZone: availabilityZone,
+            label: availabilityZoneId,
+            metricDetails: props.availabilityMetricDetails,
+            metricType: AvailabilityMetricType.SUCCESS_RATE
           },
-        ),
+          props.operation.serverSideLatencyMetricDetails.metricDimensions.zonalDimensions(
+            availabilityZoneId,
+            Aws.REGION
+          ))
+        }),
         statistic: 'Sum',
         leftYAxis: {
           max: 100,
@@ -238,425 +264,362 @@ export class ServiceAvailabilityAndLatencyDashboard
           label: 'Availability',
           showUnits: false,
         },
-        right:
-          RegionalAvailabilityMetrics.createRegionalServiceAvailabilityMetrics({
-            label: Fn.ref('AWS::Region') + ' faults',
-            period: props.service.period,
-            availabilityMetricProps: this.createRegionalAvailabilityMetricProps(
-              props.service.operations.filter((x) => x.critical),
-              isCanary,
-              AvailabilityMetricType.FAULT_COUNT,
-            ),
-          }),
-        rightYAxis: {
-          label: 'Faults',
-          showUnits: false,
-          min: 0,
-          max: Math.ceil(props.service.faultCountThreshold * 1.5),
-        },
-        rightAnnotations: [
-          {
-            color: Color.RED,
-            label: 'High severity',
-            value: props.service.faultCountThreshold,
-          },
-        ],
-      }),
-    );
-
-    props.service.availabilityZoneNames.forEach((availabilityZone: string) => {
-      let azLetter: string = availabilityZone.substring(availabilityZone.length - 1);
-      let availabilityZoneId: string = props.azMapper.availabilityZoneIdFromAvailabilityZoneLetter(azLetter);
-
-      widgets.push(
-        new GraphWidget({
-          height: 6,
-          width: 8,
-          title: availabilityZoneId + ' Availability',
-          region: Fn.ref('AWS::Region'),
-          left: ZonalAvailabilityMetrics.createZonalServiceAvailabilityMetrics(
-            this.createZonalAvailabilityMetricProps(
-              props.service.operations.filter((x) => x.critical),
-              availabilityZone,
-              availabilityZoneId,
-              isCanary,
-              AvailabilityMetricType.SUCCESS_RATE,
-            ),
-            props.service.period,
-            availabilityZoneId
-          ),
-          statistic: 'Sum',
-          leftYAxis: {
-            max: 100,
-            min: 95,
-            label: 'Availability',
-            showUnits: false,
-          },
-          right: ZonalAvailabilityMetrics.createZonalServiceAvailabilityMetrics(
-            this.createZonalAvailabilityMetricProps(
-              props.service.operations.filter((x) => x.critical),
-              availabilityZone,
-              availabilityZoneId,
-              isCanary,
-              AvailabilityMetricType.FAULT_COUNT,
-            ),
-            props.service.period,
-            availabilityZoneId
-          ),
-          rightYAxis: {
-            label: 'Faults',
-            showUnits: false,
-            min: 0,
-            max: Math.ceil(props.service.faultCountThreshold * 1.5),
-          },
-          rightAnnotations: [
-            {
-              color: Color.RED,
-              label: 'High severity',
-              value: props.service.faultCountThreshold,
-            },
-          ],
-        }),
-      );
-    });
-
-    return widgets;
-  }
-
-  private static generateLatencyMetricWidgets(
-    props: ServiceAvailabilityAndLatencyDashboardProps,
-    isCanary: boolean
-  ): IWidget[] {
-    let widgets: IWidget[] = [];
-
-    widgets.push(
-      new GraphWidget({
-        height: 6,
-        width: 24,
-        title: Fn.ref('AWS::Region') + ' High Latency Count',
-        region: Fn.ref('AWS::Region'),
-        left: RegionalLatencyMetrics.createRegionalServiceLatencyCountMetrics({
-          label: Fn.ref('AWS::Region'),
-          period: props.service.period,
-          latencyMetricProps: this.createRegionalLatencyMetricProps(
-            props.service.operations.filter((x) => x.critical),
-            isCanary,
-            LatencyMetricType.SUCCESS_LATENCY,
-          ),
-        }),
-        statistic: 'Sum',
-        leftYAxis: {
-          max: props.service.faultCountThreshold * 1.5,
-          min: 0,
-          label: 'Sum',
-          showUnits: false,
-        },
         leftAnnotations: [
           {
+            value: props.availabilityMetricDetails.successAlarmThreshold,
+            visible: true,
             color: Color.RED,
-            label: 'High severity',
-            value: props.service.faultCountThreshold,
+            label: 'High Severity',
           },
         ],
+        right: props.availabilityZones.map((availabilityZone: string) => {
+          let azLetter: string = availabilityZone.substring(availabilityZone.length - 1);
+          let availabilityZoneId: string = props.azMapper.availabilityZoneIdFromAvailabilityZoneLetter(azLetter);
+
+          return AvailabilityAndLatencyMetrics.createZonalAvailabilityMetric({
+            availabilityZoneId: availabilityZoneId,
+            availabilityZone: availabilityZone,
+            label: availabilityZoneId,
+            metricDetails: props.availabilityMetricDetails,
+            metricType: AvailabilityMetricType.FAULT_COUNT
+          },
+          props.operation.serverSideLatencyMetricDetails.metricDimensions.zonalDimensions(
+            availabilityZoneId,
+            Aws.REGION
+          ))
+        }),
+        rightYAxis: {
+          label: 'Fault Count',
+          showUnits: false,
+        },
       }),
     );
 
-    props.service.availabilityZoneNames.forEach((availabilityZone: string) => {
+    props.availabilityZones.forEach((availabilityZone: string, index: number) => {
       let azLetter: string = availabilityZone.substring(availabilityZone.length - 1);
       let availabilityZoneId: string = props.azMapper.availabilityZoneIdFromAvailabilityZoneLetter(azLetter);
 
-      widgets.push(
-        new GraphWidget({
+      new AlarmWidget({
+        height: 2,
+        width: Math.floor(24 / props.zonalEndpointAvailabilityAlarms.length),
+        region: Aws.REGION,
+        alarm: props.zonalEndpointAvailabilityAlarms[index], // TODO: instead of assuming the alarms are in the same order as the ids, use a map with az letter and get the az id from the letter
+        title: availabilityZoneId,
+      })
+    });
+
+    if (!props.isCanary && props.instanceContributorsToFaults ) {
+      availabilityWidgets.push(
+        new ContributorInsightsWidget({
           height: 6,
-          width: 8,
-          title: availabilityZoneId + ' High Latency Count',
-          region: Fn.ref('AWS::Region'),
-          left: ZonalLatencyMetrics.createZonalServiceLatencyMetrics({
-            label: availabilityZoneId,
-            period: props.service.period,
-            latencyMetricProps: this.createZonalLatencyMetricProps(
-              props.service.operations.filter((x) => x.critical),
-              availabilityZoneId,
-              isCanary,
-              LatencyMetricType.SUCCESS_LATENCY,
-            ),
-          }),
-          statistic: 'Sum',
+          width: 24,
+          title: 'Individual Instance Contributors to Fault Count',
+          insightRule: props.instanceContributorsToFaults,
+          period: props.availabilityMetricDetails.period,
+          legendPosition: LegendPosition.BOTTOM,
+          orderStatistic: 'Sum',
+          accountId: Fn.ref('AWS::AccountId'),
+          topContributors: 10,
+        }),
+      );
+    }
+
+    return availabilityWidgets;
+  }
+
+  private static createLatencyWidgets(
+    props: OperationLatencyWidgetProps,
+    title: string,
+  ): IWidget[] {
+    let latencyWidgets: IWidget[] = [];
+    latencyWidgets.push(
+      new TextWidget({ height: 2, width: 24, markdown: title }),
+    );
+
+    let keyPrefix: string = MetricsHelper.nextChar();
+
+    let latencyMetrics: IMetric[] = [];
+
+    let stats: string[] =
+      props.latencyMetricDetails.graphedSuccessStatistics !== undefined
+        ? props.latencyMetricDetails.graphedSuccessStatistics
+        : ['p99'];
+
+    let latencySuccessMetrics: IMetric[] = stats.map((x) => {
+      
+      return RegionalLatencyMetrics.createRegionalAverageLatencyMetric({
+        label: x + ' Success Latency',
+        metricDetails: props.latencyMetricDetails,
+        metricType: LatencyMetricType.SUCCESS_LATENCY,
+        statistic: x,
+        keyPrefix: keyPrefix,
+      });
+
+      keyPrefix = MetricsHelper.nextChar(keyPrefix);
+    });
+
+    stats =
+      props.latencyMetricDetails.graphedFaultStatistics !== undefined
+        ? props.latencyMetricDetails.graphedFaultStatistics
+        : ['p99'];
+
+    let latencyFaultMetrics: IMetric[] = stats.map((x) => {
+      keyPrefix = MetricsHelper.nextChar(keyPrefix);
+      return RegionalLatencyMetrics.createRegionalAverageLatencyMetric({
+        label: x + ' Fault Latency',
+        metricDetails: props.latencyMetricDetails,
+        metricType: LatencyMetricType.FAULT_LATENCY,
+        statistic: x,
+        keyPrefix: keyPrefix,
+      });
+    });
+
+    latencyMetrics = latencySuccessMetrics.concat(latencyFaultMetrics);
+
+    if (latencyMetrics.length > 0) {
+      latencyWidgets.push(
+        new GraphWidget({
+          height: 8,
+          width: 24,
+          title: Fn.sub('${AWS::Region} Latency'),
+          region: Aws.REGION,
+          left: latencyMetrics,
           leftYAxis: {
-            max: props.service.faultCountThreshold * 1.5,
+            max: props.latencyMetricDetails.successAlarmThreshold * 1.5,
             min: 0,
-            label: 'Sum',
+            label: 'Latency',
             showUnits: false,
           },
           leftAnnotations: [
             {
+              value: props.latencyMetricDetails.successAlarmThreshold,
+              visible: true,
               color: Color.RED,
-              label: 'High severity',
-              value: props.service.faultCountThreshold,
+              label: 'High Severity',
             },
           ],
         }),
       );
-    });
+    }
 
-    return widgets;
-  }
+    latencyWidgets.push(
+      new AlarmWidget({
+        height: 2,
+        width: 24,
+        region: Aws.REGION,
+        alarm: props.regionalEndpointLatencyAlarm,
+      }),
+    );
 
-  private static createRegionalAvailabilityMetricProps(
-    criticalOperations: IOperation[],
-    isCanary: boolean,
-    metricType: AvailabilityMetricType,
-  ): AvailabilityMetricProps[] {
-    return criticalOperations
-      .reduce((filtered, value) => {
-        if (isCanary && value.canaryMetricDetails) {
-          filtered.push(
-            value.canaryMetricDetails.canaryAvailabilityMetricDetails,
-          );
-        } else if (!isCanary) {
-          filtered.push(value.serverSideAvailabilityMetricDetails);
-        }
-        return filtered;
-      }, [] as IOperationMetricDetails[])
-      .map((x) => {
-        return {
-          label:
-            x.operationName + ' ' + metricType.toString().replace('_', ' '),
-          metricDetails: x,
-          metricType: metricType,
-        };
-      });
-  }
+    keyPrefix = '';
 
-  private static createRegionalLatencyMetricProps(
-    criticalOperations: IOperation[],
-    isCanary: boolean,
-    metricType: LatencyMetricType,
-  ): LatencyMetricProps[] {
-    return criticalOperations
-      .reduce((filtered, value) => {
-        if (isCanary && value.canaryMetricDetails) {
-          filtered.push(value.canaryMetricDetails.canaryLatencyMetricDetails);
-        } else if (!isCanary) {
-          filtered.push(value.serverSideLatencyMetricDetails);
-        }
-        return filtered;
-      }, [] as IOperationMetricDetails[])
-      .map((x) => {
-        return {
-          label:
-            x.operationName,
-          metricDetails: x,
-          metricType: metricType,
-          statistic: 'TC(' + x.successAlarmThreshold + ':)',
-        };
-      });
-  }
+    props.availabilityZones.forEach((availabilityZone: string) => {
+      let azLetter: string = availabilityZone.substring(availabilityZone.length - 1);
+      let availabilityZoneId: string = props.azMapper.availabilityZoneIdFromAvailabilityZoneLetter(azLetter);
 
-  private static createZonalAvailabilityMetricProps(
-    criticalOperations: IOperation[],
-    availabilityZone: string,
-    availabilityZoneId: string,
-    isCanary: boolean,
-    metricType: AvailabilityMetricType,
-  ): ZonalAvailabilityMetricProps[] {
-    return criticalOperations
-      .reduce((filtered, value) => {
-        if (
-          isCanary &&
-          value.canaryMetricDetails !== undefined &&
-          value.canaryMetricDetails != null
-        ) {
-          filtered.push(
-            value.canaryMetricDetails.canaryAvailabilityMetricDetails,
-          );
-        } else if (!isCanary) {
-          filtered.push(value.serverSideAvailabilityMetricDetails);
-        }
-        return filtered;
-      }, [] as IOperationMetricDetails[])
-      .map((x) => {
-        return {
-          label:
-            x.operationName + ' ' + metricType.toString().replace('_', ' '),
-          metricDetails: x,
-          metricType: metricType,
+      let latencyMetrics2: IMetric[] = [];
+
+      let stats2: string[] = props.latencyMetricDetails.graphedSuccessStatistics
+        ? props.latencyMetricDetails.graphedSuccessStatistics
+        : ['p99'];
+
+      let zonalSuccessLatencyMetrics: IMetric[] = stats2.map((x) => {
+        keyPrefix = MetricsHelper.nextChar(keyPrefix);
+        return ZonalLatencyMetrics.createZonalAverageLatencyMetric({
+          label: x + ' Success Latency',
+          metricDetails: props.latencyMetricDetails,
+          metricType: LatencyMetricType.SUCCESS_LATENCY,
+          statistic: x,
           availabilityZoneId: availabilityZoneId,
           availabilityZone: availabilityZone
-        };
+        });
       });
-  }
 
-  private static createZonalLatencyMetricProps(
-    criticalOperations: IOperation[],
-    availabilityZoneId: string,
-    isCanary: boolean,
-    metricType: LatencyMetricType,
-  ): LatencyMetricProps[] {
-    return criticalOperations
-      .reduce((filtered, value) => {
-        if (
-          isCanary &&
-          value.canaryMetricDetails !== undefined &&
-          value.canaryMetricDetails != null
-        ) {
-          filtered.push(value.canaryMetricDetails.canaryLatencyMetricDetails);
-        } else if (!isCanary) {
-          filtered.push(value.serverSideLatencyMetricDetails);
-        }
-        return filtered;
-      }, [] as IOperationMetricDetails[])
-      .map((x) => {
-        return {
-          label:
-            x.operationName,
-          metricDetails: x,
-          metricType: metricType,
+      stats2 = props.latencyMetricDetails.graphedFaultStatistics
+        ? props.latencyMetricDetails.graphedFaultStatistics
+        : ['p99'];
+
+      let zonalFaultLatencyMetrics: IMetric[] = stats2.map((x) => {
+        keyPrefix = MetricsHelper.nextChar(keyPrefix);
+        return ZonalLatencyMetrics.createZonalAverageLatencyMetric({
+          label: x + ' Fault Latency',
+          metricDetails: props.latencyMetricDetails,
+          metricType: LatencyMetricType.FAULT_LATENCY,
+          statistic: x,
           availabilityZoneId: availabilityZoneId,
-          statistic: 'TC(' + x.successAlarmThreshold + ':)',
-        };
+          availabilityZone: availabilityZone
+        });
       });
+
+      latencyMetrics2 = zonalSuccessLatencyMetrics.concat(
+        zonalFaultLatencyMetrics,
+      );
+
+      if (latencyMetrics2.length > 0) {
+        latencyWidgets.push(
+          new GraphWidget({
+            height: 6,
+            width: 8,
+            title: availabilityZoneId + ' Latency',
+            region: Aws.REGION,
+            left: latencyMetrics2,
+            leftAnnotations: [
+              {
+                value: props.latencyMetricDetails.successAlarmThreshold,
+                visible: true,
+                color: Color.RED,
+                label: 'High Severity',
+              },
+            ],
+            leftYAxis: {
+              max: props.latencyMetricDetails.successAlarmThreshold * 1.5,
+              min: 0,
+              label: 'Latency',
+              showUnits: false,
+            },
+          }),
+        );
+      }
+    });
+
+    if (
+      !props.isCanary &&
+      props.instanceContributorsToHighLatency !== undefined &&
+      props.instanceContributorsToHighLatency != null
+    ) {
+      latencyWidgets.push(
+        new ContributorInsightsWidget({
+          height: 6,
+          width: 24,
+          title: 'Individual Instance Contributors to High Latency',
+          insightRule: props.instanceContributorsToHighLatency,
+          period: props.latencyMetricDetails.period,
+          legendPosition: LegendPosition.BOTTOM,
+          orderStatistic: 'Sum',
+          accountId: Fn.ref('AWS::AccountId'),
+          topContributors: 10,
+        }),
+      );
+    }
+
+    return latencyWidgets;
   }
 
   /**
-   * The service level dashboard
+   * The operation level dashboard
    */
   dashboard: Dashboard;
 
   constructor(
     scope: Construct,
     id: string,
-    props: ServiceAvailabilityAndLatencyDashboardProps,
+    props: OperationAvailabilityAndLatencyDashboardProps,
   ) {
     super(scope, id);
 
-    let topLevelAggregateAlarmWidgets: IWidget[] = [];
+    let widgets: IWidget[][] = [];
 
-    topLevelAggregateAlarmWidgets.push(
-      new TextWidget({
-        height: 2,
-        width: 24,
-        markdown: '***Availability and Latency Alarms***',
-      }),
-    );
-
-    topLevelAggregateAlarmWidgets.push(
-      new AlarmStatusWidget({
-        height: 2,
-        width: 24,
-        alarms: [props.aggregateRegionalAlarm],
-        title:
-          'Customer Experience - Regional Aggregate Impact Alarm (measures fault count in aggregate across all critical operations)',
-      }),
-    );
-
-    let keyPrefix: string = MetricsHelper.nextChar();
-    let perOperationAZFaultsMetrics: IMetric[] = [];
-
-    props.service.availabilityZoneNames.forEach((availabilityZone: string, index: number) => {
-      let azLetter: string = availabilityZone.substring(availabilityZone.length - 1);
-      let availabilityZoneId: string = props.azMapper.availabilityZoneIdFromAvailabilityZoneLetter(azLetter);
-      
-      topLevelAggregateAlarmWidgets.push(
-        new AlarmStatusWidget({
-          height: 2,
-          width: 8,
-          alarms: [props.zonalAggregateAlarms[index]],
-          title:
-            availabilityZoneId +
-            ' Zonal Isolated Impact Alarm (any critical operation in this AZ shows impact from server-side or canary)',
-        }),
-      );
-
-      let usingMetrics: { [key: string]: IMetric } = {};
-
-      props.service.operations
-        .filter((x) => x.critical == true)
-        .forEach((x: IOperation, index: number) => {
-          usingMetrics[`${keyPrefix}${index}`] =
-            AvailabilityAndLatencyMetrics.createZonalAvailabilityMetric({
-              availabilityZoneId: availabilityZoneId,
-              metricDetails: x.serverSideAvailabilityMetricDetails,
-              label:
-                availabilityZoneId + ' ' + x.operationName + ' fault count',
-              metricType: AvailabilityMetricType.FAULT_COUNT,
-              availabilityZone: availabilityZone
-            },
-            x.serverSideAvailabilityMetricDetails.metricDimensions.zonalDimensions(
-              availabilityZoneId,
-              Aws.REGION
-            ));
-        });
-
-      let zonalFaultCount: IMetric = new MathExpression({
-        expression: Object.keys(usingMetrics).join('+'),
-        label: availabilityZoneId,
-        usingMetrics: usingMetrics,
-        period: props.service.period
-      });
-
-      perOperationAZFaultsMetrics.push(zonalFaultCount);
-      keyPrefix = MetricsHelper.nextChar(keyPrefix);
-
-    });
-
-    let azContributorWidgets: IWidget[] = [
-      new TextWidget({
-        height: 2,
-        width: 24,
-        markdown: '**AZ Contributors To Faults**',
-      }),
-      new GraphWidget({
-        height: 6,
-        width: 24,
-        title: 'AZ Fault Count',
-        period: props.service.period,
-        left: perOperationAZFaultsMetrics,
-      }),
-    ];
-
-    topLevelAggregateAlarmWidgets.concat(
-      ServiceAvailabilityAndLatencyDashboard.generateTPSWidgets(
+    widgets.push(
+      OperationAvailabilityAndLatencyDashboard.createTopLevelAggregateAlarmWidgets(
         props
       ),
     );
 
-    this.dashboard = new Dashboard(this, 'TopLevelDashboard', {
+    widgets.push(
+      OperationAvailabilityAndLatencyDashboard.createAvailabilityWidgets(
+        {
+          operation: props.operation,
+          availabilityMetricDetails:
+            props.operation.serverSideAvailabilityMetricDetails,
+          availabilityZones: props.availabilityZones,
+          isCanary: false,
+          zonalEndpointAvailabilityAlarms:
+            props.zonalEndpointServerAvailabilityAlarms,
+          regionalEndpointAvailabilityAlarm:
+            props.regionalEndpointServerAvailabilityAlarm,
+          instanceContributorsToFaults: props.instanceContributorsToFaults,
+          azMapper: props.azMapper
+        },
+        '**Server-side Availability**',
+      ),
+    );
+
+    widgets.push(
+      OperationAvailabilityAndLatencyDashboard.createLatencyWidgets(
+        {
+          operation: props.operation,
+          latencyMetricDetails: props.operation.serverSideLatencyMetricDetails,
+          availabilityZones: props.availabilityZones,
+          isCanary: false,
+          zonalEndpointLatencyAlarms: props.zonalEndpointServerLatencyAlarms,
+          regionalEndpointLatencyAlarm:
+            props.regionalEndpointServerLatencyAlarm,
+          instanceContributorsToHighLatency:
+            props.instanceContributorsToHighLatency,
+          azMapper: props.azMapper
+        },
+        '**Server-side Latency**',
+      ),
+    );
+
+    if (
+      props.operation.canaryMetricDetails !== undefined &&
+      props.operation.canaryMetricDetails != null
+    ) {
+      if (
+        props.zonalEndpointCanaryAvailabilityAlarms &&
+        props.zonalEndpointCanaryLatencyAlarms &&
+        props.regionalEndpointCanaryAvailabilityAlarm &&
+        props.regionalEndpointCanaryLatencyAlarm
+      ) {
+        widgets.push(
+          OperationAvailabilityAndLatencyDashboard.createAvailabilityWidgets(
+            {
+              operation: props.operation,
+              availabilityMetricDetails:
+                props.operation.canaryMetricDetails
+                  .canaryAvailabilityMetricDetails,
+              availabilityZones: props.availabilityZones,
+              isCanary: true,
+              zonalEndpointAvailabilityAlarms:
+                props.zonalEndpointCanaryAvailabilityAlarms,
+              regionalEndpointAvailabilityAlarm:
+                props.regionalEndpointCanaryAvailabilityAlarm,
+              azMapper: props.azMapper
+            },
+            '**Canary Measured Availability**',
+          ),
+        );
+
+        widgets.push(
+          OperationAvailabilityAndLatencyDashboard.createLatencyWidgets(
+            {
+              operation: props.operation,
+              latencyMetricDetails:
+                props.operation.canaryMetricDetails.canaryLatencyMetricDetails,
+              availabilityZones: props.availabilityZones,
+              isCanary: true,
+              zonalEndpointLatencyAlarms:
+                props.zonalEndpointCanaryLatencyAlarms,
+              regionalEndpointLatencyAlarm:
+                props.regionalEndpointCanaryLatencyAlarm,
+              azMapper: props.azMapper
+            },
+            '**Canary Measured Latency**',
+          ),
+        );
+      }
+    }
+
+    this.dashboard = new Dashboard(this, 'Dashboard', {
       dashboardName:
-        props.service.serviceName.toLowerCase() +
+        props.operation.service.serviceName.toLowerCase() +
+        '-' +
+        props.operation.operationName.toLowerCase() +
         Fn.sub('-availability-and-latency-${AWS::Region}'),
       defaultInterval: props.interval,
       periodOverride: PeriodOverride.AUTO,
-      widgets: [
-        topLevelAggregateAlarmWidgets,
-        azContributorWidgets,
-        ServiceAvailabilityAndLatencyDashboard.generateServerSideAndCanaryAvailabilityWidgets(
-          props
-        ),
-        ServiceAvailabilityAndLatencyDashboard.generateServerSideAndCanaryLatencyWidgets(
-          props
-        ),
-      ],
+      widgets: widgets,
     });
-
-    let lb: CfnLoadBalancer = props.service.loadBalancer?.node
-      .defaultChild as CfnLoadBalancer;
-
-    if (lb && lb.type == 'application') {
-      this.dashboard.addWidgets(
-        new TextWidget({ height: 2, width: 24, markdown: "**Load Balancer Metrics**" })
-      );
-
-      this.dashboard.addWidgets(
-        ...ApplicationLoadBalancerMetrics.generateLoadBalancerWidgets(
-          [ props.service.loadBalancer as IApplicationLoadBalancer ],
-          props.azMapper,
-          props.service.period,
-          props.service.defaultLatencyMetricDetails.alarmStatistic,
-          props.service.defaultLatencyMetricDetails.successAlarmThreshold,
-          props.service.defaultLatencyMetricDetails.faultAlarmThreshold
-        )
-      );
-    }
   }
 }
