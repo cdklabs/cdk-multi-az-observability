@@ -91,6 +91,13 @@ export class OperationAlarmsAndRules
         .loadBalancerArn;
     }
 
+    // We want to know three things
+    // 1. These is impact in one AZ from either the server or canary perspective
+    // 2. The impact in that AZ is an outlier
+    // 3. The impact is coming from more than 1 instance
+
+    
+
     this.serverSideRegionalAlarmsAndRules =
       new ServerSideOperationRegionalAlarmsAndRules(
         this,

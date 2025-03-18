@@ -494,10 +494,11 @@ export class OperationAvailabilityAndLatencyDashboard
         );
       });
     });
+
     // Canary high-latency request count
     alarmsAndMetricsWidgets.push(
       new GraphWidget({
-        height: 6,
+        height: 8,
         width: 6,
         title: 'Canary Measured High Latency Request Count',
         left: [
