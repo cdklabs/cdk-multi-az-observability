@@ -5,11 +5,11 @@ import {
   AlarmStatusWidget,
   Dashboard,
   GraphWidget,
-  IAlarm,
   IMetric,
   IWidget,
   PeriodOverride,
   TextWidget,
+  TextWidgetBackground,
 } from 'aws-cdk-lib/aws-cloudwatch';
 import { Construct } from 'constructs';
 import { BasicServiceDashboardProps } from './props/BasicServiceDashboardProps';
@@ -96,37 +96,6 @@ export class BasicServiceDashboard extends Construct {
     return widgets;
   }
 
-  private static createTopLevelAlarmWidgets(alarms: {
-    [key: string]: IAlarm;
-  },
-  azMapper: AvailabilityZoneMapper,
-  ): IWidget[] {
-    let widgets: IWidget[] = [];
-
-    widgets.push(
-      new TextWidget({
-        markdown: 'Availability Zone Isolated Impact Alarms',
-        height: 2,
-        width: 24,
-      }),
-    );
-
-    Object.keys(alarms).forEach((azLetter) => {
-      let availabilityZoneId: string = azMapper.availabilityZoneIdFromAvailabilityZoneLetter(azLetter);
-
-      widgets.push(
-        new AlarmStatusWidget({
-          alarms: [alarms[azLetter]],
-          height: 2,
-          width: 8,
-          title: availabilityZoneId + ' Aggregate Isolated Impact',
-        }),
-      );
-    });
-
-    return widgets;
-  }
-
   dashboard: Dashboard;
 
   constructor(scope: Construct, id: string, props: BasicServiceDashboardProps) {
@@ -136,19 +105,31 @@ export class BasicServiceDashboard extends Construct {
       throw new Error("You must define either ALBs or NAT Gateways for this service in order to create a dashboard.");
     }
 
-    let widgets: IWidget[][] = [];
+    this.dashboard = new Dashboard(this, 'BasicServiceDashboard', {
+      dashboardName:
+        props.serviceName.toLowerCase() +
+        Fn.sub('-per-az-health-${AWS::Region}'),
+      defaultInterval: props.interval,
+      periodOverride: PeriodOverride.AUTO
+    });
 
-    widgets.push(
-      BasicServiceDashboard.createTopLevelAlarmWidgets(
-        props.zonalAggregateIsolatedImpactAlarms,
-        props.azMapper,
-      ),
-    );
+    this.dashboard.addWidgets(new AlarmStatusWidget({
+      alarms: Object.values(props.zonalAggregateIsolatedImpactAlarms),
+      height: 2,
+      width: 24,
+      title: 'Aggregate Alarms',
+    }));
 
     if (props.albs) {
-      widgets.push([new TextWidget({ height: 2, width: 24, markdown: "Load Balancer Metrics" })]);
-      widgets.push(     
-        ApplicationLoadBalancerMetrics.generateLoadBalancerWidgets(
+      this.dashboard.addWidgets(
+
+      new TextWidget({
+        markdown: "## **Load Balancer Metrics**",
+        background: TextWidgetBackground.TRANSPARENT,
+        height: 1,
+        width: 24
+      }),
+      ...ApplicationLoadBalancerMetrics.generateLoadBalancerWidgets(
           props.albs.applicationLoadBalancers,
           props.azMapper,
           props.period,
@@ -160,23 +141,14 @@ export class BasicServiceDashboard extends Construct {
     }
 
     if (props.natgws) {
-      widgets.push(
-        BasicServiceDashboard.generateNatGatewayWidgets(
+      this.dashboard.addWidgets(
+        ...BasicServiceDashboard.generateNatGatewayWidgets(
           props.natgws.natGateways,
           props.azMapper,
           props.period,
           props.natgws.packetLossPercentThreshold ? props.natgws.packetLossPercentThreshold : 0.01
-        ),
+        )
       );
     }
-
-    this.dashboard = new Dashboard(this, 'BasicServiceDashboard', {
-      dashboardName:
-        props.serviceName.toLowerCase() +
-        Fn.sub('-per-az-health-${AWS::Region}'),
-      defaultInterval: props.interval,
-      periodOverride: PeriodOverride.AUTO,
-      widgets: widgets,
-    });
   }
 }
