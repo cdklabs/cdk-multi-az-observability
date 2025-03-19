@@ -287,7 +287,7 @@ export class OperationAvailabilityAndLatencyDashboard
 
     dashboard.addWidgets(
       new TextWidget({
-        height: 2,
+        height: 1,
         width: 24,
         markdown: "### Alarms",
         background: TextWidgetBackground.TRANSPARENT
@@ -580,7 +580,7 @@ export class OperationAvailabilityAndLatencyDashboard
 
     dashboard.addWidgets(
       new TextWidget({
-        height: 2,
+        height: 1,
         width: 24,
         markdown: "### Alarms",
         background: TextWidgetBackground.TRANSPARENT
