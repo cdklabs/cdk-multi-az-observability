@@ -38,16 +38,6 @@ export interface IServiceAlarmsAndRules {
   regionalAvailabilityCanaryAlarm?: IAlarm;
 
   /**
-   * An alarm for regional availability or latency impact of any critical operation as measured by the server-side.
-   */
-  //regionalAvailabilityOrLatencyServerSideAlarm: IAlarm;
-
-  /**
-   * An alarm for regional availability impact of any critical operation as measured by the server-side.
-   */
-  //regionalAvailabilityServerSideAlarm: IAlarm;
-
-  /**
    * An alarm for fault count exceeding a regional threshold for all critical operations.
    */
   regionalFaultCountServerSideAlarm: IAlarm;

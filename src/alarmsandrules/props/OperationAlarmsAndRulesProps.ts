@@ -3,7 +3,6 @@
 import { ILoadBalancerV2 } from 'aws-cdk-lib/aws-elasticloadbalancingv2';
 import { IFunction } from 'aws-cdk-lib/aws-lambda';
 import { IAvailabilityZoneMapper } from '../../azmapper/IAvailabilityZoneMapper';
-import { ContributorInsightRuleDetails } from '../../services/ContributorInsightRuleDetails';
 import { Operation } from '../../services/Operation';
 import { OutlierDetectionAlgorithm } from '../../utilities/OutlierDetectionAlgorithm';
 
@@ -27,19 +26,43 @@ export interface OperationAlarmsAndRulesProps {
   readonly loadBalancer?: ILoadBalancerV2;
 
   /**
-   * Rule details for contributor insight rules
+   * Used when the OutlierDetectionAlgorithm is set to STATIC, should be a
+   * number between 0 and 1, non-inclusive, representing the percentage
+   * of faults  that an AZ must have to be considered
+   * an outlier.
    */
-  readonly contributorInsightRuleDetails?: ContributorInsightRuleDetails;
+  readonly availabilityOutlierThreshold: number;
 
   /**
-   * The outlier threshold used with the STATIC outlier detection algorithm
+   * Used when the OutlierDetectionAlgorithm is set to STATIC, should be a
+   * number between 0 and 1, non-inclusive, representing the percentage
+   * of high latency responses that an AZ must have to be considered
+   * an outlier.
    */
-  readonly outlierThreshold: number;
+  readonly latencyOutlierThreshold: number;
 
   /**
-   * The outlier detection algorithm
+   * The number of instances that need to be impacted to consider
+   * an AZ to be impacted. This helps to ensure "more than one" instance
+   * isn't making an AZ look bad.
+   * 
+   * @default 2
    */
-  readonly outlierDetectionAlgorithm: OutlierDetectionAlgorithm;
+  readonly numberOfInstancesToConsiderAZImpacted?: number;
+
+  /**
+   * The outlier detection algorithm used to determine if Availability Zones
+   * or instances are outliers for latency or availability impact. Currently this property
+   * is ignored and only STATIC is used.
+   */
+  readonly availabilityOutlierDetectionAlgorithm: OutlierDetectionAlgorithm;
+
+  /**
+   * The outlier detection algorithm used to determine if Availability Zones
+   * or instances are outliers for latency or availability impact. Currently this property
+   * is ignored and only STATIC is used.
+   */
+  readonly latencyOutlierDetectionAlgorithm: OutlierDetectionAlgorithm;
 
   /**
    * The AZ Mapper

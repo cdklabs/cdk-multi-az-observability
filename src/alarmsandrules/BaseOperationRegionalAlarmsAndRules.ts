@@ -47,7 +47,7 @@ export abstract class BaseOperationRegionalAlarmsAndRules
         props.nameSuffix,
       );
     this.availabilityOrLatencyAlarm =
-      AvailabilityAndLatencyAlarmsAndRules.createRegionalCustomerExperienceAlarm(
+      AvailabilityAndLatencyAlarmsAndRules.createRegionalAvailabilityOrLatencyImpactAlarm(
         this,
         props.availabilityMetricDetails.operationName,
         props.nameSuffix,

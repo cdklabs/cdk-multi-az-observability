@@ -14,43 +14,37 @@ export interface IOperationAlarmsAndRules {
   /**
    * The operation the alarms and rules are created for
    */
-  operation: IOperation;
+  readonly operation: IOperation;
+
+  /**
+   * An alarm indicating regionally scoped impact, not zonal
+   */
+  readonly regionalImpactAlarm: IAlarm;
 
   /**
    * The server side regional alarms and rules
    */
-  serverSideRegionalAlarmsAndRules: IServerSideOperationRegionalAlarmsAndRules;
+  readonly serverSideRegionalAlarmsAndRules: IServerSideOperationRegionalAlarmsAndRules;
 
   /**
    * The canary regional alarms and rules
    */
-  canaryRegionalAlarmsAndRules?: ICanaryOperationRegionalAlarmsAndRules;
+  readonly canaryRegionalAlarmsAndRules?: ICanaryOperationRegionalAlarmsAndRules;
 
   /**
-   * The server side zonal alarms and rules
+   * The aggregate zonal alarm indexed by Availability Zone name.
    */
-  serverSideZonalAlarmsAndRules: IServerSideOperationZonalAlarmsAndRules[];
+  readonly aggregateZonalAlarmsMap: { [key: string]: IAlarm };
 
   /**
-   * The canary zonal alarms and rules
+   * The server side zonal alarms and rules, indexed by Availability Zone name.
    */
-  canaryZonalAlarmsAndRules?: ICanaryOperationZonalAlarmsAndRules[];
+  readonly serverSideZonalAlarmsAndRulesMap: {[key: string]: IServerSideOperationZonalAlarmsAndRules};
 
   /**
-   * The aggregate zonal alarms, one per AZ. Each alarm indicates there is either
-   * latency or availability impact in that AZ, and the AZ is an outlier for
-   * availability or latency impact. Both server side and canary metrics are
-   * evaluated
+   * The canary zonal alarms and rules, indexed by Availability Zone name.
+   * 
+   * @default - This is an empty dictionary if canary metric details are not provided
    */
-  aggregateZonalAlarms: IAlarm[];
-
-  /**
-   * The aggregate zonal alarm indexed by Availability Zone Id.
-   */
-  aggregateZonalAlarmsMap: { [key: string]: IAlarm };
-
-  /**
-   * Just the server side zonal alarms
-   */
-  serverSideZonalAlarmsMap: { [key: string]: IAlarm };
+  readonly canaryZonalAlarmsAndRulesMap?: {[key: string]: ICanaryOperationZonalAlarmsAndRules};
 }

@@ -5,12 +5,13 @@ import { Construct } from "constructs";
 import { AvailabilityAndLatencyAlarmsAndRules } from "./AvailabilityAndLatencyAlarmsAndRules";
 import { IServerSideOperationRegionalAlarmsAndRules } from "./IServerSideOperationRegionalAlarmsAndRules";
 import { ServerSideOperationRegionalAlarmsAndRulesProps } from "./props/ServerSideOperationRegionalAlarmsAndRulesProps";
+import { BaseOperationRegionalAlarmsAndRules } from "./BaseOperationRegionalAlarmsAndRules";
 
 /**
  * The server side regional alarms and rules for an operation
  */
 export class ServerSideOperationRegionalAlarmsAndRules
-  extends Construct
+  extends BaseOperationRegionalAlarmsAndRules
   implements IServerSideOperationRegionalAlarmsAndRules
 {
   /**
@@ -28,7 +29,7 @@ export class ServerSideOperationRegionalAlarmsAndRules
     id: string,
     props: ServerSideOperationRegionalAlarmsAndRulesProps,
   ) {
-    super(scope, id);
+    super(scope, id, props);
 
     if (props.contributorInsightRuleDetails) {
       this.instanceContributorsToRegionalFaults =

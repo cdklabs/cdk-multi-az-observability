@@ -12,6 +12,7 @@ import { BaseOperationZonalAlarmsAndRules } from "./BaseOperationZonalAlarmsAndR
 import { IServerSideOperationZonalAlarmsAndRules } from "./IServerSideOperationZonalAlarmsAndRules";
 import { ServerSideOperationZonalAlarmsAndRulesProps } from "./props/ServerSideOperationZonalAlarmsAndRulesProps";
 import { OutlierDetectionAlgorithm } from "../utilities/OutlierDetectionAlgorithm";
+import { IOperation } from "../services/IOperation";
 
 /**
  * The server side alarms and rules for an operation in an Availability Zone
@@ -21,62 +22,93 @@ export class ServerSideOperationZonalAlarmsAndRules
   implements IServerSideOperationZonalAlarmsAndRules
 {
   /**
+   * Availability alarm for this operation
+   */
+  readonly availabilityAlarm: IAlarm;
+
+  /**
+   * Latency alarm for this operation
+   */
+  readonly latencyAlarm: IAlarm;
+
+  /**
    * Alarm that triggers if either latency or availability breach the specified
    * threshold in this AZ and the AZ is an outlier for faults or latency
    */
-  isolatedImpactAlarm: IAlarm;
+  readonly isolatedImpactAlarm: IAlarm;
 
   /**
    * Alarm indicating that there are multiple instances producing faults in
    * this AZ indicating the fault rate is not being caused by a single instance
    */
-  multipleInstancesProducingFaultsInThisAvailabilityZone?: IAlarm;
+  readonly multipleInstancesProducingFaultsInThisAvailabilityZone?: IAlarm;
 
   /**
    * Alarm indicating that there are multiple instances producing high
    * latency responses in this AZ indicating the latency is not being
    * caused by a single instance
    */
-  multipleInstancesProducingHighLatencyInThisAZ?: IAlarm;
+  readonly multipleInstancesProducingHighLatencyInThisAZ?: IAlarm;
 
   /**
    * Insight rule that measures the number of instances contributing to high latency in this AZ
    */
-  instanceContributorsToHighLatencyInThisAZ?: CfnInsightRule;
+  readonly instanceContributorsToHighLatencyInThisAZ?: CfnInsightRule;
 
   /**
    * Insight rule that measures the number of instances contributing to faults in this AZ
    */
-  instanceContributorsToFaultsInThisAZ?: CfnInsightRule;
+  readonly instanceContributorsToFaultsInThisAZ?: CfnInsightRule;
 
   /**
    * Insight rule that is used to calculate the number of instances in this particular AZ that is used with metric math to calculate
    * the percent of instances contributing to latency or faults
    */
-  instancesHandlingRequestsInThisAZ?: CfnInsightRule;
+  readonly instancesHandlingRequestsInThisAZ?: CfnInsightRule;
 
   /**
    * Alarm that indicates that this AZ is an outlier for fault rate
    */
-  availabilityZoneIsOutlierForFaults: IAlarm;
+  readonly availabilityZoneIsOutlierForFaults: IAlarm;
 
   /**
    * Alarm that indicates this AZ is an outlier for high latency
    */
-  availabilityZoneIsOutlierForLatency: IAlarm;
+  readonly availabilityZoneIsOutlierForLatency: IAlarm;
 
   constructor(
     scope: Construct,
     id: string,
     props: ServerSideOperationZonalAlarmsAndRulesProps,
   ) {
-    super(scope, id, props);
+    super(scope, id);
 
     let azLetter: string = props.availabilityZone.substring(
       props.availabilityZone.length - 1,
     );
     let availabilityZoneId: string =
-      props.azMapper.availabilityZoneIdFromAvailabilityZoneLetter(azLetter);
+      props.operationAlarmsAndRulesProps.azMapper.availabilityZoneIdFromAvailabilityZoneLetter(azLetter);
+
+    let operation: IOperation = props.operationAlarmsAndRulesProps.operation;
+
+    this.availabilityAlarm =
+      AvailabilityAndLatencyAlarmsAndRules.createZonalAvailabilityAlarm(
+        this,
+        operation.serverSideAvailabilityMetricDetails,
+        props.availabilityZone,
+        availabilityZoneId,
+        props.counter,
+        props.nameSuffix,
+      );
+    this.latencyAlarm =
+      AvailabilityAndLatencyAlarmsAndRules.createZonalLatencyAlarm(
+        this,
+        operation.serverSideLatencyMetricDetails,
+        props.availabilityZone,
+        availabilityZoneId,
+        props.counter,
+        props.nameSuffix,
+      );
 
     // We want to know three things:
     // 1. There is impact in one AZ from either the server or canary perspective
@@ -86,95 +118,92 @@ export class ServerSideOperationZonalAlarmsAndRules
     // 3. The impact is coming from more than 1 instance
     //   This is being done here
 
-    if (props.availabilityOutlierDetectionAlgorithm == OutlierDetectionAlgorithm.STATIC) {
+    if (props.operationAlarmsAndRulesProps.availabilityOutlierDetectionAlgorithm == OutlierDetectionAlgorithm.STATIC) {
       this.availabilityZoneIsOutlierForFaults =
         AvailabilityAndLatencyAlarmsAndRules.createZonalFaultRateStaticOutlierAlarm(
           this,
-          props.availabilityMetricDetails,
+          operation.serverSideAvailabilityMetricDetails,
           props.availabilityZone,
           availabilityZoneId,
           props.counter,
-          props.availabilityOutlierThreshold,
+          props.operationAlarmsAndRulesProps.availabilityOutlierThreshold,
           props.nameSuffix,
         );
     } else {
       this.availabilityZoneIsOutlierForFaults =
         AvailabilityAndLatencyAlarmsAndRules.createZonalFaultRateOutlierAlarm(
           this,
-          props.availabilityMetricDetails,
+          operation.serverSideAvailabilityMetricDetails,
           availabilityZoneId,
-          props.operation.service.availabilityZoneNames.map((az) => {
-            return props.azMapper.availabilityZoneIdFromAvailabilityZoneLetter(
+          operation.service.availabilityZoneNames.map((az) => {
+            return props.operationAlarmsAndRulesProps.azMapper.availabilityZoneIdFromAvailabilityZoneLetter(
               az.substring(az.length - 1),
             );
           }),
-          props.availabilityOutlierThreshold,
-          props.outlierDetectionFunction!,
-          props.availabilityOutlierDetectionAlgorithm,
+          props.operationAlarmsAndRulesProps.availabilityOutlierThreshold,
+          props.operationAlarmsAndRulesProps.outlierDetectionFunction!,
+          props.operationAlarmsAndRulesProps.availabilityOutlierDetectionAlgorithm,
           props.counter,
           props.nameSuffix,
         );
     }
 
-    if (props.latencyOutlierDetectionAlgorithm == OutlierDetectionAlgorithm.STATIC) {
+    if (props.operationAlarmsAndRulesProps.latencyOutlierDetectionAlgorithm == OutlierDetectionAlgorithm.STATIC) {
       this.availabilityZoneIsOutlierForLatency =
         AvailabilityAndLatencyAlarmsAndRules.createZonalHighLatencyStaticOutlierAlarm(
           this,
-          props.latencyMetricDetails,
+          operation.serverSideLatencyMetricDetails,
           props.availabilityZone,
           availabilityZoneId,
           props.counter,
-          props.latencyOutlierThreshold,
+          props.operationAlarmsAndRulesProps.latencyOutlierThreshold,
           props.nameSuffix,
         );
     } else {
       this.availabilityZoneIsOutlierForLatency =
         AvailabilityAndLatencyAlarmsAndRules.createZonalHighLatencyOutlierAlarm(
           this,
-          props.latencyMetricDetails,
+          operation.serverSideLatencyMetricDetails,
           availabilityZoneId,
-          props.operation.service.availabilityZoneNames.map((az) => {
-            return props.azMapper.availabilityZoneIdFromAvailabilityZoneLetter(
+          operation.service.availabilityZoneNames.map((az) => {
+            return props.operationAlarmsAndRulesProps.azMapper.availabilityZoneIdFromAvailabilityZoneLetter(
               az.substring(az.length - 1),
             );
           }),
-          props.latencyOutlierThreshold,
-          props.outlierDetectionFunction!,
-          props.latencyOutlierDetectionAlgorithm,
+          props.operationAlarmsAndRulesProps.latencyOutlierThreshold,
+          props.operationAlarmsAndRulesProps.outlierDetectionFunction!,
+          props.operationAlarmsAndRulesProps.latencyOutlierDetectionAlgorithm,
           props.counter,
           props.nameSuffix,
         );
     }
 
-    if (
-      props.contributorInsightRuleDetails !== undefined &&
-      props.contributorInsightRuleDetails != null
-    ) {
+    if (operation.serverSideContributorInsightRuleDetails) {
       this.instancesHandlingRequestsInThisAZ =
         AvailabilityAndLatencyAlarmsAndRules.createServerSideInstancesHandlingRequestsInThisAZRule(
           this,
-          props.availabilityMetricDetails.operationName,
+          operation.operationName,
           availabilityZoneId,
-          props.contributorInsightRuleDetails,
+          operation.serverSideContributorInsightRuleDetails!,
           props.counter,
           props.nameSuffix,
         );
       this.instanceContributorsToFaultsInThisAZ =
         AvailabilityAndLatencyAlarmsAndRules.createServerSideInstanceFaultContributorsInThisAZRule(
           this,
-          props.availabilityMetricDetails.operationName,
+          operation.operationName,
           availabilityZoneId,
-          props.contributorInsightRuleDetails,
+          operation.serverSideContributorInsightRuleDetails!,
           props.counter,
           props.nameSuffix,
         );
       this.multipleInstancesProducingFaultsInThisAvailabilityZone =
         AvailabilityAndLatencyAlarmsAndRules.createServerSideZonalMoreThanOneInstanceProducingFaultsAlarm(
           this,
-          props.availabilityMetricDetails,
+          operation.serverSideAvailabilityMetricDetails,
           availabilityZoneId,
           props.counter,
-          props.numberOfInstancesToConsiderAZImpacted ? props.numberOfInstancesToConsiderAZImpacted : 2,
+          props.operationAlarmsAndRulesProps.numberOfInstancesToConsiderAZImpacted ? props.operationAlarmsAndRulesProps.numberOfInstancesToConsiderAZImpacted : 2,
           this.instanceContributorsToFaultsInThisAZ,
           this.instancesHandlingRequestsInThisAZ,
           props.nameSuffix,
@@ -182,19 +211,19 @@ export class ServerSideOperationZonalAlarmsAndRules
       this.instanceContributorsToHighLatencyInThisAZ =
         AvailabilityAndLatencyAlarmsAndRules.createServerSideInstanceHighLatencyContributorsInThisAZRule(
           this,
-          props.latencyMetricDetails,
+          operation.serverSideLatencyMetricDetails,
           availabilityZoneId,
-          props.contributorInsightRuleDetails,
+          operation.serverSideContributorInsightRuleDetails!,
           props.counter,
           props.nameSuffix,
         );
       this.multipleInstancesProducingHighLatencyInThisAZ =
         AvailabilityAndLatencyAlarmsAndRules.createServerSideZonalMoreThanOneInstanceProducingHighLatencyAlarm(
           this,
-          props.latencyMetricDetails,
+          operation.serverSideLatencyMetricDetails,
           availabilityZoneId,
           props.counter,
-          props.numberOfInstancesToConsiderAZImpacted ? props.numberOfInstancesToConsiderAZImpacted : 2,
+          props.operationAlarmsAndRulesProps.numberOfInstancesToConsiderAZImpacted ? props.operationAlarmsAndRulesProps.numberOfInstancesToConsiderAZImpacted : 2,
           this.instanceContributorsToHighLatencyInThisAZ,
           this.instancesHandlingRequestsInThisAZ,
           props.nameSuffix,
@@ -202,9 +231,9 @@ export class ServerSideOperationZonalAlarmsAndRules
 
       this.isolatedImpactAlarm = new CompositeAlarm(
         scope,
-        `${props.operation.operationName}-zone-${azLetter}-isolated-impact-alarm`,
+        `${operation.operationName}-zone-${azLetter}-isolated-impact-alarm`,
         {
-          compositeAlarmName: `${availabilityZoneId}-${props.operation.operationName}-isolated-impact-alarm${props.nameSuffix}`,
+          compositeAlarmName: `${availabilityZoneId}-${operation.operationName}-isolated-impact-alarm${props.nameSuffix}`,
           alarmRule: AlarmRule.anyOf(
             AlarmRule.allOf(
               this.availabilityZoneIsOutlierForFaults,
@@ -224,9 +253,9 @@ export class ServerSideOperationZonalAlarmsAndRules
     else {
       this.isolatedImpactAlarm = new CompositeAlarm(
         scope,
-        `${props.operation.operationName}-zone-${azLetter}-isolated-impact-alarm`,
+        `${operation.operationName}-zone-${azLetter}-isolated-impact-alarm`,
         {
-          compositeAlarmName: `${availabilityZoneId}-${props.operation.operationName}-isolated-impact-alarm${props.nameSuffix}`,
+          compositeAlarmName: `${availabilityZoneId}-${operation.operationName}-isolated-impact-alarm${props.nameSuffix}`,
           alarmRule: AlarmRule.anyOf(
             AlarmRule.allOf(
               this.availabilityZoneIsOutlierForFaults,

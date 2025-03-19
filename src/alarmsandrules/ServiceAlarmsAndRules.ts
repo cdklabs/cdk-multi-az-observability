@@ -78,25 +78,17 @@ export class ServiceAlarmsAndRules
     let criticalOperations: string[] = props.service.operations
       .filter((x) => x.critical == true)
       .map((x) => x.operationName);
-    let counter: number = 1;
     this.zonalAggregateIsolatedImpactAlarms = [];
     this.zonalServerSideIsolatedImpactAlarms = [];
 
-    let availabilityZoneIds: string[] = props.service.availabilityZoneNames.map(
-      (x) => {
-        return props.azMapper.availabilityZoneIdFromAvailabilityZoneLetter(
-          x.substring(x.length - 1),
-        );
-      },
-    );
-
-    for (let i = 0; i < availabilityZoneIds.length; i++) {
-      let availabilityZonedId: string = availabilityZoneIds[i];
+    props.service.availabilityZoneNames.forEach((availabilityZone: string, index: number) => {
+      let azLetter: string = availabilityZone.substring(availabilityZone.length - 1);
+      let availabilityZonedId: string = props.azMapper.availabilityZoneIdFromAvailabilityZoneLetter(azLetter);
 
       this.zonalAggregateIsolatedImpactAlarms.push(
         new CompositeAlarm(
           this,
-          'AZ' + counter + 'ServiceAggregateIsolatedImpactAlarm',
+          'AZ' + index + 'ServiceAggregateIsolatedImpactAlarm',
           {
             compositeAlarmName:
               availabilityZonedId +
@@ -115,7 +107,7 @@ export class ServiceAlarmsAndRules
                   },
                   {} as { [key: string]: IOperationAlarmsAndRules },
                 ),
-              ).map((x) => x.aggregateZonalAlarms[i]),
+              ).map((x) => x.aggregateZonalAlarmsMap[availabilityZone]),
             ),
           },
         ),
@@ -124,7 +116,7 @@ export class ServiceAlarmsAndRules
       this.zonalServerSideIsolatedImpactAlarms.push(
         new CompositeAlarm(
           this,
-          'AZ' + counter + 'ServiceServerSideIsolatedImpactAlarm',
+          'AZ' + index + 'ServiceServerSideIsolatedImpactAlarm',
           {
             compositeAlarmName:
               availabilityZonedId +
@@ -143,14 +135,12 @@ export class ServiceAlarmsAndRules
                   },
                   {} as { [key: string]: IOperationAlarmsAndRules },
                 ),
-              ).map((x) => x.serverSideZonalAlarmsMap[availabilityZonedId]),
+              ).map((x) => x.serverSideZonalAlarmsAndRulesMap[availabilityZone].isolatedImpactAlarm),
             ),
           },
         ),
       );
-
-      counter++;
-    }
+    });
 
     let keyPrefix: string = '';
 
