@@ -39,10 +39,27 @@ export interface BaseOperationZonalAlarmsAndRulesProps {
   /**
    * Used when the OutlierDetectionAlgorithm is set to STATIC, should be a
    * number between 0 and 1, non-inclusive, representing the percentage
-   * or faults or high latency responses that an AZ must have to be considered
+   * of faults  that an AZ must have to be considered
    * an outlier.
    */
-  readonly outlierThreshold: number;
+  readonly availabilityOutlierThreshold: number;
+
+  /**
+   * Used when the OutlierDetectionAlgorithm is set to STATIC, should be a
+   * number between 0 and 1, non-inclusive, representing the percentage
+   * of high latency responses that an AZ must have to be considered
+   * an outlier.
+   */
+  readonly latencyOutlierThreshold: number;
+
+  /**
+   * The number of instances that need to be impacted to consider
+   * an AZ to be impacted. This helps to ensure "more than one" instance
+   * isn't making an AZ look bad.
+   * 
+   * @default 2
+   */
+  readonly numberOfInstancesToConsiderAZImpacted?: number;
 
   /**
    * (Optional) Details for creating contributor insight rules, which help
@@ -55,7 +72,14 @@ export interface BaseOperationZonalAlarmsAndRulesProps {
    * or instances are outliers for latency or availability impact. Currently this property
    * is ignored and only STATIC is used.
    */
-  readonly outlierDetectionAlgorithm: OutlierDetectionAlgorithm;
+  readonly availabilityOutlierDetectionAlgorithm: OutlierDetectionAlgorithm;
+
+  /**
+   * The outlier detection algorithm used to determine if Availability Zones
+   * or instances are outliers for latency or availability impact. Currently this property
+   * is ignored and only STATIC is used.
+   */
+  readonly latencyOutlierDetectionAlgorithm: OutlierDetectionAlgorithm;
 
   /**
    * (Optional) A suffix to apply to alarm and rules names, like "-server" for server

@@ -40,7 +40,7 @@ export class CanaryOperationZonalAlarmsAndRules
     let azLetter: string = props.availabilityZone.substring(props.availabilityZone.length - 1);
     let availabilityZoneId: string = props.azMapper.availabilityZoneIdFromAvailabilityZoneLetter(azLetter);
 
-    if (props.outlierDetectionAlgorithm == OutlierDetectionAlgorithm.STATIC) {
+    if (props.availabilityOutlierDetectionAlgorithm == OutlierDetectionAlgorithm.STATIC) {
       this.availabilityZoneIsOutlierForFaults =
         AvailabilityAndLatencyAlarmsAndRules.createZonalFaultRateStaticOutlierAlarmForCanaries(
           this,
@@ -49,18 +49,7 @@ export class CanaryOperationZonalAlarmsAndRules
           availabilityZoneId,
           props.operation.service.availabilityZoneNames,
           props.counter,
-          props.outlierThreshold,
-          props.nameSuffix,
-        );
-      this.availabilityZoneIsOutlierForLatency =
-        AvailabilityAndLatencyAlarmsAndRules.createZonalHighLatencyStaticOutlierAlarmForCanaries(
-          this,
-          props.latencyMetricDetails,
-          props.availabilityZone,
-          availabilityZoneId,
-          props.operation.service.availabilityZoneNames,
-          props.counter,
-          props.outlierThreshold,
+          props.availabilityOutlierThreshold,
           props.nameSuffix,
         );
     } else {
@@ -74,12 +63,27 @@ export class CanaryOperationZonalAlarmsAndRules
               az.substring(az.length - 1),
             );
           }),
-          props.outlierThreshold,
+          props.availabilityOutlierThreshold,
           props.outlierDetectionFunction!,
-          props.outlierDetectionAlgorithm,
+          props.availabilityOutlierDetectionAlgorithm,
           props.counter,
           props.nameSuffix,
+        );  
+    }
+
+    if (props.latencyOutlierDetectionAlgorithm == OutlierDetectionAlgorithm.STATIC) {
+      this.availabilityZoneIsOutlierForLatency =
+        AvailabilityAndLatencyAlarmsAndRules.createZonalHighLatencyStaticOutlierAlarmForCanaries(
+          this,
+          props.latencyMetricDetails,
+          props.availabilityZone,
+          availabilityZoneId,
+          props.operation.service.availabilityZoneNames,
+          props.counter,
+          props.latencyOutlierThreshold,
+          props.nameSuffix,
         );
+    } else {
       this.availabilityZoneIsOutlierForLatency =
         AvailabilityAndLatencyAlarmsAndRules.createZonalHighLatencyOutlierAlarm(
           this,
@@ -90,9 +94,9 @@ export class CanaryOperationZonalAlarmsAndRules
               az.substring(az.length - 1),
             );
           }),
-          props.outlierThreshold,
+          props.latencyOutlierThreshold,
           props.outlierDetectionFunction!,
-          props.outlierDetectionAlgorithm,
+          props.latencyOutlierDetectionAlgorithm,
           props.counter,
           props.nameSuffix,
         );

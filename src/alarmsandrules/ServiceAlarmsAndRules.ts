@@ -59,12 +59,12 @@ export class ServiceAlarmsAndRules
   /**
    * An alarm for regional availability or latency impact of any critical operation as measured by the server-side.
    */
-  regionalAvailabilityOrLatencyServerSideAlarm: IAlarm;
+  //regionalAvailabilityOrLatencyServerSideAlarm: IAlarm;
 
   /**
    * An alarm for regional availability impact of any critical operation as measured by the server-side.
    */
-  regionalAvailabilityServerSideAlarm: IAlarm;
+  //regionalAvailabilityServerSideAlarm: IAlarm;
 
   /**
    * An alarm for fault count exceeding a regional threshold for all critical operations.
@@ -273,7 +273,7 @@ export class ServiceAlarmsAndRules
       );
     }
 
-    this.regionalAvailabilityOrLatencyServerSideAlarm = new CompositeAlarm(
+    /*this.regionalAvailabilityOrLatencyServerSideAlarm = new CompositeAlarm(
       this,
       'ServiceServerSideAggregateIsolatedImpactAlarm',
       {
@@ -299,9 +299,9 @@ export class ServiceAlarmsAndRules
             .map((x) => x.availabilityOrLatencyAlarm),
         ),
       },
-    );
+    );*/
 
-    this.regionalAvailabilityServerSideAlarm = new CompositeAlarm(
+    /*this.regionalAvailabilityServerSideAlarm = new CompositeAlarm(
       this,
       'ServiceServerSideAvailabilityAlarm',
       {
@@ -327,6 +327,6 @@ export class ServiceAlarmsAndRules
             .map((x) => x.availabilityAlarm),
         ),
       },
-    );
+    );*/
   }
 }
