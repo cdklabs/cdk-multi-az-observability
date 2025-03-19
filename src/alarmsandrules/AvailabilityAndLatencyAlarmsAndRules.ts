@@ -1205,7 +1205,7 @@ export class AvailabilityAndLatencyAlarmsAndRules {
       metricDetails.operationName + 'RegionalLatencyAlarm',
       {
         alarmName:
-          Fn.ref('AWS::Region') +
+          Aws.REGION +
           '-' +
           metricDetails.operationName.toLowerCase() +
           '-success-latency' +
@@ -1217,11 +1217,7 @@ export class AvailabilityAndLatencyAlarmsAndRules {
         actionsEnabled: false,
         treatMissingData: TreatMissingData.IGNORE,
         metric: RegionalLatencyMetrics.createRegionalAverageLatencyMetric({
-          label:
-            Fn.ref('AWS::Region') +
-            ' ' +
-            metricDetails.alarmStatistic +
-            ' latency',
+          label: Aws.REGION,        
           metricDetails: metricDetails,
           metricType: LatencyMetricType.SUCCESS_LATENCY,
           statistic: metricDetails.alarmStatistic,
@@ -1240,7 +1236,7 @@ export class AvailabilityAndLatencyAlarmsAndRules {
    * @param regionalLatencyAlarm
    * @returns
    */
-  static createRegionalCustomerExperienceAlarm(
+  static createRegionalAvailabilityOrLatencyImpactAlarm(
     scope: Construct,
     operationName: string,
     nameSuffix: string,

@@ -2,9 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 import { IAlarm } from "aws-cdk-lib/aws-cloudwatch";
 import { Construct } from "constructs";
-import { AvailabilityAndLatencyAlarmsAndRules } from "./AvailabilityAndLatencyAlarmsAndRules";
 import { IBaseOperationZonalAlarmsAndRules } from "./IBaseOperationZonalAlarmsAndRules";
-import { BaseOperationZonalAlarmsAndRulesProps } from "./props/BaseOperationZonalAlarmsAndRulesProps";
 
 /**
  * The base operation regional alarms and rules
@@ -16,12 +14,12 @@ export abstract class BaseOperationZonalAlarmsAndRules
   /**
    * Availability alarm for this operation
    */
-  availabilityAlarm: IAlarm;
+  abstract availabilityAlarm: IAlarm;
 
   /**
    * Latency alarm for this operation
    */
-  latencyAlarm: IAlarm;
+  abstract latencyAlarm: IAlarm;
 
   /**
    * Alarm that indicates that this AZ is an outlier for fault rate
@@ -35,34 +33,8 @@ export abstract class BaseOperationZonalAlarmsAndRules
 
   constructor(
     scope: Construct,
-    id: string,
-    props: BaseOperationZonalAlarmsAndRulesProps,
+    id: string
   ) {
     super(scope, id);
-
-    let azLetter: string = props.availabilityZone.substring(
-      props.availabilityZone.length - 1,
-    );
-    let availabilityZoneId: string =
-      props.azMapper.availabilityZoneIdFromAvailabilityZoneLetter(azLetter);
-
-    this.availabilityAlarm =
-      AvailabilityAndLatencyAlarmsAndRules.createZonalAvailabilityAlarm(
-        this,
-        props.availabilityMetricDetails,
-        props.availabilityZone,
-        availabilityZoneId,
-        props.counter,
-        props.nameSuffix,
-      );
-    this.latencyAlarm =
-      AvailabilityAndLatencyAlarmsAndRules.createZonalLatencyAlarm(
-        this,
-        props.latencyMetricDetails,
-        props.availabilityZone,
-        availabilityZoneId,
-        props.counter,
-        props.nameSuffix,
-      );
   }
 }

@@ -434,8 +434,10 @@ export class InstrumentedServiceMultiAZObservability
           operation.operationName,
           new OperationAlarmsAndRules(nestedStack, operation.operationName, {
             operation: operation,
-            outlierDetectionAlgorithm: props.outlierDetectionAlgorithm,
-            outlierThreshold: outlierThreshold,
+            latencyOutlierDetectionAlgorithm: props.outlierDetectionAlgorithm,
+            availabilityOutlierDetectionAlgorithm: props.outlierDetectionAlgorithm,
+            latencyOutlierThreshold: outlierThreshold,
+            availabilityOutlierThreshold: outlierThreshold,
             loadBalancer: props.service.loadBalancer,
             azMapper: this.azMapper,
             outlierDetectionFunction: this.outlierDetectionFunction,
@@ -481,56 +483,11 @@ export class InstrumentedServiceMultiAZObservability
               dashboardStack,
               x.operationName,
               {
-                operation: x,
+                operationAlarmsAndRules: this.perOperationAlarmsAndRules[x.operationName],
                 azMapper: this.azMapper,
-                availabilityZones: props.service.availabilityZoneNames,
                 interval: props.interval
                   ? props.interval
                   : Duration.minutes(60),
-
-                regionalEndpointCanaryAvailabilityAlarm:
-                  this.perOperationAlarmsAndRules[x.operationName]
-                    .canaryRegionalAlarmsAndRules?.availabilityAlarm,
-
-                regionalEndpointCanaryLatencyAlarm:
-                  this.perOperationAlarmsAndRules[x.operationName]
-                    .canaryRegionalAlarmsAndRules?.latencyAlarm,
-
-                zonalEndpointCanaryAvailabilityAlarms:
-                  this.perOperationAlarmsAndRules[
-                    x.operationName
-                  ].canaryZonalAlarmsAndRules?.map((a) => a.availabilityAlarm),
-
-                zonalEndpointCanaryLatencyAlarms:
-                  this.perOperationAlarmsAndRules[
-                    x.operationName
-                  ].canaryZonalAlarmsAndRules?.map((a) => a.latencyAlarm),
-
-                zonalEndpointServerAvailabilityAlarms:
-                  this.perOperationAlarmsAndRules[
-                    x.operationName
-                  ].serverSideZonalAlarmsAndRules.map(
-                    (a) => a.availabilityAlarm,
-                  ),
-
-                zonalEndpointServerLatencyAlarms:
-                  this.perOperationAlarmsAndRules[
-                    x.operationName
-                  ].serverSideZonalAlarmsAndRules.map((a) => a.latencyAlarm),
-
-                isolatedAZImpactAlarms:
-                  this.perOperationAlarmsAndRules[x.operationName]
-                    .aggregateZonalAlarms,
-
-                instanceContributorsToFaults:
-                  this.perOperationAlarmsAndRules[x.operationName]
-                    .serverSideRegionalAlarmsAndRules
-                    .instanceContributorsToRegionalFaults,
-
-                instanceContributorsToHighLatency:
-                  this.perOperationAlarmsAndRules[x.operationName]
-                    .serverSideRegionalAlarmsAndRules
-                    .instanceContributorsToRegionalHighLatency,
               },
             ).dashboard,
           );
