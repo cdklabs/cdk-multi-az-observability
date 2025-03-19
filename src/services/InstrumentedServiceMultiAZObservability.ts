@@ -543,6 +543,7 @@ export class InstrumentedServiceMultiAZObservability
         {},
       );
 
+      // TOOD: Revamp service level dashboard and rethink alarms
       this.serviceDashboard = new ServiceAvailabilityAndLatencyDashboard(
         dashboardStack,
         props.service.serviceName.toLowerCase(),

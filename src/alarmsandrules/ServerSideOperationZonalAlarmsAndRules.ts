@@ -86,7 +86,7 @@ export class ServerSideOperationZonalAlarmsAndRules
     // 3. The impact is coming from more than 1 instance
     //   This is being done here
 
-    if (props.outlierDetectionAlgorithm == OutlierDetectionAlgorithm.STATIC) {
+    if (props.availabilityOutlierDetectionAlgorithm == OutlierDetectionAlgorithm.STATIC) {
       this.availabilityZoneIsOutlierForFaults =
         AvailabilityAndLatencyAlarmsAndRules.createZonalFaultRateStaticOutlierAlarm(
           this,
@@ -94,17 +94,7 @@ export class ServerSideOperationZonalAlarmsAndRules
           props.availabilityZone,
           availabilityZoneId,
           props.counter,
-          props.outlierThreshold,
-          props.nameSuffix,
-        );
-      this.availabilityZoneIsOutlierForLatency =
-        AvailabilityAndLatencyAlarmsAndRules.createZonalHighLatencyStaticOutlierAlarm(
-          this,
-          props.latencyMetricDetails,
-          props.availabilityZone,
-          availabilityZoneId,
-          props.counter,
-          props.outlierThreshold,
+          props.availabilityOutlierThreshold,
           props.nameSuffix,
         );
     } else {
@@ -118,12 +108,26 @@ export class ServerSideOperationZonalAlarmsAndRules
               az.substring(az.length - 1),
             );
           }),
-          props.outlierThreshold,
+          props.availabilityOutlierThreshold,
           props.outlierDetectionFunction!,
-          props.outlierDetectionAlgorithm,
+          props.availabilityOutlierDetectionAlgorithm,
           props.counter,
           props.nameSuffix,
         );
+    }
+
+    if (props.latencyOutlierDetectionAlgorithm == OutlierDetectionAlgorithm.STATIC) {
+      this.availabilityZoneIsOutlierForLatency =
+        AvailabilityAndLatencyAlarmsAndRules.createZonalHighLatencyStaticOutlierAlarm(
+          this,
+          props.latencyMetricDetails,
+          props.availabilityZone,
+          availabilityZoneId,
+          props.counter,
+          props.latencyOutlierThreshold,
+          props.nameSuffix,
+        );
+    } else {
       this.availabilityZoneIsOutlierForLatency =
         AvailabilityAndLatencyAlarmsAndRules.createZonalHighLatencyOutlierAlarm(
           this,
@@ -134,9 +138,9 @@ export class ServerSideOperationZonalAlarmsAndRules
               az.substring(az.length - 1),
             );
           }),
-          props.outlierThreshold,
+          props.latencyOutlierThreshold,
           props.outlierDetectionFunction!,
-          props.outlierDetectionAlgorithm,
+          props.latencyOutlierDetectionAlgorithm,
           props.counter,
           props.nameSuffix,
         );
@@ -170,7 +174,7 @@ export class ServerSideOperationZonalAlarmsAndRules
           props.availabilityMetricDetails,
           availabilityZoneId,
           props.counter,
-          props.outlierThreshold,
+          props.numberOfInstancesToConsiderAZImpacted ? props.numberOfInstancesToConsiderAZImpacted : 2,
           this.instanceContributorsToFaultsInThisAZ,
           this.instancesHandlingRequestsInThisAZ,
           props.nameSuffix,
@@ -190,7 +194,7 @@ export class ServerSideOperationZonalAlarmsAndRules
           props.latencyMetricDetails,
           availabilityZoneId,
           props.counter,
-          props.outlierThreshold,
+          props.numberOfInstancesToConsiderAZImpacted ? props.numberOfInstancesToConsiderAZImpacted : 2,
           this.instanceContributorsToHighLatencyInThisAZ,
           this.instancesHandlingRequestsInThisAZ,
           props.nameSuffix,

@@ -3,7 +3,6 @@
 import { CfnInsightRule } from "aws-cdk-lib/aws-cloudwatch";
 import { Construct } from "constructs";
 import { AvailabilityAndLatencyAlarmsAndRules } from "./AvailabilityAndLatencyAlarmsAndRules";
-import { BaseOperationRegionalAlarmsAndRules } from "./BaseOperationRegionalAlarmsAndRules";
 import { IServerSideOperationRegionalAlarmsAndRules } from "./IServerSideOperationRegionalAlarmsAndRules";
 import { ServerSideOperationRegionalAlarmsAndRulesProps } from "./props/ServerSideOperationRegionalAlarmsAndRulesProps";
 
@@ -11,7 +10,7 @@ import { ServerSideOperationRegionalAlarmsAndRulesProps } from "./props/ServerSi
  * The server side regional alarms and rules for an operation
  */
 export class ServerSideOperationRegionalAlarmsAndRules
-  extends BaseOperationRegionalAlarmsAndRules
+  extends Construct
   implements IServerSideOperationRegionalAlarmsAndRules
 {
   /**
@@ -29,7 +28,7 @@ export class ServerSideOperationRegionalAlarmsAndRules
     id: string,
     props: ServerSideOperationRegionalAlarmsAndRulesProps,
   ) {
-    super(scope, id, props);
+    super(scope, id);
 
     if (props.contributorInsightRuleDetails) {
       this.instanceContributorsToRegionalFaults =

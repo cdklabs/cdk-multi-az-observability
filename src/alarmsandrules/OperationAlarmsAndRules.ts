@@ -1,6 +1,5 @@
 // Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
-import { Fn } from 'aws-cdk-lib';
 import { AlarmRule, CompositeAlarm, IAlarm } from 'aws-cdk-lib/aws-cloudwatch';
 import { BaseLoadBalancer } from 'aws-cdk-lib/aws-elasticloadbalancingv2';
 import { Construct } from 'constructs';
@@ -36,12 +35,6 @@ export class OperationAlarmsAndRules
    * The canary regional alarms and rules
    */
   readonly canaryRegionalAlarmsAndRules?: ICanaryOperationRegionalAlarmsAndRules;
-
-  /**
-   * The aggregate regional alarm that looks at both canary and server
-   * side impact alarms for latency and availability
-   */
-  readonly aggregateRegionalAlarm: IAlarm;
 
   /**
    * The server side zonal alarms and rules
@@ -91,33 +84,13 @@ export class OperationAlarmsAndRules
         .loadBalancerArn;
     }
 
-    // We want to know three things
-    // 1. There is impact in one AZ from either the server or canary perspective
-    // 2. The impact in that AZ is an outlier
-    // 3. The impact is coming from more than 1 instance
-    // 
-    // let operationAlarmsPerAZ: {[key: string]: IAlarm} = {};
-    //
-    // props.service.availabilityZones.forEach((availabilityZone: string, index: number) => {
-    //
-    //  let availabilityImpactAlarm: IAlarm = new ServerSideAvailabilityImpactAlarm();
-    //  let availabilityOutlierAlarm: IAlarm = new ServerSideAvailabilityOutlierAlarm();
-    //  let availabilityImpactAndOutlierAlarm: IAlarm = new CompositeAlarm({ alarmRule: AlarmRule.allOf(availabilityImpactAlarm, availabilityOutlierAlarm)});
-    //  
-    //  let latencyImpactAlarm: IAlarm = new ServerSideLatencyImpactAlarm();
-    //  let latencyOutlierAlarm: IAlarm = new ServerSideLatencyOutlierAlarm();
-    //  let latencyImpactAndOutlierAlarm: IAlarm = new CompositeAlarm({ alarmRule: AlarmRule.allOf(latencyImpactAlarm, latencyOutlierAlarm)});
-    //  
-    //  let zonalImpactAlarm: IAlarm = new CompositeAlarm({ alarmRule: AlarmRule.anyOf(availabilityImpactAndOutlierAlarm, latencyImpactAndOutlierAlarm)});
-    //  let moreThanOneInstanceAlarm: IAlarm = new ServerSideMoreThanOneInstanceAlarm();
-    //  
-    //  let zonalIsolatedImpactAlarm: IAlarm = new CompositeAlarm({ alarmRule: AlarmRule.allOf(zonalImpactAlarm, moreThanOneInstanceAlarm)})
-    //  operationAlarmsPerAZ[availabilityZone] = zonalIsolatedImpactAlarm;
-    //
-    // });
-    
+    // TODO: These are mostly used for the operation level dashboard,
+    // may make sense to move this logic and similar canary logic there
+    // or at least calculate a regional impact alarm when the operation
+    // is impacted, but not in particular AZ
 
-
+    // Creates the regional impact alarms and contributor insight rules
+    // for contributors to regional faults and latency
     this.serverSideRegionalAlarmsAndRules =
       new ServerSideOperationRegionalAlarmsAndRules(
         this,
@@ -134,10 +107,9 @@ export class OperationAlarmsAndRules
         },
       );
 
-    if (
-      props.operation.canaryMetricDetails !== undefined &&
-      props.operation.canaryMetricDetails != null
-    ) {
+    // If canary metrics are defined, create the regional impact
+    // alarms 
+    if (props.operation.canaryMetricDetails) {
       this.canaryRegionalAlarmsAndRules =
         new CanaryOperationRegionalAlarmsAndRules(
           this,
@@ -151,41 +123,22 @@ export class OperationAlarmsAndRules
             nameSuffix: '-canary',
           },
         );
-
-      this.aggregateRegionalAlarm = new CompositeAlarm(
-        this,
-        props.operation.operationName + 'AggregateRegionalAlarm',
-        {
-          actionsEnabled: false,
-          compositeAlarmName:
-            Fn.ref('AWS::Region') +
-            '-' +
-            props.operation.operationName.toLowerCase() +
-            '-' +
-            'aggregate-alarm',
-          alarmRule: AlarmRule.anyOf(
-            this.serverSideRegionalAlarmsAndRules.availabilityOrLatencyAlarm,
-            this.canaryRegionalAlarmsAndRules.availabilityOrLatencyAlarm,
-          ),
-        },
-      );
-    } else {
-      this.aggregateRegionalAlarm =
-        this.serverSideRegionalAlarmsAndRules.availabilityOrLatencyAlarm;
     }
 
-    let counter: number = 1;
+    // Create the zonal isolated impact alarms
 
     props.operation.service.availabilityZoneNames.forEach((availabilityZone: string, index: number) => {
       let azLetter: string = availabilityZone.substring(availabilityZone.length - 1);
       let availabilityZoneId: string = props.azMapper.availabilityZoneIdFromAvailabilityZoneLetter(azLetter);
 
+      // TODO: Can condense this logic and just pass the parent props as a parameter in these
+      // props
       this.serverSideZonalAlarmsAndRules.push(
         new ServerSideOperationZonalAlarmsAndRules(
           this,
           props.operation.operationName +
             'AZ' +
-            counter +
+            index +
             'ServerSideZonalAlarmsAndRules',
           {
             availabilityZone: availabilityZone,
@@ -197,9 +150,11 @@ export class OperationAlarmsAndRules
               .serverSideContributorInsightRuleDetails
               ? props.operation.serverSideContributorInsightRuleDetails
               : props.operation.service.defaultContributorInsightRuleDetails,
-            counter: counter,
-            outlierThreshold: props.outlierThreshold,
-            outlierDetectionAlgorithm: props.outlierDetectionAlgorithm,
+            counter: index,
+            availabilityOutlierThreshold: props.outlierThreshold,
+            latencyOutlierThreshold: props.outlierThreshold,
+            availabilityOutlierDetectionAlgorithm: props.outlierDetectionAlgorithm,
+            latencyOutlierDetectionAlgorithm: props.outlierDetectionAlgorithm,
             nameSuffix: '-server',
             operation: props.operation,
             azMapper: props.azMapper,
@@ -208,6 +163,8 @@ export class OperationAlarmsAndRules
         ),
       );
 
+      // TODO: Move all of the alarms to dictionaries based on AZ name
+      // and maybe include AZ ID in that map
       this.serverSideZonalAlarmsMap[availabilityZoneId] =
         this.serverSideZonalAlarmsAndRules[index].isolatedImpactAlarm;
 
@@ -220,7 +177,7 @@ export class OperationAlarmsAndRules
             this,
             props.operation.operationName +
               'AZ' +
-              counter +
+              index +
               'CanaryZonalAlarmsAndRules',
             {
               availabilityZone: availabilityZone,
@@ -229,9 +186,11 @@ export class OperationAlarmsAndRules
                   .canaryAvailabilityMetricDetails,
               latencyMetricDetails:
                 props.operation.canaryMetricDetails.canaryLatencyMetricDetails,
-              counter: counter,
-              outlierThreshold: props.outlierThreshold,
-              outlierDetectionAlgorithm: props.outlierDetectionAlgorithm,
+              counter: index,
+              availabilityOutlierThreshold: props.outlierThreshold,
+              latencyOutlierThreshold: props.outlierThreshold,
+              latencyOutlierDetectionAlgorithm: props.outlierDetectionAlgorithm,
+              availabilityOutlierDetectionAlgorithm: props.outlierDetectionAlgorithm,
               nameSuffix: '-canary',
               operation: props.operation,
               azMapper: props.azMapper,
@@ -245,7 +204,7 @@ export class OperationAlarmsAndRules
             this,
             props.operation.operationName +
               'AZ' +
-              counter +
+              index +
               'AggregateZonalIsolatedImpactAlarm',
             {
               compositeAlarmName:
@@ -275,8 +234,6 @@ export class OperationAlarmsAndRules
 
       this.aggregateZonalAlarmsMap[availabilityZoneId] =
         this.aggregateZonalAlarms[-1];
-
-      counter++;
     });
   }
 }

@@ -24,6 +24,8 @@ import { LatencyMetricType } from '../utilities/LatencyMetricType';
 import { MetricsHelper } from '../utilities/MetricsHelper';
 import { AvailabilityAndLatencyMetrics } from '../metrics/AvailabilityAndLatencyMetrics';
 
+// TODO: Create two sections in the dashboard, one for regional level metrics and one for zonal level metrics
+// then regional level availability and latency alarms can be used through a composite alarm like (ALARM(availability) OR (ALARM(latency)) AND NOT(ALARM(az1) OR ALARM(az2))
 /**
  * Creates an operation level availability and latency dashboard
  */
@@ -295,7 +297,9 @@ export class OperationAvailabilityAndLatencyDashboard
     props.zonalEndpointServerAvailabilityAlarms.forEach((alarm: IAlarm) => {
       availabilityAlarmWidgets.push(new AlarmWidget({
         alarm: alarm,
-        title: "Availability"
+        title: "Zonal Availability",
+        height: 2,
+        width: 8
       }));
     });
 
@@ -306,7 +310,9 @@ export class OperationAvailabilityAndLatencyDashboard
     props.zonalEndpointServerLatencyAlarms.forEach((alarm: IAlarm) => {
       latencyAlarmWidgets.push(new AlarmWidget({
         alarm: alarm,
-        title: "Latency"
+        title: "Zonal Latency",
+        height: 2,
+        width: 8
       }));
     });
 
@@ -575,11 +581,15 @@ export class OperationAvailabilityAndLatencyDashboard
     dashboard.addWidgets(
       new AlarmWidget({
         alarm: props.regionalEndpointCanaryAvailabilityAlarm!,
-        title: "Availability"
+        title: "Regional Availability",
+        height: 2,
+        width: 8
       }),
       new AlarmWidget({
         alarm: props.regionalEndpointCanaryLatencyAlarm!,
-        title: "Latency"
+        title: "Regional Latency",
+        height: 2,
+        width: 8
       }),
     );
 
@@ -588,7 +598,9 @@ export class OperationAvailabilityAndLatencyDashboard
     props.zonalEndpointCanaryAvailabilityAlarms!.forEach((alarm: IAlarm) => {
       availabilityAlarmWidgets.push(new AlarmWidget({
         alarm: alarm,
-        title: "Availability"
+        title: "Zonal Availability",
+        height: 2,
+        width: 8
       }));
     });
 
@@ -599,7 +611,9 @@ export class OperationAvailabilityAndLatencyDashboard
     props.zonalEndpointCanaryLatencyAlarms!.forEach((alarm: IAlarm) => {
       latencyAlarmWidgets.push(new AlarmWidget({
         alarm: alarm,
-        title: "Latency"
+        title: "Zonal Latency",
+        height: 2,
+        width: 8
       }));
     });
   }

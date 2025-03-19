@@ -27,12 +27,6 @@ export interface IOperationAlarmsAndRules {
   canaryRegionalAlarmsAndRules?: ICanaryOperationRegionalAlarmsAndRules;
 
   /**
-   * The aggregate regional alarm that looks at both canary and server
-   * side impact alarms for latency and availability
-   */
-  aggregateRegionalAlarm: IAlarm;
-
-  /**
    * The server side zonal alarms and rules
    */
   serverSideZonalAlarmsAndRules: IServerSideOperationZonalAlarmsAndRules[];
