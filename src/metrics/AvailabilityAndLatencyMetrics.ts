@@ -250,6 +250,7 @@ export class AvailabilityAndLatencyMetrics {
       statistic: props.statistic,
       dimensionsMap: dimensions,
       label: props.label,
+      color: props.color
     });
   }
 
@@ -288,6 +289,7 @@ export class AvailabilityAndLatencyMetrics {
         label: props.label,
         period: props.metricDetails.period,
         usingMetrics: usingMetrics,
+        color: props.color
       });
     }
   }
