@@ -5,20 +5,21 @@ import {
   CfnInsightRule,
   CompositeAlarm,
   AlarmRule,
-} from 'aws-cdk-lib/aws-cloudwatch';
-import { Construct } from 'constructs';
-import { AvailabilityAndLatencyAlarmsAndRules } from './AvailabilityAndLatencyAlarmsAndRules';
-import { BaseOperationZonalAlarmsAndRules } from './BaseOperationZonalAlarmsAndRules';
-import { IServerSideOperationZonalAlarmsAndRules } from './IServerSideOperationZonalAlarmsAndRules';
-import { ServerSideOperationZonalAlarmsAndRulesProps } from './props/ServerSideOperationZonalAlarmsAndRulesProps';
-import { OutlierDetectionAlgorithm } from '../utilities/OutlierDetectionAlgorithm';
+} from "aws-cdk-lib/aws-cloudwatch";
+import { Construct } from "constructs";
+import { AvailabilityAndLatencyAlarmsAndRules } from "./AvailabilityAndLatencyAlarmsAndRules";
+import { BaseOperationZonalAlarmsAndRules } from "./BaseOperationZonalAlarmsAndRules";
+import { IServerSideOperationZonalAlarmsAndRules } from "./IServerSideOperationZonalAlarmsAndRules";
+import { ServerSideOperationZonalAlarmsAndRulesProps } from "./props/ServerSideOperationZonalAlarmsAndRulesProps";
+import { OutlierDetectionAlgorithm } from "../utilities/OutlierDetectionAlgorithm";
 
 /**
  * The server side alarms and rules for an operation in an Availability Zone
  */
 export class ServerSideOperationZonalAlarmsAndRules
   extends BaseOperationZonalAlarmsAndRules
-  implements IServerSideOperationZonalAlarmsAndRules {
+  implements IServerSideOperationZonalAlarmsAndRules
+{
   /**
    * Alarm that triggers if either latency or availability breach the specified
    * threshold in this AZ and the AZ is an outlier for faults or latency
@@ -71,8 +72,19 @@ export class ServerSideOperationZonalAlarmsAndRules
   ) {
     super(scope, id, props);
 
-    let azLetter: string = props.availabilityZone.substring(props.availabilityZone.length - 1);
-    let availabilityZoneId: string = props.azMapper.availabilityZoneIdFromAvailabilityZoneLetter(azLetter);
+    let azLetter: string = props.availabilityZone.substring(
+      props.availabilityZone.length - 1,
+    );
+    let availabilityZoneId: string =
+      props.azMapper.availabilityZoneIdFromAvailabilityZoneLetter(azLetter);
+
+    // We want to know three things:
+    // 1. There is impact in one AZ from either the server or canary perspective
+    //   This is being done by the base class
+    // 2. The impact in that AZ is an outlier
+    //   This is being done here
+    // 3. The impact is coming from more than 1 instance
+    //   This is being done here
 
     if (props.outlierDetectionAlgorithm == OutlierDetectionAlgorithm.STATIC) {
       this.availabilityZoneIsOutlierForFaults =
@@ -184,33 +196,33 @@ export class ServerSideOperationZonalAlarmsAndRules
           props.nameSuffix,
         );
 
-      this.isolatedImpactAlarm =
-        AvailabilityAndLatencyAlarmsAndRules.createServerSideIsolatedAZImpactAlarm(
-          this,
-          props.availabilityMetricDetails.operationName,
-          availabilityZoneId,
-          props.counter,
-          this.availabilityZoneIsOutlierForFaults,
-          this.availabilityAlarm,
-          this.multipleInstancesProducingFaultsInThisAvailabilityZone,
-          this.availabilityZoneIsOutlierForLatency,
-          this.latencyAlarm,
-          this.multipleInstancesProducingHighLatencyInThisAZ,
-          props.nameSuffix,
-        );
-    } else {
       this.isolatedImpactAlarm = new CompositeAlarm(
         scope,
-        props.operation.operationName +
-          'AZ' +
-          props.counter +
-          'IsolatedImpactAlarm' +
-          props.nameSuffix,
+        `${props.operation.operationName}-zone-${azLetter}-isolated-impact-alarm`,
         {
-          compositeAlarmName:
-            availabilityZoneId +
-            `-${props.operation.operationName.toLowerCase()}-isolated-impact-alarm` +
-            props.nameSuffix,
+          compositeAlarmName: `${availabilityZoneId}-${props.operation.operationName}-isolated-impact-alarm${props.nameSuffix}`,
+          alarmRule: AlarmRule.anyOf(
+            AlarmRule.allOf(
+              this.availabilityZoneIsOutlierForFaults,
+              this.availabilityAlarm,
+              this.multipleInstancesProducingFaultsInThisAvailabilityZone,
+            ),
+            AlarmRule.allOf(
+              this.availabilityZoneIsOutlierForLatency,
+              this.latencyAlarm,
+              this.multipleInstancesProducingHighLatencyInThisAZ,
+            ),
+          ),
+          actionsEnabled: false,
+        },
+      );
+    } 
+    else {
+      this.isolatedImpactAlarm = new CompositeAlarm(
+        scope,
+        `${props.operation.operationName}-zone-${azLetter}-isolated-impact-alarm`,
+        {
+          compositeAlarmName: `${availabilityZoneId}-${props.operation.operationName}-isolated-impact-alarm${props.nameSuffix}`,
           alarmRule: AlarmRule.anyOf(
             AlarmRule.allOf(
               this.availabilityZoneIsOutlierForFaults,

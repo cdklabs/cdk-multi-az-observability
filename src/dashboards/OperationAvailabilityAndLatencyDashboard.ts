@@ -11,6 +11,8 @@ import {
   LegendPosition,
   TextWidget,
   TextWidgetBackground,
+  AlarmWidget,
+  IAlarm,
 } from 'aws-cdk-lib/aws-cloudwatch';
 import { Construct } from 'constructs';
 import { ContributorInsightsWidget } from './ContributorInsightsWidget';
@@ -30,12 +32,11 @@ export class OperationAvailabilityAndLatencyDashboard
   implements IOperationAvailabilityAndLatencyDashboard {
 
   private static createServerSideWidgets(
+    dashboard: Dashboard,
     props: OperationAvailabilityAndLatencyDashboardProps
-  ): IWidget[] {
+  ): void {
     
-    let alarmsAndMetricsWidgets: IWidget[] = [];
-
-    alarmsAndMetricsWidgets.push(
+    dashboard.addWidgets(
       new TextWidget({
         markdown: "## **Server-side Metrics**",
         background: TextWidgetBackground.TRANSPARENT,
@@ -44,8 +45,9 @@ export class OperationAvailabilityAndLatencyDashboard
       })
     );
 
-    // Server-side availability
-    alarmsAndMetricsWidgets.push(
+    dashboard.addWidgets(
+
+      // Server-side availability
       new GraphWidget({
         height: 8,
         width: 6,
@@ -95,10 +97,8 @@ export class OperationAvailabilityAndLatencyDashboard
           },
         ]
       }),
-    );
 
-    // Server-side fault count
-    alarmsAndMetricsWidgets.push(
+      // Server-side fault count
       new GraphWidget({
         height: 8,
         width: 6,
@@ -128,10 +128,8 @@ export class OperationAvailabilityAndLatencyDashboard
           showUnits: false,
         }
       }),
-    );
 
-    // Server-side request count
-    alarmsAndMetricsWidgets.push(
+      // Server-side request count
       new GraphWidget({
         height: 8,
         width: 6,
@@ -160,31 +158,31 @@ export class OperationAvailabilityAndLatencyDashboard
           showUnits: false,
         },
       }),
-    );
 
-    // Server-side instance contributors to faults
-    if (props.instanceContributorsToFaults) {
-      alarmsAndMetricsWidgets.push(
-        new ContributorInsightsWidget({
-          height: 8,
-          width: 6,
-          title: 'Individual Instance Contributors to Fault Count',
-          insightRule: props.instanceContributorsToFaults,
-          period: props.operation.serverSideAvailabilityMetricDetails.period,
-          legendPosition: LegendPosition.BOTTOM,
-          orderStatistic: 'Sum',
-          accountId: Aws.ACCOUNT_ID, 
-          topContributors: 10,
-        }),
+      // Server-side instance contributors to faults
+      ... props.instanceContributorsToFaults ?
+        [ 
+          new ContributorInsightsWidget({
+            height: 8,
+            width: 6,
+            title: 'Individual Instance Contributors to Fault Count',
+            insightRule: props.instanceContributorsToFaults,
+            period: props.operation.serverSideAvailabilityMetricDetails.period,
+            legendPosition: LegendPosition.BOTTOM,
+            orderStatistic: 'Sum',
+            accountId: Aws.ACCOUNT_ID, 
+            topContributors: 10,
+          }) 
+        ] : []
       );
-    }
 
     // Server-side latency
+    let latencyWidgets: IWidget[] = [];
     props.operation.serverSideLatencyMetricDetails.successMetricNames.forEach((metricName: string) => {
 
       props.operation.serverSideLatencyMetricDetails.graphedSuccessStatistics?.forEach((statistic: string) => {
 
-        alarmsAndMetricsWidgets.push(
+        latencyWidgets.push(
           new GraphWidget({
             height: 8,
             width: 6,
@@ -237,8 +235,10 @@ export class OperationAvailabilityAndLatencyDashboard
       });
     });
 
-    // Server-side high latency request count
-    alarmsAndMetricsWidgets.push(
+    dashboard.addWidgets(
+      ...latencyWidgets,
+
+      // Server-side high latency request count
       new GraphWidget({
         height: 8,
         width: 6,
@@ -263,35 +263,62 @@ export class OperationAvailabilityAndLatencyDashboard
           showUnits: false,
         },
       }),
+
+      // Server-side instance contributors to latency
+      ... props.instanceContributorsToHighLatency ?
+        [
+          new ContributorInsightsWidget({
+            height: 8,
+            width: 6,
+            title: 'Individual Instance Contributors to High Latency',
+            insightRule: props.instanceContributorsToHighLatency,
+            period: props.operation.serverSideLatencyMetricDetails.period,
+            legendPosition: LegendPosition.BOTTOM,
+            orderStatistic: 'Sum',
+            accountId: Aws.ACCOUNT_ID,
+            topContributors: 10,
+          }) 
+        ] : []
     );
 
-    // Server-side instance contributors to latency
-    if (props.instanceContributorsToHighLatency) {
-      alarmsAndMetricsWidgets.push(
-        new ContributorInsightsWidget({
-          height: 8,
-          width: 6,
-          title: 'Individual Instance Contributors to High Latency',
-          insightRule: props.instanceContributorsToHighLatency,
-          period: props.operation.serverSideLatencyMetricDetails.period,
-          legendPosition: LegendPosition.BOTTOM,
-          orderStatistic: 'Sum',
-          accountId: Aws.ACCOUNT_ID,
-          topContributors: 10,
-        })
-      );
-    }
+    dashboard.addWidgets(
+      new TextWidget({
+        height: 2,
+        width: 24,
+        markdown: "### Alarms",
+        background: TextWidgetBackground.TRANSPARENT
+      })
+    );
 
-    return alarmsAndMetricsWidgets;
+    let availabilityAlarmWidgets: IWidget[] = []
+
+    props.zonalEndpointServerAvailabilityAlarms.forEach((alarm: IAlarm) => {
+      availabilityAlarmWidgets.push(new AlarmWidget({
+        alarm: alarm,
+        title: "Availability"
+      }));
+    });
+
+    dashboard.addWidgets(...availabilityAlarmWidgets);
+
+    let latencyAlarmWidgets: IWidget[] = [];
+
+    props.zonalEndpointServerLatencyAlarms.forEach((alarm: IAlarm) => {
+      latencyAlarmWidgets.push(new AlarmWidget({
+        alarm: alarm,
+        title: "Latency"
+      }));
+    });
+
+    dashboard.addWidgets(...latencyAlarmWidgets);
   }
   
   private static createCanaryWidgets(
+    dashboard: Dashboard,
     props: OperationAvailabilityAndLatencyDashboardProps
-  ): IWidget[] {
+  ): void {
 
-    let alarmsAndMetricsWidgets: IWidget[] = [];
-
-    alarmsAndMetricsWidgets.push(
+    dashboard.addWidgets(
       new TextWidget({
         markdown: "## **Canary Metrics**",
         background: TextWidgetBackground.TRANSPARENT,
@@ -300,8 +327,8 @@ export class OperationAvailabilityAndLatencyDashboard
       })
     );
 
-    // Canary availability
-    alarmsAndMetricsWidgets.push(
+    dashboard.addWidgets(
+      // Canary availability
       new GraphWidget({
         height: 8,
         width: 6,
@@ -351,9 +378,8 @@ export class OperationAvailabilityAndLatencyDashboard
           },
         ]
       }),
-    );
-    // Canary fault count
-    alarmsAndMetricsWidgets.push(
+
+      // Canary fault count
       new GraphWidget({
         height: 8,
         width: 6,
@@ -394,10 +420,8 @@ export class OperationAvailabilityAndLatencyDashboard
           showUnits: false,
         }
       }),
-    );
 
-    // Canary request count
-    alarmsAndMetricsWidgets.push(
+      // Canary request count
       new GraphWidget({
         height: 8,
         width: 6,
@@ -435,14 +459,16 @@ export class OperationAvailabilityAndLatencyDashboard
           label: 'Count',
           showUnits: false,
         }
-      }),
+      })
     );
+
+    let latencyWidgets: IWidget[] = [];
 
     // Canary latency
     props.operation.canaryMetricDetails!.canaryLatencyMetricDetails.successMetricNames.forEach((metricName: string) => {
       props.operation.canaryMetricDetails!.canaryLatencyMetricDetails.graphedSuccessStatistics?.forEach((statistic: string) => {
 
-        alarmsAndMetricsWidgets.push(
+        latencyWidgets.push(
           new GraphWidget({
             height: 8,
             width: 6,
@@ -495,8 +521,10 @@ export class OperationAvailabilityAndLatencyDashboard
       });
     });
 
-    // Canary high-latency request count
-    alarmsAndMetricsWidgets.push(
+    dashboard.addWidgets(
+      ...latencyWidgets,
+
+      // Canary high-latency request count
       new GraphWidget({
         height: 8,
         width: 6,
@@ -534,8 +562,6 @@ export class OperationAvailabilityAndLatencyDashboard
         },
       }),
     );
-
-    return alarmsAndMetricsWidgets;
   }
 
   /**
@@ -565,17 +591,16 @@ export class OperationAvailabilityAndLatencyDashboard
         height: 2,
         width: 24,
         alarms: [
-          props.regionalImpactAlarm,
-        ...props.isolatedAZImpactAlarms
+          ...props.isolatedAZImpactAlarms
         ],
         title: "Aggregate Alarms"
       }
     ));
 
-    this.dashboard.addWidgets(...OperationAvailabilityAndLatencyDashboard.createServerSideWidgets(props));
+    OperationAvailabilityAndLatencyDashboard.createServerSideWidgets(this.dashboard, props);
 
     if (props.operation.canaryMetricDetails) {
-      this.dashboard.addWidgets(...OperationAvailabilityAndLatencyDashboard.createCanaryWidgets(props));
+      OperationAvailabilityAndLatencyDashboard.createCanaryWidgets(this.dashboard, props);
     }
   }
 }

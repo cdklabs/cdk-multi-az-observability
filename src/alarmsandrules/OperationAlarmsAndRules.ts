@@ -92,11 +92,31 @@ export class OperationAlarmsAndRules
     }
 
     // We want to know three things
-    // 1. These is impact in one AZ from either the server or canary perspective
+    // 1. There is impact in one AZ from either the server or canary perspective
     // 2. The impact in that AZ is an outlier
     // 3. The impact is coming from more than 1 instance
-
+    // 
+    // let operationAlarmsPerAZ: {[key: string]: IAlarm} = {};
+    //
+    // props.service.availabilityZones.forEach((availabilityZone: string, index: number) => {
+    //
+    //  let availabilityImpactAlarm: IAlarm = new ServerSideAvailabilityImpactAlarm();
+    //  let availabilityOutlierAlarm: IAlarm = new ServerSideAvailabilityOutlierAlarm();
+    //  let availabilityImpactAndOutlierAlarm: IAlarm = new CompositeAlarm({ alarmRule: AlarmRule.allOf(availabilityImpactAlarm, availabilityOutlierAlarm)});
+    //  
+    //  let latencyImpactAlarm: IAlarm = new ServerSideLatencyImpactAlarm();
+    //  let latencyOutlierAlarm: IAlarm = new ServerSideLatencyOutlierAlarm();
+    //  let latencyImpactAndOutlierAlarm: IAlarm = new CompositeAlarm({ alarmRule: AlarmRule.allOf(latencyImpactAlarm, latencyOutlierAlarm)});
+    //  
+    //  let zonalImpactAlarm: IAlarm = new CompositeAlarm({ alarmRule: AlarmRule.anyOf(availabilityImpactAndOutlierAlarm, latencyImpactAndOutlierAlarm)});
+    //  let moreThanOneInstanceAlarm: IAlarm = new ServerSideMoreThanOneInstanceAlarm();
+    //  
+    //  let zonalIsolatedImpactAlarm: IAlarm = new CompositeAlarm({ alarmRule: AlarmRule.allOf(zonalImpactAlarm, moreThanOneInstanceAlarm)})
+    //  operationAlarmsPerAZ[availabilityZone] = zonalIsolatedImpactAlarm;
+    //
+    // });
     
+
 
     this.serverSideRegionalAlarmsAndRules =
       new ServerSideOperationRegionalAlarmsAndRules(

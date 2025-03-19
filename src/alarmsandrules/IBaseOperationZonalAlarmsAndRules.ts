@@ -7,11 +7,6 @@ import { IAlarm } from 'aws-cdk-lib/aws-cloudwatch';
  */
 export interface IBaseOperationZonalAlarmsAndRules {
   /**
-   * Composite alarm for either availabiltiy or latency impact to this operation
-   */
-  availabilityOrLatencyAlarm: IAlarm;
-
-  /**
    * Availability alarm for this operation
    */
   availabilityAlarm: IAlarm;

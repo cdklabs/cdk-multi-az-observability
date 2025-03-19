@@ -41,16 +41,6 @@ export interface OperationAvailabilityAndLatencyDashboardProps {
   readonly zonalEndpointCanaryLatencyAlarms?: IAlarm[];
 
   /**
-   * Regional server-side availability alarm
-   */
-  readonly regionalEndpointServerAvailabilityAlarm: IAlarm;
-
-  /**
-   * Regional server-side latency alarm
-   */
-  readonly regionalEndpointServerLatencyAlarm: IAlarm;
-
-  /**
    * Regional canary availability alarm
    */
   readonly regionalEndpointCanaryAvailabilityAlarm?: IAlarm;
@@ -64,11 +54,6 @@ export interface OperationAvailabilityAndLatencyDashboardProps {
    * Per AZ alarms that indicate isolated single AZ impact
    */
   readonly isolatedAZImpactAlarms: IAlarm[];
-
-  /**
-   * Alarm that indicates regional impact
-   */
-  readonly regionalImpactAlarm: IAlarm;
 
   /**
    * Insight rule that shows instance contributors to
