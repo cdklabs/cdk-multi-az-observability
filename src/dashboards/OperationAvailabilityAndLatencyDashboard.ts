@@ -562,6 +562,46 @@ export class OperationAvailabilityAndLatencyDashboard
         },
       }),
     );
+
+    dashboard.addWidgets(
+      new TextWidget({
+        height: 2,
+        width: 24,
+        markdown: "### Alarms",
+        background: TextWidgetBackground.TRANSPARENT
+      })
+    );
+
+    dashboard.addWidgets(
+      new AlarmWidget({
+        alarm: props.regionalEndpointCanaryAvailabilityAlarm!,
+        title: "Availability"
+      }),
+      new AlarmWidget({
+        alarm: props.regionalEndpointCanaryLatencyAlarm!,
+        title: "Latency"
+      }),
+    );
+
+    let availabilityAlarmWidgets: IWidget[] = []
+
+    props.zonalEndpointCanaryAvailabilityAlarms!.forEach((alarm: IAlarm) => {
+      availabilityAlarmWidgets.push(new AlarmWidget({
+        alarm: alarm,
+        title: "Availability"
+      }));
+    });
+
+    dashboard.addWidgets(...availabilityAlarmWidgets);
+
+    let latencyAlarmWidgets: IWidget[] = [];
+
+    props.zonalEndpointCanaryLatencyAlarms!.forEach((alarm: IAlarm) => {
+      latencyAlarmWidgets.push(new AlarmWidget({
+        alarm: alarm,
+        title: "Latency"
+      }));
+    });
   }
 
   /**
