@@ -1,22 +1,18 @@
 // Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
-import { IAlarm } from 'aws-cdk-lib/aws-cloudwatch';
-import { Construct } from 'constructs';
-import { AvailabilityAndLatencyAlarmsAndRules } from './AvailabilityAndLatencyAlarmsAndRules';
-import { IBaseOperationZonalAlarmsAndRules } from './IBaseOperationZonalAlarmsAndRules';
-import { BaseOperationZonalAlarmsAndRulesProps } from './props/BaseOperationZonalAlarmsAndRulesProps';
+import { IAlarm } from "aws-cdk-lib/aws-cloudwatch";
+import { Construct } from "constructs";
+import { AvailabilityAndLatencyAlarmsAndRules } from "./AvailabilityAndLatencyAlarmsAndRules";
+import { IBaseOperationZonalAlarmsAndRules } from "./IBaseOperationZonalAlarmsAndRules";
+import { BaseOperationZonalAlarmsAndRulesProps } from "./props/BaseOperationZonalAlarmsAndRulesProps";
 
 /**
  * The base operation regional alarms and rules
  */
 export abstract class BaseOperationZonalAlarmsAndRules
   extends Construct
-  implements IBaseOperationZonalAlarmsAndRules {
-  /**
-   * Composite alarm for either availabiltiy or latency impact to this operation
-   */
-  availabilityOrLatencyAlarm: IAlarm;
-
+  implements IBaseOperationZonalAlarmsAndRules
+{
   /**
    * Availability alarm for this operation
    */
@@ -43,9 +39,12 @@ export abstract class BaseOperationZonalAlarmsAndRules
     props: BaseOperationZonalAlarmsAndRulesProps,
   ) {
     super(scope, id);
-    
-    let azLetter: string = props.availabilityZone.substring(props.availabilityZone.length - 1);
-    let availabilityZoneId: string = props.azMapper.availabilityZoneIdFromAvailabilityZoneLetter(azLetter);
+
+    let azLetter: string = props.availabilityZone.substring(
+      props.availabilityZone.length - 1,
+    );
+    let availabilityZoneId: string =
+      props.azMapper.availabilityZoneIdFromAvailabilityZoneLetter(azLetter);
 
     this.availabilityAlarm =
       AvailabilityAndLatencyAlarmsAndRules.createZonalAvailabilityAlarm(
@@ -63,16 +62,6 @@ export abstract class BaseOperationZonalAlarmsAndRules
         props.availabilityZone,
         availabilityZoneId,
         props.counter,
-        props.nameSuffix,
-      );
-    this.availabilityOrLatencyAlarm =
-      AvailabilityAndLatencyAlarmsAndRules.createZonalAvailabilityOrLatencyCompositeAlarm(
-        this,
-        props.availabilityMetricDetails.operationName,
-        availabilityZoneId,
-        props.counter,
-        this.availabilityAlarm,
-        this.latencyAlarm,
         props.nameSuffix,
       );
   }

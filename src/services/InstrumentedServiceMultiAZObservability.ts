@@ -496,14 +496,6 @@ export class InstrumentedServiceMultiAZObservability
                   this.perOperationAlarmsAndRules[x.operationName]
                     .canaryRegionalAlarmsAndRules?.latencyAlarm,
 
-                regionalEndpointServerAvailabilityAlarm:
-                  this.perOperationAlarmsAndRules[x.operationName]
-                    .serverSideRegionalAlarmsAndRules.availabilityAlarm,
-
-                regionalEndpointServerLatencyAlarm:
-                  this.perOperationAlarmsAndRules[x.operationName]
-                    .serverSideRegionalAlarmsAndRules.latencyAlarm,
-
                 zonalEndpointCanaryAvailabilityAlarms:
                   this.perOperationAlarmsAndRules[
                     x.operationName
@@ -529,10 +521,6 @@ export class InstrumentedServiceMultiAZObservability
                 isolatedAZImpactAlarms:
                   this.perOperationAlarmsAndRules[x.operationName]
                     .aggregateZonalAlarms,
-
-                regionalImpactAlarm:
-                  this.perOperationAlarmsAndRules[x.operationName]
-                    .aggregateRegionalAlarm,
 
                 instanceContributorsToFaults:
                   this.perOperationAlarmsAndRules[x.operationName]
