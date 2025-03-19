@@ -188,7 +188,7 @@ export class OperationAlarmsAndRules
     // AZ impact alarm 
     if (props.operation.canaryMetricDetails) {
       this.regionalImpactAlarm = new CompositeAlarm(this, props.operation.operationName + "-regional-impact-alarm", {
-        compositeAlarmName: `${props.operation.service.serviceName.toLowerCase()}-${props.operation.operationName}-regional-impact`,
+        compositeAlarmName: `${props.operation.service.serviceName.toLowerCase()}-${props.operation.operationName.toLowerCase()}-regional-impact`,
         alarmRule: AlarmRule.allOf(
           AlarmRule.anyOf(
             this.serverSideRegionalAlarmsAndRules.availabilityOrLatencyAlarm,
@@ -204,7 +204,7 @@ export class OperationAlarmsAndRules
     }
     else {
       this.regionalImpactAlarm = new CompositeAlarm(this, props.operation.operationName + "-regional-impact-alarm", {
-        compositeAlarmName: `${props.operation.service.serviceName.toLowerCase()}-${props.operation.operationName}-regional-impact`,
+        compositeAlarmName: `${props.operation.service.serviceName.toLowerCase()}-${props.operation.operationName.toLowerCase()}-regional-impact`,
         alarmRule: AlarmRule.allOf(
           this.serverSideRegionalAlarmsAndRules.availabilityOrLatencyAlarm,     
           AlarmRule.not(
