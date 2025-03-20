@@ -1,7 +1,7 @@
 // Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 import { Duration } from 'aws-cdk-lib';
-import { IAlarm } from 'aws-cdk-lib/aws-cloudwatch';
+import { Dashboard, IAlarm } from 'aws-cdk-lib/aws-cloudwatch';
 import { IAvailabilityZoneMapper } from '../../azmapper/IAvailabilityZoneMapper';
 import { IService } from '../../services/IService';
 
@@ -34,4 +34,9 @@ export interface ServiceAvailabilityAndLatencyDashboardProps {
    * The AZ Mapper
    */
   readonly azMapper: IAvailabilityZoneMapper;
+
+  /**
+   * The per operation dashboards
+   */
+  readonly operationsDashboard: Dashboard[];
 }

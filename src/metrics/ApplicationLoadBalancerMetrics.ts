@@ -979,7 +979,7 @@ export class ApplicationLoadBalancerMetrics {
         });
 
         latencyPerZone[availabiltityZone] = new MathExpression({
-          expression: `((${latencyKeys.join("+")}) / (${requestKeys.join("+")})) * 1000"`,
+          expression: `((${latencyKeys.join("+")}) / (${requestKeys.join("+")})) * 1000`,
           usingMetrics: usingMetrics,
           label: availabilityZoneId,
           period: period,
@@ -1013,7 +1013,7 @@ export class ApplicationLoadBalancerMetrics {
         let availabilityZoneId: string = azMapper.availabilityZoneIdFromAvailabilityZoneLetter(azLetter);
 
         zscore[availabilityZone] = new MathExpression({
-          expression: `(${azLetter} - AVG([${Object.keys(updatedMetrics).filter(x => x != azLetter).join(",")}]) / AVG(STDDEV([${Object.keys(updatedMetrics).filter(x => x != azLetter).join(",")}])))`,
+          expression: `(${azLetter} - AVG([${Object.keys(updatedMetrics).filter(x => x != azLetter).join(",")}])) / STDDEV([${Object.keys(updatedMetrics).filter(x => x != azLetter).join(",")}])`,
           usingMetrics: updatedMetrics,
           label: availabilityZoneId,
           period: period,
