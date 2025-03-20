@@ -1010,6 +1010,43 @@ export class ApplicationLoadBalancerMetrics {
       return latencyPerZone;
     }
 
+    static getWeightedLatencyZScorePerZone(
+      albs: IApplicationLoadBalancer[],
+      statistic: string,
+      period: Duration,
+      azMapper: IAvailabilityZoneMapper
+    ) : {[key: string]: IMetric} {
+
+      let weightedLatency: {[key: string]: IMetric} = this.getTotalAlbLatencyPerZone(albs, statistic, period, azMapper);
+      let zscore: {[key: string]: IMetric} = {};
+      
+      Object.keys(weightedLatency).forEach((availabilityZone: string, index: number) => {
+        let azLetter: string = availabilityZone.substring(availabilityZone.length - 1);
+        let availabilityZoneId: string = azMapper.availabilityZoneIdFromAvailabilityZoneLetter(azLetter);
+
+        let usingMetrics: {[key: string]: IMetric} = {};
+        let azMetricId: string = `${azLetter}1_zscore`;
+
+        usingMetrics[azMetricId] = weightedLatency[availabilityZone];
+
+        Object.keys(weightedLatency).forEach((az: string, metricIndex: number) => {
+          if (az != availabilityZone) {
+            usingMetrics[`others_${azLetter}${metricIndex}`] = weightedLatency[az]; 
+          }
+        });
+
+        zscore[availabilityZone] = new MathExpression({
+          expression: `(${azMetricId} - AVG(METRICS("others_${azLetter}"))) / AVG(STDDEV(METRICS("others_${azLetter}")))`,
+          usingMetrics: usingMetrics,
+          label: availabilityZoneId,
+          period: period,
+          color: MetricsHelper.colors[index]
+        });
+      });
+
+      return zscore;
+    }
+
     /**
      * Calculates the fault rate per AZ
      * @param requestsPerZone 
@@ -1442,6 +1479,8 @@ export class ApplicationLoadBalancerMetrics {
           ApplicationLoadBalancerMetrics.getTotalAlbRequestsPerZone(albs, period, azMapper);  
         let faultRatePerZone: {[key: string]: IMetric} =
           ApplicationLoadBalancerMetrics.getTotalAlbFaultRatePerZone(albs, period, azMapper);  
+        let weightedLatencyZScorePerZone: {[key: string]: IMetric} = 
+          ApplicationLoadBalancerMetrics.getWeightedLatencyZScorePerZone(albs, latencyStatistic, period, azMapper);
     
         albWidgets.push(
           new GraphWidget({
@@ -1458,21 +1497,6 @@ export class ApplicationLoadBalancerMetrics {
           })
         );
     
-        albWidgets.push(
-          new GraphWidget({
-            height: 8,
-            width: 8,
-            title: Fn.sub('${AWS::Region} Zonal Target 5xx Count'),
-            region: Aws.REGION,
-            left: Object.values(faultCountPerZone),
-            leftYAxis: {
-              min: 0,
-              label: 'Count',
-              showUnits: false,
-            }
-          })
-        );
-
         albWidgets.push(
           new GraphWidget({
             height: 8,
@@ -1571,6 +1595,28 @@ export class ApplicationLoadBalancerMetrics {
               {
                 label: "High Severity",
                 value: latencyThreshold,
+                color: Color.RED
+              }
+            ]
+          })
+        );
+
+        albWidgets.push(
+          new GraphWidget({
+            height: 8,
+            width: 8,
+            title: Fn.sub('${AWS::Region} Zonal Latency Z-Score (' + latencyStatistic + ')'),
+            region: Aws.REGION,
+            left: Object.values(weightedLatencyZScorePerZone),
+            leftYAxis: {
+              min: 0,
+              label: "Score",
+              showUnits: false,
+            },
+            leftAnnotations: [
+              {
+                label: "High Severity",
+                value: 3,
                 color: Color.RED
               }
             ]
