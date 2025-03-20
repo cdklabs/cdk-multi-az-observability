@@ -11,6 +11,7 @@ import { MetricsHelper } from "../utilities/MetricsHelper";
 import { IConstruct } from "constructs";
 import { ApplicationLoadBalancerAvailabilityOutlierAlgorithm } from "../outlier-detection/ApplicationLoadBalancerAvailabilityOutlierAlgorithm";
 import { ApplicationLoadBalancerLatencyOutlierAlgorithm } from "../outlier-detection/ApplicationLoadBalancerLatencyOutlierAlgorithm";
+import { IAvailabilityZoneMapper } from "../azmapper/IAvailabilityZoneMapper";
 
 export class ApplicationLoadBalancerMetrics {
 
@@ -543,7 +544,7 @@ export class ApplicationLoadBalancerMetrics {
       let metricsPerAZ: {[key: string]: IMetric[]} = {};
       let keyprefix: string = prefix ? prefix : MetricsHelper.nextChar();
   
-      albs.forEach((alb: IApplicationLoadBalancer) => {
+      albs.forEach((alb: IApplicationLoadBalancer, albIndex: number) => {
   
         alb.vpc!.availabilityZones.forEach((availabilityZone: string, index: number) => {
           let azLetter = availabilityZone.substring(availabilityZone.length - 1);
@@ -569,29 +570,12 @@ export class ApplicationLoadBalancerMetrics {
             },
           );
         
-          // 5xx responses from ELB
-          let elb5xx: IMetric = alb.metrics.httpCodeElb(
-            HttpCodeElb.ELB_5XX_COUNT,
-            {
-              dimensionsMap: {
-                AvailabilityZone: availabilityZone,
-                LoadBalancer: (alb as ILoadBalancerV2 as BaseLoadBalancer)
-                  .loadBalancerFullName,
-              },
-              label: availabilityZoneId,
-              period: period,
-              statistic: Stats.SUM,
-              unit: Unit.COUNT
-            },
-          );
-  
           let usingMetrics: {[key: string]: IMetric} = {};
-          usingMetrics[`${keyprefix}1`] = elb5xx;
-          usingMetrics[`${keyprefix}2`] = target5xx;
+          usingMetrics[`${azLetter}${albIndex}_faultcount`] = target5xx;
   
           // This is the total number of faults per zone for this load balancer
           metricsPerAZ[azLetter].push(new MathExpression({
-            expression: `FILL(${keyprefix}1, 0) + FILL(${keyprefix}2, 0)`,
+            expression: `FILL(${azLetter}${albIndex}_faultcount, 0)`,
             usingMetrics: usingMetrics,
             period: period,
             label: availabilityZoneId,
@@ -612,7 +596,7 @@ export class ApplicationLoadBalancerMetrics {
           let usingMetrics: {[key: string]: IMetric} = {};
           
           metricsPerAZ[azLetter].forEach((metric: IMetric, index: number) => {
-            usingMetrics[`${keyprefix}${index}`] = metric;
+            usingMetrics[`${azLetter}${index}_total_faultcount`] = metric;
           });
         
           faultsPerZone[azLetter] = new MathExpression({
@@ -1076,6 +1060,72 @@ export class ApplicationLoadBalancerMetrics {
       return faultRateMetrics;
     }
 
+    static getTotalAlb5xxCountPerZone(
+      albs: IApplicationLoadBalancer[],
+      period: Duration,
+      azMapper: IAvailabilityZoneMapper
+    ) : {[key: string]: IMetric} {
+
+      let faultsPerZone: {[key: string]: IMetric[]} = {};
+      let aggregateFaultsPerZone: {[key: string]: IMetric} = {};
+
+      albs.forEach((alb: IApplicationLoadBalancer) => {
+
+        alb.vpc?.availabilityZones.forEach((availabilityZone: string) => {
+
+          if (!(availabilityZone in faultsPerZone)) {
+            faultsPerZone[availabilityZone] = [];
+          }
+
+          let azLetter = availabilityZone.substring(availabilityZone.length - 1);
+          let availabilityZoneId = azMapper.availabilityZoneIdFromAvailabilityZoneLetter(azLetter);
+
+          let elb5xx: IMetric = alb.metrics.httpCodeElb(
+            HttpCodeElb.ELB_5XX_COUNT,
+            {
+              dimensionsMap: {
+                AvailabilityZone: availabilityZone,
+                LoadBalancer: (alb as ILoadBalancerV2 as BaseLoadBalancer)
+                  .loadBalancerFullName,
+              },
+              label: availabilityZoneId,
+              period: period,
+              statistic: Stats.SUM,
+              unit: Unit.COUNT
+            },
+          );
+
+          faultsPerZone[availabilityZone].push(elb5xx);
+        });
+      });
+
+      Object.keys(faultsPerZone).forEach((availabilityZone: string, index: number) => {
+        let azLetter = availabilityZone.substring(availabilityZone.length - 1);
+        let availabilityZoneId = azMapper.availabilityZoneIdFromAvailabilityZoneLetter(azLetter);
+
+        let usingMetrics: {[key: string]: IMetric} = {};
+
+        if (faultsPerZone[availabilityZone].length > 1) {
+
+          faultsPerZone[availabilityZone].forEach((metric: IMetric, faultIndex: number) => {
+            usingMetrics[`${azLetter}${faultIndex}`] = metric;
+          });
+
+          aggregateFaultsPerZone[availabilityZone] = new MathExpression({
+            expression: Object.keys(usingMetrics).join("+"),
+            usingMetrics: usingMetrics,
+            color: MetricsHelper.colors[index],
+            label: availabilityZoneId
+          });
+        }
+        else {
+          aggregateFaultsPerZone[availabilityZone] = faultsPerZone[availabilityZone][0];
+        }
+      });
+
+      return aggregateFaultsPerZone;
+    }
+
     /**
      * Creates a zonal processed bytes metric for the specified load balancer
      * @param loadBalancerFullName
@@ -1402,7 +1452,7 @@ export class ApplicationLoadBalancerMetrics {
             left: Object.values(successCountPerZone),
             leftYAxis: {
               min: 0,
-              label: 'Sum',
+              label: 'Count',
               showUnits: false,
             }
           })
@@ -1412,12 +1462,42 @@ export class ApplicationLoadBalancerMetrics {
           new GraphWidget({
             height: 8,
             width: 8,
-            title: Fn.sub('${AWS::Region} Zonal Fault Count'),
+            title: Fn.sub('${AWS::Region} Zonal Target 5xx Count'),
             region: Aws.REGION,
             left: Object.values(faultCountPerZone),
             leftYAxis: {
               min: 0,
-              label: 'Sum',
+              label: 'Count',
+              showUnits: false,
+            }
+          })
+        );
+
+        albWidgets.push(
+          new GraphWidget({
+            height: 8,
+            width: 8,
+            title: Fn.sub('${AWS::Region} Zonal Target 5xx Count'),
+            region: Aws.REGION,
+            left: Object.values(faultCountPerZone),
+            leftYAxis: {
+              min: 0,
+              label: 'Count',
+              showUnits: false,
+            }
+          })
+        );
+
+        albWidgets.push(
+          new GraphWidget({
+            height: 8,
+            width: 8,
+            title: Fn.sub('${AWS::Region} Zonal ELB 5xx Count'),
+            region: Aws.REGION,
+            left: Object.values(this.getTotalAlb5xxCountPerZone(albs, period, azMapper)),
+            leftYAxis: {
+              min: 0,
+              label: 'Count',
               showUnits: false,
             }
           })
@@ -1432,7 +1512,7 @@ export class ApplicationLoadBalancerMetrics {
             left: Object.values(requestsPerZone),
             leftYAxis: {
               min: 0,
-              label: 'Sum',
+              label: 'Count',
               showUnits: false,
             }
           })
