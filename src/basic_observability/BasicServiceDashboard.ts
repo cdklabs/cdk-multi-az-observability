@@ -1,100 +1,19 @@
 // Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
-import { Aws, Duration, Fn } from 'aws-cdk-lib';
+import { Aws } from 'aws-cdk-lib';
 import {
   AlarmStatusWidget,
   Dashboard,
-  GraphWidget,
-  IMetric,
-  IWidget,
   PeriodOverride,
   TextWidget,
   TextWidgetBackground,
 } from 'aws-cdk-lib/aws-cloudwatch';
 import { Construct } from 'constructs';
 import { BasicServiceDashboardProps } from './props/BasicServiceDashboardProps';
-import { AvailabilityZoneMapper } from '../azmapper/AvailabilityZoneMapper';
-import { CfnNatGateway } from 'aws-cdk-lib/aws-ec2';
-import { NatGatewayMetrics } from '../metrics/NatGatewayMetrics';
 import { ApplicationLoadBalancerMetrics } from '../metrics/ApplicationLoadBalancerMetrics';
+import { NatGatewayMetrics } from '../metrics/NatGatewayMetrics';
 
 export class BasicServiceDashboard extends Construct {
-
-  private static generateNatGatewayWidgets(
-    natgws: {[key: string]: CfnNatGateway[]},
-    azMapper: AvailabilityZoneMapper,
-    period: Duration,
-    packetDropRateThreshold: number,
-  ): IWidget[] {
-    let widgets: IWidget[] = [];
-
-    widgets.push(
-      new TextWidget({
-        markdown: 'NAT Gateway Metrics',
-        height: 2,
-        width: 24,
-      }),
-    );
-
-    let totalPacketsMetrics: {[key: string]: IMetric} = NatGatewayMetrics.getTotalPacketCountForEveryAZ(natgws, azMapper, period);
-    let packetDropMetrics: {[key: string]: IMetric} = NatGatewayMetrics.getTotalPacketDropsForEveryAZ(natgws, azMapper, period);
-    let packetDropRateMetrics: {[key: string]: IMetric} = NatGatewayMetrics.getTotalPacketDropRateForEveryAZ(natgws, azMapper, period);
-
-    widgets.push(
-      new GraphWidget({
-        height: 6,
-        width: 8,
-        title: Aws.REGION + ' NAT Gateway Total Packets',
-        region: Aws.REGION,
-        left: Object.values(totalPacketsMetrics),
-        statistic: 'Sum',
-        leftYAxis: {
-          min: 0,
-          label: 'Count',
-          showUnits: false,
-        }
-      }),
-    );
-
-    widgets.push(
-      new GraphWidget({
-        height: 6,
-        width: 8,
-        title: Aws.REGION + ' NAT Gateway Dropped Packets',
-        region: Aws.REGION,
-        left: Object.values(packetDropMetrics),
-        statistic: 'Sum',
-        leftYAxis: {
-          min: 0,
-          label: 'Count',
-          showUnits: false,
-        }
-      }),
-    );
-
-    widgets.push(
-      new GraphWidget({
-        height: 6,
-        width: 8,
-        title: Aws.REGION + ' NAT Gateway Dropped Packet Rate',
-        region: Aws.REGION,
-        left: Object.values(packetDropRateMetrics),
-        leftYAxis: {
-          min: 0,
-          label: 'Percent',
-          showUnits: false,
-        },
-        leftAnnotations: [
-          {
-            label: "High Severity",
-            value: packetDropRateThreshold
-          }
-        ]
-      }),
-    );
-
-    return widgets;
-  }
 
   dashboard: Dashboard;
 
@@ -106,9 +25,7 @@ export class BasicServiceDashboard extends Construct {
     }
 
     this.dashboard = new Dashboard(this, 'BasicServiceDashboard', {
-      dashboardName:
-        props.serviceName.toLowerCase() +
-        Fn.sub('-per-az-health-${AWS::Region}'),
+      dashboardName: `${props.serviceName.toLowerCase()}-per-az-health-${Aws.REGION})`,
       defaultInterval: props.interval,
       periodOverride: PeriodOverride.AUTO
     });
@@ -142,7 +59,7 @@ export class BasicServiceDashboard extends Construct {
 
     if (props.natgws) {
       this.dashboard.addWidgets(
-        ...BasicServiceDashboard.generateNatGatewayWidgets(
+        ...NatGatewayMetrics.generateNatGatewayWidgets(
           props.natgws.natGateways,
           props.azMapper,
           props.period,
