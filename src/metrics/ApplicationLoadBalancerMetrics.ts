@@ -1019,33 +1019,29 @@ export class ApplicationLoadBalancerMetrics {
 
       let weightedLatency: {[key: string]: IMetric} = this.getTotalAlbLatencyPerZone(albs, statistic, period, azMapper);
       let zscore: {[key: string]: IMetric} = {};
-      let keyprefix: string = MetricsHelper.nextChar();
       
       Object.keys(weightedLatency).forEach((availabilityZone: string, index: number) => {
         let azLetter: string = availabilityZone.substring(availabilityZone.length - 1);
         let availabilityZoneId: string = azMapper.availabilityZoneIdFromAvailabilityZoneLetter(azLetter);
 
         let usingMetrics: {[key: string]: IMetric} = {};
-        let azMetricId: string = `${keyprefix}1`;
+        let azMetricId: string = `${azLetter}1_zscore`;
 
         usingMetrics[azMetricId] = weightedLatency[availabilityZone];
-        keyprefix = MetricsHelper.nextChar(keyprefix);
 
-        Object.keys(weightedLatency).forEach((az: string, index: number) => {
+        Object.keys(weightedLatency).forEach((az: string, metricIndex: number) => {
           if (az != availabilityZone) {
-            usingMetrics[`${keyprefix}${index}`] = weightedLatency[az]; 
+            usingMetrics[`others_${azLetter}${metricIndex}`] = weightedLatency[az]; 
           }
         });
 
         zscore[availabilityZone] = new MathExpression({
-          expression: `(${azMetricId} - AVG(METRICS("${keyprefix}"))) / AVG(STDDEV(METRICS("${keyprefix}")))`,
+          expression: `(${azMetricId} - AVG(METRICS("others_${azLetter}"))) / AVG(STDDEV(METRICS("others_${azLetter}")))`,
           usingMetrics: usingMetrics,
           label: availabilityZoneId,
           period: period,
           color: MetricsHelper.colors[index]
         });
-
-        keyprefix = MetricsHelper.nextChar(keyprefix);   
       });
 
       return zscore;
