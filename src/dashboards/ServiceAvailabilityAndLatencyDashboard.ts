@@ -1,6 +1,6 @@
 // Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
-import { Aws, Fn } from 'aws-cdk-lib';
+import { Aws } from 'aws-cdk-lib';
 import {
   AlarmStatusWidget,
   Color,
@@ -11,6 +11,7 @@ import {
   MathExpression,
   PeriodOverride,
   TextWidget,
+  TextWidgetBackground,
 } from 'aws-cdk-lib/aws-cloudwatch';
 import {
   CfnLoadBalancer,
@@ -20,19 +21,19 @@ import { Construct } from 'constructs';
 import { IServiceAvailabilityAndLatencyDashboard } from './IServiceAvailabilityAndLatencyDashboard';
 import { ServiceAvailabilityAndLatencyDashboardProps } from './props/ServiceAvailabilityAndLatencyDashboardProps';
 import { ApplicationLoadBalancerMetrics } from '../metrics/ApplicationLoadBalancerMetrics';
-import { AvailabilityMetricProps } from '../metrics/props/AvailabilityMetricProps';
-import { LatencyMetricProps } from '../metrics/props/LatencyMetricProps';
-import { RegionalAvailabilityMetrics } from '../metrics/RegionalAvailabilityMetrics';
-import { RegionalLatencyMetrics } from '../metrics/RegionalLatencyMetrics';
-import { ZonalAvailabilityMetrics } from '../metrics/ZonalAvailabilityMetrics';
-import { ZonalLatencyMetrics } from '../metrics/ZonalLatencyMetrics';
+//import { AvailabilityMetricProps } from '../metrics/props/AvailabilityMetricProps';
+//import { LatencyMetricProps } from '../metrics/props/LatencyMetricProps';
+//import { RegionalAvailabilityMetrics } from '../metrics/RegionalAvailabilityMetrics';
+//import { RegionalLatencyMetrics } from '../metrics/RegionalLatencyMetrics';
+//import { ZonalAvailabilityMetrics } from '../metrics/ZonalAvailabilityMetrics';
+//import { ZonalLatencyMetrics } from '../metrics/ZonalLatencyMetrics';
 import { IOperation } from '../services/IOperation';
-import { IOperationMetricDetails } from '../services/IOperationMetricDetails';
+//import { IOperationMetricDetails } from '../services/IOperationMetricDetails';
 import { AvailabilityMetricType } from '../utilities/AvailabilityMetricType';
 import { LatencyMetricType } from '../utilities/LatencyMetricType';
 import { MetricsHelper } from '../utilities/MetricsHelper';
 import { AvailabilityAndLatencyMetrics } from '../metrics/AvailabilityAndLatencyMetrics';
-import { ZonalAvailabilityMetricProps } from '../metrics/props/ZonalAvailabilityMetricProps';
+//import { ZonalAvailabilityMetricProps } from '../metrics/props/ZonalAvailabilityMetricProps';
 
 /**
  * Creates a service level availability and latency dashboard
@@ -41,6 +42,7 @@ export class ServiceAvailabilityAndLatencyDashboard
   extends Construct
   implements IServiceAvailabilityAndLatencyDashboard {
  
+  /*
   private static generateTPSWidgets(
     props: ServiceAvailabilityAndLatencyDashboardProps
   ): IWidget[] {
@@ -516,6 +518,192 @@ export class ServiceAvailabilityAndLatencyDashboard
           statistic: 'TC(' + x.successAlarmThreshold + ':)',
         };
       });
+  }*/
+
+  private static createServerSideWidgets(
+    dashboard: Dashboard,
+    props: ServiceAvailabilityAndLatencyDashboardProps
+  ): void {
+  
+    let availabilityZones: string[] = props.service.availabilityZoneNames;
+    let criticalOperations: IOperation[] =  props.service.operations.filter((x) => x.critical == true);
+     
+    dashboard.addWidgets(
+      new TextWidget({
+        markdown: "## **Server-side Metrics**",
+        background: TextWidgetBackground.TRANSPARENT,
+        height: 1,
+        width: 24
+      })
+    );
+
+    let zonalAvailabilityWidgets: IWidget[] = availabilityZones.map((availabilityZone: string, index: number) => {
+      let azLetter: string = availabilityZone.substring(availabilityZone.length - 1);
+      let availabilityZoneId: string = props.azMapper.availabilityZoneIdFromAvailabilityZoneLetter(azLetter);
+
+      let criticalOperationsZonalMetrics: IMetric[] = criticalOperations.map((operation: IOperation) => {
+        return AvailabilityAndLatencyMetrics.createZonalAvailabilityMetric({
+          availabilityZoneId: availabilityZoneId,
+          availabilityZone: availabilityZone,
+          label: availabilityZoneId + " (avg: ${AVG}  min: ${MIN})",
+          metricDetails: operation.serverSideAvailabilityMetricDetails,
+          metricType: AvailabilityMetricType.SUCCESS_RATE,
+          color: MetricsHelper.colors[index]
+        },
+        operation.serverSideAvailabilityMetricDetails.metricDimensions.zonalDimensions(
+          availabilityZoneId,
+          Aws.REGION
+        ));
+      });
+
+      return new GraphWidget({
+          height: 6,
+          width: 8,
+          title: `Server-side ${availabilityZoneId} Availability`,
+          region: Aws.REGION,
+          left: criticalOperationsZonalMetrics,
+          statistic: 'Sum',
+          leftYAxis: {
+            max: 100,
+            min: 95,
+            label: 'Percent',
+            showUnits: false,
+          }
+        }
+      )
+    });
+
+    let zonalFaultCountWidgets: IWidget[] = availabilityZones.map((availabilityZone: string, index: number) => {
+      let azLetter: string = availabilityZone.substring(availabilityZone.length - 1);
+      let availabilityZoneId: string = props.azMapper.availabilityZoneIdFromAvailabilityZoneLetter(azLetter);
+
+      let criticalOperationsZonalMetrics: IMetric[] = criticalOperations.map((operation: IOperation) => {
+        return AvailabilityAndLatencyMetrics.createZonalAvailabilityMetric({
+          availabilityZoneId: availabilityZoneId,
+          availabilityZone: availabilityZone,
+          label: availabilityZoneId + " (avg: ${AVG}  min: ${MIN})",
+          metricDetails: operation.serverSideAvailabilityMetricDetails,
+          metricType: AvailabilityMetricType.FAULT_COUNT,
+          color: MetricsHelper.colors[index]
+        },
+        operation.serverSideAvailabilityMetricDetails.metricDimensions.zonalDimensions(
+          availabilityZoneId,
+          Aws.REGION
+        ));
+      });
+
+      return new GraphWidget({
+          height: 6,
+          width: 8,
+          title: `Server-side ${availabilityZoneId} Fault Count`,
+          region: Aws.REGION,
+          left: criticalOperationsZonalMetrics,
+          statistic: 'Sum',
+          leftYAxis: {
+            min: 0,
+            label: 'Count',
+            showUnits: false,
+          }
+        }
+      )
+    });
+
+    let perAZWidgetWithPerOperationHighLatencyCount: IWidget[] = availabilityZones.map((availabilityZone: string, index: number) => {
+      let azLetter: string = availabilityZone.substring(availabilityZone.length - 1);
+      let availabilityZoneId: string = props.azMapper.availabilityZoneIdFromAvailabilityZoneLetter(azLetter);
+
+      let criticalOperationsZonalMetrics: IMetric[] = criticalOperations.map((operation: IOperation) => {
+        return AvailabilityAndLatencyMetrics.createZonalLatencyCountMetric({
+          availabilityZoneId: availabilityZoneId,
+          availabilityZone: availabilityZone,
+          label: availabilityZoneId + " (avg: ${AVG}  min: ${MIN})",
+          metricDetails: operation.serverSideLatencyMetricDetails,
+          metricType: LatencyMetricType.SUCCESS_LATENCY,
+          color: MetricsHelper.colors[index],
+          statistic: "p99"
+        },
+        operation.serverSideLatencyMetricDetails.metricDimensions.zonalDimensions(
+          availabilityZoneId,
+          Aws.REGION
+        ));
+      });
+
+      return new GraphWidget({
+          height: 6,
+          width: 8,
+          title: `Server-side ${availabilityZoneId} High Latency Count`,
+          region: Aws.REGION,
+          left: criticalOperationsZonalMetrics,
+          statistic: 'Sum',
+          leftYAxis: {
+            min: 0,
+            label: 'Count',
+            showUnits: false,
+          }
+        }
+      )
+    });
+
+    dashboard.addWidgets(
+
+      // Server-side per AZ fault count
+      new GraphWidget({
+        height: 8,
+        width: 6,
+        title: 'Server-side Per-AZ Fault Count',
+        region: Aws.REGION,
+        left: availabilityZones.map((availabilityZone: string) => {
+          let azLetter: string = availabilityZone.substring(availabilityZone.length - 1);
+          let availabilityZoneId: string = props.azMapper.availabilityZoneIdFromAvailabilityZoneLetter(azLetter);
+        
+    
+          let usingMetrics: { [key: string]: IMetric } = {};
+    
+          criticalOperations.forEach((operation: IOperation) => {
+              
+            usingMetrics[`${azLetter}_${operation.operationName}`] =
+              AvailabilityAndLatencyMetrics.createZonalAvailabilityMetric({
+                availabilityZoneId: availabilityZoneId,
+                metricDetails: operation.serverSideAvailabilityMetricDetails,
+                label: availabilityZoneId,
+                metricType: AvailabilityMetricType.FAULT_COUNT,
+                availabilityZone: availabilityZone
+              },
+              operation.serverSideAvailabilityMetricDetails.metricDimensions.zonalDimensions(
+                availabilityZoneId,
+                Aws.REGION
+              ));
+          });
+    
+          return new MathExpression({
+            expression: Object.keys(usingMetrics).join('+'),
+            label: availabilityZoneId,
+            usingMetrics: usingMetrics,
+            period: props.service.period
+          });
+        }),
+        statistic: 'Sum',
+        leftYAxis: {
+          min: 0,
+          label: 'Count',
+          showUnits: false,
+        },
+        leftAnnotations: [
+          {
+            value: props.service.faultCountThreshold,
+            visible: true,
+            color: Color.RED,
+            label: 'High Severity',
+          },
+        ]
+      }),
+
+      ...zonalAvailabilityWidgets,
+      ...zonalFaultCountWidgets,
+      ...perAZWidgetWithPerOperationHighLatencyCount
+    );
+
+    
   }
 
   /**
@@ -530,121 +718,46 @@ export class ServiceAvailabilityAndLatencyDashboard
   ) {
     super(scope, id);
 
-    let topLevelAggregateAlarmWidgets: IWidget[] = [];
+    this.dashboard = new Dashboard(this, 'Dashboard', {
+      dashboardName: `${props.service.serviceName.toLowerCase()}-availability-and-latency-${Aws.REGION}`,
+      defaultInterval: props.interval,
+      periodOverride: PeriodOverride.AUTO
+    });
 
-    topLevelAggregateAlarmWidgets.push(
-      new TextWidget({
-        height: 2,
-        width: 24,
-        markdown: '***Availability and Latency Alarms***',
-      }),
-    );
-
-    topLevelAggregateAlarmWidgets.push(
+    this.dashboard.addWidgets(
       new AlarmStatusWidget({
         height: 2,
         width: 24,
-        alarms: [props.aggregateRegionalAlarm],
-        title:
-          'Customer Experience - Regional Aggregate Impact Alarm (measures fault count in aggregate across all critical operations)',
-      }),
-    );
+        alarms: [
+          props.aggregateRegionalAlarm,
+          ...props.zonalAggregateAlarms
+        ],
+        title: "Aggregate Alarms"
+      }
+    ));
 
-    let keyPrefix: string = MetricsHelper.nextChar();
-    let perOperationAZFaultsMetrics: IMetric[] = [];
+    ServiceAvailabilityAndLatencyDashboard.createServerSideWidgets(this.dashboard, props);
 
-    props.service.availabilityZoneNames.forEach((availabilityZone: string, index: number) => {
-      let azLetter: string = availabilityZone.substring(availabilityZone.length - 1);
-      let availabilityZoneId: string = props.azMapper.availabilityZoneIdFromAvailabilityZoneLetter(azLetter);
-      
-      topLevelAggregateAlarmWidgets.push(
-        new AlarmStatusWidget({
-          height: 2,
-          width: 8,
-          alarms: [props.zonalAggregateAlarms[index]],
-          title:
-            availabilityZoneId +
-            ' Zonal Isolated Impact Alarm (any critical operation in this AZ shows impact from server-side or canary)',
-        }),
-      );
-
-      let usingMetrics: { [key: string]: IMetric } = {};
-
-      props.service.operations
-        .filter((x) => x.critical == true)
-        .forEach((x: IOperation, index: number) => {
-          usingMetrics[`${keyPrefix}${index}`] =
-            AvailabilityAndLatencyMetrics.createZonalAvailabilityMetric({
-              availabilityZoneId: availabilityZoneId,
-              metricDetails: x.serverSideAvailabilityMetricDetails,
-              label:
-                availabilityZoneId + ' ' + x.operationName + ' fault count',
-              metricType: AvailabilityMetricType.FAULT_COUNT,
-              availabilityZone: availabilityZone
-            },
-            x.serverSideAvailabilityMetricDetails.metricDimensions.zonalDimensions(
-              availabilityZoneId,
-              Aws.REGION
-            ));
-        });
-
-      let zonalFaultCount: IMetric = new MathExpression({
-        expression: Object.keys(usingMetrics).join('+'),
-        label: availabilityZoneId,
-        usingMetrics: usingMetrics,
-        period: props.service.period
-      });
-
-      perOperationAZFaultsMetrics.push(zonalFaultCount);
-      keyPrefix = MetricsHelper.nextChar(keyPrefix);
-
-    });
-
-    let azContributorWidgets: IWidget[] = [
+    this.dashboard.addWidgets(
       new TextWidget({
-        height: 2,
-        width: 24,
-        markdown: '**AZ Contributors To Faults**',
-      }),
-      new GraphWidget({
+        markdown: "### Per Operation Dashboards\n" + props.operationsDashboard.map(x => `-[${x.dashboardName}](https://${Aws.REGION}.console.aws.amazon.com/cloudwatch/home?region=${Aws.REGION}#dashboards/dashboard/${x.dashboardName})`).join("\n"),
+        background: TextWidgetBackground.TRANSPARENT,
         height: 6,
-        width: 24,
-        title: 'AZ Fault Count',
-        period: props.service.period,
-        left: perOperationAZFaultsMetrics,
-      }),
-    ];
-
-    topLevelAggregateAlarmWidgets.concat(
-      ServiceAvailabilityAndLatencyDashboard.generateTPSWidgets(
-        props
-      ),
+        width: 24
+      })
     );
-
-    this.dashboard = new Dashboard(this, 'TopLevelDashboard', {
-      dashboardName:
-        props.service.serviceName.toLowerCase() +
-        Fn.sub('-availability-and-latency-${AWS::Region}'),
-      defaultInterval: props.interval,
-      periodOverride: PeriodOverride.AUTO,
-      widgets: [
-        topLevelAggregateAlarmWidgets,
-        azContributorWidgets,
-        ServiceAvailabilityAndLatencyDashboard.generateServerSideAndCanaryAvailabilityWidgets(
-          props
-        ),
-        ServiceAvailabilityAndLatencyDashboard.generateServerSideAndCanaryLatencyWidgets(
-          props
-        ),
-      ],
-    });
 
     let lb: CfnLoadBalancer = props.service.loadBalancer?.node
       .defaultChild as CfnLoadBalancer;
 
     if (lb && lb.type == 'application') {
       this.dashboard.addWidgets(
-        new TextWidget({ height: 2, width: 24, markdown: "**Load Balancer Metrics**" })
+        new TextWidget({
+          markdown: "## **Load Balancer Metrics**",
+          background: TextWidgetBackground.TRANSPARENT,
+          height: 1,
+          width: 24
+        }),
       );
 
       this.dashboard.addWidgets(

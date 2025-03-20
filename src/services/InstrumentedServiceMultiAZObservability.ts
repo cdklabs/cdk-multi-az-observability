@@ -477,21 +477,19 @@ export class InstrumentedServiceMultiAZObservability
           {},
         );
 
-        if (this.operationDashboards) {
-          this.operationDashboards.push(
-            new OperationAvailabilityAndLatencyDashboard(
-              dashboardStack,
-              x.operationName,
-              {
-                operationAlarmsAndRules: this.perOperationAlarmsAndRules[x.operationName],
-                azMapper: this.azMapper,
-                interval: props.interval
-                  ? props.interval
-                  : Duration.minutes(60),
-              },
-            ).dashboard,
-          );
-        }
+        this.operationDashboards!.push(
+          new OperationAvailabilityAndLatencyDashboard(
+            dashboardStack,
+            x.operationName,
+            {
+              operationAlarmsAndRules: this.perOperationAlarmsAndRules[x.operationName],
+              azMapper: this.azMapper,
+              interval: props.interval
+                ? props.interval
+                : Duration.minutes(60),
+            },
+          ).dashboard,
+        );
       });
 
       let dashboardStack: NestedStack = new NestedStack(
@@ -512,6 +510,7 @@ export class InstrumentedServiceMultiAZObservability
           zonalAggregateAlarms:
             this.serviceAlarms.zonalAggregateIsolatedImpactAlarms,
           azMapper: this.azMapper,
+          operationsDashboard: this.operationDashboards
         },
       ).dashboard;
     }
