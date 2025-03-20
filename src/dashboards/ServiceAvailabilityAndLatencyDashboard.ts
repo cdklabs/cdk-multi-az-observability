@@ -736,8 +736,6 @@ export class ServiceAvailabilityAndLatencyDashboard
       }
     ));
 
-    ServiceAvailabilityAndLatencyDashboard.createServerSideWidgets(this.dashboard, props);
-
     this.dashboard.addWidgets(
       new TextWidget({
         markdown: "### Per Operation Dashboards\n" + props.operationsDashboard.map(x => `-[${x.dashboardName}](https://${Aws.REGION}.console.aws.amazon.com/cloudwatch/home?region=${Aws.REGION}#dashboards/dashboard/${x.dashboardName})`).join("\n"),
@@ -746,6 +744,8 @@ export class ServiceAvailabilityAndLatencyDashboard
         width: 24
       })
     );
+
+    ServiceAvailabilityAndLatencyDashboard.createServerSideWidgets(this.dashboard, props);
 
     let lb: CfnLoadBalancer = props.service.loadBalancer?.node
       .defaultChild as CfnLoadBalancer;
