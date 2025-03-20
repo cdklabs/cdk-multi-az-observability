@@ -905,27 +905,19 @@ export class ApplicationLoadBalancerMetrics {
       azMapper: AvailabilityZoneMapper
     ) : {[key: string]: IMetric}
     {
-      let latencyPerZone: {[key: string]: IMetric} = {};
-      let keyprefix: string = MetricsHelper.nextChar();
-      let requestCountsPerAZMetricKeys: {[key: string]: string[]} = {};
-      let weightedLatencyPerAZ: {[key: string]: IMetric[]} = {};
+      let latencyPerZonePerAlb: {[key: string]: {[key: string]: IMetric}[]} = {};
   
       albs.forEach((alb: IApplicationLoadBalancer) => {
   
         alb.vpc!.availabilityZones.forEach((availabilityZone: string) => {
 
           let azLetter = availabilityZone.substring(availabilityZone.length - 1);
-
-          if (!(azLetter in weightedLatencyPerAZ)) {
-            weightedLatencyPerAZ[azLetter] = [];
-          }
-
-          if (!(azLetter in requestCountsPerAZMetricKeys)) {
-            requestCountsPerAZMetricKeys[azLetter] = [];
-          }
-   
           let availabilityZoneId = azMapper.availabilityZoneIdFromAvailabilityZoneLetter(azLetter);
-  
+
+          if (!(availabilityZone in latencyPerZonePerAlb)) {
+            latencyPerZonePerAlb[availabilityZone] = [];
+          }
+       
           let latency: IMetric = alb.metrics.targetResponseTime(
             {
               dimensionsMap: {
@@ -953,58 +945,46 @@ export class ApplicationLoadBalancerMetrics {
               unit: Unit.COUNT
             },
           );
-        
-          let usingMetrics: {[key: string]: IMetric} = {};
-          usingMetrics[`${keyprefix}1`] = latency;
-          usingMetrics[`${keyprefix}2`] = requestCount;
 
-          let weightedLatency: IMetric = new MathExpression({
-            expression: `${keyprefix}1*${keyprefix}2`,
-            usingMetrics: usingMetrics,
-            period: period,
-            label: availabilityZoneId
-          });
-
-          weightedLatencyPerAZ[azLetter].push(weightedLatency);
-          requestCountsPerAZMetricKeys[azLetter].push(`${keyprefix}2`);
-  
-          keyprefix = MetricsHelper.nextChar(keyprefix);
+          latencyPerZonePerAlb[availabilityZone].push({"latency": latency, "requests": requestCount});
         });   
       });
-  
-      // We can have multiple load balancers per zone, combine their latency per zone
-      // to get an average latency percentile latency, like average p99
-      Object.keys(weightedLatencyPerAZ).forEach((azLetter: string, index: number) => {
-        let availabilityZoneId = azMapper.availabilityZoneIdFromAvailabilityZoneLetter(azLetter);
-  
-        let usingMetrics: {[key: string]: IMetric} = {};
 
-        weightedLatencyPerAZ[azLetter].forEach((metric: IMetric, index: number) => {
-          usingMetrics[`${keyprefix}${index}`] = metric;
+      /**
+       * We want to calculate this formula
+       * 
+       * (((p99_1 * requests_1) + (p99_2 * requests_2) + (p99_3 * requests_3)) / (requests_1 + requests_2 + requests_3)) * 1000
+       * 
+       * This will provide a request weighted approximation of the p99
+       * latency per AZ
+       */  
+      let latencyPerZone: {[key: string]: IMetric} = {};
+
+      Object.keys(latencyPerZonePerAlb).forEach((availabiltityZone: string, index: number) => {
+        let requestKeys: string[] = [];
+        let latencyKeys: string[] = [];
+        let usingMetrics: {[key: string]: IMetric} = {};
+        
+        let azLetter: string = availabiltityZone.substring(availabiltityZone.length - 1);
+        let availabilityZoneId: string = azMapper.availabilityZoneIdFromAvailabilityZoneLetter(azLetter);
+        
+        latencyPerZonePerAlb[availabiltityZone].forEach((metric: {[key: string]: IMetric}, index: number) => {
+
+          usingMetrics[`${azLetter}${index}_requests`] =  metric["requests"];
+          usingMetrics[`${azLetter}${index}_latency`] = metric["latency"];
+
+          requestKeys.push(`${azLetter}${index}_requests`);
+          latencyKeys.push(`(${azLetter}${index}_latency * ${azLetter}${index}_requests)`);
+
         });
 
-        let numerator = "(" + Object.keys(usingMetrics).join("+") + ")";
-        let denominator: string = "(" + requestCountsPerAZMetricKeys[azLetter].join("+") + ")";
-
-        keyprefix = MetricsHelper.nextChar(keyprefix);
-        
-        /**
-         * We want to calculate this formula
-         * 
-         * (p99_1 * requests_1 + p99_2 * requests_2 + p99_3 * requests_3) / (requests_1 + requests_2 + requests_3)
-         * 
-         * This will provide a request weighted approximation of the p99
-         * latency per AZ
-         */ 
-        latencyPerZone[azLetter] = new MathExpression({
-          expression: "(" + numerator + "/" + denominator + ") * 1000",
+        latencyPerZone[availabiltityZone] = new MathExpression({
+          expression: `((${latencyKeys.join("+")}) / (${requestKeys.join("+")})) * 1000"`,
           usingMetrics: usingMetrics,
           label: availabilityZoneId,
           period: period,
           color: MetricsHelper.colors[index]
         });
-
-        keyprefix = MetricsHelper.nextChar(keyprefix);
       });
   
       return latencyPerZone;
@@ -1019,25 +999,22 @@ export class ApplicationLoadBalancerMetrics {
 
       let weightedLatency: {[key: string]: IMetric} = this.getTotalAlbLatencyPerZone(albs, statistic, period, azMapper);
       let zscore: {[key: string]: IMetric} = {};
-      
+
+      // Rename the metric keys to the AZ letter to use in the metrics equations
+      let updatedMetrics: {[key: string]: IMetric} = {};
+
+      Object.keys(weightedLatency).forEach((availabilityZone: string) => {
+        let azLetter: string = availabilityZone.substring(availabilityZone.length - 1);
+        updatedMetrics[azLetter] = weightedLatency[availabilityZone];
+      })
+
       Object.keys(weightedLatency).forEach((availabilityZone: string, index: number) => {
         let azLetter: string = availabilityZone.substring(availabilityZone.length - 1);
         let availabilityZoneId: string = azMapper.availabilityZoneIdFromAvailabilityZoneLetter(azLetter);
 
-        let usingMetrics: {[key: string]: IMetric} = {};
-        let azMetricId: string = `${azLetter}1_zscore`;
-
-        usingMetrics[azMetricId] = weightedLatency[availabilityZone];
-
-        Object.keys(weightedLatency).forEach((az: string, metricIndex: number) => {
-          if (az != availabilityZone) {
-            usingMetrics[`others_${azLetter}${metricIndex}`] = weightedLatency[az]; 
-          }
-        });
-
         zscore[availabilityZone] = new MathExpression({
-          expression: `(${azMetricId} - AVG(METRICS("others_${azLetter}"))) / AVG(STDDEV(METRICS("others_${azLetter}")))`,
-          usingMetrics: usingMetrics,
+          expression: `(${azLetter} - AVG([${Object.keys(updatedMetrics).filter(x => x != azLetter).join(",")}]) / AVG(STDDEV([${Object.keys(updatedMetrics).filter(x => x != azLetter).join(",")}])))`,
+          usingMetrics: updatedMetrics,
           label: availabilityZoneId,
           period: period,
           color: MetricsHelper.colors[index]
@@ -1353,7 +1330,6 @@ export class ApplicationLoadBalancerMetrics {
       scope: IConstruct,
       alb: IApplicationLoadBalancer, 
       algorithm: ApplicationLoadBalancerLatencyOutlierAlgorithm,
-      availabilityZoneId: string,
       availabilityZone: string,
       statistic: string,
       latencyThresold: number,
@@ -1361,50 +1337,27 @@ export class ApplicationLoadBalancerMetrics {
       period: Duration,
       evaluationPeriods: number,
       datapointsToAlarm: number,
-      keyprefix: string
+      azMapper: IAvailabilityZoneMapper
     ) : IAlarm {
   
-      let usingMetrics: { [key: string]: IMetric } = {};
-      let azMetricId: string = "";
-  
+      let azLetter: string = availabilityZone.substring(availabilityZone.length - 1);
+      let availabilityZoneId: string = azMapper.availabilityZoneIdFromAvailabilityZoneLetter(azLetter);
+
       switch (algorithm)
       {
         case ApplicationLoadBalancerLatencyOutlierAlgorithm.Z_SCORE:
         default:
-  
-          alb.vpc!.availabilityZones.forEach((az: string, index: number) => {
-  
-            // Target response time
-            let targetResponseTime: IMetric = ApplicationLoadBalancerMetrics.getPerAZLatencyMetric({
-              alb: alb,
-              availabilityZone: az,
-              label: az + "-target-response-time",
-              statistic: statistic,
-              period: period
-            });
-  
-            if (az == availabilityZone) {       
-              azMetricId = `a${index}`
-              usingMetrics[`a${index}`] = targetResponseTime;
-            }
-            else {
-              usingMetrics[`b${index}`] = targetResponseTime;
-            }
-          });
-  
+
+          let weightedLatencyZScorePerZone: {[key: string]: IMetric} = ApplicationLoadBalancerMetrics.getWeightedLatencyZScorePerZone( [ alb ], statistic, period, azMapper);
+          
           return new Alarm(
             scope,
-            keyprefix + "-latency-outlier-alarm",
+            azLetter + "-latency-outlier-alarm",
             {
               alarmName:
                 availabilityZoneId + '-' + alb.loadBalancerArn + '-latency-impact-outlier',
               actionsEnabled: false,
-              metric: new MathExpression({
-                expression: `(${azMetricId!} - AVG(METRICS("b"))) / AVG(STDDEV(METRICS("b")))`,
-                usingMetrics: usingMetrics,
-                label: availabilityZoneId + '-' + alb.loadBalancerArn + '-latency-z-score',
-                period: period,
-              }),
+              metric: weightedLatencyZScorePerZone[availabilityZone],
               evaluationPeriods: evaluationPeriods,
               datapointsToAlarm: datapointsToAlarm,
               threshold: outlierThreshold,
@@ -1414,37 +1367,35 @@ export class ApplicationLoadBalancerMetrics {
           );
         case ApplicationLoadBalancerLatencyOutlierAlgorithm.STATIC:
           
-          alb.vpc!.availabilityZones.forEach((az: string, index: number) => {
+          let usingMetrics: {[key: string]: IMetric} = {};
+
+          alb.vpc!.availabilityZones.forEach((az: string) => {
+            let azLetter: string = az.substring(az.length - 1);
+            let azId: string = azMapper.availabilityZoneIdFromAvailabilityZoneLetter(azLetter);
+
             // Target response time
             let targetResponseTime: IMetric = ApplicationLoadBalancerMetrics.getPerAZLatencyMetric({
               alb: alb,
               availabilityZone: az,
-              label: az + "-target-response-time",
+              label: azId,
               statistic: `TC(${latencyThresold}:)`,
               period: period
             });
-  
-            if (az == availabilityZone) {       
-              azMetricId = `a${index}`
-              usingMetrics[`a${index}`] = targetResponseTime;
-            }
-            else {
-              usingMetrics[`b${index}`] = targetResponseTime;
-            }
-  
+
+            usingMetrics[`${azLetter}`] = targetResponseTime;
           });
-  
+
           return new Alarm(
             scope,
-            keyprefix + "-latency-outlier-alarm",
+            azLetter + "-latency-outlier-alarm",
             {
               alarmName:
                 availabilityZoneId + '-' + alb.loadBalancerArn + '-latency-impact-outlier',
               actionsEnabled: false,
               metric: new MathExpression({
-                expression: `(${azMetricId}/(${Object.keys(usingMetrics).join("+")})) * 100`,
+                expression: `(${azLetter}/(${Object.keys(usingMetrics).join("+")})) * 100`,
                 usingMetrics: usingMetrics,
-                label: availabilityZoneId + '-' + alb.loadBalancerArn + '-latency-static',
+                label: availabilityZoneId,
                 period: period,
               }),
               evaluationPeriods: evaluationPeriods,

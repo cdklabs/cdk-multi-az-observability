@@ -1,7 +1,7 @@
 import { CfnNatGateway } from "aws-cdk-lib/aws-ec2";
 import { MetricsHelper } from "../utilities/MetricsHelper";
-import { Alarm, ComparisonOperator, IAlarm, IMetric, MathExpression, Metric, Stats, TreatMissingData, Unit } from "aws-cdk-lib/aws-cloudwatch";
-import { Duration } from "aws-cdk-lib";
+import { Alarm, ComparisonOperator, GraphWidget, IAlarm, IMetric, IWidget, MathExpression, Metric, Stats, TextWidget, TreatMissingData, Unit } from "aws-cdk-lib/aws-cloudwatch";
+import { Aws, Duration } from "aws-cdk-lib";
 import { IConstruct } from "constructs";
 import { IAvailabilityZoneMapper } from "../azmapper/IAvailabilityZoneMapper";
 import { PacketLossOutlierAlgorithm } from "../outlier-detection/PacketLossOutlierAlgorithm";
@@ -403,5 +403,81 @@ export class NatGatewayMetrics {
         });
 
         return usingMetrics;
+    }
+
+    static generateNatGatewayWidgets(
+      natgws: {[key: string]: CfnNatGateway[]},
+      azMapper: IAvailabilityZoneMapper,
+      period: Duration,
+      packetDropRateThreshold: number,
+    ): IWidget[] {
+      let widgets: IWidget[] = [];
+  
+      widgets.push(
+        new TextWidget({
+          markdown: 'NAT Gateway Metrics',
+          height: 2,
+          width: 24,
+        }),
+      );
+  
+      let totalPacketsMetrics: {[key: string]: IMetric} = NatGatewayMetrics.getTotalPacketCountForEveryAZ(natgws, azMapper, period);
+      let packetDropMetrics: {[key: string]: IMetric} = NatGatewayMetrics.getTotalPacketDropsForEveryAZ(natgws, azMapper, period);
+      let packetDropRateMetrics: {[key: string]: IMetric} = NatGatewayMetrics.getTotalPacketDropRateForEveryAZ(natgws, azMapper, period);
+  
+      widgets.push(
+        new GraphWidget({
+          height: 6,
+          width: 8,
+          title: Aws.REGION + ' NAT Gateway Total Packets',
+          region: Aws.REGION,
+          left: Object.values(totalPacketsMetrics),
+          statistic: 'Sum',
+          leftYAxis: {
+            min: 0,
+            label: 'Count',
+            showUnits: false,
+          }
+        }),
+      );
+  
+      widgets.push(
+        new GraphWidget({
+          height: 6,
+          width: 8,
+          title: Aws.REGION + ' NAT Gateway Dropped Packets',
+          region: Aws.REGION,
+          left: Object.values(packetDropMetrics),
+          statistic: 'Sum',
+          leftYAxis: {
+            min: 0,
+            label: 'Count',
+            showUnits: false,
+          }
+        }),
+      );
+  
+      widgets.push(
+        new GraphWidget({
+          height: 6,
+          width: 8,
+          title: Aws.REGION + ' NAT Gateway Dropped Packet Rate',
+          region: Aws.REGION,
+          left: Object.values(packetDropRateMetrics),
+          leftYAxis: {
+            min: 0,
+            label: 'Percent',
+            showUnits: false,
+          },
+          leftAnnotations: [
+            {
+              label: "High Severity",
+              value: packetDropRateThreshold
+            }
+          ]
+        }),
+      );
+  
+      return widgets;
     }
 }

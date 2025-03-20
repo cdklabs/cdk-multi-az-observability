@@ -283,7 +283,6 @@ export class BasicServiceMultiAZObservability
           this,
           alb,
           latencyOutlierDetectionAlgorithm,
-          availabilityZoneId,
           az,
           props.applicationLoadBalancerProps!.latencyStatistic,
           (props.applicationLoadBalancerProps!.latencyThreshold / 1000), // threshold is provided in milliseconds, but latency is provided in seconds
@@ -291,7 +290,7 @@ export class BasicServiceMultiAZObservability
           period,
           props.evaluationPeriods,
           props.datapointsToAlarm,
-          azLetter
+          this._azMapper
         );
 
         // Alarm if the AZ shows impact and is an outlier
