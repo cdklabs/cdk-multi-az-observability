@@ -1,7 +1,7 @@
 // Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 import * as path from 'path';
-import { Aws, Duration, Fn, RemovalPolicy, Tags } from 'aws-cdk-lib';
+import { Aws, Duration, RemovalPolicy, Tags } from 'aws-cdk-lib';
 import { ISecurityGroup, SecurityGroup } from 'aws-cdk-lib/aws-ec2';
 import {
   Effect,
@@ -159,7 +159,7 @@ export class OutlierDetectionFunction
       principal: new ServicePrincipal(
         'lambda.datasource.cloudwatch.amazonaws.com',
       ),
-      sourceAccount: Fn.ref('AWS::AccountId'),
+      sourceAccount: Aws.ACCOUNT_ID
     });
 
     this.logGroup = new LogGroup(this, 'logGroup', {

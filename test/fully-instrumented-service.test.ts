@@ -1,7 +1,7 @@
 // Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 import * as cdk from 'aws-cdk-lib';
-import { Duration } from 'aws-cdk-lib';
+import { Aws, Duration } from 'aws-cdk-lib';
 import { Template } from 'aws-cdk-lib/assertions';
 import { Unit } from 'aws-cdk-lib/aws-cloudwatch';
 import { SelectedSubnets, SubnetType, Vpc } from 'aws-cdk-lib/aws-ec2';
@@ -26,9 +26,9 @@ test('Fully instrumented service', () => {
   const stack = new cdk.Stack(app, 'TestStack');
 
   let azs: string[] = [
-    cdk.Fn.ref('AWS::Region') + 'a',
-    cdk.Fn.ref('AWS::Region') + 'b',
-    cdk.Fn.ref('AWS::Region') + 'c',
+    Aws.REGION + 'a',
+    Aws.REGION + 'b',
+    Aws.REGION + 'c',
   ];
 
   let vpc = new Vpc(stack, 'vpc', {
@@ -241,9 +241,9 @@ test('Fully instrumented service with NLB', () => {
   const stack = new cdk.Stack(app, 'TestStack');
 
   let azs: string[] = [
-    cdk.Fn.ref('AWS::Region') + 'a',
-    cdk.Fn.ref('AWS::Region') + 'b',
-    cdk.Fn.ref('AWS::Region') + 'c',
+    Aws.REGION + 'a',
+    Aws.REGION + 'b',
+    Aws.REGION + 'c',
   ];
 
   let vpc = new Vpc(stack, 'vpc', {
@@ -371,9 +371,9 @@ test('Fully instrumented service with chi-squared', () => {
   const stack = new cdk.Stack(app, 'TestStack');
 
   let azs: string[] = [
-    cdk.Fn.ref('AWS::Region') + 'a',
-    cdk.Fn.ref('AWS::Region') + 'b',
-    cdk.Fn.ref('AWS::Region') + 'c',
+    Aws.REGION + 'a',
+    Aws.REGION + 'b',
+    Aws.REGION + 'c',
   ];
 
   let vpc = new Vpc(stack, 'vpc', {
@@ -507,9 +507,9 @@ test('Fully instrumented service adding canaries', () => {
   const stack = new cdk.Stack(app, 'TestStack');
 
   let azs: string[] = [
-    cdk.Fn.ref('AWS::Region') + 'a',
-    cdk.Fn.ref('AWS::Region') + 'b',
-    cdk.Fn.ref('AWS::Region') + 'c',
+    Aws.REGION + 'a',
+    Aws.REGION + 'b',
+    Aws.REGION + 'c',
   ];
 
   let vpc = new Vpc(stack, 'vpc', {
@@ -685,9 +685,9 @@ test('Fully instrumented service adding canaries with dynamic source', () => {
   });
 
   let azs: string[] = [
-    cdk.Fn.ref('AWS::Region') + 'a',
-    cdk.Fn.ref('AWS::Region') + 'b',
-    cdk.Fn.ref('AWS::Region') + 'c',
+    Aws.REGION + 'a',
+    Aws.REGION + 'b',
+    Aws.REGION + 'c',
   ];
 
   let vpc = new Vpc(stack, 'vpc', {

@@ -56,11 +56,11 @@ export class ServiceAvailabilityAndLatencyDashboard
       new GraphWidget({
         height: 6,
         width: 24,
-        title: Fn.ref('AWS::Region') + ' TPS',
-        region: Fn.ref('AWS::Region'),
+        title:Aws.REGION + ' TPS',
+        region:Aws.REGION,
         left: RegionalAvailabilityMetrics.createRegionalServiceAvailabilityMetrics(
           {
-            label: Fn.ref('AWS::Region') + ' tps',
+            label:Aws.REGION + ' tps',
             period: props.service.period,
             availabilityMetricProps: props.service.operations
               .filter((x) => x.critical)
@@ -90,7 +90,7 @@ export class ServiceAvailabilityAndLatencyDashboard
           height: 6,
           width: 8,
           title: availabilityZoneId + ' TPS',
-          region: Fn.ref('AWS::Region'),
+          region:Aws.REGION,
           left: ZonalAvailabilityMetrics.createZonalServiceAvailabilityMetrics(
             props.service.operations
             .filter((x) => x.critical)
@@ -220,11 +220,11 @@ export class ServiceAvailabilityAndLatencyDashboard
       new GraphWidget({
         height: 6,
         width: 24,
-        title: Fn.ref('AWS::Region') + ' Availability',
-        region: Fn.ref('AWS::Region'),
+        title:Aws.REGION + ' Availability',
+        region:Aws.REGION,
         left: RegionalAvailabilityMetrics.createRegionalServiceAvailabilityMetrics(
           {
-            label: Fn.ref('AWS::Region') + ' availability',
+            label:Aws.REGION + ' availability',
             period: props.service.period,
             availabilityMetricProps: this.createRegionalAvailabilityMetricProps(
               props.service.operations.filter((x) => x.critical),
@@ -242,7 +242,7 @@ export class ServiceAvailabilityAndLatencyDashboard
         },
         right:
           RegionalAvailabilityMetrics.createRegionalServiceAvailabilityMetrics({
-            label: Fn.ref('AWS::Region') + ' faults',
+            label:Aws.REGION + ' faults',
             period: props.service.period,
             availabilityMetricProps: this.createRegionalAvailabilityMetricProps(
               props.service.operations.filter((x) => x.critical),
@@ -275,7 +275,7 @@ export class ServiceAvailabilityAndLatencyDashboard
           height: 6,
           width: 8,
           title: availabilityZoneId + ' Availability',
-          region: Fn.ref('AWS::Region'),
+          region:Aws.REGION,
           left: ZonalAvailabilityMetrics.createZonalServiceAvailabilityMetrics(
             this.createZonalAvailabilityMetricProps(
               props.service.operations.filter((x) => x.critical),
@@ -335,10 +335,10 @@ export class ServiceAvailabilityAndLatencyDashboard
       new GraphWidget({
         height: 6,
         width: 24,
-        title: Fn.ref('AWS::Region') + ' High Latency Count',
-        region: Fn.ref('AWS::Region'),
+        title:Aws.REGION + ' High Latency Count',
+        region:Aws.REGION,
         left: RegionalLatencyMetrics.createRegionalServiceLatencyCountMetrics({
-          label: Fn.ref('AWS::Region'),
+          label:Aws.REGION,
           period: props.service.period,
           latencyMetricProps: this.createRegionalLatencyMetricProps(
             props.service.operations.filter((x) => x.critical),
@@ -372,7 +372,7 @@ export class ServiceAvailabilityAndLatencyDashboard
           height: 6,
           width: 8,
           title: availabilityZoneId + ' High Latency Count',
-          region: Fn.ref('AWS::Region'),
+          region:Aws.REGION,
           left: ZonalLatencyMetrics.createZonalServiceLatencyMetrics({
             label: availabilityZoneId,
             period: props.service.period,
@@ -1010,7 +1010,7 @@ export class ServiceAvailabilityAndLatencyDashboard
         alarms: [
           props.serviceAlarmsAndRules.regionalCanaryAlarm
         ],
-        title: "Regional Impact (there is regionally scoped impact to any critical operation, measured from the canary)"
+        title: "Canary Regional Impact (there is regionally scoped impact to any critical operation, measured from the canary)"
       })] : []
     );
 
@@ -1032,7 +1032,7 @@ export class ServiceAvailabilityAndLatencyDashboard
         alarms: [
           ...Object.values(props.serviceAlarmsAndRules.zonalServerSideIsolatedImpactAlarms)
         ],
-        title: "Zonal Aggregate Alarms (alarms trigger if any critical operation in the AZ sees availability or latency impact as measured from the server-side, these are useful for deployment monitoring, in case the canary sees errors when an AZ is intentionally unavailable)"
+        title: "Server-side Zonal Alarms (alarms trigger if any critical operation in the AZ sees availability or latency impact as measured from the server-side, these are useful for deployment monitoring, in case the canary sees errors when an AZ is intentionally unavailable)"
       }
     ));
 

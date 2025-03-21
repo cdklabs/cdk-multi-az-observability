@@ -1517,7 +1517,7 @@ standard for Z_SCORE.
 Standard defaults based on the outlier detection algorithm:
 STATIC: 0.7
 CHI_SQUARED: 0.05
-Z_SCORE: 2
+Z_SCORE: 3
 IQR: 1.5
 MAD: 3
 

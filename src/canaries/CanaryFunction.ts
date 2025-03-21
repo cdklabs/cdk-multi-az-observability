@@ -1,7 +1,7 @@
 // Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 import * as path from 'path';
-import { Duration, Fn, RemovalPolicy } from 'aws-cdk-lib';
+import { Aws, Duration, RemovalPolicy } from 'aws-cdk-lib';
 import { ISecurityGroup, SecurityGroup } from 'aws-cdk-lib/aws-ec2';
 import {
   Effect,
@@ -125,8 +125,8 @@ export class CanaryFunction extends Construct implements ICanaryFunction {
         memorySize: 512,
         layers: [monitoringLayer],
         environment: {
-          REGION: Fn.ref('AWS::Region'),
-          PARTITION: Fn.ref('AWS::Partition'),
+          REGION:Aws.REGION,
+          PARTITION: Aws.PARTITION,
           TIMEOUT:
             props.httpTimeout !== undefined
               ? props.httpTimeout.toSeconds().toString()
@@ -153,8 +153,8 @@ export class CanaryFunction extends Construct implements ICanaryFunction {
         memorySize: 512,
         layers: [monitoringLayer],
         environment: {
-          REGION: Fn.ref('AWS::Region'),
-          PARTITION: Fn.ref('AWS::Partition'),
+          REGION: Aws.REGION,
+          PARTITION: Aws.PARTITION,
           TIMEOUT:
             props.httpTimeout !== undefined
               ? props.httpTimeout.toSeconds().toString()
@@ -171,9 +171,7 @@ export class CanaryFunction extends Construct implements ICanaryFunction {
     this.function.addPermission('invokePermission', {
       action: 'lambda:InvokeFunction',
       principal: new ServicePrincipal('events.amazonaws.com'),
-      sourceArn: Fn.sub(
-        'arn:${AWS::Partition}:events:${AWS::Region}:${AWS::AccountId}:rule/*',
-      ),
+      sourceArn: `arn:${Aws.PARTITION}:events:${Aws.REGION}:${Aws.ACCOUNT_ID}:rule/*`
     });
 
     this.logGroup = new LogGroup(this, 'logGroup', {
