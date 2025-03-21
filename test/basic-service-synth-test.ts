@@ -9,6 +9,7 @@ import {
 } from 'aws-cdk-lib/aws-ec2';
 import { ApplicationLoadBalancer } from 'aws-cdk-lib/aws-elasticloadbalancingv2';
 import { BasicServiceMultiAZObservability } from '../src/basic_observability/BasicServiceMultiAZObservability';
+import { Aws } from 'aws-cdk-lib';
 
 const app = new cdk.App();
 const stack = new cdk.Stack(app, 'TestStack', {
@@ -16,9 +17,9 @@ const stack = new cdk.Stack(app, 'TestStack', {
 });
 
 let azs: string[] = [
-  cdk.Fn.ref('AWS::Region') + 'a',
-  cdk.Fn.ref('AWS::Region') + 'b',
-  cdk.Fn.ref('AWS::Region') + 'c',
+  Aws.REGION + 'a',
+  Aws.REGION + 'b',
+  Aws.REGION + 'c',
 ];
 
 let vpc = new Vpc(stack, 'vpc', {

@@ -1,6 +1,6 @@
 // Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
-import { Aws, Duration, Fn } from 'aws-cdk-lib';
+import { Aws, Duration } from 'aws-cdk-lib';
 import {
   IAlarm,
   Alarm,
@@ -337,7 +337,7 @@ export class AvailabilityAndLatencyAlarmsAndRules {
       metricDimensions[azId] = [
         metricDetails.metricDimensions.zonalDimensions(
           azId,
-          Fn.ref('AWS::Region'),
+         Aws.REGION,
         ),
       ];
     });
@@ -547,7 +547,7 @@ export class AvailabilityAndLatencyAlarmsAndRules {
       metricDimensions[azId] = [
         metricDetails.metricDimensions.zonalDimensions(
           azId,
-          Fn.ref('AWS::Region'),
+         Aws.REGION,
         ),
       ];
     });
@@ -625,7 +625,7 @@ export class AvailabilityAndLatencyAlarmsAndRules {
     let regionalLatency: IMetric =
       RegionalLatencyMetrics.createRegionalLatencyCountMetric({
         label:
-          Fn.ref('AWS::Region') +
+         Aws.REGION +
           '-' +
           metricDetails.operationName +
           '-high-latency-requests',
@@ -1167,7 +1167,7 @@ export class AvailabilityAndLatencyAlarmsAndRules {
       metricDetails.operationName + 'RegionalAvailabilityAlarm',
       {
         alarmName:
-          Fn.ref('AWS::Region') +
+         Aws.REGION +
           '-' +
           metricDetails.operationName.toLowerCase() +
           '-success-rate' +
@@ -1248,7 +1248,7 @@ export class AvailabilityAndLatencyAlarmsAndRules {
       operationName + 'RegionalCustomerExperienceAlarm',
       {
         compositeAlarmName:
-          Fn.ref('AWS::Region') +
+         Aws.REGION +
           '-' +
           operationName.toLowerCase() +
           '-customer-experience-imact' +
@@ -1286,7 +1286,7 @@ export class AvailabilityAndLatencyAlarmsAndRules {
 
     return new CfnInsightRule(scope, 'RegionPerInstanceHighLatencyRule', {
       ruleName:
-        Fn.ref('AWS::Region') +
+       Aws.REGION +
         `-${metricDetails.operationName.toLowerCase()}-per-instance-high-latency-server`,
       ruleState: 'ENABLED',
       ruleBody: ruleBody.toJson(),
@@ -1318,7 +1318,7 @@ export class AvailabilityAndLatencyAlarmsAndRules {
 
     return new CfnInsightRule(scope, 'RegionPerInstanceErrorRule', {
       ruleName:
-        Fn.ref('AWS::Region') +
+       Aws.REGION +
         `-${metricDetails.operationName.toLowerCase()}-per-instance-faults-server`,
       ruleState: 'ENABLED',
       ruleBody: ruleBody.toJson(),

@@ -1,10 +1,10 @@
 // Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
-import { Fn } from 'aws-cdk-lib';
 import { IRule, Rule, RuleTargetInput, Schedule } from 'aws-cdk-lib/aws-events';
 import { LambdaFunction } from 'aws-cdk-lib/aws-events-targets';
 import { Construct } from 'constructs';
 import { CanaryTestProps } from './props/CanaryTestProps';
+import { Aws } from 'aws-cdk-lib';
 
 export class CanaryTest extends Construct {
   timedEventRules: { [key: string]: IRule };
@@ -86,14 +86,14 @@ export class CanaryTest extends Construct {
         postData: props.postData === undefined ? '' : props.postData,
         headers: props.headers === undefined ? {} : props.headers,
         operation: props.operation.operationName,
-        faultBoundaryId: Fn.ref('AWS::Region'),
+        faultBoundaryId:Aws.REGION,
         faultBoundary: 'region',
         metricNamespace: this.metricNamespace,
         requestCount: props.regionalRequestCount,
       },
     };
 
-    this.timedEventRules[Fn.ref('AWS::Region')] = new Rule(
+    this.timedEventRules[Aws.REGION] = new Rule(
       this,
       'RegionalTimedEvent',
       {

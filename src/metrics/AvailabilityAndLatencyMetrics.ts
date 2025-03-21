@@ -224,6 +224,7 @@ export class AvailabilityAndLatencyMetrics {
           statistic: props.statistic,
           dimensionsMap: dimensions,
           label: props.label,
+          color: props.color
         }),
     );
   }

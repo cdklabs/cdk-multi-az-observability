@@ -12,7 +12,7 @@ import { ServiceMetricDetails } from '../src/services/ServiceMetricDetails';
 import { InstrumentedServiceMultiAZObservability } from '../src/services/InstrumentedServiceMultiAZObservability';
 import { OutlierDetectionAlgorithm } from '../src/utilities/OutlierDetectionAlgorithm';
 import { Template } from 'aws-cdk-lib/assertions';
-import { Aspects, Duration } from 'aws-cdk-lib';
+import { Aspects, Aws, Duration } from 'aws-cdk-lib';
 import { MetricDimensions } from '../src/services/props/MetricDimensions';
 import { OperationMetricDetails } from '../src/services/OperationMetricDetails';
 import { Operation } from '../src/services/Operation';
@@ -23,9 +23,9 @@ test('Fully instrumented service', () => {
     const stack = new cdk.Stack(app, 'TestStack');
   
     let azs: string[] = [
-      cdk.Fn.ref('AWS::Region') + 'a',
-      cdk.Fn.ref('AWS::Region') + 'b',
-      cdk.Fn.ref('AWS::Region') + 'c',
+      Aws.REGION + 'a',
+      Aws.REGION + 'b',
+      Aws.REGION + 'c',
     ];
   
     let vpc = new Vpc(stack, 'vpc', {

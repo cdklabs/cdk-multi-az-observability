@@ -1,9 +1,9 @@
-import { Alarm, Color, ComparisonOperator, GraphWidget, IAlarm, IMetric, IWidget, MathExpression, Stats, TreatMissingData, Unit } from "aws-cdk-lib/aws-cloudwatch";
+import { Alarm, Color, ComparisonOperator, GraphWidget, IAlarm, IMetric, IWidget, MathExpression, Metric, Stats, TreatMissingData, Unit } from "aws-cdk-lib/aws-cloudwatch";
 import { BaseLoadBalancer, HttpCodeElb, HttpCodeTarget, IApplicationLoadBalancer, ILoadBalancerV2 } from "aws-cdk-lib/aws-elasticloadbalancingv2";
 import { AvailabilityMetricType } from "../utilities/AvailabilityMetricType";
 import { ZonalApplicationLoadBalancerLatencyMetricProps } from "../basic_observability/props/ZonalApplicationLoadBalancerLatencyMetricProps";
 import { ZonalApplicationLoadBalancerAvailabilityMetricProps } from "../basic_observability/props/ZonalApplicationLoadBalancerAvailabilityMetricProps";
-import { Aws, Duration, Fn } from "aws-cdk-lib";
+import { Aws, Duration } from "aws-cdk-lib";
 import { RegionalApplicationLoadBalancerAvailabilityMetricProps } from "../basic_observability/props/RegionalApplicationLoadBalancerAvailabilityMetricProps";
 import { RegionalApplicationLoadBalancerLatencyMetricProps } from "../basic_observability/props/RegionalApplicationLoadBalancerLatencyMetricProps";
 import { AvailabilityZoneMapper } from "../azmapper/AvailabilityZoneMapper";
@@ -889,6 +889,146 @@ export class ApplicationLoadBalancerMetrics {
       return processedBytesPerZone;
     }
 
+    static getTotalAnomalousHostCountPerZone(
+      albs: IApplicationLoadBalancer[],
+      period: Duration,
+      azMapper: AvailabilityZoneMapper
+    ) : {[key: string]: IMetric}
+    {
+      let anomalousHostsPerZone: {[key: string]: IMetric} = {};
+      let metricsPerAZ: {[key: string]: IMetric[]} = {};
+      let keyprefix: string = MetricsHelper.nextChar();
+  
+      albs.forEach((alb: IApplicationLoadBalancer) => {
+  
+        alb.vpc!.availabilityZones.forEach((availabilityZone: string, index: number) => {
+          let azLetter = availabilityZone.substring(availabilityZone.length - 1);
+          let availabilityZoneId = azMapper.availabilityZoneIdFromAvailabilityZoneLetter(azLetter);
+
+          if (!(azLetter in metricsPerAZ)) {
+            metricsPerAZ[azLetter] = [];
+          }
+  
+          let anomalousHostCount: IMetric = new Metric({
+            namespace: "AWS/ApplicationELB",
+            region: Aws.REGION,
+            metricName: "AnomalousHostCount",
+            dimensionsMap: {
+              AvailabilityZone: availabilityZone,
+              LoadBalancer: (alb as ILoadBalancerV2 as BaseLoadBalancer)
+                .loadBalancerFullName,
+            },
+            label: availabilityZoneId,
+            unit: Unit.COUNT,
+            color: MetricsHelper.colors[index],
+            statistic: Stats.SUM,
+            period: period
+          });
+  
+          metricsPerAZ[azLetter].push(anomalousHostCount);
+        });   
+      });
+  
+      // We can have multiple load balancers per zone, so add their processed bytes together
+      Object.keys(metricsPerAZ).forEach((azLetter: string, index: number) => {
+        let availabilityZoneId = azMapper.availabilityZoneIdFromAvailabilityZoneLetter(azLetter);
+
+        if (metricsPerAZ[azLetter].length > 1) {
+
+          let usingMetrics: {[key: string]: IMetric} = {};
+          
+          metricsPerAZ[azLetter].forEach((metric: IMetric, index: number) => {
+            usingMetrics[`${keyprefix}${index}`] = metric;
+          });
+
+          keyprefix = MetricsHelper.nextChar(keyprefix);
+        
+          anomalousHostsPerZone[azLetter] = new MathExpression({
+            expression: Object.keys(usingMetrics).join("+"),
+            usingMetrics: usingMetrics,
+            label: availabilityZoneId,
+            period: period,
+            color: MetricsHelper.colors[index]
+          });
+        }
+        else {
+          anomalousHostsPerZone[azLetter] = metricsPerAZ[azLetter][0];
+        }
+      });
+  
+      return anomalousHostsPerZone;
+    }
+
+    static getTotalMitigatedHostCountPerZone(
+      albs: IApplicationLoadBalancer[],
+      period: Duration,
+      azMapper: AvailabilityZoneMapper
+    ) : {[key: string]: IMetric}
+    {
+      let mitigatedHostsPerZone: {[key: string]: IMetric} = {};
+      let metricsPerAZ: {[key: string]: IMetric[]} = {};
+      let keyprefix: string = MetricsHelper.nextChar();
+  
+      albs.forEach((alb: IApplicationLoadBalancer) => {
+  
+        alb.vpc!.availabilityZones.forEach((availabilityZone: string, index: number) => {
+          let azLetter = availabilityZone.substring(availabilityZone.length - 1);
+          let availabilityZoneId = azMapper.availabilityZoneIdFromAvailabilityZoneLetter(azLetter);
+
+          if (!(azLetter in metricsPerAZ)) {
+            metricsPerAZ[azLetter] = [];
+          }
+  
+          let mitigatedHostCount: IMetric = new Metric({
+            namespace: "AWS/ApplicationELB",
+            region: Aws.REGION,
+            metricName: "MitigatedHostCount",
+            dimensionsMap: {
+              AvailabilityZone: availabilityZone,
+              LoadBalancer: (alb as ILoadBalancerV2 as BaseLoadBalancer)
+                .loadBalancerFullName,
+            },
+            label: availabilityZoneId,
+            unit: Unit.COUNT,
+            color: MetricsHelper.colors[index],
+            statistic: Stats.SUM,
+            period: period
+          });
+  
+          metricsPerAZ[azLetter].push(mitigatedHostCount);
+        });   
+      });
+  
+      // We can have multiple load balancers per zone, so add their processed bytes together
+      Object.keys(metricsPerAZ).forEach((azLetter: string, index: number) => {
+        let availabilityZoneId = azMapper.availabilityZoneIdFromAvailabilityZoneLetter(azLetter);
+
+        if (metricsPerAZ[azLetter].length > 1) {
+
+          let usingMetrics: {[key: string]: IMetric} = {};
+          
+          metricsPerAZ[azLetter].forEach((metric: IMetric, index: number) => {
+            usingMetrics[`${keyprefix}${index}`] = metric;
+          });
+
+          keyprefix = MetricsHelper.nextChar(keyprefix);
+        
+          mitigatedHostsPerZone[azLetter] = new MathExpression({
+            expression: Object.keys(usingMetrics).join("+"),
+            usingMetrics: usingMetrics,
+            label: availabilityZoneId,
+            period: period,
+            color: MetricsHelper.colors[index]
+          });
+        }
+        else {
+          mitigatedHostsPerZone[azLetter] = metricsPerAZ[azLetter][0];
+        }
+      });
+  
+      return mitigatedHostsPerZone;
+    }
+
     /**
      * Calculates a weighted approximation of the latency at the provided statistic for all ALBs
      * in each zone.
@@ -1437,7 +1577,7 @@ export class ApplicationLoadBalancerMetrics {
           new GraphWidget({
             height: 8,
             width: 8,
-            title: Fn.sub('${AWS::Region} Zonal Success Count'),
+            title: "Success Count",
             region: Aws.REGION,
             left: Object.values(successCountPerZone),
             leftYAxis: {
@@ -1452,7 +1592,7 @@ export class ApplicationLoadBalancerMetrics {
           new GraphWidget({
             height: 8,
             width: 8,
-            title: Fn.sub('${AWS::Region} Zonal Target 5xx Count'),
+            title: "Target 5xx Count",
             region: Aws.REGION,
             left: Object.values(faultCountPerZone),
             leftYAxis: {
@@ -1467,7 +1607,7 @@ export class ApplicationLoadBalancerMetrics {
           new GraphWidget({
             height: 8,
             width: 8,
-            title: Fn.sub('${AWS::Region} Zonal ELB 5xx Count'),
+            title: "ELB 5xx Count",
             region: Aws.REGION,
             left: Object.values(this.getTotalAlb5xxCountPerZone(albs, period, azMapper)),
             leftYAxis: {
@@ -1482,7 +1622,7 @@ export class ApplicationLoadBalancerMetrics {
           new GraphWidget({
             height: 8,
             width: 8,
-            title: Fn.sub('${AWS::Region} Zonal Request Count'),
+            title: "Request Count",
             region: Aws.REGION,
             left: Object.values(requestsPerZone),
             leftYAxis: {
@@ -1497,7 +1637,7 @@ export class ApplicationLoadBalancerMetrics {
           new GraphWidget({
             height: 8,
             width: 8,
-            title: Fn.sub('${AWS::Region} Zonal Fault Rate'),
+            title: "Fault Rate",
             region: Aws.REGION,
             left: Object.values(faultRatePerZone),
             leftYAxis: {
@@ -1519,7 +1659,7 @@ export class ApplicationLoadBalancerMetrics {
           new GraphWidget({
             height: 8,
             width: 8,
-            title: Fn.sub('${AWS::Region} Zonal Processed Bytes'),
+            title: "Processed Bytes",
             region: Aws.REGION,
             left: Object.values(processedBytesPerZone),
             leftYAxis: {
@@ -1534,7 +1674,7 @@ export class ApplicationLoadBalancerMetrics {
           new GraphWidget({
             height: 8,
             width: 8,
-            title: Fn.sub('${AWS::Region} Zonal Target Response Time (' + latencyStatistic + ')'),
+            title: `Target Response Time (${latencyStatistic})`,
             region: Aws.REGION,
             left: Object.values(latencyPerZone),
             leftYAxis: {
@@ -1556,7 +1696,7 @@ export class ApplicationLoadBalancerMetrics {
           new GraphWidget({
             height: 8,
             width: 8,
-            title: Fn.sub('${AWS::Region} Zonal Latency Z-Score (' + latencyStatistic + ')'),
+            title: `Latency Z-Score (${latencyStatistic})`,
             region: Aws.REGION,
             left: Object.values(weightedLatencyZScorePerZone),
             leftYAxis: {
@@ -1571,6 +1711,36 @@ export class ApplicationLoadBalancerMetrics {
                 color: Color.RED
               }
             ]
+          })
+        );
+
+        albWidgets.push(
+          new GraphWidget({
+            height: 8,
+            width: 8,
+            title: "Anomalous Hosts",
+            region: Aws.REGION,
+            left: Object.values(this.getTotalAnomalousHostCountPerZone(albs, period, azMapper)),
+            leftYAxis: {
+              min: 0,
+              label: "Count",
+              showUnits: false,
+            }
+          })
+        );
+
+        albWidgets.push(
+          new GraphWidget({
+            height: 8,
+            width: 8,
+            title: "Mitigated Hosts",
+            region: Aws.REGION,
+            left: Object.values(this.getTotalMitigatedHostCountPerZone(albs, period, azMapper)),
+            leftYAxis: {
+              min: 0,
+              label: "Count",
+              showUnits: false,
+            }
           })
         );
     

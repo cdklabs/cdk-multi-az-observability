@@ -377,7 +377,7 @@ export class InstrumentedServiceMultiAZObservability
           outlierThreshold = 0.7;
           break;
         case OutlierDetectionAlgorithm.Z_SCORE:
-          outlierThreshold = 2;
+          outlierThreshold = 3;
           break;
       }
     } else {

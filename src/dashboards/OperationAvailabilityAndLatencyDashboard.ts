@@ -1,6 +1,6 @@
 // Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
-import { Aws, Fn } from 'aws-cdk-lib';
+import { Aws } from 'aws-cdk-lib';
 import {
   Dashboard,
   PeriodOverride,
@@ -651,7 +651,7 @@ export class OperationAvailabilityAndLatencyDashboard
         props.operationAlarmsAndRules.operation.service.serviceName.toLowerCase() +
         '-' +
         props.operationAlarmsAndRules.operation.operationName.toLowerCase() +
-        Fn.sub('-availability-and-latency-${AWS::Region}'),
+        `-availability-and-latency-${Aws.REGION}`,
       defaultInterval: props.interval,
       periodOverride: PeriodOverride.AUTO
     });

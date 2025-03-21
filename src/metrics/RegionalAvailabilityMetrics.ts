@@ -1,11 +1,12 @@
 // Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
-import { Fn } from 'aws-cdk-lib';
+import { Aws } from 'aws-cdk-lib';
 import { IMetric, MathExpression } from 'aws-cdk-lib/aws-cloudwatch';
 import { AvailabilityAndLatencyMetrics } from './AvailabilityAndLatencyMetrics';
 import { RegionalAvailabilityMetricProps } from './props/RegionalAvailabilityMetricProps';
 import { ServiceAvailabilityMetricProps } from './props/ServiceAvailabilityMetricProps';
 import { AvailabilityMetricType } from '../utilities/AvailabilityMetricType';
+import { AvailabilityMetricProps } from './props/AvailabilityMetricProps';
 
 export class RegionalAvailabilityMetrics {
   /**
@@ -19,7 +20,7 @@ export class RegionalAvailabilityMetrics {
     return AvailabilityAndLatencyMetrics.createAvailabilityMetric(
       props,
       props.metricDetails.metricDimensions.regionalDimensions(
-        Fn.ref('AWS::Region'),
+        Aws.REGION,
       ),
     );
   }
@@ -36,9 +37,8 @@ export class RegionalAvailabilityMetrics {
   ): IMetric[] {
     let usingMetrics: { [key: string]: IMetric } = {};
     let operationMetrics: IMetric[] = [];
-    let counter: number = 0;
-
-    props.availabilityMetricProps.forEach((prop) => {
+ 
+    props.availabilityMetricProps.forEach((prop: AvailabilityMetricProps, index: number) => {
       let keyPrefix: string =
         (prop.keyPrefix === undefined || prop.keyPrefix == ''
           ? ''
@@ -53,7 +53,7 @@ export class RegionalAvailabilityMetrics {
         );
 
       operationMetrics.push(regionalOperationAvailabilityMetric);
-      usingMetrics[`${keyPrefix}${counter++}`] =
+      usingMetrics[`${keyPrefix}${index}`] =
         regionalOperationAvailabilityMetric;
     });
 

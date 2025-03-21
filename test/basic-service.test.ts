@@ -12,15 +12,16 @@ import { ApplicationLoadBalancer } from 'aws-cdk-lib/aws-elasticloadbalancingv2'
 import { BasicServiceMultiAZObservability } from '../src/basic_observability/BasicServiceMultiAZObservability';
 import { ApplicationLoadBalancerLatencyOutlierAlgorithm } from '../src/outlier-detection/ApplicationLoadBalancerLatencyOutlierAlgorithm';
 import { Stats } from 'aws-cdk-lib/aws-cloudwatch';
+import { Aws } from 'aws-cdk-lib';
 
 test('Basic service observability test', () => {
   const app = new cdk.App();
   const stack = new cdk.Stack(app, 'TestStack');
 
   let azs: string[] = [
-    cdk.Fn.ref('AWS::Region') + 'a',
-    cdk.Fn.ref('AWS::Region') + 'b',
-    cdk.Fn.ref('AWS::Region') + 'c',
+    Aws.REGION + 'a',
+    Aws.REGION + 'b',
+    Aws.REGION + 'c',
   ];
 
   let vpc = new Vpc(stack, 'vpc', {
@@ -85,9 +86,9 @@ test('Basic service observability with static latency outlier detection', () => 
   const stack = new cdk.Stack(app, 'TestStack');
 
   let azs: string[] = [
-    cdk.Fn.ref('AWS::Region') + 'a',
-    cdk.Fn.ref('AWS::Region') + 'b',
-    cdk.Fn.ref('AWS::Region') + 'c',
+    Aws.REGION + 'a',
+    Aws.REGION + 'b',
+    Aws.REGION + 'c',
   ];
 
   let vpc = new Vpc(stack, 'vpc', {

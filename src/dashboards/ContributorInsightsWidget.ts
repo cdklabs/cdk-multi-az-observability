@@ -1,8 +1,8 @@
 // Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
-import { Fn } from 'aws-cdk-lib';
 import { ConcreteWidget, IWidget } from 'aws-cdk-lib/aws-cloudwatch';
 import { ContributorInsightWidgetProps } from './props/ContributorInsightWidgetProps';
+import { Aws } from 'aws-cdk-lib';
 
 /**
  * A Contributor Insight dashboard widget
@@ -49,7 +49,7 @@ export class ContributorInsightsWidget
           region:
             this.properties.region !== undefined
               ? this.properties.region
-              : Fn.ref('AWS::Region'),
+              :Aws.REGION,
           legend: {
             position: this.properties.legendPosition,
           },

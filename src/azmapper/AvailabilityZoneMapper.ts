@@ -3,9 +3,9 @@
 import * as fs from 'fs';
 import * as path from 'path';
 import {
+  Aws,
   CustomResource,
   Duration,
-  Fn,
   Reference,
   RemovalPolicy,
 } from 'aws-cdk-lib';
@@ -130,8 +130,8 @@ export class AvailabilityZoneMapper
       timeout: Duration.seconds(20),
       memorySize: 512,
       environment: {
-        REGION: Fn.ref('AWS::Region'),
-        PARTITION: Fn.ref('AWS::Partition'),
+        REGION: Aws.REGION,
+        PARTITION: Aws.PARTITION
       },
     });
 
@@ -153,11 +153,7 @@ export class AvailabilityZoneMapper
           actions: ['logs:CreateLogStream', 'logs:PutLogEvents'],
           effect: Effect.ALLOW,
           resources: [
-            Fn.sub(
-              'arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:',
-            ) +
-              this.logGroup.logGroupName +
-              ':*',
+            `arn:${Aws.PARTITION}:logs:${Aws.REGION}:${Aws.ACCOUNT_ID}:log-group:${this.logGroup.logGroupName}:*`
           ],
         }),
       ],
@@ -197,7 +193,7 @@ export class AvailabilityZoneMapper
    * @returns
    */
   regionPrefixForAvailabilityZoneIds(): string {
-    return this.mapper.getAttString(Fn.ref('AWS::Region'));
+    return this.mapper.getAttString(Aws.REGION);
   }
 
   /**
