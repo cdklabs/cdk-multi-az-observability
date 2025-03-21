@@ -11,8 +11,7 @@ import {
   LegendPosition,
   TextWidget,
   TextWidgetBackground,
-  AlarmWidget,
-  IAlarm,
+  AlarmWidget
 } from 'aws-cdk-lib/aws-cloudwatch';
 import { Construct } from 'constructs';
 import { ContributorInsightsWidget } from './ContributorInsightsWidget';
@@ -297,11 +296,12 @@ export class OperationAvailabilityAndLatencyDashboard
     let availabilityAlarmWidgets: IWidget[] = []
 
     Object.keys(props.operationAlarmsAndRules.serverSideZonalAlarmsAndRulesMap).forEach((availabilityZone: string) => {
-      let alarm: IAlarm = props.operationAlarmsAndRules.serverSideZonalAlarmsAndRulesMap[availabilityZone].availabilityAlarm
+      let azLetter: string = availabilityZone.substring(availabilityZone.length - 1);
+      let availabilityZoneId: string = props.azMapper.availabilityZoneIdFromAvailabilityZoneLetter(azLetter);
 
       availabilityAlarmWidgets.push(new AlarmWidget({
-        alarm: alarm,
-        title: "Zonal Availability",
+        alarm: props.operationAlarmsAndRules.serverSideZonalAlarmsAndRulesMap[availabilityZone].availabilityAlarm,
+        title: `${availabilityZoneId} Availability`,
         height: 2,
         width: 8
       }));
@@ -312,11 +312,12 @@ export class OperationAvailabilityAndLatencyDashboard
     let latencyAlarmWidgets: IWidget[] = [];
 
     Object.keys(props.operationAlarmsAndRules.serverSideZonalAlarmsAndRulesMap).forEach((availabilityZone: string) => {
-      let alarm: IAlarm = props.operationAlarmsAndRules.serverSideZonalAlarmsAndRulesMap[availabilityZone].latencyAlarm
+      let azLetter: string = availabilityZone.substring(availabilityZone.length - 1);
+      let availabilityZoneId: string = props.azMapper.availabilityZoneIdFromAvailabilityZoneLetter(azLetter);
 
       latencyAlarmWidgets.push(new AlarmWidget({
-        alarm: alarm,
-        title: "Zonal Latency",
+        alarm: props.operationAlarmsAndRules.serverSideZonalAlarmsAndRulesMap[availabilityZone].latencyAlarm,
+        title: `${availabilityZoneId} Latency`,
         height: 2,
         width: 8
       }));
@@ -604,12 +605,13 @@ export class OperationAvailabilityAndLatencyDashboard
 
     let availabilityAlarmWidgets: IWidget[] = []
 
-    Object.keys(props.operationAlarmsAndRules.canaryZonalAlarmsAndRulesMap!).forEach((availabiltiyZone: string) => {
-      let alarm: IAlarm = props.operationAlarmsAndRules.canaryZonalAlarmsAndRulesMap![availabiltiyZone].availabilityAlarm;
-
+    Object.keys(props.operationAlarmsAndRules.canaryZonalAlarmsAndRulesMap!).forEach((availabilityZone: string) => {
+      let azLetter: string = availabilityZone.substring(availabilityZone.length - 1);
+      let availabilityZoneId: string = props.azMapper.availabilityZoneIdFromAvailabilityZoneLetter(azLetter);
+      
       availabilityAlarmWidgets.push(new AlarmWidget({
-        alarm: alarm,
-        title: "Zonal Availability",
+        alarm: props.operationAlarmsAndRules.canaryZonalAlarmsAndRulesMap![availabilityZone].availabilityAlarm,
+        title: `${availabilityZoneId} Availability`,
         height: 2,
         width: 8
       }));
@@ -619,11 +621,13 @@ export class OperationAvailabilityAndLatencyDashboard
 
     let latencyAlarmWidgets: IWidget[] = [];
 
-    Object.keys(props.operationAlarmsAndRules.canaryZonalAlarmsAndRulesMap!).forEach((availabiltiyZone: string) => {
-      let alarm: IAlarm = props.operationAlarmsAndRules.canaryZonalAlarmsAndRulesMap![availabiltiyZone].latencyAlarm;
+    Object.keys(props.operationAlarmsAndRules.canaryZonalAlarmsAndRulesMap!).forEach((availabilityZone: string) => {
+      let azLetter: string = availabilityZone.substring(availabilityZone.length - 1);
+      let availabilityZoneId: string = props.azMapper.availabilityZoneIdFromAvailabilityZoneLetter(azLetter);
+
       latencyAlarmWidgets.push(new AlarmWidget({
-        alarm: alarm,
-        title: "Zonal Latency",
+        alarm: props.operationAlarmsAndRules.canaryZonalAlarmsAndRulesMap![availabilityZone].latencyAlarm,
+        title: `${availabilityZoneId} Latency`,
         height: 2,
         width: 8
       }));
