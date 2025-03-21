@@ -537,12 +537,10 @@ export class ApplicationLoadBalancerMetrics {
       albs: IApplicationLoadBalancer[],
       period: Duration,
       azMapper: AvailabilityZoneMapper,
-      prefix?: string
     ) : {[key: string]: IMetric}
     {
       let faultsPerZone: {[key: string]: IMetric} = {};
       let metricsPerAZ: {[key: string]: IMetric[]} = {};
-      let keyprefix: string = prefix ? prefix : MetricsHelper.nextChar();
   
       albs.forEach((alb: IApplicationLoadBalancer, albIndex: number) => {
   
@@ -581,8 +579,6 @@ export class ApplicationLoadBalancerMetrics {
             label: availabilityZoneId,
             color: MetricsHelper.colors[index]
           }));
-  
-          keyprefix = MetricsHelper.nextChar(keyprefix);
         });   
       });
   
@@ -746,13 +742,11 @@ export class ApplicationLoadBalancerMetrics {
     static getTotalAlbRequestsPerZone(
       albs: IApplicationLoadBalancer[],
       period: Duration,
-      azMapper: AvailabilityZoneMapper,
-      prefix?: string
+      azMapper: AvailabilityZoneMapper
     ) : {[key: string]: IMetric}
     {
       let requestsPerZone: {[key: string]: IMetric} = {};
       let metricsPerAZ: {[key: string]: IMetric[]} = {};
-      let keyprefix: string = prefix ? prefix : MetricsHelper.nextChar();
 
       albs.forEach((alb: IApplicationLoadBalancer) => {
   
@@ -792,11 +786,9 @@ export class ApplicationLoadBalancerMetrics {
           let usingMetrics: {[key: string]: IMetric} = {};
           
           metricsPerAZ[azLetter].forEach((metric: IMetric, index: number) => {
-            usingMetrics[`${keyprefix}${index}`] = metric;
+            usingMetrics[`${azLetter}${index}`] = metric;
           });
 
-          keyprefix = MetricsHelper.nextChar(keyprefix);
-        
           requestsPerZone[azLetter] = new MathExpression({
             expression: Object.keys(usingMetrics).join("+"),
             usingMetrics: usingMetrics,
@@ -897,7 +889,6 @@ export class ApplicationLoadBalancerMetrics {
     {
       let anomalousHostsPerZone: {[key: string]: IMetric} = {};
       let metricsPerAZ: {[key: string]: IMetric[]} = {};
-      let keyprefix: string = MetricsHelper.nextChar();
   
       albs.forEach((alb: IApplicationLoadBalancer) => {
   
@@ -929,7 +920,7 @@ export class ApplicationLoadBalancerMetrics {
         });   
       });
   
-      // We can have multiple load balancers per zone, so add their processed bytes together
+      // We can have multiple load balancers per zone, so add their counts together
       Object.keys(metricsPerAZ).forEach((azLetter: string, index: number) => {
         let availabilityZoneId = azMapper.availabilityZoneIdFromAvailabilityZoneLetter(azLetter);
 
@@ -937,11 +928,9 @@ export class ApplicationLoadBalancerMetrics {
 
           let usingMetrics: {[key: string]: IMetric} = {};
           
-          metricsPerAZ[azLetter].forEach((metric: IMetric, index: number) => {
-            usingMetrics[`${keyprefix}${index}`] = metric;
+          metricsPerAZ[azLetter].forEach((metric: IMetric, metricIndex: number) => {
+            usingMetrics[`${azLetter}${metricIndex}`] = metric;
           });
-
-          keyprefix = MetricsHelper.nextChar(keyprefix);
         
           anomalousHostsPerZone[azLetter] = new MathExpression({
             expression: Object.keys(usingMetrics).join("+") + " + TIME_SERIES(0)",
@@ -952,9 +941,12 @@ export class ApplicationLoadBalancerMetrics {
           });
         }
         else {
+          let usingMetrics: {[key: string]: IMetric} = {};
+          usingMetrics[azLetter] = metricsPerAZ[azLetter][0];
+
           anomalousHostsPerZone[azLetter] = new MathExpression({
-            expression: "FILL(a, 0)",
-            usingMetrics: {"a": metricsPerAZ[azLetter][0]},
+            expression: `FILL(${azLetter}, 0)`,
+            usingMetrics: usingMetrics,
             label: availabilityZoneId,
             period: period,
             color: MetricsHelper.colors[index]
@@ -973,8 +965,7 @@ export class ApplicationLoadBalancerMetrics {
     {
       let mitigatedHostsPerZone: {[key: string]: IMetric} = {};
       let metricsPerAZ: {[key: string]: IMetric[]} = {};
-      let keyprefix: string = MetricsHelper.nextChar();
-  
+
       albs.forEach((alb: IApplicationLoadBalancer) => {
   
         alb.vpc!.availabilityZones.forEach((availabilityZone: string, index: number) => {
@@ -1005,7 +996,7 @@ export class ApplicationLoadBalancerMetrics {
         });   
       });
   
-      // We can have multiple load balancers per zone, so add their processed bytes together
+      // We can have multiple load balancers per zone, so add their counts together
       Object.keys(metricsPerAZ).forEach((azLetter: string, index: number) => {
         let availabilityZoneId = azMapper.availabilityZoneIdFromAvailabilityZoneLetter(azLetter);
 
@@ -1013,12 +1004,10 @@ export class ApplicationLoadBalancerMetrics {
 
           let usingMetrics: {[key: string]: IMetric} = {};
           
-          metricsPerAZ[azLetter].forEach((metric: IMetric, index: number) => {
-            usingMetrics[`${keyprefix}${index}`] = metric;
+          metricsPerAZ[azLetter].forEach((metric: IMetric, metricIndex: number) => {
+            usingMetrics[`${azLetter}${metricIndex}`] = metric;
           });
-
-          keyprefix = MetricsHelper.nextChar(keyprefix);
-        
+       
           mitigatedHostsPerZone[azLetter] = new MathExpression({
             expression: Object.keys(usingMetrics).join("+") + " + TIME_SERIES(0)",
             usingMetrics: usingMetrics,
@@ -1028,9 +1017,12 @@ export class ApplicationLoadBalancerMetrics {
           });
         }
         else {
+          let usingMetrics: {[key: string]: IMetric} = {};
+          usingMetrics[azLetter] = metricsPerAZ[azLetter][0];
+
           mitigatedHostsPerZone[azLetter] = new MathExpression({
-            expression: "FILL(a, 0)",
-            usingMetrics: {"a": metricsPerAZ[azLetter][0]},
+            expression: `FILL(${azLetter}, 0)`,
+            usingMetrics: usingMetrics,
             label: availabilityZoneId,
             period: period,
             color: MetricsHelper.colors[index]
@@ -1191,8 +1183,8 @@ export class ApplicationLoadBalancerMetrics {
     ) : {[key: string]: IMetric} {
 
       let faultRateMetrics: {[key: string]: IMetric} = {};
-      let requestsPerZone: {[key: string]: IMetric} = this.getTotalAlbRequestsPerZone(albs, period, azMapper, "a");
-      let faultsPerZone: {[key: string]: IMetric} = this.getTotalAlbFaultCountPerZone(albs, period, azMapper, "e");
+      let requestsPerZone: {[key: string]: IMetric} = this.getTotalAlbRequestsPerZone(albs, period, azMapper);
+      let faultsPerZone: {[key: string]: IMetric} = this.getTotalAlbFaultCountPerZone(albs, period, azMapper);
 
       Object.keys(requestsPerZone).forEach((key: string, index: number) => {
         if (key in faultsPerZone) {
@@ -1285,9 +1277,12 @@ export class ApplicationLoadBalancerMetrics {
           });
         }
         else {
+          let usingMetrics: {[key: string]: IMetric} = {};
+          usingMetrics[azLetter] = faultsPerZone[availabilityZone][0];
+
           aggregateFaultsPerZone[availabilityZone] = new MathExpression({
-            expression: "FILL(a, 0)",
-            usingMetrics: {"a": faultsPerZone[availabilityZone][0]},
+            expression: `FILL(${azLetter}, 0)`,
+            usingMetrics: usingMetrics,
             color: MetricsHelper.colors[index],
             label: availabilityZoneId
           });
@@ -1574,6 +1569,10 @@ export class ApplicationLoadBalancerMetrics {
         faultRateThreshold: number
       ): IWidget[] {
         let albWidgets: IWidget[] = [];
+
+        latencyStatistic;
+        latencyThreshold;
+        faultRateThreshold;
     
         let successCountPerZone: {[key: string]: IMetric} = 
           ApplicationLoadBalancerMetrics.getTotalAlbSuccessCountPerZone(albs, period, azMapper);
@@ -1605,7 +1604,7 @@ export class ApplicationLoadBalancerMetrics {
           })
         );
     
-        albWidgets.push(
+       albWidgets.push(
           new GraphWidget({
             height: 8,
             width: 8,

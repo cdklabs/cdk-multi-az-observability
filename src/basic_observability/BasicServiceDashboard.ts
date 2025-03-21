@@ -34,7 +34,7 @@ export class BasicServiceDashboard extends Construct {
       alarms: Object.values(props.zonalAggregateIsolatedImpactAlarms),
       height: 2,
       width: 24,
-      title: 'Aggregate Alarms',
+      title: 'Zonal Impact Alarms',
     }));
 
     if (props.albs) {
