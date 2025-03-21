@@ -448,7 +448,7 @@ export class InstrumentedServiceMultiAZObservability
 
     this.perOperationZonalImpactAlarms = Object.fromEntries(
       Object.entries(this.perOperationAlarmsAndRules).map(([key, value]) => {
-        return [key, value.aggregateZonalAlarmsMap];
+        return [key, value.aggregateZonalAlarms];
       }),
     );
 

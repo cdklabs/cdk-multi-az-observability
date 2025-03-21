@@ -36,7 +36,7 @@ export class ServiceAlarmsAndRules
    * triggers for availability or latency impact to any critical operation in that AZ
    * that indicates it has isolated impact as measured by canaries or server-side.
    */
-  zonalAggregateIsolatedImpactAlarms: IAlarm[];
+  zonalAggregateIsolatedImpactAlarms: {[key: string]: IAlarm};
 
   /**
    * The zonal server-side isolated impact alarms. There is 1 alarm per AZ that triggers
@@ -44,7 +44,7 @@ export class ServiceAlarmsAndRules
    * for deployment monitoring to not inadvertently fail when a canary can't contact an AZ
    * during a deployment.
    */
-  zonalServerSideIsolatedImpactAlarms: IAlarm[];
+  zonalServerSideIsolatedImpactAlarms: {[key: string]: IAlarm};
 
   /**
    * An alarm for regional availability or latency impact of any critical operation as measured by the canary.
@@ -78,67 +78,62 @@ export class ServiceAlarmsAndRules
     let criticalOperations: string[] = props.service.operations
       .filter((x) => x.critical == true)
       .map((x) => x.operationName);
-    this.zonalAggregateIsolatedImpactAlarms = [];
-    this.zonalServerSideIsolatedImpactAlarms = [];
+    this.zonalAggregateIsolatedImpactAlarms = {};
+    this.zonalServerSideIsolatedImpactAlarms = {};
 
     props.service.availabilityZoneNames.forEach((availabilityZone: string, index: number) => {
       let azLetter: string = availabilityZone.substring(availabilityZone.length - 1);
       let availabilityZonedId: string = props.azMapper.availabilityZoneIdFromAvailabilityZoneLetter(azLetter);
 
-      this.zonalAggregateIsolatedImpactAlarms.push(
-        new CompositeAlarm(
-          this,
-          'AZ' + index + 'ServiceAggregateIsolatedImpactAlarm',
-          {
-            compositeAlarmName:
-              availabilityZonedId +
-              '-' +
-              props.service.serviceName.toLowerCase() +
-              '-isolated-impact-aggregate-alarm',
-            alarmRule: AlarmRule.anyOf(
-              ...Object.values(
-                Object.entries(props.perOperationAlarmsAndRules).reduce(
-                  (filtered, [key, value]) => {
-                    if (criticalOperations.indexOf(key) > -1) {
-                      filtered[key] = value;
-                    }
+      this.zonalAggregateIsolatedImpactAlarms[availabilityZone] = new CompositeAlarm(
+        this,
+        'AZ' + index + 'ServiceAggregateIsolatedImpactAlarm',
+        {
+          compositeAlarmName:
+            availabilityZonedId +
+            '-' +
+            props.service.serviceName.toLowerCase() +
+            '-isolated-impact-aggregate-alarm',
+          alarmRule: AlarmRule.anyOf(
+            ...Object.values(
+              Object.entries(props.perOperationAlarmsAndRules).reduce(
+                (filtered, [key, value]) => {
+                  if (criticalOperations.indexOf(key) > -1) {
+                    filtered[key] = value;
+                  }
 
-                    return filtered;
-                  },
-                  {} as { [key: string]: IOperationAlarmsAndRules },
-                ),
-              ).map((x) => x.aggregateZonalAlarmsMap[availabilityZone]),
-            ),
-          },
-        ),
+                  return filtered;
+                },
+                {} as { [key: string]: IOperationAlarmsAndRules },
+              ),
+            ).map((x) => x.aggregateZonalAlarms[availabilityZone]),
+          ),
+        },
       );
 
-      this.zonalServerSideIsolatedImpactAlarms.push(
-        new CompositeAlarm(
-          this,
-          'AZ' + index + 'ServiceServerSideIsolatedImpactAlarm',
-          {
-            compositeAlarmName:
-              availabilityZonedId +
-              '-' +
-              props.service.serviceName.toLowerCase() +
-              '-isolated-impact-server-side-alarm',
-            alarmRule: AlarmRule.anyOf(
-              ...Object.values(
-                Object.entries(props.perOperationAlarmsAndRules).reduce(
-                  (filtered, [key, value]) => {
-                    if (criticalOperations.indexOf(key) > -1) {
-                      filtered[key] = value;
-                    }
-
-                    return filtered;
-                  },
-                  {} as { [key: string]: IOperationAlarmsAndRules },
-                ),
-              ).map((x) => x.serverSideZonalAlarmsAndRulesMap[availabilityZone].isolatedImpactAlarm),
-            ),
-          },
-        ),
+      this.zonalServerSideIsolatedImpactAlarms[availabilityZone] = new CompositeAlarm(
+        this,
+        'AZ' + index + 'ServiceServerSideIsolatedImpactAlarm',
+        {
+          compositeAlarmName:
+            availabilityZonedId +
+            '-' +
+            props.service.serviceName.toLowerCase() +
+            '-isolated-impact-server-side-alarm',
+          alarmRule: AlarmRule.anyOf(
+            ...Object.values(
+              Object.entries(props.perOperationAlarmsAndRules).reduce(
+                (filtered, [key, value]) => {
+                  if (criticalOperations.indexOf(key) > -1) {
+                    filtered[key] = value;
+                  }
+                  return filtered;
+                },
+                {} as { [key: string]: IOperationAlarmsAndRules },
+              ),
+            ).map((x) => x.serverSideZonalAlarmsAndRules[availabilityZone].isolatedImpactAlarm),
+          ),
+        },
       );
     });
 

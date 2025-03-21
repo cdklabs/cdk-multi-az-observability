@@ -17,7 +17,7 @@ export interface ServiceAvailabilityAndLatencyDashboardProps {
   /**
    * The AZ isolated impact alarms, one for each AZ
    */
-  readonly zonalAggregateAlarms: IAlarm[];
+  readonly zonalAggregateAlarms: {[key: string]: IAlarm};
 
   /**
    * The aggregate regional impact alarm, typically a fault

@@ -545,7 +545,7 @@ export class ServiceAvailabilityAndLatencyDashboard
         return AvailabilityAndLatencyMetrics.createZonalAvailabilityMetric({
           availabilityZoneId: availabilityZoneId,
           availabilityZone: availabilityZone,
-          label: availabilityZoneId + " (avg: ${AVG}  min: ${MIN})",
+          label: operation.operationName + " (avg: ${AVG}  min: ${MIN})",
           metricDetails: operation.serverSideAvailabilityMetricDetails,
           metricType: AvailabilityMetricType.SUCCESS_RATE,
           color: MetricsHelper.colors[index]
@@ -557,8 +557,8 @@ export class ServiceAvailabilityAndLatencyDashboard
       });
 
       return new GraphWidget({
-          height: 6,
-          width: 8,
+          height: 8,
+          width: 6,
           title: `Server-side ${availabilityZoneId} Availability`,
           region: Aws.REGION,
           left: criticalOperationsZonalMetrics,
@@ -573,15 +573,15 @@ export class ServiceAvailabilityAndLatencyDashboard
       )
     });
 
-    let zonalFaultCountWidgets: IWidget[] = availabilityZones.map((availabilityZone: string, index: number) => {
+    let zonalFaultCountWidgets: IWidget[] = availabilityZones.map((availabilityZone: string) => {
       let azLetter: string = availabilityZone.substring(availabilityZone.length - 1);
       let availabilityZoneId: string = props.azMapper.availabilityZoneIdFromAvailabilityZoneLetter(azLetter);
 
-      let criticalOperationsZonalMetrics: IMetric[] = criticalOperations.map((operation: IOperation) => {
+      let criticalOperationsZonalMetrics: IMetric[] = criticalOperations.map((operation: IOperation, index: number) => {
         return AvailabilityAndLatencyMetrics.createZonalAvailabilityMetric({
           availabilityZoneId: availabilityZoneId,
           availabilityZone: availabilityZone,
-          label: availabilityZoneId + " (avg: ${AVG}  min: ${MIN})",
+          label: operation.operationName + " (avg: ${AVG}  min: ${MIN})",
           metricDetails: operation.serverSideAvailabilityMetricDetails,
           metricType: AvailabilityMetricType.FAULT_COUNT,
           color: MetricsHelper.colors[index]
@@ -616,7 +616,7 @@ export class ServiceAvailabilityAndLatencyDashboard
         return AvailabilityAndLatencyMetrics.createZonalLatencyCountMetric({
           availabilityZoneId: availabilityZoneId,
           availabilityZone: availabilityZone,
-          label: availabilityZoneId + " (avg: ${AVG}  min: ${MIN})",
+          label: operation.operationName + " (avg: ${AVG}  min: ${MIN})",
           metricDetails: operation.serverSideLatencyMetricDetails,
           metricType: LatencyMetricType.SUCCESS_LATENCY,
           color: MetricsHelper.colors[index],
@@ -645,6 +645,8 @@ export class ServiceAvailabilityAndLatencyDashboard
     });
 
     dashboard.addWidgets(
+
+      ...zonalAvailabilityWidgets,
 
       // Server-side per AZ fault count
       new GraphWidget({
@@ -696,8 +698,7 @@ export class ServiceAvailabilityAndLatencyDashboard
           },
         ]
       }),
-
-      ...zonalAvailabilityWidgets,
+      
       ...zonalFaultCountWidgets,
       ...perAZWidgetWithPerOperationHighLatencyCount
     );
@@ -728,7 +729,7 @@ export class ServiceAvailabilityAndLatencyDashboard
         width: 24,
         alarms: [
           props.aggregateRegionalAlarm,
-          ...props.zonalAggregateAlarms
+          ... Object.values(props.zonalAggregateAlarms)
         ],
         title: "Aggregate Alarms"
       }
@@ -736,9 +737,9 @@ export class ServiceAvailabilityAndLatencyDashboard
 
     this.dashboard.addWidgets(
       new TextWidget({
-        markdown: "### Per Operation Dashboards\n" + props.operationsDashboard.map(x => `-[${x.dashboardName}](https://${Aws.REGION}.console.aws.amazon.com/cloudwatch/home?region=${Aws.REGION}#dashboards/dashboard/${x.dashboardName})`).join("\n"),
+        markdown: "### Per Operation Dashboards\n" + props.operationsDashboard.map(x => `- [${x.dashboardName}](https://${Aws.REGION}.console.aws.amazon.com/cloudwatch/home?region=${Aws.REGION}#dashboards/dashboard/${x.dashboardName})`).join("\n"),
         background: TextWidgetBackground.TRANSPARENT,
-        height: 6,
+        height: 4,
         width: 24
       })
     );
