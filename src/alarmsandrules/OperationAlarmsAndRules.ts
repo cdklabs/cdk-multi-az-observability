@@ -42,7 +42,8 @@ export class OperationAlarmsAndRules
   readonly aggregateZonalAlarms: { [key: string]: IAlarm };
 
   /**
-   * An alarm indicating regionally scoped impact, not zonal
+   * An alarm indicating availability or latency impact has been detected by the server-side 
+   * and/or canary (if present) and the impact is regionally scoped, not zonal
    */
   readonly regionalImpactAlarm: IAlarm;
 

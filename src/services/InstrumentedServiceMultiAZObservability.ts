@@ -504,11 +504,8 @@ export class InstrumentedServiceMultiAZObservability
         props.service.serviceName.toLowerCase(),
         {
           interval: props.interval ? props.interval : Duration.minutes(60),
+          serviceAlarmsAndRules: this.serviceAlarms,
           service: props.service,
-          aggregateRegionalAlarm:
-            this.serviceAlarms.regionalFaultCountServerSideAlarm,
-          zonalAggregateAlarms:
-            this.serviceAlarms.zonalAggregateIsolatedImpactAlarms,
           azMapper: this.azMapper,
           operationsDashboard: this.operationDashboards
         },
