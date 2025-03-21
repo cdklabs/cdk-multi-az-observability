@@ -654,8 +654,7 @@ export class ServiceAvailabilityAndLatencyDashboard
         region: Aws.REGION,
         left: availabilityZones.map((availabilityZone: string) => {
           let azLetter: string = availabilityZone.substring(availabilityZone.length - 1);
-          let availabilityZoneId: string = props.azMapper.availabilityZoneIdFromAvailabilityZoneLetter(azLetter);
-        
+          let availabilityZoneId: string = props.azMapper.availabilityZoneIdFromAvailabilityZoneLetter(azLetter);      
     
           let usingMetrics: { [key: string]: IMetric } = {};
     
@@ -702,8 +701,7 @@ export class ServiceAvailabilityAndLatencyDashboard
       ...zonalFaultCountWidgets,
       ...perAZWidgetWithPerOperationHighLatencyCount
     );
-
-    
+     
   }
 
   /**
