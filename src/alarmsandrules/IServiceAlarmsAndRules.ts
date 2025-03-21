@@ -21,24 +21,33 @@ export interface IServiceAlarmsAndRules {
 
   /**
    * The zonal server-side isolated impact alarms. There is 1 alarm per AZ that triggers
-   * on availability or atency impact to any critical operation in that AZ. These are useful
+   * on availability or latency impact to any critical operation in that AZ. These are useful
    * for deployment monitoring to not inadvertently fail when a canary can't contact an AZ
    * during a deployment.
    */
   zonalServerSideIsolatedImpactAlarms: {[key: string]: IAlarm};
 
   /**
-   * An alarm for regional availability or latency impact of any critical operation as measured by the canary.
+   * An alarm indicating the canary has discovered an availability or latency impact on a critical
+   * operation while testing the regional endpoint.
    */
-  regionalAvailabilityOrLatencyCanaryAlarm?: IAlarm;
+  regionalCanaryAlarm?: IAlarm;
 
   /**
-   * An alarm for regional availability impact of any critical operation as measured by the canary.
+   * An alarm indicating there is availability or latency impact on a critical operation
+   * that is not scoped to a single availability zone as measured by the server-side and/or canary (if present)
    */
-  regionalAvailabilityCanaryAlarm?: IAlarm;
+  regionalImpactAlarm: IAlarm;
 
   /**
-   * An alarm for fault count exceeding a regional threshold for all critical operations.
+   * An alarm indicating there is availability or latency impact on a critical operation
+   * that is not scoped to a single availability zone as measured by the server-side
    */
-  regionalFaultCountServerSideAlarm: IAlarm;
+  regionalServerSideImpactAlarm: IAlarm;
+
+  /**
+   * This is the top level alarm you should tie notifications/paging/alerting to. It triggers
+   * on any impact to a critical operation either zonally scoped or regionally scoped.
+   */
+  serviceImpactAlarm: IAlarm;
 }

@@ -4893,24 +4893,37 @@ Service level alarms and rules using critical operations.
 
 | **Name** | **Type** | **Description** |
 | --- | --- | --- |
-| <code><a href="#@cdklabs/multi-az-observability.IServiceAlarmsAndRules.property.regionalFaultCountServerSideAlarm">regionalFaultCountServerSideAlarm</a></code> | <code>aws-cdk-lib.aws_cloudwatch.IAlarm</code> | An alarm for fault count exceeding a regional threshold for all critical operations. |
+| <code><a href="#@cdklabs/multi-az-observability.IServiceAlarmsAndRules.property.regionalImpactAlarm">regionalImpactAlarm</a></code> | <code>aws-cdk-lib.aws_cloudwatch.IAlarm</code> | An alarm indicating there is availability or latency impact on a critical operation that is not scoped to a single availability zone as measured by the server-side and/or canary (if present). |
+| <code><a href="#@cdklabs/multi-az-observability.IServiceAlarmsAndRules.property.regionalServerSideImpactAlarm">regionalServerSideImpactAlarm</a></code> | <code>aws-cdk-lib.aws_cloudwatch.IAlarm</code> | An alarm indicating there is availability or latency impact on a critical operation that is not scoped to a single availability zone as measured by the server-side. |
 | <code><a href="#@cdklabs/multi-az-observability.IServiceAlarmsAndRules.property.service">service</a></code> | <code><a href="#@cdklabs/multi-az-observability.IService">IService</a></code> | The service these alarms and rules are for. |
+| <code><a href="#@cdklabs/multi-az-observability.IServiceAlarmsAndRules.property.serviceImpactAlarm">serviceImpactAlarm</a></code> | <code>aws-cdk-lib.aws_cloudwatch.IAlarm</code> | This is the top level alarm you should tie notifications/paging/alerting to. |
 | <code><a href="#@cdklabs/multi-az-observability.IServiceAlarmsAndRules.property.zonalAggregateIsolatedImpactAlarms">zonalAggregateIsolatedImpactAlarms</a></code> | <code>{[ key: string ]: aws-cdk-lib.aws_cloudwatch.IAlarm}</code> | The zonal aggregate isolated impact alarms. |
 | <code><a href="#@cdklabs/multi-az-observability.IServiceAlarmsAndRules.property.zonalServerSideIsolatedImpactAlarms">zonalServerSideIsolatedImpactAlarms</a></code> | <code>{[ key: string ]: aws-cdk-lib.aws_cloudwatch.IAlarm}</code> | The zonal server-side isolated impact alarms. |
-| <code><a href="#@cdklabs/multi-az-observability.IServiceAlarmsAndRules.property.regionalAvailabilityCanaryAlarm">regionalAvailabilityCanaryAlarm</a></code> | <code>aws-cdk-lib.aws_cloudwatch.IAlarm</code> | An alarm for regional availability impact of any critical operation as measured by the canary. |
-| <code><a href="#@cdklabs/multi-az-observability.IServiceAlarmsAndRules.property.regionalAvailabilityOrLatencyCanaryAlarm">regionalAvailabilityOrLatencyCanaryAlarm</a></code> | <code>aws-cdk-lib.aws_cloudwatch.IAlarm</code> | An alarm for regional availability or latency impact of any critical operation as measured by the canary. |
+| <code><a href="#@cdklabs/multi-az-observability.IServiceAlarmsAndRules.property.regionalCanaryAlarm">regionalCanaryAlarm</a></code> | <code>aws-cdk-lib.aws_cloudwatch.IAlarm</code> | An alarm indicating the canary has discovered an availability or latency impact on a critical operation while testing the regional endpoint. |
 
 ---
 
-##### `regionalFaultCountServerSideAlarm`<sup>Required</sup> <a name="regionalFaultCountServerSideAlarm" id="@cdklabs/multi-az-observability.IServiceAlarmsAndRules.property.regionalFaultCountServerSideAlarm"></a>
+##### `regionalImpactAlarm`<sup>Required</sup> <a name="regionalImpactAlarm" id="@cdklabs/multi-az-observability.IServiceAlarmsAndRules.property.regionalImpactAlarm"></a>
 
 ```typescript
-public readonly regionalFaultCountServerSideAlarm: IAlarm;
+public readonly regionalImpactAlarm: IAlarm;
 ```
 
 - *Type:* aws-cdk-lib.aws_cloudwatch.IAlarm
 
-An alarm for fault count exceeding a regional threshold for all critical operations.
+An alarm indicating there is availability or latency impact on a critical operation that is not scoped to a single availability zone as measured by the server-side and/or canary (if present).
+
+---
+
+##### `regionalServerSideImpactAlarm`<sup>Required</sup> <a name="regionalServerSideImpactAlarm" id="@cdklabs/multi-az-observability.IServiceAlarmsAndRules.property.regionalServerSideImpactAlarm"></a>
+
+```typescript
+public readonly regionalServerSideImpactAlarm: IAlarm;
+```
+
+- *Type:* aws-cdk-lib.aws_cloudwatch.IAlarm
+
+An alarm indicating there is availability or latency impact on a critical operation that is not scoped to a single availability zone as measured by the server-side.
 
 ---
 
@@ -4923,6 +4936,21 @@ public readonly service: IService;
 - *Type:* <a href="#@cdklabs/multi-az-observability.IService">IService</a>
 
 The service these alarms and rules are for.
+
+---
+
+##### `serviceImpactAlarm`<sup>Required</sup> <a name="serviceImpactAlarm" id="@cdklabs/multi-az-observability.IServiceAlarmsAndRules.property.serviceImpactAlarm"></a>
+
+```typescript
+public readonly serviceImpactAlarm: IAlarm;
+```
+
+- *Type:* aws-cdk-lib.aws_cloudwatch.IAlarm
+
+This is the top level alarm you should tie notifications/paging/alerting to.
+
+It triggers
+on any impact to a critical operation either zonally scoped or regionally scoped.
 
 ---
 
@@ -4953,33 +4981,21 @@ public readonly zonalServerSideIsolatedImpactAlarms: {[ key: string ]: IAlarm};
 The zonal server-side isolated impact alarms.
 
 There is 1 alarm per AZ that triggers
-on availability or atency impact to any critical operation in that AZ. These are useful
+on availability or latency impact to any critical operation in that AZ. These are useful
 for deployment monitoring to not inadvertently fail when a canary can't contact an AZ
 during a deployment.
 
 ---
 
-##### `regionalAvailabilityCanaryAlarm`<sup>Optional</sup> <a name="regionalAvailabilityCanaryAlarm" id="@cdklabs/multi-az-observability.IServiceAlarmsAndRules.property.regionalAvailabilityCanaryAlarm"></a>
+##### `regionalCanaryAlarm`<sup>Optional</sup> <a name="regionalCanaryAlarm" id="@cdklabs/multi-az-observability.IServiceAlarmsAndRules.property.regionalCanaryAlarm"></a>
 
 ```typescript
-public readonly regionalAvailabilityCanaryAlarm: IAlarm;
+public readonly regionalCanaryAlarm: IAlarm;
 ```
 
 - *Type:* aws-cdk-lib.aws_cloudwatch.IAlarm
 
-An alarm for regional availability impact of any critical operation as measured by the canary.
-
----
-
-##### `regionalAvailabilityOrLatencyCanaryAlarm`<sup>Optional</sup> <a name="regionalAvailabilityOrLatencyCanaryAlarm" id="@cdklabs/multi-az-observability.IServiceAlarmsAndRules.property.regionalAvailabilityOrLatencyCanaryAlarm"></a>
-
-```typescript
-public readonly regionalAvailabilityOrLatencyCanaryAlarm: IAlarm;
-```
-
-- *Type:* aws-cdk-lib.aws_cloudwatch.IAlarm
-
-An alarm for regional availability or latency impact of any critical operation as measured by the canary.
+An alarm indicating the canary has discovered an availability or latency impact on a critical operation while testing the regional endpoint.
 
 ---
 

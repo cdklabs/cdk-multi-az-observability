@@ -1,9 +1,10 @@
 // Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 import { Duration } from 'aws-cdk-lib';
-import { Dashboard, IAlarm } from 'aws-cdk-lib/aws-cloudwatch';
+import { Dashboard } from 'aws-cdk-lib/aws-cloudwatch';
 import { IAvailabilityZoneMapper } from '../../azmapper/IAvailabilityZoneMapper';
 import { IService } from '../../services/IService';
+import { IServiceAlarmsAndRules } from '../../alarmsandrules/IServiceAlarmsAndRules';
 
 /**
  * Properties for creating a service level dashboard
@@ -15,15 +16,9 @@ export interface ServiceAvailabilityAndLatencyDashboardProps {
   readonly service: IService;
 
   /**
-   * The AZ isolated impact alarms, one for each AZ
+   * The service alarms and rules
    */
-  readonly zonalAggregateAlarms: {[key: string]: IAlarm};
-
-  /**
-   * The aggregate regional impact alarm, typically a fault
-   * count across all critical operations
-   */
-  readonly aggregateRegionalAlarm: IAlarm;
+  readonly serviceAlarmsAndRules: IServiceAlarmsAndRules;
 
   /**
    * The interval for the dashboard
