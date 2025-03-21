@@ -944,7 +944,7 @@ export class ApplicationLoadBalancerMetrics {
           keyprefix = MetricsHelper.nextChar(keyprefix);
         
           anomalousHostsPerZone[azLetter] = new MathExpression({
-            expression: Object.keys(usingMetrics).join("+"),
+            expression: Object.keys(usingMetrics).join("+") + " + TIME_SERIES(0)",
             usingMetrics: usingMetrics,
             label: availabilityZoneId,
             period: period,
@@ -952,7 +952,13 @@ export class ApplicationLoadBalancerMetrics {
           });
         }
         else {
-          anomalousHostsPerZone[azLetter] = metricsPerAZ[azLetter][0];
+          anomalousHostsPerZone[azLetter] = new MathExpression({
+            expression: "FILL(a, 0)",
+            usingMetrics: {"a": metricsPerAZ[azLetter][0]},
+            label: availabilityZoneId,
+            period: period,
+            color: MetricsHelper.colors[index]
+          });
         }
       });
   
@@ -1014,7 +1020,7 @@ export class ApplicationLoadBalancerMetrics {
           keyprefix = MetricsHelper.nextChar(keyprefix);
         
           mitigatedHostsPerZone[azLetter] = new MathExpression({
-            expression: Object.keys(usingMetrics).join("+"),
+            expression: Object.keys(usingMetrics).join("+") + " + TIME_SERIES(0)",
             usingMetrics: usingMetrics,
             label: availabilityZoneId,
             period: period,
@@ -1022,7 +1028,13 @@ export class ApplicationLoadBalancerMetrics {
           });
         }
         else {
-          mitigatedHostsPerZone[azLetter] = metricsPerAZ[azLetter][0];
+          mitigatedHostsPerZone[azLetter] = new MathExpression({
+            expression: "FILL(a, 0)",
+            usingMetrics: {"a": metricsPerAZ[azLetter][0]},
+            label: availabilityZoneId,
+            period: period,
+            color: MetricsHelper.colors[index]
+          });
         }
       });
   
@@ -1266,14 +1278,19 @@ export class ApplicationLoadBalancerMetrics {
           });
 
           aggregateFaultsPerZone[availabilityZone] = new MathExpression({
-            expression: Object.keys(usingMetrics).join("+"),
+            expression: Object.keys(usingMetrics).join("+") + " + TIME_SERIES(0)",
             usingMetrics: usingMetrics,
             color: MetricsHelper.colors[index],
             label: availabilityZoneId
           });
         }
         else {
-          aggregateFaultsPerZone[availabilityZone] = faultsPerZone[availabilityZone][0];
+          aggregateFaultsPerZone[availabilityZone] = new MathExpression({
+            expression: "FILL(a, 0)",
+            usingMetrics: {"a": faultsPerZone[availabilityZone][0]},
+            color: MetricsHelper.colors[index],
+            label: availabilityZoneId
+          });
         }
       });
 
