@@ -34,17 +34,17 @@ export interface IOperationAlarmsAndRules {
   /**
    * The aggregate zonal alarm indexed by Availability Zone name.
    */
-  readonly aggregateZonalAlarmsMap: { [key: string]: IAlarm };
+  readonly aggregateZonalAlarms: {[key: string]: IAlarm};
 
   /**
    * The server side zonal alarms and rules, indexed by Availability Zone name.
    */
-  readonly serverSideZonalAlarmsAndRulesMap: {[key: string]: IServerSideOperationZonalAlarmsAndRules};
+  readonly serverSideZonalAlarmsAndRules: {[key: string]: IServerSideOperationZonalAlarmsAndRules};
 
   /**
    * The canary zonal alarms and rules, indexed by Availability Zone name.
    * 
    * @default - This is an empty dictionary if canary metric details are not provided
    */
-  readonly canaryZonalAlarmsAndRulesMap?: {[key: string]: ICanaryOperationZonalAlarmsAndRules};
+  readonly canaryZonalAlarmsAndRules?: {[key: string]: ICanaryOperationZonalAlarmsAndRules};
 }

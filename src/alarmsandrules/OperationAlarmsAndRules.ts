@@ -39,7 +39,7 @@ export class OperationAlarmsAndRules
   /**
    * The aggregate zonal alarm indexed by Availability Zone Id.
    */
-  readonly aggregateZonalAlarmsMap: { [key: string]: IAlarm };
+  readonly aggregateZonalAlarms: { [key: string]: IAlarm };
 
   /**
    * An alarm indicating regionally scoped impact, not zonal
@@ -49,14 +49,14 @@ export class OperationAlarmsAndRules
   /**
    * The server side zonal alarms and rules, indexed by Availability Zone name.
    */
-  readonly serverSideZonalAlarmsAndRulesMap: {[key: string]: IServerSideOperationZonalAlarmsAndRules};
+  readonly serverSideZonalAlarmsAndRules: {[key: string]: IServerSideOperationZonalAlarmsAndRules};
 
   /**
    * The canary zonal alarms and rules, indexed by Availability Zone name.
    * 
    * @default - This is an empty dictionary if canary metric details are not provided
    */
-  readonly canaryZonalAlarmsAndRulesMap?: {[key: string]: ICanaryOperationZonalAlarmsAndRules};
+  readonly canaryZonalAlarmsAndRules?: {[key: string]: ICanaryOperationZonalAlarmsAndRules};
 
   constructor(
     scope: Construct,
@@ -66,9 +66,9 @@ export class OperationAlarmsAndRules
     super(scope, id);
 
     this.operation = props.operation;
-    this.aggregateZonalAlarmsMap = {};
-    this.serverSideZonalAlarmsAndRulesMap = {};
-    this.canaryZonalAlarmsAndRulesMap = {};
+    this.aggregateZonalAlarms = {};
+    this.serverSideZonalAlarmsAndRules = {};
+    this.canaryZonalAlarmsAndRules = {};
 
     let loadBalancerArn: string = '';
 
@@ -132,7 +132,7 @@ export class OperationAlarmsAndRules
         },
       );
 
-      this.serverSideZonalAlarmsAndRulesMap[availabilityZone] = serverSideZonalAlarmsAndRules;
+      this.serverSideZonalAlarmsAndRules[availabilityZone] = serverSideZonalAlarmsAndRules;
 
       if (props.operation.canaryMetricDetails) {
         let canaryZonalAlarmsAndRules: ICanaryOperationZonalAlarmsAndRules = new CanaryOperationZonalAlarmsAndRules(
@@ -149,7 +149,7 @@ export class OperationAlarmsAndRules
           },
         );
 
-        this.canaryZonalAlarmsAndRulesMap![availabilityZone] = canaryZonalAlarmsAndRules;
+        this.canaryZonalAlarmsAndRules![availabilityZone] = canaryZonalAlarmsAndRules;
 
         let aggAlarm: IAlarm = new CompositeAlarm(
           this,
@@ -164,8 +164,8 @@ export class OperationAlarmsAndRules
               props.operation.operationName.toLowerCase() +
               '-aggregate-isolated-az-impact',
             alarmRule: AlarmRule.anyOf(
-              this.canaryZonalAlarmsAndRulesMap![availabilityZone].isolatedImpactAlarm,
-              this.serverSideZonalAlarmsAndRulesMap[availabilityZone].isolatedImpactAlarm
+              this.canaryZonalAlarmsAndRules![availabilityZone].isolatedImpactAlarm,
+              this.serverSideZonalAlarmsAndRules[availabilityZone].isolatedImpactAlarm
             ),
             actionsEnabled: false,
             alarmDescription:
@@ -177,9 +177,9 @@ export class OperationAlarmsAndRules
           },
         );
         
-        this.aggregateZonalAlarmsMap[availabilityZone] = aggAlarm;
+        this.aggregateZonalAlarms[availabilityZone] = aggAlarm;
       } else {       
-        this.aggregateZonalAlarmsMap[availabilityZone] = this.serverSideZonalAlarmsAndRulesMap[availabilityZone].isolatedImpactAlarm    
+        this.aggregateZonalAlarms[availabilityZone] = this.serverSideZonalAlarmsAndRules[availabilityZone].isolatedImpactAlarm    
       }
     });
 
@@ -196,7 +196,7 @@ export class OperationAlarmsAndRules
           ),
           AlarmRule.not(
             AlarmRule.anyOf(
-              ...Object.values(this.aggregateZonalAlarmsMap)
+              ...Object.values(this.aggregateZonalAlarms)
             )
           )
         )
@@ -209,7 +209,7 @@ export class OperationAlarmsAndRules
           this.serverSideRegionalAlarmsAndRules.availabilityOrLatencyAlarm,     
           AlarmRule.not(
             AlarmRule.anyOf(
-              ...Object.values(this.aggregateZonalAlarmsMap)
+              ...Object.values(this.aggregateZonalAlarms)
             )
           )
         )

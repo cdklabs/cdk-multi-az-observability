@@ -295,12 +295,12 @@ export class OperationAvailabilityAndLatencyDashboard
 
     let availabilityAlarmWidgets: IWidget[] = []
 
-    Object.keys(props.operationAlarmsAndRules.serverSideZonalAlarmsAndRulesMap).forEach((availabilityZone: string) => {
+    Object.keys(props.operationAlarmsAndRules.serverSideZonalAlarmsAndRules).forEach((availabilityZone: string) => {
       let azLetter: string = availabilityZone.substring(availabilityZone.length - 1);
       let availabilityZoneId: string = props.azMapper.availabilityZoneIdFromAvailabilityZoneLetter(azLetter);
 
       availabilityAlarmWidgets.push(new AlarmWidget({
-        alarm: props.operationAlarmsAndRules.serverSideZonalAlarmsAndRulesMap[availabilityZone].availabilityAlarm,
+        alarm: props.operationAlarmsAndRules.serverSideZonalAlarmsAndRules[availabilityZone].availabilityAlarm,
         title: `${availabilityZoneId} Availability`,
         height: 2,
         width: 8
@@ -311,12 +311,12 @@ export class OperationAvailabilityAndLatencyDashboard
 
     let latencyAlarmWidgets: IWidget[] = [];
 
-    Object.keys(props.operationAlarmsAndRules.serverSideZonalAlarmsAndRulesMap).forEach((availabilityZone: string) => {
+    Object.keys(props.operationAlarmsAndRules.serverSideZonalAlarmsAndRules).forEach((availabilityZone: string) => {
       let azLetter: string = availabilityZone.substring(availabilityZone.length - 1);
       let availabilityZoneId: string = props.azMapper.availabilityZoneIdFromAvailabilityZoneLetter(azLetter);
 
       latencyAlarmWidgets.push(new AlarmWidget({
-        alarm: props.operationAlarmsAndRules.serverSideZonalAlarmsAndRulesMap[availabilityZone].latencyAlarm,
+        alarm: props.operationAlarmsAndRules.serverSideZonalAlarmsAndRules[availabilityZone].latencyAlarm,
         title: `${availabilityZoneId} Latency`,
         height: 2,
         width: 8
@@ -605,12 +605,12 @@ export class OperationAvailabilityAndLatencyDashboard
 
     let availabilityAlarmWidgets: IWidget[] = []
 
-    Object.keys(props.operationAlarmsAndRules.canaryZonalAlarmsAndRulesMap!).forEach((availabilityZone: string) => {
+    Object.keys(props.operationAlarmsAndRules.canaryZonalAlarmsAndRules!).forEach((availabilityZone: string) => {
       let azLetter: string = availabilityZone.substring(availabilityZone.length - 1);
       let availabilityZoneId: string = props.azMapper.availabilityZoneIdFromAvailabilityZoneLetter(azLetter);
       
       availabilityAlarmWidgets.push(new AlarmWidget({
-        alarm: props.operationAlarmsAndRules.canaryZonalAlarmsAndRulesMap![availabilityZone].availabilityAlarm,
+        alarm: props.operationAlarmsAndRules.canaryZonalAlarmsAndRules![availabilityZone].availabilityAlarm,
         title: `${availabilityZoneId} Availability`,
         height: 2,
         width: 8
@@ -621,12 +621,12 @@ export class OperationAvailabilityAndLatencyDashboard
 
     let latencyAlarmWidgets: IWidget[] = [];
 
-    Object.keys(props.operationAlarmsAndRules.canaryZonalAlarmsAndRulesMap!).forEach((availabilityZone: string) => {
+    Object.keys(props.operationAlarmsAndRules.canaryZonalAlarmsAndRules!).forEach((availabilityZone: string) => {
       let azLetter: string = availabilityZone.substring(availabilityZone.length - 1);
       let availabilityZoneId: string = props.azMapper.availabilityZoneIdFromAvailabilityZoneLetter(azLetter);
 
       latencyAlarmWidgets.push(new AlarmWidget({
-        alarm: props.operationAlarmsAndRules.canaryZonalAlarmsAndRulesMap![availabilityZone].latencyAlarm,
+        alarm: props.operationAlarmsAndRules.canaryZonalAlarmsAndRules![availabilityZone].latencyAlarm,
         title: `${availabilityZoneId} Latency`,
         height: 2,
         width: 8
@@ -662,7 +662,7 @@ export class OperationAvailabilityAndLatencyDashboard
         width: 24,
         alarms: [
           props.operationAlarmsAndRules.regionalImpactAlarm,
-          ...Object.values(props.operationAlarmsAndRules.aggregateZonalAlarmsMap)
+          ...Object.values(props.operationAlarmsAndRules.aggregateZonalAlarms)
         ],
         title: "Aggregate Alarms"
       }
