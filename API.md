@@ -4895,8 +4895,8 @@ Service level alarms and rules using critical operations.
 | --- | --- | --- |
 | <code><a href="#@cdklabs/multi-az-observability.IServiceAlarmsAndRules.property.regionalFaultCountServerSideAlarm">regionalFaultCountServerSideAlarm</a></code> | <code>aws-cdk-lib.aws_cloudwatch.IAlarm</code> | An alarm for fault count exceeding a regional threshold for all critical operations. |
 | <code><a href="#@cdklabs/multi-az-observability.IServiceAlarmsAndRules.property.service">service</a></code> | <code><a href="#@cdklabs/multi-az-observability.IService">IService</a></code> | The service these alarms and rules are for. |
-| <code><a href="#@cdklabs/multi-az-observability.IServiceAlarmsAndRules.property.zonalAggregateIsolatedImpactAlarms">zonalAggregateIsolatedImpactAlarms</a></code> | <code>aws-cdk-lib.aws_cloudwatch.IAlarm[]</code> | The zonal aggregate isolated impact alarms. |
-| <code><a href="#@cdklabs/multi-az-observability.IServiceAlarmsAndRules.property.zonalServerSideIsolatedImpactAlarms">zonalServerSideIsolatedImpactAlarms</a></code> | <code>aws-cdk-lib.aws_cloudwatch.IAlarm[]</code> | The zonal server-side isolated impact alarms. |
+| <code><a href="#@cdklabs/multi-az-observability.IServiceAlarmsAndRules.property.zonalAggregateIsolatedImpactAlarms">zonalAggregateIsolatedImpactAlarms</a></code> | <code>{[ key: string ]: aws-cdk-lib.aws_cloudwatch.IAlarm}</code> | The zonal aggregate isolated impact alarms. |
+| <code><a href="#@cdklabs/multi-az-observability.IServiceAlarmsAndRules.property.zonalServerSideIsolatedImpactAlarms">zonalServerSideIsolatedImpactAlarms</a></code> | <code>{[ key: string ]: aws-cdk-lib.aws_cloudwatch.IAlarm}</code> | The zonal server-side isolated impact alarms. |
 | <code><a href="#@cdklabs/multi-az-observability.IServiceAlarmsAndRules.property.regionalAvailabilityCanaryAlarm">regionalAvailabilityCanaryAlarm</a></code> | <code>aws-cdk-lib.aws_cloudwatch.IAlarm</code> | An alarm for regional availability impact of any critical operation as measured by the canary. |
 | <code><a href="#@cdklabs/multi-az-observability.IServiceAlarmsAndRules.property.regionalAvailabilityOrLatencyCanaryAlarm">regionalAvailabilityOrLatencyCanaryAlarm</a></code> | <code>aws-cdk-lib.aws_cloudwatch.IAlarm</code> | An alarm for regional availability or latency impact of any critical operation as measured by the canary. |
 
@@ -4929,10 +4929,10 @@ The service these alarms and rules are for.
 ##### `zonalAggregateIsolatedImpactAlarms`<sup>Required</sup> <a name="zonalAggregateIsolatedImpactAlarms" id="@cdklabs/multi-az-observability.IServiceAlarmsAndRules.property.zonalAggregateIsolatedImpactAlarms"></a>
 
 ```typescript
-public readonly zonalAggregateIsolatedImpactAlarms: IAlarm[];
+public readonly zonalAggregateIsolatedImpactAlarms: {[ key: string ]: IAlarm};
 ```
 
-- *Type:* aws-cdk-lib.aws_cloudwatch.IAlarm[]
+- *Type:* {[ key: string ]: aws-cdk-lib.aws_cloudwatch.IAlarm}
 
 The zonal aggregate isolated impact alarms.
 
@@ -4945,10 +4945,10 @@ that indicates it has isolated impact as measured by canaries or server-side.
 ##### `zonalServerSideIsolatedImpactAlarms`<sup>Required</sup> <a name="zonalServerSideIsolatedImpactAlarms" id="@cdklabs/multi-az-observability.IServiceAlarmsAndRules.property.zonalServerSideIsolatedImpactAlarms"></a>
 
 ```typescript
-public readonly zonalServerSideIsolatedImpactAlarms: IAlarm[];
+public readonly zonalServerSideIsolatedImpactAlarms: {[ key: string ]: IAlarm};
 ```
 
-- *Type:* aws-cdk-lib.aws_cloudwatch.IAlarm[]
+- *Type:* {[ key: string ]: aws-cdk-lib.aws_cloudwatch.IAlarm}
 
 The zonal server-side isolated impact alarms.
 
