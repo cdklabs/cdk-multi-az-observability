@@ -25,7 +25,7 @@ export class BasicServiceDashboard extends Construct {
     }
 
     this.dashboard = new Dashboard(this, 'BasicServiceDashboard', {
-      dashboardName: `${props.serviceName.toLowerCase()}-per-az-health-${Aws.REGION})`,
+      dashboardName: `${props.serviceName.toLowerCase()}-per-az-health-${Aws.REGION}`,
       defaultInterval: props.interval,
       periodOverride: PeriodOverride.AUTO
     });
