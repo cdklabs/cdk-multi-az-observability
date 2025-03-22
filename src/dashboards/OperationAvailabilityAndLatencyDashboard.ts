@@ -254,7 +254,7 @@ export class OperationAvailabilityAndLatencyDashboard
             availabilityZoneId: availabilityZoneId,
             availabilityZone: availabilityZone,
             metricDetails: operation.serverSideLatencyMetricDetails,
-            label: availabilityZoneId,
+            label: availabilityZoneId + " (avg: ${AVG}  max: ${MAX})",
             metricType: LatencyMetricType.SUCCESS_LATENCY,
             statistic: `TC(${operation.serverSideLatencyMetricDetails.successAlarmThreshold}:)`,
             color: MetricsHelper.colors[index]
@@ -554,14 +554,14 @@ export class OperationAvailabilityAndLatencyDashboard
               availabilityZoneId: availabilityZoneId,
               availabilityZone: availabilityZone,
               metricDetails: operation.canaryMetricDetails!.canaryLatencyMetricDetails,
-              label: availabilityZoneId,
+              label: availabilityZoneId + " (avg: ${AVG}  max: ${MAX})",
               metricType: LatencyMetricType.SUCCESS_LATENCY,
               statistic: `TC(${operation.canaryMetricDetails!.canaryLatencyMetricDetails.successAlarmThreshold}:)`,
               color: MetricsHelper.colors[index]
             })
           }),
           AvailabilityAndLatencyMetrics.createLatencyCountMetric({
-            label: Aws.REGION,
+            label: Aws.REGION + " (avg: ${AVG}  max: ${MAX})", 
             metricDetails: operation.canaryMetricDetails!.canaryLatencyMetricDetails,
             metricType: LatencyMetricType.SUCCESS_LATENCY,
             statistic: `TC(${operation.canaryMetricDetails!.canaryLatencyMetricDetails.successAlarmThreshold}:)`,

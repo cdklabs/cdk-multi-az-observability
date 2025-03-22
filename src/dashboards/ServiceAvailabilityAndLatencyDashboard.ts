@@ -95,7 +95,7 @@ export class ServiceAvailabilityAndLatencyDashboard
         return AvailabilityAndLatencyMetrics.createZonalAvailabilityMetric({
           availabilityZoneId: availabilityZoneId,
           availabilityZone: availabilityZone,
-          label: operation.operationName + " (avg: ${AVG}  min: ${MIN})",
+          label: operation.operationName + " (avg: ${AVG}  max: ${MAX})",
           metricDetails: operation.serverSideAvailabilityMetricDetails,
           metricType: AvailabilityMetricType.FAULT_COUNT,
           color: MetricsHelper.colors[index]
@@ -130,7 +130,7 @@ export class ServiceAvailabilityAndLatencyDashboard
         return AvailabilityAndLatencyMetrics.createZonalLatencyCountMetric({
           availabilityZoneId: availabilityZoneId,
           availabilityZone: availabilityZone,
-          label: `${operation.operationName} (${operation.serverSideLatencyMetricDetails.alarmStatistic})` + " (avg: ${AVG}  min: ${MIN})",
+          label: `${operation.operationName} (${operation.serverSideLatencyMetricDetails.alarmStatistic})` + " (avg: ${AVG}  max: ${MAX})",
           metricDetails: operation.serverSideLatencyMetricDetails,
           metricType: LatencyMetricType.SUCCESS_LATENCY,
           color: MetricsHelper.colors[index],
@@ -165,7 +165,7 @@ export class ServiceAvailabilityAndLatencyDashboard
         return AvailabilityAndLatencyMetrics.createZonalLatencyCountMetric({
           availabilityZoneId: availabilityZoneId,
           availabilityZone: availabilityZone,
-          label: operation.operationName + " (avg: ${AVG}  min: ${MIN})",
+          label: operation.operationName + " (avg: ${AVG}  max: ${MAX})",
           metricDetails: operation.serverSideLatencyMetricDetails,
           metricType: LatencyMetricType.SUCCESS_LATENCY,
           color: MetricsHelper.colors[index],
@@ -227,7 +227,7 @@ export class ServiceAvailabilityAndLatencyDashboard
     
           return new MathExpression({
             expression: Object.keys(usingMetrics).join('+'),
-            label: availabilityZoneId,
+            label: availabilityZoneId + " (avg: ${AVG}  max: ${MAX})",
             usingMetrics: usingMetrics,
             period: props.service.period
           });
@@ -315,7 +315,7 @@ export class ServiceAvailabilityAndLatencyDashboard
         return AvailabilityAndLatencyMetrics.createZonalAvailabilityMetric({
           availabilityZoneId: availabilityZoneId,
           availabilityZone: availabilityZone,
-          label: operation.operationName + " (avg: ${AVG}  min: ${MIN})",
+          label: operation.operationName + " (avg: ${AVG}  max: ${MAX})",
           metricDetails: operation.canaryMetricDetails!.canaryAvailabilityMetricDetails,
           metricType: AvailabilityMetricType.FAULT_COUNT,
           color: MetricsHelper.colors[index]
@@ -350,7 +350,7 @@ export class ServiceAvailabilityAndLatencyDashboard
         return AvailabilityAndLatencyMetrics.createZonalLatencyCountMetric({
           availabilityZoneId: availabilityZoneId,
           availabilityZone: availabilityZone,
-          label: `${operation.operationName} (${operation.canaryMetricDetails!.canaryLatencyMetricDetails.alarmStatistic})` + " (avg: ${AVG}  min: ${MIN})",
+          label: `${operation.operationName} (${operation.canaryMetricDetails!.canaryLatencyMetricDetails.alarmStatistic})` + " (avg: ${AVG}  max: ${MAX})",
           metricDetails: operation.canaryMetricDetails!.canaryLatencyMetricDetails,
           metricType: LatencyMetricType.SUCCESS_LATENCY,
           color: MetricsHelper.colors[index],
@@ -385,7 +385,7 @@ export class ServiceAvailabilityAndLatencyDashboard
         return AvailabilityAndLatencyMetrics.createZonalLatencyCountMetric({
           availabilityZoneId: availabilityZoneId,
           availabilityZone: availabilityZone,
-          label: operation.operationName + " (avg: ${AVG}  min: ${MIN})",
+          label: operation.operationName + " (avg: ${AVG}  max: ${MAX})",
           metricDetails: operation.canaryMetricDetails!.canaryLatencyMetricDetails,
           metricType: LatencyMetricType.SUCCESS_LATENCY,
           color: MetricsHelper.colors[index],
