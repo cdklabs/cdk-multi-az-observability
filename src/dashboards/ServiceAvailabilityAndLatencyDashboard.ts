@@ -157,11 +157,11 @@ export class ServiceAvailabilityAndLatencyDashboard
       )
     });
 
-    let perAZWidgetWithPerOperationHighLatencyCount: IWidget[] = availabilityZones.map((availabilityZone: string, index: number) => {
+    let perAZWidgetWithPerOperationHighLatencyCount: IWidget[] = availabilityZones.map((availabilityZone: string) => {
       let azLetter: string = availabilityZone.substring(availabilityZone.length - 1);
       let availabilityZoneId: string = props.azMapper.availabilityZoneIdFromAvailabilityZoneLetter(azLetter);
 
-      let criticalOperationsZonalMetrics: IMetric[] = criticalOperations.map((operation: IOperation) => {
+      let criticalOperationsZonalMetrics: IMetric[] = criticalOperations.map((operation: IOperation, index: number) => {
         return AvailabilityAndLatencyMetrics.createZonalLatencyCountMetric({
           availabilityZoneId: availabilityZoneId,
           availabilityZone: availabilityZone,
@@ -377,11 +377,11 @@ export class ServiceAvailabilityAndLatencyDashboard
       )
     });
 
-    let perAZWidgetWithPerOperationHighLatencyCount: IWidget[] = availabilityZones.map((availabilityZone: string, index: number) => {
+    let perAZWidgetWithPerOperationHighLatencyCount: IWidget[] = availabilityZones.map((availabilityZone: string) => {
       let azLetter: string = availabilityZone.substring(availabilityZone.length - 1);
       let availabilityZoneId: string = props.azMapper.availabilityZoneIdFromAvailabilityZoneLetter(azLetter);
 
-      let criticalOperationsZonalMetrics: IMetric[] = criticalOperations.map((operation: IOperation) => {
+      let criticalOperationsZonalMetrics: IMetric[] = criticalOperations.map((operation: IOperation, index: number) => {
         return AvailabilityAndLatencyMetrics.createZonalLatencyCountMetric({
           availabilityZoneId: availabilityZoneId,
           availabilityZone: availabilityZone,
