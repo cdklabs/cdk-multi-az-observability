@@ -1569,11 +1569,7 @@ export class ApplicationLoadBalancerMetrics {
         faultRateThreshold: number
       ): IWidget[] {
         let albWidgets: IWidget[] = [];
-
-        latencyStatistic;
-        latencyThreshold;
-        faultRateThreshold;
-    
+   
         let successCountPerZone: {[key: string]: IMetric} = 
           ApplicationLoadBalancerMetrics.getTotalAlbSuccessCountPerZone(albs, period, azMapper);
         let faultCountPerZone: {[key: string]: IMetric} = 
