@@ -13,12 +13,12 @@ var wildRydesService = new Service(new ServiceProps(){
     AvailabilityZoneNames = vpc.AvailabilityZones,
     Period = Duration.Seconds(60),
     LoadBalancer = loadBalancer,
-    DefaultAvailabilityMetricDetails = new ServiceMetricDetails(new ServiceMetricDetailsProps() {
+    DefaultAvailabilityMetricDetails = new ServiceAvailabilityMetricDetails(new ServiceAvailabilityMetricDetailsProps() {
         AlarmStatistic = "Sum",
-        DatapointsToAlarm = 3,
-        EvaluationPeriods = 5,
+        DatapointsToAlarm = 2,
+        EvaluationPeriods = 3,
         FaultAlarmThreshold = 1,
-        FaultMetricNames = new string[] { "Fault", "Error" },
+        FaultMetricNames = new string[] { "Fault", "Failure" },
         GraphedFaultStatistics = new string[] { "Sum" },
         GraphedSuccessStatistics = new string[] { "Sum" },
         MetricNamespace = metricsNamespace,
@@ -27,11 +27,10 @@ var wildRydesService = new Service(new ServiceProps(){
         SuccessMetricNames = new string[] {"Success"},
         Unit = Unit.COUNT,
     }),
-    DefaultLatencyMetricDetails = new ServiceMetricDetails(new ServiceMetricDetailsProps(){
+    DefaultLatencyMetricDetails = new ServiceLatencyMetricDetails(new ServiceLatencyMetricDetailsProps(){
         AlarmStatistic = "p99",
-        DatapointsToAlarm = 3,
-        EvaluationPeriods = 5,
-        FaultAlarmThreshold = 1,
+        DatapointsToAlarm = 2,
+        EvaluationPeriods = 3,
         FaultMetricNames = new string[] { "FaultLatency" },
         GraphedFaultStatistics = new string[] { "p50" },
         GraphedSuccessStatistics = new string[] { "p50", "p99", "tm50", "tm99" },
@@ -50,89 +49,92 @@ var wildRydesService = new Service(new ServiceProps(){
         SuccessLatencyMetricJsonPath = successLatencyMetricJsonPath
     }),
     CanaryTestProps = new AddCanaryTestProps() {
-        RequestCount = 10,
+        RequestCount = 60,
+        RegionalRequestCount = 60,
         LoadBalancer = loadBalancer,
         Schedule = "rate(1 minute)",
+        Timeout = Duration.Seconds(3),
         NetworkConfiguration = new NetworkConfigurationProps() {
             Vpc = vpc,
             SubnetSelection = new SubnetSelection() { SubnetType = SubnetType.PRIVATE_ISOLATED }
-        }
+        }            
     }
-});
+}
+
 wildRydesService.AddOperation(new Operation(new OperationProps() {
     OperationName = "Signin",
     Path = "/signin",
     Service = wildRydesService,
     Critical = true,
     HttpMethods = new string[] { "GET" },
-    ServerSideAvailabilityMetricDetails = new OperationMetricDetails(new OperationMetricDetailsProps() {
+    ServerSideAvailabilityMetricDetails = new OperationAvailabilityMetricDetails(new OperationAvailabilityMetricDetailsProps() {
         OperationName = "Signin",
         MetricDimensions = new MetricDimensions(new Dictionary<string, string> {{ "Operation", "Signin"}}, "AZ-ID", "Region")
     }, wildRydesService.DefaultAvailabilityMetricDetails),
-    ServerSideLatencyMetricDetails = new OperationMetricDetails(new OperationMetricDetailsProps() {
+    ServerSideLatencyMetricDetails = new OperationLatencyMetricDetails(new OperationLatencyMetricDetailsProps() {
         OperationName = "Signin",
         SuccessAlarmThreshold = Duration.Millis(150),
         MetricDimensions = new MetricDimensions(new Dictionary<string, string> {{ "Operation", "Signin"}}, "AZ-ID", "Region")
     }, wildRydesService.DefaultLatencyMetricDetails),
-    CanaryTestLatencyMetricsOverride = new CanaryTestMetricsOverride(new CanaryTestMetricsOverrideProps() {
-        SuccessAlarmThreshold = Duration.Millis(250),
+    CanaryTestLatencyMetricsOverride = new CanaryTestLatencyMetricsOverride(new CanaryTestLatencyMetricsOverrideProps() {
+        SuccessAlarmThreshold = Duration.Millis(500)
     })
-}));
+})
 wildRydesService.AddOperation(new Operation(new OperationProps() {
     OperationName = "Pay",
     Path = "/pay",
     Service = wildRydesService,
     HttpMethods = new string[] { "GET" },
     Critical = true,
-    ServerSideAvailabilityMetricDetails = new OperationMetricDetails(new OperationMetricDetailsProps() {
+    ServerSideAvailabilityMetricDetails = new OperationAvailabilityMetricDetails(new OperationAvailabilityMetricDetailsProps() {
         OperationName = "Pay",
         MetricDimensions = new MetricDimensions(new Dictionary<string, string> {{ "Operation", "Pay"}}, "AZ-ID", "Region")
     }, wildRydesService.DefaultAvailabilityMetricDetails),
-    ServerSideLatencyMetricDetails = new OperationMetricDetails(new OperationMetricDetailsProps() {
+    ServerSideLatencyMetricDetails = new OperationLatencyMetricDetails(new OperationLatencyMetricDetailsProps() {
         OperationName = "Pay",
         SuccessAlarmThreshold = Duration.Millis(200),
         MetricDimensions = new MetricDimensions(new Dictionary<string, string> {{ "Operation", "Pay"}}, "AZ-ID", "Region")
     }, wildRydesService.DefaultLatencyMetricDetails),
-    CanaryTestLatencyMetricsOverride = new CanaryTestMetricsOverride(new CanaryTestMetricsOverrideProps() {
-        SuccessAlarmThreshold = Duration.Millis(300)
+    CanaryTestLatencyMetricsOverride = new CanaryTestLatencyMetricsOverride(new CanaryTestLatencyMetricsOverrideProps() {
+        SuccessAlarmThreshold = Duration.Millis(500)
     })
-}));
+})
 wildRydesService.AddOperation(new Operation(new OperationProps() {
     OperationName = "Ride",
     Path = "/ride",
     Service = wildRydesService,
     HttpMethods = new string[] { "GET" },
     Critical = true,
-    ServerSideAvailabilityMetricDetails = new OperationMetricDetails(new OperationMetricDetailsProps() {
+    ServerSideAvailabilityMetricDetails = new OperationAvailabilityMetricDetails(new OperationAvailabilityMetricDetailsProps() {
         OperationName = "Ride",
         MetricDimensions = new MetricDimensions(new Dictionary<string, string> {{ "Operation", "Ride"}}, "AZ-ID", "Region")
     }, wildRydesService.DefaultAvailabilityMetricDetails),
-    ServerSideLatencyMetricDetails = new OperationMetricDetails(new OperationMetricDetailsProps() {
+    ServerSideLatencyMetricDetails = new OperationLatencyMetricDetails(new OperationLatencyMetricDetailsProps() {
         OperationName = "Ride",
         SuccessAlarmThreshold = Duration.Millis(350),
         MetricDimensions = new MetricDimensions(new Dictionary<string, string> {{ "Operation", "Ride"}}, "AZ-ID", "Region")
     }, wildRydesService.DefaultLatencyMetricDetails),
-    CanaryTestLatencyMetricsOverride = new CanaryTestMetricsOverride(new CanaryTestMetricsOverrideProps() {
-        SuccessAlarmThreshold = Duration.Millis(550)
+    CanaryTestLatencyMetricsOverride = new CanaryTestLatencyMetricsOverride(new CanaryTestLatencyMetricsOverrideProps() {
+        SuccessAlarmThreshold = Duration.Millis(650)
     })
-}));
+})
 wildRydesService.AddOperation(new Operation(new OperationProps() {
     OperationName = "Home",
     Path = "/home",
     Service = wildRydesService,
     HttpMethods = new string[] { "GET" },
     Critical = true,
-    ServerSideAvailabilityMetricDetails = new OperationMetricDetails(new OperationMetricDetailsProps() {
+    ServerSideAvailabilityMetricDetails = new OperationAvailabilityMetricDetails(new OperationAvailabilityMetricDetailsProps() {
         OperationName = "Home",
-        MetricDimensions = new MetricDimensions(new Dictionary<string, string> {{ "Operation", "Ride"}}, "AZ-ID", "Region")
+        MetricDimensions = new MetricDimensions(new Dictionary<string, string> {{ "Operation", "Home"}}, "AZ-ID", "Region")
     }, wildRydesService.DefaultAvailabilityMetricDetails),
-    ServerSideLatencyMetricDetails = new OperationMetricDetails(new OperationMetricDetailsProps() {
+    ServerSideLatencyMetricDetails = new OperationLatencyMetricDetails(new OperationLatencyMetricDetailsProps() {
         OperationName = "Home",
         SuccessAlarmThreshold = Duration.Millis(100),
-        MetricDimensions = new MetricDimensions(new Dictionary<string, string> {{ "Operation", "Ride"}}, "AZ-ID", "Region")
+        MetricDimensions = new MetricDimensions(new Dictionary<string, string> {{ "Operation", "Home"}}, "AZ-ID", "Region")
     }, wildRydesService.DefaultLatencyMetricDetails),
-    CanaryTestLatencyMetricsOverride = new CanaryTestMetricsOverride(new CanaryTestMetricsOverrideProps() {
-        SuccessAlarmThreshold = Duration.Millis(200)
+    CanaryTestLatencyMetricsOverride = new CanaryTestLatencyMetricsOverride(new CanaryTestLatencyMetricsOverrideProps() {
+        SuccessAlarmThreshold = Duration.Millis(500)
     })
 }));
 ```
