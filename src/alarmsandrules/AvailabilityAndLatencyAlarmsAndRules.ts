@@ -11,6 +11,7 @@ import {
   CfnInsightRule,
   ComparisonOperator,
   TreatMissingData,
+  Stats
 } from 'aws-cdk-lib/aws-cloudwatch';
 import { CfnNatGateway } from 'aws-cdk-lib/aws-ec2';
 import {
@@ -33,6 +34,8 @@ import { LatencyMetricType } from '../utilities/LatencyMetricType';
 import { OutlierDetectionAlgorithm } from '../utilities/OutlierDetectionAlgorithm';
 import { MetricsHelper } from '../utilities/MetricsHelper';
 import { AvailabilityAndLatencyMetrics } from '../metrics/AvailabilityAndLatencyMetrics';
+import { IOperationAvailabilityMetricDetails } from '../services/IOperationAvailabilityMetricDetails';
+import { IOperationLatencyMetricDetails } from '../services/IOperationLatencyMetricDetails';
 
 /**
  * Class used to create availability and latency alarms and Contributor Insight rules
@@ -49,7 +52,7 @@ export class AvailabilityAndLatencyAlarmsAndRules {
    */
   static createZonalAvailabilityAlarm(
     scope: Construct,
-    metricDetails: IOperationMetricDetails,
+    metricDetails: IOperationAvailabilityMetricDetails,
     availabilityZone: string,
     availabilityZoneId: string,
     counter: number,
@@ -97,7 +100,7 @@ export class AvailabilityAndLatencyAlarmsAndRules {
    */
   static createZonalLatencyAlarm(
     scope: Construct,
-    metricDetails: IOperationMetricDetails,
+    metricDetails: IOperationLatencyMetricDetails,
     availabilityZone: string,
     availabilityZoneId: string,
     counter: number,
@@ -116,7 +119,7 @@ export class AvailabilityAndLatencyAlarmsAndRules {
         evaluationPeriods: metricDetails.evaluationPeriods,
         datapointsToAlarm: metricDetails.datapointsToAlarm,
         comparisonOperator: ComparisonOperator.GREATER_THAN_THRESHOLD,
-        threshold: metricDetails.successAlarmThreshold,
+        threshold: MetricsHelper.convertDurationByUnit(metricDetails.successAlarmThreshold, metricDetails.unit),
         actionsEnabled: false,
         treatMissingData: TreatMissingData.IGNORE,
         metric: ZonalLatencyMetrics.createZonalAverageLatencyMetric({
@@ -532,7 +535,7 @@ export class AvailabilityAndLatencyAlarmsAndRules {
 
   static createZonalHighLatencyOutlierAlarm(
     scope: IConstruct,
-    metricDetails: IOperationMetricDetails,
+    metricDetails: IOperationLatencyMetricDetails,
     availabilityZoneId: string,
     allAvailabilityZoneIds: string[],
     outlierThreshold: number,
@@ -571,7 +574,7 @@ export class AvailabilityAndLatencyAlarmsAndRules {
         `"${str}",` +
         `"${metricDetails.metricNamespace}",` +
         `"${metricDetails.successMetricNames.join(':')}",` +
-        `"TC(${metricDetails.successAlarmThreshold}:)",` +
+        Stats.trimmedCount(MetricsHelper.convertDurationByUnit(metricDetails.successAlarmThreshold, metricDetails.unit)) +
         '"Milliseconds"' +
         '))',
       period: metricDetails.period
@@ -601,7 +604,7 @@ export class AvailabilityAndLatencyAlarmsAndRules {
 
   static createZonalHighLatencyStaticOutlierAlarm(
     scope: Construct,
-    metricDetails: IOperationMetricDetails,
+    metricDetails: IOperationLatencyMetricDetails,
     availabilityZone: string,
     availabilityZoneId: string,
     counter: number,
@@ -619,7 +622,7 @@ export class AvailabilityAndLatencyAlarmsAndRules {
           '-high-latency-requests',
         metricDetails: metricDetails,
         metricType: LatencyMetricType.SUCCESS_LATENCY,
-        statistic: `TC(${metricDetails.successAlarmThreshold}:)`
+        statistic: Stats.trimmedCount(MetricsHelper.convertDurationByUnit(metricDetails.successAlarmThreshold, metricDetails.unit))
       });
 
     let regionalLatency: IMetric =
@@ -631,7 +634,7 @@ export class AvailabilityAndLatencyAlarmsAndRules {
           '-high-latency-requests',
         metricDetails: metricDetails,
         metricType: LatencyMetricType.SUCCESS_LATENCY,
-        statistic: `TC(${metricDetails.successAlarmThreshold}:)`,
+        statistic: Stats.trimmedCount(MetricsHelper.convertDurationByUnit(metricDetails.successAlarmThreshold, metricDetails.unit)),
         keyPrefix: 'b',
       });
 
@@ -667,7 +670,7 @@ export class AvailabilityAndLatencyAlarmsAndRules {
 
   static createZonalHighLatencyStaticOutlierAlarmForCanaries(
     scope: Construct,
-    metricDetails: IOperationMetricDetails,
+    metricDetails: IOperationLatencyMetricDetails,
     availabilityZone: string,
     availabilityZoneId: string,
     availabilityZones: string[],
@@ -686,7 +689,7 @@ export class AvailabilityAndLatencyAlarmsAndRules {
           '-high-latency-requests',
         metricDetails: metricDetails,
         metricType: LatencyMetricType.SUCCESS_LATENCY,
-        statistic: `TC(${metricDetails.successAlarmThreshold}:)`
+        statistic: Stats.trimmedCount(MetricsHelper.convertDurationByUnit(metricDetails.successAlarmThreshold, metricDetails.unit))
       });
 
       let prefix = 'b';
@@ -702,7 +705,7 @@ export class AvailabilityAndLatencyAlarmsAndRules {
           metricDetails: metricDetails,
           metricType: LatencyMetricType.SUCCESS_LATENCY,
           keyPrefix: prefix,
-          statistic: `TC(${metricDetails.successAlarmThreshold}:)`
+          statistic: Stats.trimmedCount(MetricsHelper.convertDurationByUnit(metricDetails.successAlarmThreshold, metricDetails.unit))
         });
 
         prefix = MetricsHelper.nextChar(prefix);
@@ -885,7 +888,7 @@ export class AvailabilityAndLatencyAlarmsAndRules {
    */
   static createServerSideInstanceHighLatencyContributorsInThisAZRule(
     scope: Construct,
-    metricDetails: IOperationMetricDetails,
+    metricDetails: IOperationLatencyMetricDetails,
     availabilityZoneId: string,
     ruleDetails: IContributorInsightRuleDetails,
     counter: number,
@@ -908,7 +911,7 @@ export class AvailabilityAndLatencyAlarmsAndRules {
         },
         {
           Match: ruleDetails.successLatencyMetricJsonPath,
-          GreaterThan: metricDetails.successAlarmThreshold,
+          GreaterThan: MetricsHelper.convertDurationByUnit(metricDetails.successAlarmThreshold, metricDetails.unit),
         },
       ],
     } as unknown as IContributionDefinition;
@@ -1159,7 +1162,7 @@ export class AvailabilityAndLatencyAlarmsAndRules {
    */
   static createRegionalAvailabilityAlarm(
     scope: Construct,
-    metricDetails: IOperationMetricDetails,
+    metricDetails: IOperationAvailabilityMetricDetails,
     nameSuffix: string,
   ): IAlarm {
     return new Alarm(
@@ -1197,7 +1200,7 @@ export class AvailabilityAndLatencyAlarmsAndRules {
    */
   static createRegionalLatencyAlarm(
     scope: Construct,
-    metricDetails: IOperationMetricDetails,
+    metricDetails: IOperationLatencyMetricDetails,
     nameSuffix: string,
   ): IAlarm {
     return new Alarm(
@@ -1213,7 +1216,7 @@ export class AvailabilityAndLatencyAlarmsAndRules {
         evaluationPeriods: metricDetails.evaluationPeriods,
         datapointsToAlarm: metricDetails.datapointsToAlarm,
         comparisonOperator: ComparisonOperator.GREATER_THAN_THRESHOLD,
-        threshold: metricDetails.successAlarmThreshold,
+        threshold: MetricsHelper.convertDurationByUnit(metricDetails.successAlarmThreshold, metricDetails.unit),
         actionsEnabled: false,
         treatMissingData: TreatMissingData.IGNORE,
         metric: RegionalLatencyMetrics.createRegionalAverageLatencyMetric({
@@ -1263,7 +1266,7 @@ export class AvailabilityAndLatencyAlarmsAndRules {
 
   static createRegionalInstanceContributorsToHighLatency(
     scope: Construct,
-    metricDetails: IOperationMetricDetails,
+    metricDetails: IOperationLatencyMetricDetails,
     ruleDetails: IContributorInsightRuleDetails,
   ): CfnInsightRule {
     let ruleBody = new InsightRuleBody();
@@ -1275,7 +1278,7 @@ export class AvailabilityAndLatencyAlarmsAndRules {
       filters: [
         {
           Match: ruleDetails.successLatencyMetricJsonPath,
-          GreaterThan: metricDetails.successAlarmThreshold,
+          GreaterThan: MetricsHelper.convertDurationByUnit(metricDetails.successAlarmThreshold, metricDetails.unit),
         },
         {
           Match: ruleDetails.operationNameJsonPath,

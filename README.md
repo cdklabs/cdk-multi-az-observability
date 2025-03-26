@@ -1,9 +1,9 @@
-![Build Workflow](https://github.com/cdklabs/cdk-multi-az-observability/actions/workflows/build.yml/badge.svg) ![Release Workflow](https://github.com/cdklabs/cdk-multi-az-observability/actions/workflows/release.yml/badge.svg)
+![Build Workflow](https://github.com/cdklabs/cdk-multi-az-observability/actions/workflows/build.yml/badge.svg) ![Release Workflow](https://github.com/cdklabs/cdk-multi-az-observability/actions/workflows/release.yml/badge.svg) ![GitHub Release](https://img.shields.io/github/v/release/cdklabs/cdk-multi-az-observability?include_prereleases&sort=semver&logo=github&label=version)
 
 # multi-az-observability
 This is a CDK construct for multi-AZ observability to help detect single-AZ impairments. This is currently an `alpha` version, but is being used in the AWS [Advanced Multi-AZ Resilience Patterns](https://catalog.workshops.aws/multi-az-gray-failures/en-US) workshop.
 
-There is a lot of available information to think through and combine to provide signals about single-AZ impact. To simplify the setup and use reasonable defaults, this construct (available in TypeScript, Go, Python, and .NET [Java coming soon]) sets up the necessary observability. To use the CDK construct, you first define your service like this:
+There is a lot of available information to think through and combine to provide signals about single-AZ impact. To simplify the setup and use reasonable defaults, this construct (available in [TypeScript](https://www.npmjs.com/package/@cdklabs/multi-az-observability), [Go](https://github.com/cdklabs/cdk-multi-az-observability-go), [Python](https://pypi.org/project/cdklabs.multi-az-observability/), [.NET](https://www.nuget.org/packages/Cdklabs.MultiAZObservability), and [Java](https://central.sonatype.com/artifact/io.github.cdklabs/cdk-multi-az-observability)) sets up the necessary observability. To use the CDK construct, you first define your service like this:
 
 ```csharp
 var wildRydesService = new Service(new ServiceProps(){
@@ -37,7 +37,7 @@ var wildRydesService = new Service(new ServiceProps(){
         GraphedSuccessStatistics = new string[] { "p50", "p99", "tm50", "tm99" },
         MetricNamespace = metricsNamespace,
         Period = Duration.Seconds(60),
-        SuccessAlarmThreshold = 100,
+        SuccessAlarmThreshold = Duration.Millis(100),
         SuccessMetricNames = new string[] {"SuccessLatency"},
         Unit = Unit.MILLISECONDS,
     }),
@@ -71,11 +71,11 @@ wildRydesService.AddOperation(new Operation(new OperationProps() {
     }, wildRydesService.DefaultAvailabilityMetricDetails),
     ServerSideLatencyMetricDetails = new OperationMetricDetails(new OperationMetricDetailsProps() {
         OperationName = "Signin",
-        SuccessAlarmThreshold = 150,
+        SuccessAlarmThreshold = Duration.Millis(150),
         MetricDimensions = new MetricDimensions(new Dictionary<string, string> {{ "Operation", "Signin"}}, "AZ-ID", "Region")
     }, wildRydesService.DefaultLatencyMetricDetails),
     CanaryTestLatencyMetricsOverride = new CanaryTestMetricsOverride(new CanaryTestMetricsOverrideProps() {
-        SuccessAlarmThreshold = 250
+        SuccessAlarmThreshold = Duration.Millis(250),
     })
 }));
 wildRydesService.AddOperation(new Operation(new OperationProps() {
@@ -90,11 +90,11 @@ wildRydesService.AddOperation(new Operation(new OperationProps() {
     }, wildRydesService.DefaultAvailabilityMetricDetails),
     ServerSideLatencyMetricDetails = new OperationMetricDetails(new OperationMetricDetailsProps() {
         OperationName = "Pay",
-        SuccessAlarmThreshold = 200,
+        SuccessAlarmThreshold = Duration.Millis(200),
         MetricDimensions = new MetricDimensions(new Dictionary<string, string> {{ "Operation", "Pay"}}, "AZ-ID", "Region")
     }, wildRydesService.DefaultLatencyMetricDetails),
     CanaryTestLatencyMetricsOverride = new CanaryTestMetricsOverride(new CanaryTestMetricsOverrideProps() {
-        SuccessAlarmThreshold = 300
+        SuccessAlarmThreshold = Duration.Millis(300)
     })
 }));
 wildRydesService.AddOperation(new Operation(new OperationProps() {
@@ -109,11 +109,11 @@ wildRydesService.AddOperation(new Operation(new OperationProps() {
     }, wildRydesService.DefaultAvailabilityMetricDetails),
     ServerSideLatencyMetricDetails = new OperationMetricDetails(new OperationMetricDetailsProps() {
         OperationName = "Ride",
-        SuccessAlarmThreshold = 350,
+        SuccessAlarmThreshold = Duration.Millis(350),
         MetricDimensions = new MetricDimensions(new Dictionary<string, string> {{ "Operation", "Ride"}}, "AZ-ID", "Region")
     }, wildRydesService.DefaultLatencyMetricDetails),
     CanaryTestLatencyMetricsOverride = new CanaryTestMetricsOverride(new CanaryTestMetricsOverrideProps() {
-        SuccessAlarmThreshold = 550
+        SuccessAlarmThreshold = Duration.Millis(550)
     })
 }));
 wildRydesService.AddOperation(new Operation(new OperationProps() {
@@ -128,11 +128,11 @@ wildRydesService.AddOperation(new Operation(new OperationProps() {
     }, wildRydesService.DefaultAvailabilityMetricDetails),
     ServerSideLatencyMetricDetails = new OperationMetricDetails(new OperationMetricDetailsProps() {
         OperationName = "Home",
-        SuccessAlarmThreshold = 100,
+        SuccessAlarmThreshold = Duration.Millis(100),
         MetricDimensions = new MetricDimensions(new Dictionary<string, string> {{ "Operation", "Ride"}}, "AZ-ID", "Region")
     }, wildRydesService.DefaultLatencyMetricDetails),
     CanaryTestLatencyMetricsOverride = new CanaryTestMetricsOverride(new CanaryTestMetricsOverrideProps() {
-        SuccessAlarmThreshold = 200
+        SuccessAlarmThreshold = Duration.Millis(200)
     })
 }));
 ```
@@ -148,9 +148,9 @@ InstrumentedServiceMultiAZObservability multiAvailabilityZoneObservability = new
 });
 ```
 
-You define some characteristics of the service, default values for metrics and alarms, and then add operations as well as any overrides for default values that you need. The construct can also automatically create synthetic canaries that test each operation with a very simple HTTP check, or you can configure your own synthetics and just tell the construct about the metric details and optionally log files. This creates metrics, alarms, and dashboards that can be used to detect single-AZ impact.
+You define some characteristics of the service, default values for metrics and alarms, and then add operations as well as any overrides for default values that you need. The construct can also automatically create synthetic canaries that test each operation with a very simple HTTP check, or you can configure your own synthetics and just tell the construct about the metric details and optionally log files. This creates metrics, alarms, and dashboards that can be used to detect single-AZ impact. You can access these alarms from the `multiAvailabilityZoneObservability` object and use them in your CDK project to start automation, send SNS notifications, or incorporate in your own dashboards.
 
-If you don't have service specific logs and custom metrics with per-AZ dimensions, you can still use the construct to evaluate ALB and NAT Gateway metrics to find single AZ faults.
+If you don't have service specific logs and custom metrics with per-AZ dimensions, you can still use the construct to evaluate ALB and/or NAT Gateway metrics to find single AZ impairments.
 
 ```csharp
 BasicServiceMultiAZObservability multiAZObservability = new BasicServiceMultiAZObservability(this, "basic-service-", new BasicServiceMultiAZObservabilityProps() {  
@@ -158,7 +158,7 @@ BasicServiceMultiAZObservability multiAZObservability = new BasicServiceMultiAZO
         ApplicationLoadBalancers = [ myALB ],
         LatencyStatistic = Stats.Percentile(99),
         FaultCountPercentThreshold = 1,
-        LatencyThreshold = 500
+        LatencyThreshold = Duration.Millis(500)
     },
     NatGatewayProps = new NatGatewayDetectionProps() {     
         PacketLossPercentThreshold = 0.01,

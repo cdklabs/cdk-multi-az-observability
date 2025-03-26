@@ -1,13 +1,15 @@
 // Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 import { ICanaryMetrics } from './ICanaryMetrics';
-import { ICanaryTestMetricsOverride } from './ICanaryTestMetricsOverride';
 import { IContributorInsightRuleDetails } from './IContributorInsightRuleDetails';
 import { IOperation } from './IOperation';
-import { IOperationMetricDetails } from './IOperationMetricDetails';
 import { IService } from './IService';
 import { OperationProps } from './props/OperationProps';
 import { AddCanaryTestProps } from '../canaries/props/AddCanaryTestProps';
+import { IOperationAvailabilityMetricDetails } from './IOperationAvailabilityMetricDetails';
+import { IOperationLatencyMetricDetails } from './IOperationLatencyMetricDetails';
+import { ICanaryTestAvailabilityMetricsOverride } from './ICanaryTestAvailabilityMetricsOverride';
+import { ICanaryTestLatencyMetricsOverride } from './ICanaryTestLatencyMetricsOverride';
 
 /**
  * A single operation that is part of a service
@@ -32,12 +34,12 @@ export class Operation implements IOperation {
   /**
    * The server side availability metric details
    */
-  readonly serverSideAvailabilityMetricDetails: IOperationMetricDetails;
+  readonly serverSideAvailabilityMetricDetails: IOperationAvailabilityMetricDetails;
 
   /**
    * The server side latency metric details
    */
-  readonly serverSideLatencyMetricDetails: IOperationMetricDetails;
+  readonly serverSideLatencyMetricDetails: IOperationLatencyMetricDetails;
 
   /**
    * Optional metric details if the service has a canary
@@ -49,14 +51,14 @@ export class Operation implements IOperation {
    * use values other than the service defaults to define the thresholds for
    * availability.
    */
-  readonly canaryTestAvailabilityMetricsOverride?: ICanaryTestMetricsOverride;
+  readonly canaryTestAvailabilityMetricsOverride?: ICanaryTestAvailabilityMetricsOverride;
 
   /**
    * The override values for automatically created canary tests so you can
    * use values other than the service defaults to define the thresholds for
    * latency.
    */
-  readonly canaryTestLatencyMetricsOverride?: ICanaryTestMetricsOverride;
+  readonly canaryTestLatencyMetricsOverride?: ICanaryTestLatencyMetricsOverride;
 
   /**
    * The server side details for contributor insights rules

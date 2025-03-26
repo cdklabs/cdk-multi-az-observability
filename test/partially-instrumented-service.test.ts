@@ -14,11 +14,11 @@ import { InstrumentedServiceMultiAZObservability } from '../src/services/Instrum
 import { IOperation } from '../src/services/IOperation';
 import { IService } from '../src/services/IService';
 import { Operation } from '../src/services/Operation';
-import { OperationMetricDetails } from '../src/services/OperationMetricDetails';
 import { MetricDimensions } from '../src/services/props/MetricDimensions';
 import { Service } from '../src/services/Service';
-import { ServiceMetricDetails } from '../src/services/ServiceMetricDetails';
 import { OutlierDetectionAlgorithm } from '../src/utilities/OutlierDetectionAlgorithm';
+import { OperationAvailabilityMetricDetails } from '../src/services/OperationAvailabilityMetricDetails';
+import { OperationLatencyMetricDetails } from '../src/services/OperationLatencyMetricDetails';
 
 test('Partially instrumented service', () => {
   const app = new cdk.App();
@@ -64,7 +64,7 @@ test('Partially instrumented service', () => {
     faultCountThreshold: 25,
     period: Duration.seconds(60),
     loadBalancer: loadBalancer,
-    defaultAvailabilityMetricDetails: new ServiceMetricDetails({
+    defaultAvailabilityMetricDetails: {
       metricNamespace: 'front-end/metrics',
       successMetricNames: ['Success'],
       faultMetricNames: ['Fault', 'Error'],
@@ -77,8 +77,8 @@ test('Partially instrumented service', () => {
       faultAlarmThreshold: 0.1,
       graphedFaultStatistics: ['Sum'],
       graphedSuccessStatistics: ['Sum'],
-    }),
-    defaultLatencyMetricDetails: new ServiceMetricDetails({
+    },
+    defaultLatencyMetricDetails: {
       metricNamespace: 'front-end/metrics',
       successMetricNames: ['SuccessLatency'],
       faultMetricNames: ['FaultLatency'],
@@ -87,11 +87,10 @@ test('Partially instrumented service', () => {
       period: Duration.seconds(60),
       evaluationPeriods: 5,
       datapointsToAlarm: 3,
-      successAlarmThreshold: 100,
-      faultAlarmThreshold: 1,
+      successAlarmThreshold: Duration.millis(100),
       graphedFaultStatistics: ['p99'],
       graphedSuccessStatistics: ['p50', 'p99', 'tm99'],
-    }),
+    }
   });
 
   let rideOperation: IOperation = new Operation({
@@ -100,7 +99,7 @@ test('Partially instrumented service', () => {
     path: '/ride',
     critical: true,
     httpMethods: ['GET'],
-    serverSideAvailabilityMetricDetails: new OperationMetricDetails(
+    serverSideAvailabilityMetricDetails: new OperationAvailabilityMetricDetails(
       {
         operationName: 'ride',
         metricDimensions: new MetricDimensions(
@@ -111,7 +110,7 @@ test('Partially instrumented service', () => {
       },
       service.defaultAvailabilityMetricDetails,
     ),
-    serverSideLatencyMetricDetails: new OperationMetricDetails(
+    serverSideLatencyMetricDetails: new OperationLatencyMetricDetails(
       {
         operationName: 'ride',
         metricDimensions: new MetricDimensions(
@@ -177,7 +176,7 @@ test('Partially instrumented service with NLB and dashboard', () => {
     faultCountThreshold: 25,
     period: Duration.seconds(60),
     loadBalancer: loadBalancer,
-    defaultAvailabilityMetricDetails: new ServiceMetricDetails({
+    defaultAvailabilityMetricDetails: {
       metricNamespace: 'front-end/metrics',
       successMetricNames: ['Success'],
       faultMetricNames: ['Fault', 'Error'],
@@ -190,8 +189,8 @@ test('Partially instrumented service with NLB and dashboard', () => {
       faultAlarmThreshold: 0.1,
       graphedFaultStatistics: ['Sum'],
       graphedSuccessStatistics: ['Sum'],
-    }),
-    defaultLatencyMetricDetails: new ServiceMetricDetails({
+    },
+    defaultLatencyMetricDetails: {
       metricNamespace: 'front-end/metrics',
       successMetricNames: ['SuccessLatency'],
       faultMetricNames: ['FaultLatency'],
@@ -200,11 +199,10 @@ test('Partially instrumented service with NLB and dashboard', () => {
       period: Duration.seconds(60),
       evaluationPeriods: 5,
       datapointsToAlarm: 3,
-      successAlarmThreshold: 100,
-      faultAlarmThreshold: 1,
+      successAlarmThreshold: Duration.millis(100),
       graphedFaultStatistics: ['p99'],
       graphedSuccessStatistics: ['p50', 'p99', 'tm99'],
-    }),
+    }
   });
 
   let rideOperation: IOperation = new Operation({
@@ -213,7 +211,7 @@ test('Partially instrumented service with NLB and dashboard', () => {
     path: '/ride',
     critical: true,
     httpMethods: ['GET'],
-    serverSideAvailabilityMetricDetails: new OperationMetricDetails(
+    serverSideAvailabilityMetricDetails: new OperationAvailabilityMetricDetails(
       {
         operationName: 'ride',
         metricDimensions: new MetricDimensions(
@@ -224,7 +222,7 @@ test('Partially instrumented service with NLB and dashboard', () => {
       },
       service.defaultAvailabilityMetricDetails,
     ),
-    serverSideLatencyMetricDetails: new OperationMetricDetails(
+    serverSideLatencyMetricDetails: new OperationLatencyMetricDetails(
       {
         operationName: 'ride',
         metricDimensions: new MetricDimensions(
@@ -293,7 +291,7 @@ test('Partially instrumented service with chi-squared', () => {
     faultCountThreshold: 25,
     period: Duration.seconds(60),
     loadBalancer: loadBalancer,
-    defaultAvailabilityMetricDetails: new ServiceMetricDetails({
+    defaultAvailabilityMetricDetails: {
       metricNamespace: 'front-end/metrics',
       successMetricNames: ['Success'],
       faultMetricNames: ['Fault', 'Error'],
@@ -306,8 +304,8 @@ test('Partially instrumented service with chi-squared', () => {
       faultAlarmThreshold: 0.1,
       graphedFaultStatistics: ['Sum'],
       graphedSuccessStatistics: ['Sum'],
-    }),
-    defaultLatencyMetricDetails: new ServiceMetricDetails({
+    },
+    defaultLatencyMetricDetails: {
       metricNamespace: 'front-end/metrics',
       successMetricNames: ['SuccessLatency'],
       faultMetricNames: ['FaultLatency'],
@@ -316,11 +314,10 @@ test('Partially instrumented service with chi-squared', () => {
       period: Duration.seconds(60),
       evaluationPeriods: 5,
       datapointsToAlarm: 3,
-      successAlarmThreshold: 100,
-      faultAlarmThreshold: 1,
+      successAlarmThreshold: Duration.millis(100),
       graphedFaultStatistics: ['p99'],
       graphedSuccessStatistics: ['p50', 'p99', 'tm99'],
-    }),
+    }
   });
 
   let rideOperation: IOperation = new Operation({
@@ -329,7 +326,7 @@ test('Partially instrumented service with chi-squared', () => {
     path: '/ride',
     critical: true,
     httpMethods: ['GET'],
-    serverSideAvailabilityMetricDetails: new OperationMetricDetails(
+    serverSideAvailabilityMetricDetails: new OperationAvailabilityMetricDetails(
       {
         operationName: 'ride',
         metricDimensions: new MetricDimensions(
@@ -340,7 +337,7 @@ test('Partially instrumented service with chi-squared', () => {
       },
       service.defaultAvailabilityMetricDetails,
     ),
-    serverSideLatencyMetricDetails: new OperationMetricDetails(
+    serverSideLatencyMetricDetails: new OperationLatencyMetricDetails(
       {
         operationName: 'ride',
         metricDimensions: new MetricDimensions(
@@ -514,7 +511,7 @@ test('Partially instrumented service with canaries', () => {
     faultCountThreshold: 25,
     period: Duration.seconds(60),
     loadBalancer: loadBalancer,
-    defaultAvailabilityMetricDetails: new ServiceMetricDetails({
+    defaultAvailabilityMetricDetails: {
       metricNamespace: 'front-end/metrics',
       successMetricNames: ['Success'],
       faultMetricNames: ['Fault', 'Error'],
@@ -527,8 +524,8 @@ test('Partially instrumented service with canaries', () => {
       faultAlarmThreshold: 0.1,
       graphedFaultStatistics: ['Sum'],
       graphedSuccessStatistics: ['Sum'],
-    }),
-    defaultLatencyMetricDetails: new ServiceMetricDetails({
+    },
+    defaultLatencyMetricDetails: {
       metricNamespace: 'front-end/metrics',
       successMetricNames: ['SuccessLatency'],
       faultMetricNames: ['FaultLatency'],
@@ -537,11 +534,10 @@ test('Partially instrumented service with canaries', () => {
       period: Duration.seconds(60),
       evaluationPeriods: 5,
       datapointsToAlarm: 3,
-      successAlarmThreshold: 100,
-      faultAlarmThreshold: 1,
+      successAlarmThreshold: Duration.millis(100),
       graphedFaultStatistics: ['p99'],
       graphedSuccessStatistics: ['p50', 'p99', 'tm99'],
-    }),
+    }
   });
 
   let rideOperation: Operation = {
@@ -550,7 +546,7 @@ test('Partially instrumented service with canaries', () => {
     path: '/ride',
     critical: true,
     httpMethods: ['GET'],
-    serverSideAvailabilityMetricDetails: new OperationMetricDetails(
+    serverSideAvailabilityMetricDetails: new OperationAvailabilityMetricDetails(
       {
         operationName: 'ride',
         metricDimensions: new MetricDimensions(
@@ -561,7 +557,7 @@ test('Partially instrumented service with canaries', () => {
       },
       service.defaultAvailabilityMetricDetails,
     ),
-    serverSideLatencyMetricDetails: new OperationMetricDetails(
+    serverSideLatencyMetricDetails: new OperationLatencyMetricDetails(
       {
         operationName: 'ride',
         metricDimensions: new MetricDimensions(
@@ -573,7 +569,7 @@ test('Partially instrumented service with canaries', () => {
       service.defaultLatencyMetricDetails,
     ),
     canaryMetricDetails: {
-      canaryAvailabilityMetricDetails: new OperationMetricDetails(
+      canaryAvailabilityMetricDetails: new OperationAvailabilityMetricDetails(
         {
           operationName: 'ride',
           metricNamespace: 'canary/metrics',
@@ -585,7 +581,7 @@ test('Partially instrumented service with canaries', () => {
         },
         service.defaultAvailabilityMetricDetails,
       ),
-      canaryLatencyMetricDetails: new OperationMetricDetails(
+      canaryLatencyMetricDetails: new OperationLatencyMetricDetails(
         {
           operationName: 'ride',
           metricNamespace: 'canary/metrics',

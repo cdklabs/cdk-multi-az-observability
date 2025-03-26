@@ -4,7 +4,8 @@ import { Duration } from 'aws-cdk-lib';
 import { ILoadBalancerV2 } from 'aws-cdk-lib/aws-elasticloadbalancingv2';
 import { AddCanaryTestProps } from '../../canaries/props/AddCanaryTestProps';
 import { IContributorInsightRuleDetails } from '../IContributorInsightRuleDetails';
-import { IServiceMetricDetails } from '../IServiceMetricDetails';
+import { IServiceAvailabilityMetricDetails } from '../IServiceAvailabilityMetricDetails';
+import { IServiceLatencyMetricDetails } from '../IServiceLatencyMetricDetails';
 
 /**
  * Properties to initialize a service
@@ -61,14 +62,14 @@ export interface ServiceProps {
    * for all operations unless specifically overridden in an
    * operation definition.
    */
-  readonly defaultAvailabilityMetricDetails: IServiceMetricDetails;
+  readonly defaultAvailabilityMetricDetails: IServiceAvailabilityMetricDetails;
 
   /**
    * The default settings that are used for availability metrics
    * for all operations unless specifically overridden in an
    * operation definition.
    */
-  readonly defaultLatencyMetricDetails: IServiceMetricDetails;
+  readonly defaultLatencyMetricDetails: IServiceLatencyMetricDetails;
 
   /**
    * The default settings that are used for contributor insight

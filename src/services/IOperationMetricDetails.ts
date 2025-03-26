@@ -73,20 +73,6 @@ export interface IOperationMetricDetails {
   readonly datapointsToAlarm: number;
 
   /**
-   * The threshold for alarms associated with success metrics, for example if measuring
-   * success rate, the threshold may be 99, meaning you would want an alarm that triggers
-   * if success drops below 99%.
-   */
-  readonly successAlarmThreshold: number;
-
-  /**
-   * The threshold for alarms associated with fault metrics, for example if measuring
-   * fault rate, the threshold may be 1, meaning you would want an alarm that triggers
-   * if the fault rate goes above 1%.
-   */
-  readonly faultAlarmThreshold: number;
-
-  /**
    * The metric dimensions for this operation, must be implemented
    * as a concrete class by the user
    */

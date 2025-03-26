@@ -129,7 +129,7 @@ export class CanaryFunction extends Construct implements ICanaryFunction {
           PARTITION: Aws.PARTITION,
           TIMEOUT:
             props.httpTimeout !== undefined
-              ? props.httpTimeout.toSeconds().toString()
+              ? props.httpTimeout.toSeconds({integral: false}).toString()
               : '2',
           IGNORE_SSL_ERRORS: (
             props.ignoreTlsErrors !== undefined && props.ignoreTlsErrors == true
@@ -157,7 +157,7 @@ export class CanaryFunction extends Construct implements ICanaryFunction {
           PARTITION: Aws.PARTITION,
           TIMEOUT:
             props.httpTimeout !== undefined
-              ? props.httpTimeout.toSeconds().toString()
+              ? props.httpTimeout.toSeconds({integral: false}).toString()
               : '2',
           IGNORE_SSL_ERRORS: (
             props.ignoreTlsErrors !== undefined && props.ignoreTlsErrors == true

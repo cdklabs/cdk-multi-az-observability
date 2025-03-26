@@ -10,7 +10,7 @@ import { OperationMetricDetailsProps } from './props/OperationMetricDetailsProps
 /**
  * Generic metric details for an operation
  */
-export class OperationMetricDetails implements IOperationMetricDetails {
+export abstract class OperationMetricDetails implements IOperationMetricDetails {
   /**
    * The operation these metric details are for
    */
@@ -76,20 +76,6 @@ export class OperationMetricDetails implements IOperationMetricDetails {
   readonly datapointsToAlarm: number;
 
   /**
-   * The threshold for alarms associated with success metrics, for example if measuring
-   * success rate, the threshold may be 99, meaning you would want an alarm that triggers
-   * if success drops below 99%.
-   */
-  readonly successAlarmThreshold: number;
-
-  /**
-   * The threshold for alarms associated with fault metrics, for example if measuring
-   * fault rate, the threshold may be 1, meaning you would want an alarm that triggers
-   * if the fault rate goes above 1%.
-   */
-  readonly faultAlarmThreshold: number;
-
-  /**
    * The metric dimensions for this operation, must be implemented
    * as a concrete class by the user
    */
@@ -107,10 +93,7 @@ export class OperationMetricDetails implements IOperationMetricDetails {
       : defaultProps.datapointsToAlarm;
     this.evaluationPeriods = props.evaluationPeriods
       ? props.evaluationPeriods
-      : defaultProps.evaluationPeriods;
-    this.faultAlarmThreshold = props.faultAlarmThreshold
-      ? props.faultAlarmThreshold
-      : defaultProps.faultAlarmThreshold;
+      : defaultProps.evaluationPeriods;    
     this.faultMetricNames = props.faultMetricNames
       ? props.faultMetricNames
       : defaultProps.faultMetricNames;
@@ -125,9 +108,6 @@ export class OperationMetricDetails implements IOperationMetricDetails {
       : defaultProps.metricNamespace;
     this.operationName = props.operationName;
     this.period = props.period ? props.period : defaultProps.period;
-    this.successAlarmThreshold = props.successAlarmThreshold
-      ? props.successAlarmThreshold
-      : defaultProps.successAlarmThreshold;
     this.successMetricNames = props.successMetricNames
       ? props.successMetricNames
       : defaultProps.successMetricNames;

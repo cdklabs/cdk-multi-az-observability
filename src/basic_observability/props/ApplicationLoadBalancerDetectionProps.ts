@@ -1,6 +1,7 @@
 import { IApplicationLoadBalancer } from "aws-cdk-lib/aws-elasticloadbalancingv2";
 import { ApplicationLoadBalancerAvailabilityOutlierAlgorithm } from "../../outlier-detection/ApplicationLoadBalancerAvailabilityOutlierAlgorithm";
 import { ApplicationLoadBalancerLatencyOutlierAlgorithm } from "../../outlier-detection/ApplicationLoadBalancerLatencyOutlierAlgorithm";
+import { Duration } from "aws-cdk-lib";
 
 /**
  * The properties for performing zonal impact detection with ALB(s).
@@ -23,7 +24,7 @@ export interface ApplicationLoadBalancerDetectionProps {
    * The threshold in milliseconds for ALB targets whose responses are slower than this
    * value at the specified percentile statistic.
    */
-  readonly latencyThreshold: number;
+  readonly latencyThreshold: Duration;
   
   /**
    * The statistic used to measure target response latency, like p99, 
