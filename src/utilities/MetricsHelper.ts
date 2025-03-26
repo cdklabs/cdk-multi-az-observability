@@ -1,4 +1,5 @@
-import { Color } from "aws-cdk-lib/aws-cloudwatch";
+import { Duration } from "aws-cdk-lib";
+import { Color, Unit } from "aws-cdk-lib/aws-cloudwatch";
 import { Runtime } from "aws-cdk-lib/aws-lambda";
 
 export class MetricsHelper {
@@ -38,6 +39,23 @@ export class MetricsHelper {
 
   static isNotEmpty<T extends object>(obj: T | undefined | null): obj is T {
     return obj !== undefined && obj !== null && Object.keys(obj).length > 0;
+  }
+
+  public static convertDurationByUnit(duration: Duration, unit: Unit) {
+    switch (unit) {
+      case Unit.MICROSECONDS: {
+        return duration.toMilliseconds() * 1000;
+      }
+      case Unit.MILLISECONDS: {
+        return duration.toMilliseconds();
+      }
+      case Unit.SECONDS: {
+        return duration.toSeconds({integral: false});
+      }
+      default: {
+        throw new Error("Cannot convert duration to unit: " + unit.toString());
+      }
+    }
   }
 
   public static PythonRuntime: Runtime = Runtime.PYTHON_3_13;

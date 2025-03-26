@@ -4,7 +4,8 @@ import { AddCanaryTestProps } from '../../canaries/props/AddCanaryTestProps';
 import { ICanaryMetrics } from '../ICanaryMetrics';
 import { ICanaryTestMetricsOverride } from '../ICanaryTestMetricsOverride';
 import { IContributorInsightRuleDetails } from '../IContributorInsightRuleDetails';
-import { IOperationMetricDetails } from '../IOperationMetricDetails';
+import { IOperationAvailabilityMetricDetails } from '../IOperationAvailabilityMetricDetails';
+import { IOperationLatencyMetricDetails } from '../IOperationLatencyMetricDetails';
 import { IService } from '../IService';
 
 /**
@@ -30,12 +31,12 @@ export interface OperationProps {
   /**
    * The server side availability metric details
    */
-  readonly serverSideAvailabilityMetricDetails: IOperationMetricDetails;
+  readonly serverSideAvailabilityMetricDetails: IOperationAvailabilityMetricDetails;
 
   /**
    * The server side latency metric details
    */
-  readonly serverSideLatencyMetricDetails: IOperationMetricDetails;
+  readonly serverSideLatencyMetricDetails: IOperationLatencyMetricDetails;
 
   /**
    * Optional metric details if the service has a canary

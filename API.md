@@ -545,6 +545,7 @@ Any object.
 | **Name** | **Type** | **Description** |
 | --- | --- | --- |
 | <code><a href="#@cdklabs/multi-az-observability.InstrumentedServiceMultiAZObservability.property.node">node</a></code> | <code>constructs.Node</code> | The tree node. |
+| <code><a href="#@cdklabs/multi-az-observability.InstrumentedServiceMultiAZObservability.property.perOperationAlarmsAndRules">perOperationAlarmsAndRules</a></code> | <code>{[ key: string ]: <a href="#@cdklabs/multi-az-observability.IOperationAlarmsAndRules">IOperationAlarmsAndRules</a>}</code> | Key represents the operation name and the value is the set of zonal alarms and rules for that operation. |
 | <code><a href="#@cdklabs/multi-az-observability.InstrumentedServiceMultiAZObservability.property.perOperationZonalImpactAlarms">perOperationZonalImpactAlarms</a></code> | <code>{[ key: string ]: {[ key: string ]: aws-cdk-lib.aws_cloudwatch.IAlarm}}</code> | Index into the dictionary by operation name, then by Availability Zone Id to get the alarms that indicate an AZ shows isolated impact from availability or latency as seen by either the server-side or canary. |
 | <code><a href="#@cdklabs/multi-az-observability.InstrumentedServiceMultiAZObservability.property.serviceAlarms">serviceAlarms</a></code> | <code><a href="#@cdklabs/multi-az-observability.IServiceAlarmsAndRules">IServiceAlarmsAndRules</a></code> | The alarms and rules for the overall service. |
 | <code><a href="#@cdklabs/multi-az-observability.InstrumentedServiceMultiAZObservability.property.canaryLogGroup">canaryLogGroup</a></code> | <code>aws-cdk-lib.aws_logs.ILogGroup</code> | If the service is configured to have canary tests created, this will be the log group where the canary's logs are stored. |
@@ -562,6 +563,18 @@ public readonly node: Node;
 - *Type:* constructs.Node
 
 The tree node.
+
+---
+
+##### `perOperationAlarmsAndRules`<sup>Required</sup> <a name="perOperationAlarmsAndRules" id="@cdklabs/multi-az-observability.InstrumentedServiceMultiAZObservability.property.perOperationAlarmsAndRules"></a>
+
+```typescript
+public readonly perOperationAlarmsAndRules: {[ key: string ]: IOperationAlarmsAndRules};
+```
+
+- *Type:* {[ key: string ]: <a href="#@cdklabs/multi-az-observability.IOperationAlarmsAndRules">IOperationAlarmsAndRules</a>}
+
+Key represents the operation name and the value is the set of zonal alarms and rules for that operation.
 
 ---
 
@@ -807,7 +820,7 @@ const applicationLoadBalancerDetectionProps: ApplicationLoadBalancerDetectionPro
 | <code><a href="#@cdklabs/multi-az-observability.ApplicationLoadBalancerDetectionProps.property.applicationLoadBalancers">applicationLoadBalancers</a></code> | <code>aws-cdk-lib.aws_elasticloadbalancingv2.IApplicationLoadBalancer[]</code> | The application load balancers to collect metrics from. |
 | <code><a href="#@cdklabs/multi-az-observability.ApplicationLoadBalancerDetectionProps.property.faultCountPercentThreshold">faultCountPercentThreshold</a></code> | <code>number</code> | The percentage of faults for a single ALB to consider an AZ to be unhealthy, a number between 0 and 100. |
 | <code><a href="#@cdklabs/multi-az-observability.ApplicationLoadBalancerDetectionProps.property.latencyStatistic">latencyStatistic</a></code> | <code>string</code> | The statistic used to measure target response latency, like p99,  which can be specified using Stats.percentile(99) or "p99". |
-| <code><a href="#@cdklabs/multi-az-observability.ApplicationLoadBalancerDetectionProps.property.latencyThreshold">latencyThreshold</a></code> | <code>number</code> | The threshold in milliseconds for ALB targets whose responses are slower than this value at the specified percentile statistic. |
+| <code><a href="#@cdklabs/multi-az-observability.ApplicationLoadBalancerDetectionProps.property.latencyThreshold">latencyThreshold</a></code> | <code>aws-cdk-lib.Duration</code> | The threshold in milliseconds for ALB targets whose responses are slower than this value at the specified percentile statistic. |
 | <code><a href="#@cdklabs/multi-az-observability.ApplicationLoadBalancerDetectionProps.property.availabilityOutlierAlgorithm">availabilityOutlierAlgorithm</a></code> | <code><a href="#@cdklabs/multi-az-observability.ApplicationLoadBalancerAvailabilityOutlierAlgorithm">ApplicationLoadBalancerAvailabilityOutlierAlgorithm</a></code> | The method used to determine if an AZ is an outlier for availability for Application Load Balancer metrics. |
 | <code><a href="#@cdklabs/multi-az-observability.ApplicationLoadBalancerDetectionProps.property.availabilityOutlierThreshold">availabilityOutlierThreshold</a></code> | <code>number</code> | The threshold for the outlier detection algorithm. |
 | <code><a href="#@cdklabs/multi-az-observability.ApplicationLoadBalancerDetectionProps.property.latencyOutlierAlgorithm">latencyOutlierAlgorithm</a></code> | <code><a href="#@cdklabs/multi-az-observability.ApplicationLoadBalancerLatencyOutlierAlgorithm">ApplicationLoadBalancerLatencyOutlierAlgorithm</a></code> | The method used to determine if an AZ is an outlier for latency for Application Load Balancer metrics. |
@@ -857,10 +870,10 @@ The statistic used to measure target response latency, like p99,  which can be s
 ##### `latencyThreshold`<sup>Required</sup> <a name="latencyThreshold" id="@cdklabs/multi-az-observability.ApplicationLoadBalancerDetectionProps.property.latencyThreshold"></a>
 
 ```typescript
-public readonly latencyThreshold: number;
+public readonly latencyThreshold: Duration;
 ```
 
-- *Type:* number
+- *Type:* aws-cdk-lib.Duration
 
 The threshold in milliseconds for ALB targets whose responses are slower than this value at the specified percentile statistic.
 
@@ -1142,18 +1155,18 @@ const canaryMetricProps: CanaryMetricProps = { ... }
 
 | **Name** | **Type** | **Description** |
 | --- | --- | --- |
-| <code><a href="#@cdklabs/multi-az-observability.CanaryMetricProps.property.canaryAvailabilityMetricDetails">canaryAvailabilityMetricDetails</a></code> | <code><a href="#@cdklabs/multi-az-observability.IOperationMetricDetails">IOperationMetricDetails</a></code> | The canary availability metric details. |
-| <code><a href="#@cdklabs/multi-az-observability.CanaryMetricProps.property.canaryLatencyMetricDetails">canaryLatencyMetricDetails</a></code> | <code><a href="#@cdklabs/multi-az-observability.IOperationMetricDetails">IOperationMetricDetails</a></code> | The canary latency metric details. |
+| <code><a href="#@cdklabs/multi-az-observability.CanaryMetricProps.property.canaryAvailabilityMetricDetails">canaryAvailabilityMetricDetails</a></code> | <code><a href="#@cdklabs/multi-az-observability.IOperationAvailabilityMetricDetails">IOperationAvailabilityMetricDetails</a></code> | The canary availability metric details. |
+| <code><a href="#@cdklabs/multi-az-observability.CanaryMetricProps.property.canaryLatencyMetricDetails">canaryLatencyMetricDetails</a></code> | <code><a href="#@cdklabs/multi-az-observability.IOperationLatencyMetricDetails">IOperationLatencyMetricDetails</a></code> | The canary latency metric details. |
 
 ---
 
 ##### `canaryAvailabilityMetricDetails`<sup>Required</sup> <a name="canaryAvailabilityMetricDetails" id="@cdklabs/multi-az-observability.CanaryMetricProps.property.canaryAvailabilityMetricDetails"></a>
 
 ```typescript
-public readonly canaryAvailabilityMetricDetails: IOperationMetricDetails;
+public readonly canaryAvailabilityMetricDetails: IOperationAvailabilityMetricDetails;
 ```
 
-- *Type:* <a href="#@cdklabs/multi-az-observability.IOperationMetricDetails">IOperationMetricDetails</a>
+- *Type:* <a href="#@cdklabs/multi-az-observability.IOperationAvailabilityMetricDetails">IOperationAvailabilityMetricDetails</a>
 
 The canary availability metric details.
 
@@ -1162,12 +1175,204 @@ The canary availability metric details.
 ##### `canaryLatencyMetricDetails`<sup>Required</sup> <a name="canaryLatencyMetricDetails" id="@cdklabs/multi-az-observability.CanaryMetricProps.property.canaryLatencyMetricDetails"></a>
 
 ```typescript
-public readonly canaryLatencyMetricDetails: IOperationMetricDetails;
+public readonly canaryLatencyMetricDetails: IOperationLatencyMetricDetails;
 ```
 
-- *Type:* <a href="#@cdklabs/multi-az-observability.IOperationMetricDetails">IOperationMetricDetails</a>
+- *Type:* <a href="#@cdklabs/multi-az-observability.IOperationLatencyMetricDetails">IOperationLatencyMetricDetails</a>
 
 The canary latency metric details.
+
+---
+
+### CanaryTestAvailabilityMetricsOverrideProps <a name="CanaryTestAvailabilityMetricsOverrideProps" id="@cdklabs/multi-az-observability.CanaryTestAvailabilityMetricsOverrideProps"></a>
+
+Properties for canary metrics in an operation.
+
+#### Initializer <a name="Initializer" id="@cdklabs/multi-az-observability.CanaryTestAvailabilityMetricsOverrideProps.Initializer"></a>
+
+```typescript
+import { CanaryTestAvailabilityMetricsOverrideProps } from '@cdklabs/multi-az-observability'
+
+const canaryTestAvailabilityMetricsOverrideProps: CanaryTestAvailabilityMetricsOverrideProps = { ... }
+```
+
+#### Properties <a name="Properties" id="Properties"></a>
+
+| **Name** | **Type** | **Description** |
+| --- | --- | --- |
+| <code><a href="#@cdklabs/multi-az-observability.CanaryTestAvailabilityMetricsOverrideProps.property.alarmStatistic">alarmStatistic</a></code> | <code>string</code> | The statistic used for alarms, for availability metrics this should be "Sum", for latency metrics it could something like "p99" or "p99.9". |
+| <code><a href="#@cdklabs/multi-az-observability.CanaryTestAvailabilityMetricsOverrideProps.property.datapointsToAlarm">datapointsToAlarm</a></code> | <code>number</code> | The number of datapoints to alarm on for latency and availability alarms. |
+| <code><a href="#@cdklabs/multi-az-observability.CanaryTestAvailabilityMetricsOverrideProps.property.evaluationPeriods">evaluationPeriods</a></code> | <code>number</code> | The number of evaluation periods for latency and availabiltiy alarms. |
+| <code><a href="#@cdklabs/multi-az-observability.CanaryTestAvailabilityMetricsOverrideProps.property.period">period</a></code> | <code>aws-cdk-lib.Duration</code> | The period for the metrics. |
+| <code><a href="#@cdklabs/multi-az-observability.CanaryTestAvailabilityMetricsOverrideProps.property.faultAlarmThreshold">faultAlarmThreshold</a></code> | <code>number</code> | The threshold for alarms associated with fault metrics, for example if measuring fault rate, the threshold may be 1, meaning you would want an alarm that triggers if the fault rate goes above 1%. |
+| <code><a href="#@cdklabs/multi-az-observability.CanaryTestAvailabilityMetricsOverrideProps.property.successAlarmThreshold">successAlarmThreshold</a></code> | <code>number</code> | The threshold for alarms associated with success metrics, for example if measuring success rate, the threshold may be 99, meaning you would want an alarm that triggers if success drops below 99%. |
+
+---
+
+##### `alarmStatistic`<sup>Optional</sup> <a name="alarmStatistic" id="@cdklabs/multi-az-observability.CanaryTestAvailabilityMetricsOverrideProps.property.alarmStatistic"></a>
+
+```typescript
+public readonly alarmStatistic: string;
+```
+
+- *Type:* string
+- *Default:* This property will use the default defined for the service
+
+The statistic used for alarms, for availability metrics this should be "Sum", for latency metrics it could something like "p99" or "p99.9".
+
+---
+
+##### `datapointsToAlarm`<sup>Optional</sup> <a name="datapointsToAlarm" id="@cdklabs/multi-az-observability.CanaryTestAvailabilityMetricsOverrideProps.property.datapointsToAlarm"></a>
+
+```typescript
+public readonly datapointsToAlarm: number;
+```
+
+- *Type:* number
+- *Default:* This property will use the default defined for the service
+
+The number of datapoints to alarm on for latency and availability alarms.
+
+---
+
+##### `evaluationPeriods`<sup>Optional</sup> <a name="evaluationPeriods" id="@cdklabs/multi-az-observability.CanaryTestAvailabilityMetricsOverrideProps.property.evaluationPeriods"></a>
+
+```typescript
+public readonly evaluationPeriods: number;
+```
+
+- *Type:* number
+- *Default:* This property will use the default defined for the service
+
+The number of evaluation periods for latency and availabiltiy alarms.
+
+---
+
+##### `period`<sup>Optional</sup> <a name="period" id="@cdklabs/multi-az-observability.CanaryTestAvailabilityMetricsOverrideProps.property.period"></a>
+
+```typescript
+public readonly period: Duration;
+```
+
+- *Type:* aws-cdk-lib.Duration
+- *Default:* This property will use the default defined for the service
+
+The period for the metrics.
+
+---
+
+##### `faultAlarmThreshold`<sup>Optional</sup> <a name="faultAlarmThreshold" id="@cdklabs/multi-az-observability.CanaryTestAvailabilityMetricsOverrideProps.property.faultAlarmThreshold"></a>
+
+```typescript
+public readonly faultAlarmThreshold: number;
+```
+
+- *Type:* number
+- *Default:* This property will use the default defined for the service
+
+The threshold for alarms associated with fault metrics, for example if measuring fault rate, the threshold may be 1, meaning you would want an alarm that triggers if the fault rate goes above 1%.
+
+---
+
+##### `successAlarmThreshold`<sup>Optional</sup> <a name="successAlarmThreshold" id="@cdklabs/multi-az-observability.CanaryTestAvailabilityMetricsOverrideProps.property.successAlarmThreshold"></a>
+
+```typescript
+public readonly successAlarmThreshold: number;
+```
+
+- *Type:* number
+- *Default:* This property will use the default defined for the service
+
+The threshold for alarms associated with success metrics, for example if measuring success rate, the threshold may be 99, meaning you would want an alarm that triggers if success drops below 99%.
+
+---
+
+### CanaryTestLatencyMetricsOverrideProps <a name="CanaryTestLatencyMetricsOverrideProps" id="@cdklabs/multi-az-observability.CanaryTestLatencyMetricsOverrideProps"></a>
+
+Properties for canary metrics in an operation.
+
+#### Initializer <a name="Initializer" id="@cdklabs/multi-az-observability.CanaryTestLatencyMetricsOverrideProps.Initializer"></a>
+
+```typescript
+import { CanaryTestLatencyMetricsOverrideProps } from '@cdklabs/multi-az-observability'
+
+const canaryTestLatencyMetricsOverrideProps: CanaryTestLatencyMetricsOverrideProps = { ... }
+```
+
+#### Properties <a name="Properties" id="Properties"></a>
+
+| **Name** | **Type** | **Description** |
+| --- | --- | --- |
+| <code><a href="#@cdklabs/multi-az-observability.CanaryTestLatencyMetricsOverrideProps.property.alarmStatistic">alarmStatistic</a></code> | <code>string</code> | The statistic used for alarms, for availability metrics this should be "Sum", for latency metrics it could something like "p99" or "p99.9". |
+| <code><a href="#@cdklabs/multi-az-observability.CanaryTestLatencyMetricsOverrideProps.property.datapointsToAlarm">datapointsToAlarm</a></code> | <code>number</code> | The number of datapoints to alarm on for latency and availability alarms. |
+| <code><a href="#@cdklabs/multi-az-observability.CanaryTestLatencyMetricsOverrideProps.property.evaluationPeriods">evaluationPeriods</a></code> | <code>number</code> | The number of evaluation periods for latency and availabiltiy alarms. |
+| <code><a href="#@cdklabs/multi-az-observability.CanaryTestLatencyMetricsOverrideProps.property.period">period</a></code> | <code>aws-cdk-lib.Duration</code> | The period for the metrics. |
+| <code><a href="#@cdklabs/multi-az-observability.CanaryTestLatencyMetricsOverrideProps.property.successAlarmThreshold">successAlarmThreshold</a></code> | <code>aws-cdk-lib.Duration</code> | The threshold for alarms associated with latency success metrics, for example if success latency exceeds 500 milliseconds. |
+
+---
+
+##### `alarmStatistic`<sup>Optional</sup> <a name="alarmStatistic" id="@cdklabs/multi-az-observability.CanaryTestLatencyMetricsOverrideProps.property.alarmStatistic"></a>
+
+```typescript
+public readonly alarmStatistic: string;
+```
+
+- *Type:* string
+- *Default:* This property will use the default defined for the service
+
+The statistic used for alarms, for availability metrics this should be "Sum", for latency metrics it could something like "p99" or "p99.9".
+
+---
+
+##### `datapointsToAlarm`<sup>Optional</sup> <a name="datapointsToAlarm" id="@cdklabs/multi-az-observability.CanaryTestLatencyMetricsOverrideProps.property.datapointsToAlarm"></a>
+
+```typescript
+public readonly datapointsToAlarm: number;
+```
+
+- *Type:* number
+- *Default:* This property will use the default defined for the service
+
+The number of datapoints to alarm on for latency and availability alarms.
+
+---
+
+##### `evaluationPeriods`<sup>Optional</sup> <a name="evaluationPeriods" id="@cdklabs/multi-az-observability.CanaryTestLatencyMetricsOverrideProps.property.evaluationPeriods"></a>
+
+```typescript
+public readonly evaluationPeriods: number;
+```
+
+- *Type:* number
+- *Default:* This property will use the default defined for the service
+
+The number of evaluation periods for latency and availabiltiy alarms.
+
+---
+
+##### `period`<sup>Optional</sup> <a name="period" id="@cdklabs/multi-az-observability.CanaryTestLatencyMetricsOverrideProps.property.period"></a>
+
+```typescript
+public readonly period: Duration;
+```
+
+- *Type:* aws-cdk-lib.Duration
+- *Default:* This property will use the default defined for the service
+
+The period for the metrics.
+
+---
+
+##### `successAlarmThreshold`<sup>Optional</sup> <a name="successAlarmThreshold" id="@cdklabs/multi-az-observability.CanaryTestLatencyMetricsOverrideProps.property.successAlarmThreshold"></a>
+
+```typescript
+public readonly successAlarmThreshold: Duration;
+```
+
+- *Type:* aws-cdk-lib.Duration
+- *Default:* This property will use the default defined for the service
+
+The threshold for alarms associated with latency success metrics, for example if success latency exceeds 500 milliseconds.
 
 ---
 
@@ -1190,9 +1395,7 @@ const canaryTestMetricsOverrideProps: CanaryTestMetricsOverrideProps = { ... }
 | <code><a href="#@cdklabs/multi-az-observability.CanaryTestMetricsOverrideProps.property.alarmStatistic">alarmStatistic</a></code> | <code>string</code> | The statistic used for alarms, for availability metrics this should be "Sum", for latency metrics it could something like "p99" or "p99.9". |
 | <code><a href="#@cdklabs/multi-az-observability.CanaryTestMetricsOverrideProps.property.datapointsToAlarm">datapointsToAlarm</a></code> | <code>number</code> | The number of datapoints to alarm on for latency and availability alarms. |
 | <code><a href="#@cdklabs/multi-az-observability.CanaryTestMetricsOverrideProps.property.evaluationPeriods">evaluationPeriods</a></code> | <code>number</code> | The number of evaluation periods for latency and availabiltiy alarms. |
-| <code><a href="#@cdklabs/multi-az-observability.CanaryTestMetricsOverrideProps.property.faultAlarmThreshold">faultAlarmThreshold</a></code> | <code>number</code> | The threshold for alarms associated with fault metrics, for example if measuring fault rate, the threshold may be 1, meaning you would want an alarm that triggers if the fault rate goes above 1%. |
 | <code><a href="#@cdklabs/multi-az-observability.CanaryTestMetricsOverrideProps.property.period">period</a></code> | <code>aws-cdk-lib.Duration</code> | The period for the metrics. |
-| <code><a href="#@cdklabs/multi-az-observability.CanaryTestMetricsOverrideProps.property.successAlarmThreshold">successAlarmThreshold</a></code> | <code>number</code> | The threshold for alarms associated with success metrics, for example if measuring success rate, the threshold may be 99, meaning you would want an alarm that triggers if success drops below 99%. |
 
 ---
 
@@ -1235,19 +1438,6 @@ The number of evaluation periods for latency and availabiltiy alarms.
 
 ---
 
-##### `faultAlarmThreshold`<sup>Optional</sup> <a name="faultAlarmThreshold" id="@cdklabs/multi-az-observability.CanaryTestMetricsOverrideProps.property.faultAlarmThreshold"></a>
-
-```typescript
-public readonly faultAlarmThreshold: number;
-```
-
-- *Type:* number
-- *Default:* This property will use the default defined for the service
-
-The threshold for alarms associated with fault metrics, for example if measuring fault rate, the threshold may be 1, meaning you would want an alarm that triggers if the fault rate goes above 1%.
-
----
-
 ##### `period`<sup>Optional</sup> <a name="period" id="@cdklabs/multi-az-observability.CanaryTestMetricsOverrideProps.property.period"></a>
 
 ```typescript
@@ -1258,19 +1448,6 @@ public readonly period: Duration;
 - *Default:* This property will use the default defined for the service
 
 The period for the metrics.
-
----
-
-##### `successAlarmThreshold`<sup>Optional</sup> <a name="successAlarmThreshold" id="@cdklabs/multi-az-observability.CanaryTestMetricsOverrideProps.property.successAlarmThreshold"></a>
-
-```typescript
-public readonly successAlarmThreshold: number;
-```
-
-- *Type:* number
-- *Default:* This property will use the default defined for the service
-
-The threshold for alarms associated with success metrics, for example if measuring success rate, the threshold may be 99, meaning you would want an alarm that triggers if success drops below 99%.
 
 ---
 
@@ -1646,6 +1823,430 @@ as the required IAM permissions.
 
 ---
 
+### OperationAvailabilityMetricDetailsProps <a name="OperationAvailabilityMetricDetailsProps" id="@cdklabs/multi-az-observability.OperationAvailabilityMetricDetailsProps"></a>
+
+The properties for an operation's availability metric details.
+
+#### Initializer <a name="Initializer" id="@cdklabs/multi-az-observability.OperationAvailabilityMetricDetailsProps.Initializer"></a>
+
+```typescript
+import { OperationAvailabilityMetricDetailsProps } from '@cdklabs/multi-az-observability'
+
+const operationAvailabilityMetricDetailsProps: OperationAvailabilityMetricDetailsProps = { ... }
+```
+
+#### Properties <a name="Properties" id="Properties"></a>
+
+| **Name** | **Type** | **Description** |
+| --- | --- | --- |
+| <code><a href="#@cdklabs/multi-az-observability.OperationAvailabilityMetricDetailsProps.property.metricDimensions">metricDimensions</a></code> | <code><a href="#@cdklabs/multi-az-observability.MetricDimensions">MetricDimensions</a></code> | The user implemented functions for providing the metric's dimensions. |
+| <code><a href="#@cdklabs/multi-az-observability.OperationAvailabilityMetricDetailsProps.property.operationName">operationName</a></code> | <code>string</code> | The operation these metric details are for. |
+| <code><a href="#@cdklabs/multi-az-observability.OperationAvailabilityMetricDetailsProps.property.alarmStatistic">alarmStatistic</a></code> | <code>string</code> | The statistic used for alarms, for availability metrics this should be "Sum", for latency metrics it could something like "p99" or "p99.9". |
+| <code><a href="#@cdklabs/multi-az-observability.OperationAvailabilityMetricDetailsProps.property.datapointsToAlarm">datapointsToAlarm</a></code> | <code>number</code> | The number of datapoints to alarm on for latency and availability alarms. |
+| <code><a href="#@cdklabs/multi-az-observability.OperationAvailabilityMetricDetailsProps.property.evaluationPeriods">evaluationPeriods</a></code> | <code>number</code> | The number of evaluation periods for latency and availabiltiy alarms. |
+| <code><a href="#@cdklabs/multi-az-observability.OperationAvailabilityMetricDetailsProps.property.faultMetricNames">faultMetricNames</a></code> | <code>string[]</code> | The names of fault indicating metrics. |
+| <code><a href="#@cdklabs/multi-az-observability.OperationAvailabilityMetricDetailsProps.property.graphedFaultStatistics">graphedFaultStatistics</a></code> | <code>string[]</code> | The statistics for faults you want to appear on dashboards, for example, with latency metrics, you might want p50, p99, and tm99. |
+| <code><a href="#@cdklabs/multi-az-observability.OperationAvailabilityMetricDetailsProps.property.graphedSuccessStatistics">graphedSuccessStatistics</a></code> | <code>string[]</code> | The statistics for successes you want to appear on dashboards, for example, with latency metrics, you might want p50, p99, and tm99. |
+| <code><a href="#@cdklabs/multi-az-observability.OperationAvailabilityMetricDetailsProps.property.metricNamespace">metricNamespace</a></code> | <code>string</code> | The CloudWatch metric namespace for these metrics. |
+| <code><a href="#@cdklabs/multi-az-observability.OperationAvailabilityMetricDetailsProps.property.period">period</a></code> | <code>aws-cdk-lib.Duration</code> | The period for the metrics. |
+| <code><a href="#@cdklabs/multi-az-observability.OperationAvailabilityMetricDetailsProps.property.successMetricNames">successMetricNames</a></code> | <code>string[]</code> | The names of success indicating metrics. |
+| <code><a href="#@cdklabs/multi-az-observability.OperationAvailabilityMetricDetailsProps.property.unit">unit</a></code> | <code>aws-cdk-lib.aws_cloudwatch.Unit</code> | The unit used for these metrics. |
+| <code><a href="#@cdklabs/multi-az-observability.OperationAvailabilityMetricDetailsProps.property.faultAlarmThreshold">faultAlarmThreshold</a></code> | <code>number</code> | The threshold for alarms associated with availability fault metrics, for example if measuring fault rate, the threshold may be 1, meaning you would want an alarm that triggers if the fault rate goes above 1%. |
+| <code><a href="#@cdklabs/multi-az-observability.OperationAvailabilityMetricDetailsProps.property.successAlarmThreshold">successAlarmThreshold</a></code> | <code>number</code> | The threshold for alarms associated with availability success metrics, for example if measuring success rate, the threshold may be 99, meaning you would want an alarm that triggers if success drops below 99%. |
+
+---
+
+##### `metricDimensions`<sup>Required</sup> <a name="metricDimensions" id="@cdklabs/multi-az-observability.OperationAvailabilityMetricDetailsProps.property.metricDimensions"></a>
+
+```typescript
+public readonly metricDimensions: MetricDimensions;
+```
+
+- *Type:* <a href="#@cdklabs/multi-az-observability.MetricDimensions">MetricDimensions</a>
+
+The user implemented functions for providing the metric's dimensions.
+
+---
+
+##### `operationName`<sup>Required</sup> <a name="operationName" id="@cdklabs/multi-az-observability.OperationAvailabilityMetricDetailsProps.property.operationName"></a>
+
+```typescript
+public readonly operationName: string;
+```
+
+- *Type:* string
+
+The operation these metric details are for.
+
+---
+
+##### `alarmStatistic`<sup>Optional</sup> <a name="alarmStatistic" id="@cdklabs/multi-az-observability.OperationAvailabilityMetricDetailsProps.property.alarmStatistic"></a>
+
+```typescript
+public readonly alarmStatistic: string;
+```
+
+- *Type:* string
+- *Default:* The service default is used
+
+The statistic used for alarms, for availability metrics this should be "Sum", for latency metrics it could something like "p99" or "p99.9".
+
+---
+
+##### `datapointsToAlarm`<sup>Optional</sup> <a name="datapointsToAlarm" id="@cdklabs/multi-az-observability.OperationAvailabilityMetricDetailsProps.property.datapointsToAlarm"></a>
+
+```typescript
+public readonly datapointsToAlarm: number;
+```
+
+- *Type:* number
+- *Default:* The service default is used
+
+The number of datapoints to alarm on for latency and availability alarms.
+
+---
+
+##### `evaluationPeriods`<sup>Optional</sup> <a name="evaluationPeriods" id="@cdklabs/multi-az-observability.OperationAvailabilityMetricDetailsProps.property.evaluationPeriods"></a>
+
+```typescript
+public readonly evaluationPeriods: number;
+```
+
+- *Type:* number
+- *Default:* The service default is used
+
+The number of evaluation periods for latency and availabiltiy alarms.
+
+---
+
+##### `faultMetricNames`<sup>Optional</sup> <a name="faultMetricNames" id="@cdklabs/multi-az-observability.OperationAvailabilityMetricDetailsProps.property.faultMetricNames"></a>
+
+```typescript
+public readonly faultMetricNames: string[];
+```
+
+- *Type:* string[]
+- *Default:* The service default is used
+
+The names of fault indicating metrics.
+
+---
+
+##### `graphedFaultStatistics`<sup>Optional</sup> <a name="graphedFaultStatistics" id="@cdklabs/multi-az-observability.OperationAvailabilityMetricDetailsProps.property.graphedFaultStatistics"></a>
+
+```typescript
+public readonly graphedFaultStatistics: string[];
+```
+
+- *Type:* string[]
+- *Default:* The service default is used
+
+The statistics for faults you want to appear on dashboards, for example, with latency metrics, you might want p50, p99, and tm99.
+
+For availability
+metrics this will typically just be "Sum".
+
+---
+
+##### `graphedSuccessStatistics`<sup>Optional</sup> <a name="graphedSuccessStatistics" id="@cdklabs/multi-az-observability.OperationAvailabilityMetricDetailsProps.property.graphedSuccessStatistics"></a>
+
+```typescript
+public readonly graphedSuccessStatistics: string[];
+```
+
+- *Type:* string[]
+- *Default:* The service default is used
+
+The statistics for successes you want to appear on dashboards, for example, with latency metrics, you might want p50, p99, and tm99.
+
+For availability
+metrics this will typically just be "Sum".
+
+---
+
+##### `metricNamespace`<sup>Optional</sup> <a name="metricNamespace" id="@cdklabs/multi-az-observability.OperationAvailabilityMetricDetailsProps.property.metricNamespace"></a>
+
+```typescript
+public readonly metricNamespace: string;
+```
+
+- *Type:* string
+- *Default:* The service default is used
+
+The CloudWatch metric namespace for these metrics.
+
+---
+
+##### `period`<sup>Optional</sup> <a name="period" id="@cdklabs/multi-az-observability.OperationAvailabilityMetricDetailsProps.property.period"></a>
+
+```typescript
+public readonly period: Duration;
+```
+
+- *Type:* aws-cdk-lib.Duration
+- *Default:* The service default is used
+
+The period for the metrics.
+
+---
+
+##### `successMetricNames`<sup>Optional</sup> <a name="successMetricNames" id="@cdklabs/multi-az-observability.OperationAvailabilityMetricDetailsProps.property.successMetricNames"></a>
+
+```typescript
+public readonly successMetricNames: string[];
+```
+
+- *Type:* string[]
+- *Default:* The service default is used
+
+The names of success indicating metrics.
+
+---
+
+##### `unit`<sup>Optional</sup> <a name="unit" id="@cdklabs/multi-az-observability.OperationAvailabilityMetricDetailsProps.property.unit"></a>
+
+```typescript
+public readonly unit: Unit;
+```
+
+- *Type:* aws-cdk-lib.aws_cloudwatch.Unit
+- *Default:* The service default is used
+
+The unit used for these metrics.
+
+---
+
+##### `faultAlarmThreshold`<sup>Optional</sup> <a name="faultAlarmThreshold" id="@cdklabs/multi-az-observability.OperationAvailabilityMetricDetailsProps.property.faultAlarmThreshold"></a>
+
+```typescript
+public readonly faultAlarmThreshold: number;
+```
+
+- *Type:* number
+- *Default:* The service default is used
+
+The threshold for alarms associated with availability fault metrics, for example if measuring fault rate, the threshold may be 1, meaning you would want an alarm that triggers if the fault rate goes above 1%.
+
+---
+
+##### `successAlarmThreshold`<sup>Optional</sup> <a name="successAlarmThreshold" id="@cdklabs/multi-az-observability.OperationAvailabilityMetricDetailsProps.property.successAlarmThreshold"></a>
+
+```typescript
+public readonly successAlarmThreshold: number;
+```
+
+- *Type:* number
+- *Default:* The service default is used
+
+The threshold for alarms associated with availability success metrics, for example if measuring success rate, the threshold may be 99, meaning you would want an alarm that triggers if success drops below 99%.
+
+---
+
+### OperationLatencyMetricDetailsProps <a name="OperationLatencyMetricDetailsProps" id="@cdklabs/multi-az-observability.OperationLatencyMetricDetailsProps"></a>
+
+The properties for an operation's latency metric details.
+
+#### Initializer <a name="Initializer" id="@cdklabs/multi-az-observability.OperationLatencyMetricDetailsProps.Initializer"></a>
+
+```typescript
+import { OperationLatencyMetricDetailsProps } from '@cdklabs/multi-az-observability'
+
+const operationLatencyMetricDetailsProps: OperationLatencyMetricDetailsProps = { ... }
+```
+
+#### Properties <a name="Properties" id="Properties"></a>
+
+| **Name** | **Type** | **Description** |
+| --- | --- | --- |
+| <code><a href="#@cdklabs/multi-az-observability.OperationLatencyMetricDetailsProps.property.metricDimensions">metricDimensions</a></code> | <code><a href="#@cdklabs/multi-az-observability.MetricDimensions">MetricDimensions</a></code> | The user implemented functions for providing the metric's dimensions. |
+| <code><a href="#@cdklabs/multi-az-observability.OperationLatencyMetricDetailsProps.property.operationName">operationName</a></code> | <code>string</code> | The operation these metric details are for. |
+| <code><a href="#@cdklabs/multi-az-observability.OperationLatencyMetricDetailsProps.property.alarmStatistic">alarmStatistic</a></code> | <code>string</code> | The statistic used for alarms, for availability metrics this should be "Sum", for latency metrics it could something like "p99" or "p99.9". |
+| <code><a href="#@cdklabs/multi-az-observability.OperationLatencyMetricDetailsProps.property.datapointsToAlarm">datapointsToAlarm</a></code> | <code>number</code> | The number of datapoints to alarm on for latency and availability alarms. |
+| <code><a href="#@cdklabs/multi-az-observability.OperationLatencyMetricDetailsProps.property.evaluationPeriods">evaluationPeriods</a></code> | <code>number</code> | The number of evaluation periods for latency and availabiltiy alarms. |
+| <code><a href="#@cdklabs/multi-az-observability.OperationLatencyMetricDetailsProps.property.faultMetricNames">faultMetricNames</a></code> | <code>string[]</code> | The names of fault indicating metrics. |
+| <code><a href="#@cdklabs/multi-az-observability.OperationLatencyMetricDetailsProps.property.graphedFaultStatistics">graphedFaultStatistics</a></code> | <code>string[]</code> | The statistics for faults you want to appear on dashboards, for example, with latency metrics, you might want p50, p99, and tm99. |
+| <code><a href="#@cdklabs/multi-az-observability.OperationLatencyMetricDetailsProps.property.graphedSuccessStatistics">graphedSuccessStatistics</a></code> | <code>string[]</code> | The statistics for successes you want to appear on dashboards, for example, with latency metrics, you might want p50, p99, and tm99. |
+| <code><a href="#@cdklabs/multi-az-observability.OperationLatencyMetricDetailsProps.property.metricNamespace">metricNamespace</a></code> | <code>string</code> | The CloudWatch metric namespace for these metrics. |
+| <code><a href="#@cdklabs/multi-az-observability.OperationLatencyMetricDetailsProps.property.period">period</a></code> | <code>aws-cdk-lib.Duration</code> | The period for the metrics. |
+| <code><a href="#@cdklabs/multi-az-observability.OperationLatencyMetricDetailsProps.property.successMetricNames">successMetricNames</a></code> | <code>string[]</code> | The names of success indicating metrics. |
+| <code><a href="#@cdklabs/multi-az-observability.OperationLatencyMetricDetailsProps.property.unit">unit</a></code> | <code>aws-cdk-lib.aws_cloudwatch.Unit</code> | The unit used for these metrics. |
+| <code><a href="#@cdklabs/multi-az-observability.OperationLatencyMetricDetailsProps.property.successAlarmThreshold">successAlarmThreshold</a></code> | <code>aws-cdk-lib.Duration</code> | The threshold for alarms associated with latency success metrics, for example if success latency exceeds 500 milliseconds. |
+
+---
+
+##### `metricDimensions`<sup>Required</sup> <a name="metricDimensions" id="@cdklabs/multi-az-observability.OperationLatencyMetricDetailsProps.property.metricDimensions"></a>
+
+```typescript
+public readonly metricDimensions: MetricDimensions;
+```
+
+- *Type:* <a href="#@cdklabs/multi-az-observability.MetricDimensions">MetricDimensions</a>
+
+The user implemented functions for providing the metric's dimensions.
+
+---
+
+##### `operationName`<sup>Required</sup> <a name="operationName" id="@cdklabs/multi-az-observability.OperationLatencyMetricDetailsProps.property.operationName"></a>
+
+```typescript
+public readonly operationName: string;
+```
+
+- *Type:* string
+
+The operation these metric details are for.
+
+---
+
+##### `alarmStatistic`<sup>Optional</sup> <a name="alarmStatistic" id="@cdklabs/multi-az-observability.OperationLatencyMetricDetailsProps.property.alarmStatistic"></a>
+
+```typescript
+public readonly alarmStatistic: string;
+```
+
+- *Type:* string
+- *Default:* The service default is used
+
+The statistic used for alarms, for availability metrics this should be "Sum", for latency metrics it could something like "p99" or "p99.9".
+
+---
+
+##### `datapointsToAlarm`<sup>Optional</sup> <a name="datapointsToAlarm" id="@cdklabs/multi-az-observability.OperationLatencyMetricDetailsProps.property.datapointsToAlarm"></a>
+
+```typescript
+public readonly datapointsToAlarm: number;
+```
+
+- *Type:* number
+- *Default:* The service default is used
+
+The number of datapoints to alarm on for latency and availability alarms.
+
+---
+
+##### `evaluationPeriods`<sup>Optional</sup> <a name="evaluationPeriods" id="@cdklabs/multi-az-observability.OperationLatencyMetricDetailsProps.property.evaluationPeriods"></a>
+
+```typescript
+public readonly evaluationPeriods: number;
+```
+
+- *Type:* number
+- *Default:* The service default is used
+
+The number of evaluation periods for latency and availabiltiy alarms.
+
+---
+
+##### `faultMetricNames`<sup>Optional</sup> <a name="faultMetricNames" id="@cdklabs/multi-az-observability.OperationLatencyMetricDetailsProps.property.faultMetricNames"></a>
+
+```typescript
+public readonly faultMetricNames: string[];
+```
+
+- *Type:* string[]
+- *Default:* The service default is used
+
+The names of fault indicating metrics.
+
+---
+
+##### `graphedFaultStatistics`<sup>Optional</sup> <a name="graphedFaultStatistics" id="@cdklabs/multi-az-observability.OperationLatencyMetricDetailsProps.property.graphedFaultStatistics"></a>
+
+```typescript
+public readonly graphedFaultStatistics: string[];
+```
+
+- *Type:* string[]
+- *Default:* The service default is used
+
+The statistics for faults you want to appear on dashboards, for example, with latency metrics, you might want p50, p99, and tm99.
+
+For availability
+metrics this will typically just be "Sum".
+
+---
+
+##### `graphedSuccessStatistics`<sup>Optional</sup> <a name="graphedSuccessStatistics" id="@cdklabs/multi-az-observability.OperationLatencyMetricDetailsProps.property.graphedSuccessStatistics"></a>
+
+```typescript
+public readonly graphedSuccessStatistics: string[];
+```
+
+- *Type:* string[]
+- *Default:* The service default is used
+
+The statistics for successes you want to appear on dashboards, for example, with latency metrics, you might want p50, p99, and tm99.
+
+For availability
+metrics this will typically just be "Sum".
+
+---
+
+##### `metricNamespace`<sup>Optional</sup> <a name="metricNamespace" id="@cdklabs/multi-az-observability.OperationLatencyMetricDetailsProps.property.metricNamespace"></a>
+
+```typescript
+public readonly metricNamespace: string;
+```
+
+- *Type:* string
+- *Default:* The service default is used
+
+The CloudWatch metric namespace for these metrics.
+
+---
+
+##### `period`<sup>Optional</sup> <a name="period" id="@cdklabs/multi-az-observability.OperationLatencyMetricDetailsProps.property.period"></a>
+
+```typescript
+public readonly period: Duration;
+```
+
+- *Type:* aws-cdk-lib.Duration
+- *Default:* The service default is used
+
+The period for the metrics.
+
+---
+
+##### `successMetricNames`<sup>Optional</sup> <a name="successMetricNames" id="@cdklabs/multi-az-observability.OperationLatencyMetricDetailsProps.property.successMetricNames"></a>
+
+```typescript
+public readonly successMetricNames: string[];
+```
+
+- *Type:* string[]
+- *Default:* The service default is used
+
+The names of success indicating metrics.
+
+---
+
+##### `unit`<sup>Optional</sup> <a name="unit" id="@cdklabs/multi-az-observability.OperationLatencyMetricDetailsProps.property.unit"></a>
+
+```typescript
+public readonly unit: Unit;
+```
+
+- *Type:* aws-cdk-lib.aws_cloudwatch.Unit
+- *Default:* The service default is used
+
+The unit used for these metrics.
+
+---
+
+##### `successAlarmThreshold`<sup>Optional</sup> <a name="successAlarmThreshold" id="@cdklabs/multi-az-observability.OperationLatencyMetricDetailsProps.property.successAlarmThreshold"></a>
+
+```typescript
+public readonly successAlarmThreshold: Duration;
+```
+
+- *Type:* aws-cdk-lib.Duration
+- *Default:* "The service default is used"
+
+The threshold for alarms associated with latency success metrics, for example if success latency exceeds 500 milliseconds.
+
+---
+
 ### OperationMetricDetailsProps <a name="OperationMetricDetailsProps" id="@cdklabs/multi-az-observability.OperationMetricDetailsProps"></a>
 
 The properties for operation metric details.
@@ -1667,13 +2268,11 @@ const operationMetricDetailsProps: OperationMetricDetailsProps = { ... }
 | <code><a href="#@cdklabs/multi-az-observability.OperationMetricDetailsProps.property.alarmStatistic">alarmStatistic</a></code> | <code>string</code> | The statistic used for alarms, for availability metrics this should be "Sum", for latency metrics it could something like "p99" or "p99.9". |
 | <code><a href="#@cdklabs/multi-az-observability.OperationMetricDetailsProps.property.datapointsToAlarm">datapointsToAlarm</a></code> | <code>number</code> | The number of datapoints to alarm on for latency and availability alarms. |
 | <code><a href="#@cdklabs/multi-az-observability.OperationMetricDetailsProps.property.evaluationPeriods">evaluationPeriods</a></code> | <code>number</code> | The number of evaluation periods for latency and availabiltiy alarms. |
-| <code><a href="#@cdklabs/multi-az-observability.OperationMetricDetailsProps.property.faultAlarmThreshold">faultAlarmThreshold</a></code> | <code>number</code> | The threshold for alarms associated with fault metrics, for example if measuring fault rate, the threshold may be 1, meaning you would want an alarm that triggers if the fault rate goes above 1%. |
 | <code><a href="#@cdklabs/multi-az-observability.OperationMetricDetailsProps.property.faultMetricNames">faultMetricNames</a></code> | <code>string[]</code> | The names of fault indicating metrics. |
 | <code><a href="#@cdklabs/multi-az-observability.OperationMetricDetailsProps.property.graphedFaultStatistics">graphedFaultStatistics</a></code> | <code>string[]</code> | The statistics for faults you want to appear on dashboards, for example, with latency metrics, you might want p50, p99, and tm99. |
 | <code><a href="#@cdklabs/multi-az-observability.OperationMetricDetailsProps.property.graphedSuccessStatistics">graphedSuccessStatistics</a></code> | <code>string[]</code> | The statistics for successes you want to appear on dashboards, for example, with latency metrics, you might want p50, p99, and tm99. |
 | <code><a href="#@cdklabs/multi-az-observability.OperationMetricDetailsProps.property.metricNamespace">metricNamespace</a></code> | <code>string</code> | The CloudWatch metric namespace for these metrics. |
 | <code><a href="#@cdklabs/multi-az-observability.OperationMetricDetailsProps.property.period">period</a></code> | <code>aws-cdk-lib.Duration</code> | The period for the metrics. |
-| <code><a href="#@cdklabs/multi-az-observability.OperationMetricDetailsProps.property.successAlarmThreshold">successAlarmThreshold</a></code> | <code>number</code> | The threshold for alarms associated with success metrics, for example if measuring success rate, the threshold may be 99, meaning you would want an alarm that triggers if success drops below 99%. |
 | <code><a href="#@cdklabs/multi-az-observability.OperationMetricDetailsProps.property.successMetricNames">successMetricNames</a></code> | <code>string[]</code> | The names of success indicating metrics. |
 | <code><a href="#@cdklabs/multi-az-observability.OperationMetricDetailsProps.property.unit">unit</a></code> | <code>aws-cdk-lib.aws_cloudwatch.Unit</code> | The unit used for these metrics. |
 
@@ -1739,19 +2338,6 @@ public readonly evaluationPeriods: number;
 - *Default:* The service default is used
 
 The number of evaluation periods for latency and availabiltiy alarms.
-
----
-
-##### `faultAlarmThreshold`<sup>Optional</sup> <a name="faultAlarmThreshold" id="@cdklabs/multi-az-observability.OperationMetricDetailsProps.property.faultAlarmThreshold"></a>
-
-```typescript
-public readonly faultAlarmThreshold: number;
-```
-
-- *Type:* number
-- *Default:* The service default is used
-
-The threshold for alarms associated with fault metrics, for example if measuring fault rate, the threshold may be 1, meaning you would want an alarm that triggers if the fault rate goes above 1%.
 
 ---
 
@@ -1826,19 +2412,6 @@ The period for the metrics.
 
 ---
 
-##### `successAlarmThreshold`<sup>Optional</sup> <a name="successAlarmThreshold" id="@cdklabs/multi-az-observability.OperationMetricDetailsProps.property.successAlarmThreshold"></a>
-
-```typescript
-public readonly successAlarmThreshold: number;
-```
-
-- *Type:* number
-- *Default:* The service default is used
-
-The threshold for alarms associated with success metrics, for example if measuring success rate, the threshold may be 99, meaning you would want an alarm that triggers if success drops below 99%.
-
----
-
 ##### `successMetricNames`<sup>Optional</sup> <a name="successMetricNames" id="@cdklabs/multi-az-observability.OperationMetricDetailsProps.property.successMetricNames"></a>
 
 ```typescript
@@ -1885,8 +2458,8 @@ const operationProps: OperationProps = { ... }
 | <code><a href="#@cdklabs/multi-az-observability.OperationProps.property.httpMethods">httpMethods</a></code> | <code>string[]</code> | The http methods supported by the operation. |
 | <code><a href="#@cdklabs/multi-az-observability.OperationProps.property.operationName">operationName</a></code> | <code>string</code> | The name of the operation. |
 | <code><a href="#@cdklabs/multi-az-observability.OperationProps.property.path">path</a></code> | <code>string</code> | The HTTP path for the operation for canaries to run against, something like "/products/list". |
-| <code><a href="#@cdklabs/multi-az-observability.OperationProps.property.serverSideAvailabilityMetricDetails">serverSideAvailabilityMetricDetails</a></code> | <code><a href="#@cdklabs/multi-az-observability.IOperationMetricDetails">IOperationMetricDetails</a></code> | The server side availability metric details. |
-| <code><a href="#@cdklabs/multi-az-observability.OperationProps.property.serverSideLatencyMetricDetails">serverSideLatencyMetricDetails</a></code> | <code><a href="#@cdklabs/multi-az-observability.IOperationMetricDetails">IOperationMetricDetails</a></code> | The server side latency metric details. |
+| <code><a href="#@cdklabs/multi-az-observability.OperationProps.property.serverSideAvailabilityMetricDetails">serverSideAvailabilityMetricDetails</a></code> | <code><a href="#@cdklabs/multi-az-observability.IOperationAvailabilityMetricDetails">IOperationAvailabilityMetricDetails</a></code> | The server side availability metric details. |
+| <code><a href="#@cdklabs/multi-az-observability.OperationProps.property.serverSideLatencyMetricDetails">serverSideLatencyMetricDetails</a></code> | <code><a href="#@cdklabs/multi-az-observability.IOperationLatencyMetricDetails">IOperationLatencyMetricDetails</a></code> | The server side latency metric details. |
 | <code><a href="#@cdklabs/multi-az-observability.OperationProps.property.service">service</a></code> | <code><a href="#@cdklabs/multi-az-observability.IService">IService</a></code> | The service the operation is associated with. |
 | <code><a href="#@cdklabs/multi-az-observability.OperationProps.property.canaryMetricDetails">canaryMetricDetails</a></code> | <code><a href="#@cdklabs/multi-az-observability.ICanaryMetrics">ICanaryMetrics</a></code> | Optional metric details if the service has a canary. |
 | <code><a href="#@cdklabs/multi-az-observability.OperationProps.property.canaryTestAvailabilityMetricsOverride">canaryTestAvailabilityMetricsOverride</a></code> | <code><a href="#@cdklabs/multi-az-observability.ICanaryTestMetricsOverride">ICanaryTestMetricsOverride</a></code> | The override values for automatically created canary tests so you can use values other than the service defaults to define the thresholds for availability. |
@@ -1948,10 +2521,10 @@ The HTTP path for the operation for canaries to run against, something like "/pr
 ##### `serverSideAvailabilityMetricDetails`<sup>Required</sup> <a name="serverSideAvailabilityMetricDetails" id="@cdklabs/multi-az-observability.OperationProps.property.serverSideAvailabilityMetricDetails"></a>
 
 ```typescript
-public readonly serverSideAvailabilityMetricDetails: IOperationMetricDetails;
+public readonly serverSideAvailabilityMetricDetails: IOperationAvailabilityMetricDetails;
 ```
 
-- *Type:* <a href="#@cdklabs/multi-az-observability.IOperationMetricDetails">IOperationMetricDetails</a>
+- *Type:* <a href="#@cdklabs/multi-az-observability.IOperationAvailabilityMetricDetails">IOperationAvailabilityMetricDetails</a>
 
 The server side availability metric details.
 
@@ -1960,10 +2533,10 @@ The server side availability metric details.
 ##### `serverSideLatencyMetricDetails`<sup>Required</sup> <a name="serverSideLatencyMetricDetails" id="@cdklabs/multi-az-observability.OperationProps.property.serverSideLatencyMetricDetails"></a>
 
 ```typescript
-public readonly serverSideLatencyMetricDetails: IOperationMetricDetails;
+public readonly serverSideLatencyMetricDetails: IOperationLatencyMetricDetails;
 ```
 
-- *Type:* <a href="#@cdklabs/multi-az-observability.IOperationMetricDetails">IOperationMetricDetails</a>
+- *Type:* <a href="#@cdklabs/multi-az-observability.IOperationLatencyMetricDetails">IOperationLatencyMetricDetails</a>
 
 The server side latency metric details.
 
@@ -2059,6 +2632,359 @@ The server side details for contributor insights rules.
 
 ---
 
+### ServiceAvailabilityMetricDetailsProps <a name="ServiceAvailabilityMetricDetailsProps" id="@cdklabs/multi-az-observability.ServiceAvailabilityMetricDetailsProps"></a>
+
+Props for service availability metrics.
+
+#### Initializer <a name="Initializer" id="@cdklabs/multi-az-observability.ServiceAvailabilityMetricDetailsProps.Initializer"></a>
+
+```typescript
+import { ServiceAvailabilityMetricDetailsProps } from '@cdklabs/multi-az-observability'
+
+const serviceAvailabilityMetricDetailsProps: ServiceAvailabilityMetricDetailsProps = { ... }
+```
+
+#### Properties <a name="Properties" id="Properties"></a>
+
+| **Name** | **Type** | **Description** |
+| --- | --- | --- |
+| <code><a href="#@cdklabs/multi-az-observability.ServiceAvailabilityMetricDetailsProps.property.alarmStatistic">alarmStatistic</a></code> | <code>string</code> | The statistic used for alarms, for availability metrics this should be "Sum", for latency metrics it could something like "p99" or "p99.9". |
+| <code><a href="#@cdklabs/multi-az-observability.ServiceAvailabilityMetricDetailsProps.property.datapointsToAlarm">datapointsToAlarm</a></code> | <code>number</code> | The number of datapoints to alarm on for latency and availability alarms. |
+| <code><a href="#@cdklabs/multi-az-observability.ServiceAvailabilityMetricDetailsProps.property.evaluationPeriods">evaluationPeriods</a></code> | <code>number</code> | The number of evaluation periods for latency and availabiltiy alarms. |
+| <code><a href="#@cdklabs/multi-az-observability.ServiceAvailabilityMetricDetailsProps.property.faultMetricNames">faultMetricNames</a></code> | <code>string[]</code> | The names of fault indicating metrics. |
+| <code><a href="#@cdklabs/multi-az-observability.ServiceAvailabilityMetricDetailsProps.property.metricNamespace">metricNamespace</a></code> | <code>string</code> | The CloudWatch metric namespace for these metrics. |
+| <code><a href="#@cdklabs/multi-az-observability.ServiceAvailabilityMetricDetailsProps.property.period">period</a></code> | <code>aws-cdk-lib.Duration</code> | The period for the metrics. |
+| <code><a href="#@cdklabs/multi-az-observability.ServiceAvailabilityMetricDetailsProps.property.successMetricNames">successMetricNames</a></code> | <code>string[]</code> | The names of success indicating metrics. |
+| <code><a href="#@cdklabs/multi-az-observability.ServiceAvailabilityMetricDetailsProps.property.unit">unit</a></code> | <code>aws-cdk-lib.aws_cloudwatch.Unit</code> | The unit used for these metrics. |
+| <code><a href="#@cdklabs/multi-az-observability.ServiceAvailabilityMetricDetailsProps.property.graphedFaultStatistics">graphedFaultStatistics</a></code> | <code>string[]</code> | The statistics for faults you want to appear on dashboards, for example, with latency metrics, you might want p50, p99, and tm99. |
+| <code><a href="#@cdklabs/multi-az-observability.ServiceAvailabilityMetricDetailsProps.property.graphedSuccessStatistics">graphedSuccessStatistics</a></code> | <code>string[]</code> | The statistics for successes you want to appear on dashboards, for example, with latency metrics, you might want p50, p99, and tm99. |
+| <code><a href="#@cdklabs/multi-az-observability.ServiceAvailabilityMetricDetailsProps.property.faultAlarmThreshold">faultAlarmThreshold</a></code> | <code>number</code> | The threshold for alarms associated with availability fault metrics, for example if measuring fault rate, the threshold may be 1, meaning you would want an alarm that triggers if the fault rate goes above 1%. |
+| <code><a href="#@cdklabs/multi-az-observability.ServiceAvailabilityMetricDetailsProps.property.successAlarmThreshold">successAlarmThreshold</a></code> | <code>number</code> | The threshold for alarms associated with availability success metrics, for example if measuring success rate, the threshold may be 99, meaning you would want an alarm that triggers if success drops below 99%. |
+
+---
+
+##### `alarmStatistic`<sup>Required</sup> <a name="alarmStatistic" id="@cdklabs/multi-az-observability.ServiceAvailabilityMetricDetailsProps.property.alarmStatistic"></a>
+
+```typescript
+public readonly alarmStatistic: string;
+```
+
+- *Type:* string
+
+The statistic used for alarms, for availability metrics this should be "Sum", for latency metrics it could something like "p99" or "p99.9".
+
+---
+
+##### `datapointsToAlarm`<sup>Required</sup> <a name="datapointsToAlarm" id="@cdklabs/multi-az-observability.ServiceAvailabilityMetricDetailsProps.property.datapointsToAlarm"></a>
+
+```typescript
+public readonly datapointsToAlarm: number;
+```
+
+- *Type:* number
+
+The number of datapoints to alarm on for latency and availability alarms.
+
+---
+
+##### `evaluationPeriods`<sup>Required</sup> <a name="evaluationPeriods" id="@cdklabs/multi-az-observability.ServiceAvailabilityMetricDetailsProps.property.evaluationPeriods"></a>
+
+```typescript
+public readonly evaluationPeriods: number;
+```
+
+- *Type:* number
+
+The number of evaluation periods for latency and availabiltiy alarms.
+
+---
+
+##### `faultMetricNames`<sup>Required</sup> <a name="faultMetricNames" id="@cdklabs/multi-az-observability.ServiceAvailabilityMetricDetailsProps.property.faultMetricNames"></a>
+
+```typescript
+public readonly faultMetricNames: string[];
+```
+
+- *Type:* string[]
+
+The names of fault indicating metrics.
+
+---
+
+##### `metricNamespace`<sup>Required</sup> <a name="metricNamespace" id="@cdklabs/multi-az-observability.ServiceAvailabilityMetricDetailsProps.property.metricNamespace"></a>
+
+```typescript
+public readonly metricNamespace: string;
+```
+
+- *Type:* string
+
+The CloudWatch metric namespace for these metrics.
+
+---
+
+##### `period`<sup>Required</sup> <a name="period" id="@cdklabs/multi-az-observability.ServiceAvailabilityMetricDetailsProps.property.period"></a>
+
+```typescript
+public readonly period: Duration;
+```
+
+- *Type:* aws-cdk-lib.Duration
+
+The period for the metrics.
+
+---
+
+##### `successMetricNames`<sup>Required</sup> <a name="successMetricNames" id="@cdklabs/multi-az-observability.ServiceAvailabilityMetricDetailsProps.property.successMetricNames"></a>
+
+```typescript
+public readonly successMetricNames: string[];
+```
+
+- *Type:* string[]
+
+The names of success indicating metrics.
+
+---
+
+##### `unit`<sup>Required</sup> <a name="unit" id="@cdklabs/multi-az-observability.ServiceAvailabilityMetricDetailsProps.property.unit"></a>
+
+```typescript
+public readonly unit: Unit;
+```
+
+- *Type:* aws-cdk-lib.aws_cloudwatch.Unit
+
+The unit used for these metrics.
+
+---
+
+##### `graphedFaultStatistics`<sup>Optional</sup> <a name="graphedFaultStatistics" id="@cdklabs/multi-az-observability.ServiceAvailabilityMetricDetailsProps.property.graphedFaultStatistics"></a>
+
+```typescript
+public readonly graphedFaultStatistics: string[];
+```
+
+- *Type:* string[]
+- *Default:* For availability metrics, this will be "Sum", for latency metrics it will be just "p99"
+
+The statistics for faults you want to appear on dashboards, for example, with latency metrics, you might want p50, p99, and tm99.
+
+For availability
+metrics this will typically just be "Sum".
+
+---
+
+##### `graphedSuccessStatistics`<sup>Optional</sup> <a name="graphedSuccessStatistics" id="@cdklabs/multi-az-observability.ServiceAvailabilityMetricDetailsProps.property.graphedSuccessStatistics"></a>
+
+```typescript
+public readonly graphedSuccessStatistics: string[];
+```
+
+- *Type:* string[]
+- *Default:* For availability metrics, this will be "Sum", for latency metrics it will be just "p99"
+
+The statistics for successes you want to appear on dashboards, for example, with latency metrics, you might want p50, p99, and tm99.
+
+For availability
+metrics this will typically just be "Sum".
+
+---
+
+##### `faultAlarmThreshold`<sup>Required</sup> <a name="faultAlarmThreshold" id="@cdklabs/multi-az-observability.ServiceAvailabilityMetricDetailsProps.property.faultAlarmThreshold"></a>
+
+```typescript
+public readonly faultAlarmThreshold: number;
+```
+
+- *Type:* number
+
+The threshold for alarms associated with availability fault metrics, for example if measuring fault rate, the threshold may be 1, meaning you would want an alarm that triggers if the fault rate goes above 1%.
+
+---
+
+##### `successAlarmThreshold`<sup>Required</sup> <a name="successAlarmThreshold" id="@cdklabs/multi-az-observability.ServiceAvailabilityMetricDetailsProps.property.successAlarmThreshold"></a>
+
+```typescript
+public readonly successAlarmThreshold: number;
+```
+
+- *Type:* number
+
+The threshold for alarms associated with availability success metrics, for example if measuring success rate, the threshold may be 99, meaning you would want an alarm that triggers if success drops below 99%.
+
+---
+
+### ServiceLatencyMetricDetailsProps <a name="ServiceLatencyMetricDetailsProps" id="@cdklabs/multi-az-observability.ServiceLatencyMetricDetailsProps"></a>
+
+Props for service latency metrics.
+
+#### Initializer <a name="Initializer" id="@cdklabs/multi-az-observability.ServiceLatencyMetricDetailsProps.Initializer"></a>
+
+```typescript
+import { ServiceLatencyMetricDetailsProps } from '@cdklabs/multi-az-observability'
+
+const serviceLatencyMetricDetailsProps: ServiceLatencyMetricDetailsProps = { ... }
+```
+
+#### Properties <a name="Properties" id="Properties"></a>
+
+| **Name** | **Type** | **Description** |
+| --- | --- | --- |
+| <code><a href="#@cdklabs/multi-az-observability.ServiceLatencyMetricDetailsProps.property.alarmStatistic">alarmStatistic</a></code> | <code>string</code> | The statistic used for alarms, for availability metrics this should be "Sum", for latency metrics it could something like "p99" or "p99.9". |
+| <code><a href="#@cdklabs/multi-az-observability.ServiceLatencyMetricDetailsProps.property.datapointsToAlarm">datapointsToAlarm</a></code> | <code>number</code> | The number of datapoints to alarm on for latency and availability alarms. |
+| <code><a href="#@cdklabs/multi-az-observability.ServiceLatencyMetricDetailsProps.property.evaluationPeriods">evaluationPeriods</a></code> | <code>number</code> | The number of evaluation periods for latency and availabiltiy alarms. |
+| <code><a href="#@cdklabs/multi-az-observability.ServiceLatencyMetricDetailsProps.property.faultMetricNames">faultMetricNames</a></code> | <code>string[]</code> | The names of fault indicating metrics. |
+| <code><a href="#@cdklabs/multi-az-observability.ServiceLatencyMetricDetailsProps.property.metricNamespace">metricNamespace</a></code> | <code>string</code> | The CloudWatch metric namespace for these metrics. |
+| <code><a href="#@cdklabs/multi-az-observability.ServiceLatencyMetricDetailsProps.property.period">period</a></code> | <code>aws-cdk-lib.Duration</code> | The period for the metrics. |
+| <code><a href="#@cdklabs/multi-az-observability.ServiceLatencyMetricDetailsProps.property.successMetricNames">successMetricNames</a></code> | <code>string[]</code> | The names of success indicating metrics. |
+| <code><a href="#@cdklabs/multi-az-observability.ServiceLatencyMetricDetailsProps.property.unit">unit</a></code> | <code>aws-cdk-lib.aws_cloudwatch.Unit</code> | The unit used for these metrics. |
+| <code><a href="#@cdklabs/multi-az-observability.ServiceLatencyMetricDetailsProps.property.graphedFaultStatistics">graphedFaultStatistics</a></code> | <code>string[]</code> | The statistics for faults you want to appear on dashboards, for example, with latency metrics, you might want p50, p99, and tm99. |
+| <code><a href="#@cdklabs/multi-az-observability.ServiceLatencyMetricDetailsProps.property.graphedSuccessStatistics">graphedSuccessStatistics</a></code> | <code>string[]</code> | The statistics for successes you want to appear on dashboards, for example, with latency metrics, you might want p50, p99, and tm99. |
+| <code><a href="#@cdklabs/multi-az-observability.ServiceLatencyMetricDetailsProps.property.successAlarmThreshold">successAlarmThreshold</a></code> | <code>aws-cdk-lib.Duration</code> | The threshold for alarms associated with latency success metrics, for example if success latency exceeds 500 milliseconds. |
+
+---
+
+##### `alarmStatistic`<sup>Required</sup> <a name="alarmStatistic" id="@cdklabs/multi-az-observability.ServiceLatencyMetricDetailsProps.property.alarmStatistic"></a>
+
+```typescript
+public readonly alarmStatistic: string;
+```
+
+- *Type:* string
+
+The statistic used for alarms, for availability metrics this should be "Sum", for latency metrics it could something like "p99" or "p99.9".
+
+---
+
+##### `datapointsToAlarm`<sup>Required</sup> <a name="datapointsToAlarm" id="@cdklabs/multi-az-observability.ServiceLatencyMetricDetailsProps.property.datapointsToAlarm"></a>
+
+```typescript
+public readonly datapointsToAlarm: number;
+```
+
+- *Type:* number
+
+The number of datapoints to alarm on for latency and availability alarms.
+
+---
+
+##### `evaluationPeriods`<sup>Required</sup> <a name="evaluationPeriods" id="@cdklabs/multi-az-observability.ServiceLatencyMetricDetailsProps.property.evaluationPeriods"></a>
+
+```typescript
+public readonly evaluationPeriods: number;
+```
+
+- *Type:* number
+
+The number of evaluation periods for latency and availabiltiy alarms.
+
+---
+
+##### `faultMetricNames`<sup>Required</sup> <a name="faultMetricNames" id="@cdklabs/multi-az-observability.ServiceLatencyMetricDetailsProps.property.faultMetricNames"></a>
+
+```typescript
+public readonly faultMetricNames: string[];
+```
+
+- *Type:* string[]
+
+The names of fault indicating metrics.
+
+---
+
+##### `metricNamespace`<sup>Required</sup> <a name="metricNamespace" id="@cdklabs/multi-az-observability.ServiceLatencyMetricDetailsProps.property.metricNamespace"></a>
+
+```typescript
+public readonly metricNamespace: string;
+```
+
+- *Type:* string
+
+The CloudWatch metric namespace for these metrics.
+
+---
+
+##### `period`<sup>Required</sup> <a name="period" id="@cdklabs/multi-az-observability.ServiceLatencyMetricDetailsProps.property.period"></a>
+
+```typescript
+public readonly period: Duration;
+```
+
+- *Type:* aws-cdk-lib.Duration
+
+The period for the metrics.
+
+---
+
+##### `successMetricNames`<sup>Required</sup> <a name="successMetricNames" id="@cdklabs/multi-az-observability.ServiceLatencyMetricDetailsProps.property.successMetricNames"></a>
+
+```typescript
+public readonly successMetricNames: string[];
+```
+
+- *Type:* string[]
+
+The names of success indicating metrics.
+
+---
+
+##### `unit`<sup>Required</sup> <a name="unit" id="@cdklabs/multi-az-observability.ServiceLatencyMetricDetailsProps.property.unit"></a>
+
+```typescript
+public readonly unit: Unit;
+```
+
+- *Type:* aws-cdk-lib.aws_cloudwatch.Unit
+
+The unit used for these metrics.
+
+---
+
+##### `graphedFaultStatistics`<sup>Optional</sup> <a name="graphedFaultStatistics" id="@cdklabs/multi-az-observability.ServiceLatencyMetricDetailsProps.property.graphedFaultStatistics"></a>
+
+```typescript
+public readonly graphedFaultStatistics: string[];
+```
+
+- *Type:* string[]
+- *Default:* For availability metrics, this will be "Sum", for latency metrics it will be just "p99"
+
+The statistics for faults you want to appear on dashboards, for example, with latency metrics, you might want p50, p99, and tm99.
+
+For availability
+metrics this will typically just be "Sum".
+
+---
+
+##### `graphedSuccessStatistics`<sup>Optional</sup> <a name="graphedSuccessStatistics" id="@cdklabs/multi-az-observability.ServiceLatencyMetricDetailsProps.property.graphedSuccessStatistics"></a>
+
+```typescript
+public readonly graphedSuccessStatistics: string[];
+```
+
+- *Type:* string[]
+- *Default:* For availability metrics, this will be "Sum", for latency metrics it will be just "p99"
+
+The statistics for successes you want to appear on dashboards, for example, with latency metrics, you might want p50, p99, and tm99.
+
+For availability
+metrics this will typically just be "Sum".
+
+---
+
+##### `successAlarmThreshold`<sup>Required</sup> <a name="successAlarmThreshold" id="@cdklabs/multi-az-observability.ServiceLatencyMetricDetailsProps.property.successAlarmThreshold"></a>
+
+```typescript
+public readonly successAlarmThreshold: Duration;
+```
+
+- *Type:* aws-cdk-lib.Duration
+
+The threshold for alarms associated with latency success metrics, for example if success latency exceeds 500 milliseconds.
+
+---
+
 ### ServiceMetricDetailsProps <a name="ServiceMetricDetailsProps" id="@cdklabs/multi-az-observability.ServiceMetricDetailsProps"></a>
 
 The properties for default service metric details.
@@ -2078,11 +3004,9 @@ const serviceMetricDetailsProps: ServiceMetricDetailsProps = { ... }
 | <code><a href="#@cdklabs/multi-az-observability.ServiceMetricDetailsProps.property.alarmStatistic">alarmStatistic</a></code> | <code>string</code> | The statistic used for alarms, for availability metrics this should be "Sum", for latency metrics it could something like "p99" or "p99.9". |
 | <code><a href="#@cdklabs/multi-az-observability.ServiceMetricDetailsProps.property.datapointsToAlarm">datapointsToAlarm</a></code> | <code>number</code> | The number of datapoints to alarm on for latency and availability alarms. |
 | <code><a href="#@cdklabs/multi-az-observability.ServiceMetricDetailsProps.property.evaluationPeriods">evaluationPeriods</a></code> | <code>number</code> | The number of evaluation periods for latency and availabiltiy alarms. |
-| <code><a href="#@cdklabs/multi-az-observability.ServiceMetricDetailsProps.property.faultAlarmThreshold">faultAlarmThreshold</a></code> | <code>number</code> | The threshold for alarms associated with fault metrics, for example if measuring fault rate, the threshold may be 1, meaning you would want an alarm that triggers if the fault rate goes above 1%. |
 | <code><a href="#@cdklabs/multi-az-observability.ServiceMetricDetailsProps.property.faultMetricNames">faultMetricNames</a></code> | <code>string[]</code> | The names of fault indicating metrics. |
 | <code><a href="#@cdklabs/multi-az-observability.ServiceMetricDetailsProps.property.metricNamespace">metricNamespace</a></code> | <code>string</code> | The CloudWatch metric namespace for these metrics. |
 | <code><a href="#@cdklabs/multi-az-observability.ServiceMetricDetailsProps.property.period">period</a></code> | <code>aws-cdk-lib.Duration</code> | The period for the metrics. |
-| <code><a href="#@cdklabs/multi-az-observability.ServiceMetricDetailsProps.property.successAlarmThreshold">successAlarmThreshold</a></code> | <code>number</code> | The threshold for alarms associated with success metrics, for example if measuring success rate, the threshold may be 99, meaning you would want an alarm that triggers if success drops below 99%. |
 | <code><a href="#@cdklabs/multi-az-observability.ServiceMetricDetailsProps.property.successMetricNames">successMetricNames</a></code> | <code>string[]</code> | The names of success indicating metrics. |
 | <code><a href="#@cdklabs/multi-az-observability.ServiceMetricDetailsProps.property.unit">unit</a></code> | <code>aws-cdk-lib.aws_cloudwatch.Unit</code> | The unit used for these metrics. |
 | <code><a href="#@cdklabs/multi-az-observability.ServiceMetricDetailsProps.property.graphedFaultStatistics">graphedFaultStatistics</a></code> | <code>string[]</code> | The statistics for faults you want to appear on dashboards, for example, with latency metrics, you might want p50, p99, and tm99. |
@@ -2126,18 +3050,6 @@ The number of evaluation periods for latency and availabiltiy alarms.
 
 ---
 
-##### `faultAlarmThreshold`<sup>Required</sup> <a name="faultAlarmThreshold" id="@cdklabs/multi-az-observability.ServiceMetricDetailsProps.property.faultAlarmThreshold"></a>
-
-```typescript
-public readonly faultAlarmThreshold: number;
-```
-
-- *Type:* number
-
-The threshold for alarms associated with fault metrics, for example if measuring fault rate, the threshold may be 1, meaning you would want an alarm that triggers if the fault rate goes above 1%.
-
----
-
 ##### `faultMetricNames`<sup>Required</sup> <a name="faultMetricNames" id="@cdklabs/multi-az-observability.ServiceMetricDetailsProps.property.faultMetricNames"></a>
 
 ```typescript
@@ -2171,18 +3083,6 @@ public readonly period: Duration;
 - *Type:* aws-cdk-lib.Duration
 
 The period for the metrics.
-
----
-
-##### `successAlarmThreshold`<sup>Required</sup> <a name="successAlarmThreshold" id="@cdklabs/multi-az-observability.ServiceMetricDetailsProps.property.successAlarmThreshold"></a>
-
-```typescript
-public readonly successAlarmThreshold: number;
-```
-
-- *Type:* number
-
-The threshold for alarms associated with success metrics, for example if measuring success rate, the threshold may be 99, meaning you would want an alarm that triggers if success drops below 99%.
 
 ---
 
@@ -2260,8 +3160,8 @@ const serviceProps: ServiceProps = { ... }
 | --- | --- | --- |
 | <code><a href="#@cdklabs/multi-az-observability.ServiceProps.property.availabilityZoneNames">availabilityZoneNames</a></code> | <code>string[]</code> | A list of the Availability Zone names used by this application. |
 | <code><a href="#@cdklabs/multi-az-observability.ServiceProps.property.baseUrl">baseUrl</a></code> | <code>string</code> | The base endpoint for this service, like "https://www.example.com". Operation paths will be appended to this endpoint for canary testing the service. |
-| <code><a href="#@cdklabs/multi-az-observability.ServiceProps.property.defaultAvailabilityMetricDetails">defaultAvailabilityMetricDetails</a></code> | <code><a href="#@cdklabs/multi-az-observability.IServiceMetricDetails">IServiceMetricDetails</a></code> | The default settings that are used for availability metrics for all operations unless specifically overridden in an operation definition. |
-| <code><a href="#@cdklabs/multi-az-observability.ServiceProps.property.defaultLatencyMetricDetails">defaultLatencyMetricDetails</a></code> | <code><a href="#@cdklabs/multi-az-observability.IServiceMetricDetails">IServiceMetricDetails</a></code> | The default settings that are used for availability metrics for all operations unless specifically overridden in an operation definition. |
+| <code><a href="#@cdklabs/multi-az-observability.ServiceProps.property.defaultAvailabilityMetricDetails">defaultAvailabilityMetricDetails</a></code> | <code><a href="#@cdklabs/multi-az-observability.IServiceAvailabilityMetricDetails">IServiceAvailabilityMetricDetails</a></code> | The default settings that are used for availability metrics for all operations unless specifically overridden in an operation definition. |
+| <code><a href="#@cdklabs/multi-az-observability.ServiceProps.property.defaultLatencyMetricDetails">defaultLatencyMetricDetails</a></code> | <code><a href="#@cdklabs/multi-az-observability.IServiceLatencyMetricDetails">IServiceLatencyMetricDetails</a></code> | The default settings that are used for availability metrics for all operations unless specifically overridden in an operation definition. |
 | <code><a href="#@cdklabs/multi-az-observability.ServiceProps.property.faultCountThreshold">faultCountThreshold</a></code> | <code>number</code> | The fault count threshold that indicates the service is unhealthy. |
 | <code><a href="#@cdklabs/multi-az-observability.ServiceProps.property.period">period</a></code> | <code>aws-cdk-lib.Duration</code> | The period for which metrics for the service should be aggregated. |
 | <code><a href="#@cdklabs/multi-az-observability.ServiceProps.property.serviceName">serviceName</a></code> | <code>string</code> | The name of your service. |
@@ -2298,10 +3198,10 @@ The base endpoint for this service, like "https://www.example.com". Operation pa
 ##### `defaultAvailabilityMetricDetails`<sup>Required</sup> <a name="defaultAvailabilityMetricDetails" id="@cdklabs/multi-az-observability.ServiceProps.property.defaultAvailabilityMetricDetails"></a>
 
 ```typescript
-public readonly defaultAvailabilityMetricDetails: IServiceMetricDetails;
+public readonly defaultAvailabilityMetricDetails: IServiceAvailabilityMetricDetails;
 ```
 
-- *Type:* <a href="#@cdklabs/multi-az-observability.IServiceMetricDetails">IServiceMetricDetails</a>
+- *Type:* <a href="#@cdklabs/multi-az-observability.IServiceAvailabilityMetricDetails">IServiceAvailabilityMetricDetails</a>
 
 The default settings that are used for availability metrics for all operations unless specifically overridden in an operation definition.
 
@@ -2310,10 +3210,10 @@ The default settings that are used for availability metrics for all operations u
 ##### `defaultLatencyMetricDetails`<sup>Required</sup> <a name="defaultLatencyMetricDetails" id="@cdklabs/multi-az-observability.ServiceProps.property.defaultLatencyMetricDetails"></a>
 
 ```typescript
-public readonly defaultLatencyMetricDetails: IServiceMetricDetails;
+public readonly defaultLatencyMetricDetails: IServiceLatencyMetricDetails;
 ```
 
-- *Type:* <a href="#@cdklabs/multi-az-observability.IServiceMetricDetails">IServiceMetricDetails</a>
+- *Type:* <a href="#@cdklabs/multi-az-observability.IServiceLatencyMetricDetails">IServiceLatencyMetricDetails</a>
 
 The default settings that are used for availability metrics for all operations unless specifically overridden in an operation definition.
 
@@ -2434,18 +3334,18 @@ new CanaryMetrics(props: CanaryMetricProps)
 
 | **Name** | **Type** | **Description** |
 | --- | --- | --- |
-| <code><a href="#@cdklabs/multi-az-observability.CanaryMetrics.property.canaryAvailabilityMetricDetails">canaryAvailabilityMetricDetails</a></code> | <code><a href="#@cdklabs/multi-az-observability.IOperationMetricDetails">IOperationMetricDetails</a></code> | The canary availability metric details. |
-| <code><a href="#@cdklabs/multi-az-observability.CanaryMetrics.property.canaryLatencyMetricDetails">canaryLatencyMetricDetails</a></code> | <code><a href="#@cdklabs/multi-az-observability.IOperationMetricDetails">IOperationMetricDetails</a></code> | The canary latency metric details. |
+| <code><a href="#@cdklabs/multi-az-observability.CanaryMetrics.property.canaryAvailabilityMetricDetails">canaryAvailabilityMetricDetails</a></code> | <code><a href="#@cdklabs/multi-az-observability.IOperationAvailabilityMetricDetails">IOperationAvailabilityMetricDetails</a></code> | The canary availability metric details. |
+| <code><a href="#@cdklabs/multi-az-observability.CanaryMetrics.property.canaryLatencyMetricDetails">canaryLatencyMetricDetails</a></code> | <code><a href="#@cdklabs/multi-az-observability.IOperationLatencyMetricDetails">IOperationLatencyMetricDetails</a></code> | The canary latency metric details. |
 
 ---
 
 ##### `canaryAvailabilityMetricDetails`<sup>Required</sup> <a name="canaryAvailabilityMetricDetails" id="@cdklabs/multi-az-observability.CanaryMetrics.property.canaryAvailabilityMetricDetails"></a>
 
 ```typescript
-public readonly canaryAvailabilityMetricDetails: IOperationMetricDetails;
+public readonly canaryAvailabilityMetricDetails: IOperationAvailabilityMetricDetails;
 ```
 
-- *Type:* <a href="#@cdklabs/multi-az-observability.IOperationMetricDetails">IOperationMetricDetails</a>
+- *Type:* <a href="#@cdklabs/multi-az-observability.IOperationAvailabilityMetricDetails">IOperationAvailabilityMetricDetails</a>
 
 The canary availability metric details.
 
@@ -2454,12 +3354,223 @@ The canary availability metric details.
 ##### `canaryLatencyMetricDetails`<sup>Required</sup> <a name="canaryLatencyMetricDetails" id="@cdklabs/multi-az-observability.CanaryMetrics.property.canaryLatencyMetricDetails"></a>
 
 ```typescript
-public readonly canaryLatencyMetricDetails: IOperationMetricDetails;
+public readonly canaryLatencyMetricDetails: IOperationLatencyMetricDetails;
 ```
 
-- *Type:* <a href="#@cdklabs/multi-az-observability.IOperationMetricDetails">IOperationMetricDetails</a>
+- *Type:* <a href="#@cdklabs/multi-az-observability.IOperationLatencyMetricDetails">IOperationLatencyMetricDetails</a>
 
 The canary latency metric details.
+
+---
+
+
+### CanaryTestAvailabilityMetricsOverride <a name="CanaryTestAvailabilityMetricsOverride" id="@cdklabs/multi-az-observability.CanaryTestAvailabilityMetricsOverride"></a>
+
+Provides overrides for the default metric settings used for the automatically created canary tests.
+
+#### Initializers <a name="Initializers" id="@cdklabs/multi-az-observability.CanaryTestAvailabilityMetricsOverride.Initializer"></a>
+
+```typescript
+import { CanaryTestAvailabilityMetricsOverride } from '@cdklabs/multi-az-observability'
+
+new CanaryTestAvailabilityMetricsOverride(props: CanaryTestAvailabilityMetricsOverrideProps)
+```
+
+| **Name** | **Type** | **Description** |
+| --- | --- | --- |
+| <code><a href="#@cdklabs/multi-az-observability.CanaryTestAvailabilityMetricsOverride.Initializer.parameter.props">props</a></code> | <code><a href="#@cdklabs/multi-az-observability.CanaryTestAvailabilityMetricsOverrideProps">CanaryTestAvailabilityMetricsOverrideProps</a></code> | *No description.* |
+
+---
+
+##### `props`<sup>Required</sup> <a name="props" id="@cdklabs/multi-az-observability.CanaryTestAvailabilityMetricsOverride.Initializer.parameter.props"></a>
+
+- *Type:* <a href="#@cdklabs/multi-az-observability.CanaryTestAvailabilityMetricsOverrideProps">CanaryTestAvailabilityMetricsOverrideProps</a>
+
+---
+
+
+
+#### Properties <a name="Properties" id="Properties"></a>
+
+| **Name** | **Type** | **Description** |
+| --- | --- | --- |
+| <code><a href="#@cdklabs/multi-az-observability.CanaryTestAvailabilityMetricsOverride.property.alarmStatistic">alarmStatistic</a></code> | <code>string</code> | The statistic used for alarms, for availability metrics this should be "Sum", for latency metrics it could something like "p99" or "p99.9". |
+| <code><a href="#@cdklabs/multi-az-observability.CanaryTestAvailabilityMetricsOverride.property.datapointsToAlarm">datapointsToAlarm</a></code> | <code>number</code> | The number of datapoints to alarm on for latency and availability alarms. |
+| <code><a href="#@cdklabs/multi-az-observability.CanaryTestAvailabilityMetricsOverride.property.evaluationPeriods">evaluationPeriods</a></code> | <code>number</code> | The number of evaluation periods for latency and availabiltiy alarms. |
+| <code><a href="#@cdklabs/multi-az-observability.CanaryTestAvailabilityMetricsOverride.property.period">period</a></code> | <code>aws-cdk-lib.Duration</code> | The period for the metrics. |
+| <code><a href="#@cdklabs/multi-az-observability.CanaryTestAvailabilityMetricsOverride.property.faultAlarmThreshold">faultAlarmThreshold</a></code> | <code>number</code> | The threshold for alarms associated with availability fault metrics, for example if measuring fault rate, the threshold may be 1, meaning you would want an alarm that triggers if the fault rate goes above 1%. |
+| <code><a href="#@cdklabs/multi-az-observability.CanaryTestAvailabilityMetricsOverride.property.successAlarmThreshold">successAlarmThreshold</a></code> | <code>number</code> | The threshold for alarms associated with availability success metrics, for example if measuring success rate, the threshold may be 99, meaning you would want an alarm that triggers if success drops below 99%. |
+
+---
+
+##### `alarmStatistic`<sup>Optional</sup> <a name="alarmStatistic" id="@cdklabs/multi-az-observability.CanaryTestAvailabilityMetricsOverride.property.alarmStatistic"></a>
+
+```typescript
+public readonly alarmStatistic: string;
+```
+
+- *Type:* string
+
+The statistic used for alarms, for availability metrics this should be "Sum", for latency metrics it could something like "p99" or "p99.9".
+
+---
+
+##### `datapointsToAlarm`<sup>Optional</sup> <a name="datapointsToAlarm" id="@cdklabs/multi-az-observability.CanaryTestAvailabilityMetricsOverride.property.datapointsToAlarm"></a>
+
+```typescript
+public readonly datapointsToAlarm: number;
+```
+
+- *Type:* number
+
+The number of datapoints to alarm on for latency and availability alarms.
+
+---
+
+##### `evaluationPeriods`<sup>Optional</sup> <a name="evaluationPeriods" id="@cdklabs/multi-az-observability.CanaryTestAvailabilityMetricsOverride.property.evaluationPeriods"></a>
+
+```typescript
+public readonly evaluationPeriods: number;
+```
+
+- *Type:* number
+
+The number of evaluation periods for latency and availabiltiy alarms.
+
+---
+
+##### `period`<sup>Optional</sup> <a name="period" id="@cdklabs/multi-az-observability.CanaryTestAvailabilityMetricsOverride.property.period"></a>
+
+```typescript
+public readonly period: Duration;
+```
+
+- *Type:* aws-cdk-lib.Duration
+
+The period for the metrics.
+
+---
+
+##### `faultAlarmThreshold`<sup>Optional</sup> <a name="faultAlarmThreshold" id="@cdklabs/multi-az-observability.CanaryTestAvailabilityMetricsOverride.property.faultAlarmThreshold"></a>
+
+```typescript
+public readonly faultAlarmThreshold: number;
+```
+
+- *Type:* number
+
+The threshold for alarms associated with availability fault metrics, for example if measuring fault rate, the threshold may be 1, meaning you would want an alarm that triggers if the fault rate goes above 1%.
+
+---
+
+##### `successAlarmThreshold`<sup>Optional</sup> <a name="successAlarmThreshold" id="@cdklabs/multi-az-observability.CanaryTestAvailabilityMetricsOverride.property.successAlarmThreshold"></a>
+
+```typescript
+public readonly successAlarmThreshold: number;
+```
+
+- *Type:* number
+
+The threshold for alarms associated with availability success metrics, for example if measuring success rate, the threshold may be 99, meaning you would want an alarm that triggers if success drops below 99%.
+
+---
+
+
+### CanaryTestLatencyMetricsOverride <a name="CanaryTestLatencyMetricsOverride" id="@cdklabs/multi-az-observability.CanaryTestLatencyMetricsOverride"></a>
+
+Provides overrides for the default metric settings used for the automatically created canary tests.
+
+#### Initializers <a name="Initializers" id="@cdklabs/multi-az-observability.CanaryTestLatencyMetricsOverride.Initializer"></a>
+
+```typescript
+import { CanaryTestLatencyMetricsOverride } from '@cdklabs/multi-az-observability'
+
+new CanaryTestLatencyMetricsOverride(props: CanaryTestLatencyMetricsOverrideProps)
+```
+
+| **Name** | **Type** | **Description** |
+| --- | --- | --- |
+| <code><a href="#@cdklabs/multi-az-observability.CanaryTestLatencyMetricsOverride.Initializer.parameter.props">props</a></code> | <code><a href="#@cdklabs/multi-az-observability.CanaryTestLatencyMetricsOverrideProps">CanaryTestLatencyMetricsOverrideProps</a></code> | *No description.* |
+
+---
+
+##### `props`<sup>Required</sup> <a name="props" id="@cdklabs/multi-az-observability.CanaryTestLatencyMetricsOverride.Initializer.parameter.props"></a>
+
+- *Type:* <a href="#@cdklabs/multi-az-observability.CanaryTestLatencyMetricsOverrideProps">CanaryTestLatencyMetricsOverrideProps</a>
+
+---
+
+
+
+#### Properties <a name="Properties" id="Properties"></a>
+
+| **Name** | **Type** | **Description** |
+| --- | --- | --- |
+| <code><a href="#@cdklabs/multi-az-observability.CanaryTestLatencyMetricsOverride.property.alarmStatistic">alarmStatistic</a></code> | <code>string</code> | The statistic used for alarms, for availability metrics this should be "Sum", for latency metrics it could something like "p99" or "p99.9". |
+| <code><a href="#@cdklabs/multi-az-observability.CanaryTestLatencyMetricsOverride.property.datapointsToAlarm">datapointsToAlarm</a></code> | <code>number</code> | The number of datapoints to alarm on for latency and availability alarms. |
+| <code><a href="#@cdklabs/multi-az-observability.CanaryTestLatencyMetricsOverride.property.evaluationPeriods">evaluationPeriods</a></code> | <code>number</code> | The number of evaluation periods for latency and availabiltiy alarms. |
+| <code><a href="#@cdklabs/multi-az-observability.CanaryTestLatencyMetricsOverride.property.period">period</a></code> | <code>aws-cdk-lib.Duration</code> | The period for the metrics. |
+| <code><a href="#@cdklabs/multi-az-observability.CanaryTestLatencyMetricsOverride.property.successAlarmThreshold">successAlarmThreshold</a></code> | <code>aws-cdk-lib.Duration</code> | The threshold for alarms associated with latency success metrics, for example if success latency exceeds 500 milliseconds. |
+
+---
+
+##### `alarmStatistic`<sup>Optional</sup> <a name="alarmStatistic" id="@cdklabs/multi-az-observability.CanaryTestLatencyMetricsOverride.property.alarmStatistic"></a>
+
+```typescript
+public readonly alarmStatistic: string;
+```
+
+- *Type:* string
+
+The statistic used for alarms, for availability metrics this should be "Sum", for latency metrics it could something like "p99" or "p99.9".
+
+---
+
+##### `datapointsToAlarm`<sup>Optional</sup> <a name="datapointsToAlarm" id="@cdklabs/multi-az-observability.CanaryTestLatencyMetricsOverride.property.datapointsToAlarm"></a>
+
+```typescript
+public readonly datapointsToAlarm: number;
+```
+
+- *Type:* number
+
+The number of datapoints to alarm on for latency and availability alarms.
+
+---
+
+##### `evaluationPeriods`<sup>Optional</sup> <a name="evaluationPeriods" id="@cdklabs/multi-az-observability.CanaryTestLatencyMetricsOverride.property.evaluationPeriods"></a>
+
+```typescript
+public readonly evaluationPeriods: number;
+```
+
+- *Type:* number
+
+The number of evaluation periods for latency and availabiltiy alarms.
+
+---
+
+##### `period`<sup>Optional</sup> <a name="period" id="@cdklabs/multi-az-observability.CanaryTestLatencyMetricsOverride.property.period"></a>
+
+```typescript
+public readonly period: Duration;
+```
+
+- *Type:* aws-cdk-lib.Duration
+
+The period for the metrics.
+
+---
+
+##### `successAlarmThreshold`<sup>Optional</sup> <a name="successAlarmThreshold" id="@cdklabs/multi-az-observability.CanaryTestLatencyMetricsOverride.property.successAlarmThreshold"></a>
+
+```typescript
+public readonly successAlarmThreshold: Duration;
+```
+
+- *Type:* aws-cdk-lib.Duration
+
+The threshold for alarms associated with latency success metrics, for example if success latency exceeds 500 milliseconds.
 
 ---
 
@@ -2499,9 +3610,7 @@ new CanaryTestMetricsOverride(props: CanaryTestMetricsOverrideProps)
 | <code><a href="#@cdklabs/multi-az-observability.CanaryTestMetricsOverride.property.alarmStatistic">alarmStatistic</a></code> | <code>string</code> | The statistic used for alarms, for availability metrics this should be "Sum", for latency metrics it could something like "p99" or "p99.9". |
 | <code><a href="#@cdklabs/multi-az-observability.CanaryTestMetricsOverride.property.datapointsToAlarm">datapointsToAlarm</a></code> | <code>number</code> | The number of datapoints to alarm on for latency and availability alarms. |
 | <code><a href="#@cdklabs/multi-az-observability.CanaryTestMetricsOverride.property.evaluationPeriods">evaluationPeriods</a></code> | <code>number</code> | The number of evaluation periods for latency and availabiltiy alarms. |
-| <code><a href="#@cdklabs/multi-az-observability.CanaryTestMetricsOverride.property.faultAlarmThreshold">faultAlarmThreshold</a></code> | <code>number</code> | The threshold for alarms associated with fault metrics, for example if measuring fault rate, the threshold may be 1, meaning you would want an alarm that triggers if the fault rate goes above 1%. |
 | <code><a href="#@cdklabs/multi-az-observability.CanaryTestMetricsOverride.property.period">period</a></code> | <code>aws-cdk-lib.Duration</code> | The period for the metrics. |
-| <code><a href="#@cdklabs/multi-az-observability.CanaryTestMetricsOverride.property.successAlarmThreshold">successAlarmThreshold</a></code> | <code>number</code> | The threshold for alarms associated with success metrics, for example if measuring success rate, the threshold may be 99, meaning you would want an alarm that triggers if success drops below 99%. |
 
 ---
 
@@ -2541,18 +3650,6 @@ The number of evaluation periods for latency and availabiltiy alarms.
 
 ---
 
-##### `faultAlarmThreshold`<sup>Optional</sup> <a name="faultAlarmThreshold" id="@cdklabs/multi-az-observability.CanaryTestMetricsOverride.property.faultAlarmThreshold"></a>
-
-```typescript
-public readonly faultAlarmThreshold: number;
-```
-
-- *Type:* number
-
-The threshold for alarms associated with fault metrics, for example if measuring fault rate, the threshold may be 1, meaning you would want an alarm that triggers if the fault rate goes above 1%.
-
----
-
 ##### `period`<sup>Optional</sup> <a name="period" id="@cdklabs/multi-az-observability.CanaryTestMetricsOverride.property.period"></a>
 
 ```typescript
@@ -2562,18 +3659,6 @@ public readonly period: Duration;
 - *Type:* aws-cdk-lib.Duration
 
 The period for the metrics.
-
----
-
-##### `successAlarmThreshold`<sup>Optional</sup> <a name="successAlarmThreshold" id="@cdklabs/multi-az-observability.CanaryTestMetricsOverride.property.successAlarmThreshold"></a>
-
-```typescript
-public readonly successAlarmThreshold: number;
-```
-
-- *Type:* number
-
-The threshold for alarms associated with success metrics, for example if measuring success rate, the threshold may be 99, meaning you would want an alarm that triggers if success drops below 99%.
 
 ---
 
@@ -2864,12 +3949,12 @@ new Operation(props: OperationProps)
 | <code><a href="#@cdklabs/multi-az-observability.Operation.property.httpMethods">httpMethods</a></code> | <code>string[]</code> | The http methods supported by the operation. |
 | <code><a href="#@cdklabs/multi-az-observability.Operation.property.operationName">operationName</a></code> | <code>string</code> | The name of the operation. |
 | <code><a href="#@cdklabs/multi-az-observability.Operation.property.path">path</a></code> | <code>string</code> | The HTTP path for the operation for canaries to run against, something like "/products/list". |
-| <code><a href="#@cdklabs/multi-az-observability.Operation.property.serverSideAvailabilityMetricDetails">serverSideAvailabilityMetricDetails</a></code> | <code><a href="#@cdklabs/multi-az-observability.IOperationMetricDetails">IOperationMetricDetails</a></code> | The server side availability metric details. |
-| <code><a href="#@cdklabs/multi-az-observability.Operation.property.serverSideLatencyMetricDetails">serverSideLatencyMetricDetails</a></code> | <code><a href="#@cdklabs/multi-az-observability.IOperationMetricDetails">IOperationMetricDetails</a></code> | The server side latency metric details. |
+| <code><a href="#@cdklabs/multi-az-observability.Operation.property.serverSideAvailabilityMetricDetails">serverSideAvailabilityMetricDetails</a></code> | <code><a href="#@cdklabs/multi-az-observability.IOperationAvailabilityMetricDetails">IOperationAvailabilityMetricDetails</a></code> | The server side availability metric details. |
+| <code><a href="#@cdklabs/multi-az-observability.Operation.property.serverSideLatencyMetricDetails">serverSideLatencyMetricDetails</a></code> | <code><a href="#@cdklabs/multi-az-observability.IOperationLatencyMetricDetails">IOperationLatencyMetricDetails</a></code> | The server side latency metric details. |
 | <code><a href="#@cdklabs/multi-az-observability.Operation.property.service">service</a></code> | <code><a href="#@cdklabs/multi-az-observability.IService">IService</a></code> | The service the operation is associated with. |
 | <code><a href="#@cdklabs/multi-az-observability.Operation.property.canaryMetricDetails">canaryMetricDetails</a></code> | <code><a href="#@cdklabs/multi-az-observability.ICanaryMetrics">ICanaryMetrics</a></code> | Optional metric details if the service has a canary. |
-| <code><a href="#@cdklabs/multi-az-observability.Operation.property.canaryTestAvailabilityMetricsOverride">canaryTestAvailabilityMetricsOverride</a></code> | <code><a href="#@cdklabs/multi-az-observability.ICanaryTestMetricsOverride">ICanaryTestMetricsOverride</a></code> | The override values for automatically created canary tests so you can use values other than the service defaults to define the thresholds for availability. |
-| <code><a href="#@cdklabs/multi-az-observability.Operation.property.canaryTestLatencyMetricsOverride">canaryTestLatencyMetricsOverride</a></code> | <code><a href="#@cdklabs/multi-az-observability.ICanaryTestMetricsOverride">ICanaryTestMetricsOverride</a></code> | The override values for automatically created canary tests so you can use values other than the service defaults to define the thresholds for latency. |
+| <code><a href="#@cdklabs/multi-az-observability.Operation.property.canaryTestAvailabilityMetricsOverride">canaryTestAvailabilityMetricsOverride</a></code> | <code><a href="#@cdklabs/multi-az-observability.ICanaryTestAvailabilityMetricsOverride">ICanaryTestAvailabilityMetricsOverride</a></code> | The override values for automatically created canary tests so you can use values other than the service defaults to define the thresholds for availability. |
+| <code><a href="#@cdklabs/multi-az-observability.Operation.property.canaryTestLatencyMetricsOverride">canaryTestLatencyMetricsOverride</a></code> | <code><a href="#@cdklabs/multi-az-observability.ICanaryTestLatencyMetricsOverride">ICanaryTestLatencyMetricsOverride</a></code> | The override values for automatically created canary tests so you can use values other than the service defaults to define the thresholds for latency. |
 | <code><a href="#@cdklabs/multi-az-observability.Operation.property.canaryTestProps">canaryTestProps</a></code> | <code><a href="#@cdklabs/multi-az-observability.AddCanaryTestProps">AddCanaryTestProps</a></code> | If they have been added, the properties for creating new canary tests on this operation. |
 | <code><a href="#@cdklabs/multi-az-observability.Operation.property.optOutOfServiceCreatedCanary">optOutOfServiceCreatedCanary</a></code> | <code>boolean</code> | Set to true if you have defined CanaryTestProps for your service, which applies to all operations, but you want to opt out of creating the canary test for this operation. |
 | <code><a href="#@cdklabs/multi-az-observability.Operation.property.serverSideContributorInsightRuleDetails">serverSideContributorInsightRuleDetails</a></code> | <code><a href="#@cdklabs/multi-az-observability.IContributorInsightRuleDetails">IContributorInsightRuleDetails</a></code> | The server side details for contributor insights rules. |
@@ -2927,10 +4012,10 @@ The HTTP path for the operation for canaries to run against, something like "/pr
 ##### `serverSideAvailabilityMetricDetails`<sup>Required</sup> <a name="serverSideAvailabilityMetricDetails" id="@cdklabs/multi-az-observability.Operation.property.serverSideAvailabilityMetricDetails"></a>
 
 ```typescript
-public readonly serverSideAvailabilityMetricDetails: IOperationMetricDetails;
+public readonly serverSideAvailabilityMetricDetails: IOperationAvailabilityMetricDetails;
 ```
 
-- *Type:* <a href="#@cdklabs/multi-az-observability.IOperationMetricDetails">IOperationMetricDetails</a>
+- *Type:* <a href="#@cdklabs/multi-az-observability.IOperationAvailabilityMetricDetails">IOperationAvailabilityMetricDetails</a>
 
 The server side availability metric details.
 
@@ -2939,10 +4024,10 @@ The server side availability metric details.
 ##### `serverSideLatencyMetricDetails`<sup>Required</sup> <a name="serverSideLatencyMetricDetails" id="@cdklabs/multi-az-observability.Operation.property.serverSideLatencyMetricDetails"></a>
 
 ```typescript
-public readonly serverSideLatencyMetricDetails: IOperationMetricDetails;
+public readonly serverSideLatencyMetricDetails: IOperationLatencyMetricDetails;
 ```
 
-- *Type:* <a href="#@cdklabs/multi-az-observability.IOperationMetricDetails">IOperationMetricDetails</a>
+- *Type:* <a href="#@cdklabs/multi-az-observability.IOperationLatencyMetricDetails">IOperationLatencyMetricDetails</a>
 
 The server side latency metric details.
 
@@ -2975,10 +4060,10 @@ Optional metric details if the service has a canary.
 ##### `canaryTestAvailabilityMetricsOverride`<sup>Optional</sup> <a name="canaryTestAvailabilityMetricsOverride" id="@cdklabs/multi-az-observability.Operation.property.canaryTestAvailabilityMetricsOverride"></a>
 
 ```typescript
-public readonly canaryTestAvailabilityMetricsOverride: ICanaryTestMetricsOverride;
+public readonly canaryTestAvailabilityMetricsOverride: ICanaryTestAvailabilityMetricsOverride;
 ```
 
-- *Type:* <a href="#@cdklabs/multi-az-observability.ICanaryTestMetricsOverride">ICanaryTestMetricsOverride</a>
+- *Type:* <a href="#@cdklabs/multi-az-observability.ICanaryTestAvailabilityMetricsOverride">ICanaryTestAvailabilityMetricsOverride</a>
 
 The override values for automatically created canary tests so you can use values other than the service defaults to define the thresholds for availability.
 
@@ -2987,10 +4072,10 @@ The override values for automatically created canary tests so you can use values
 ##### `canaryTestLatencyMetricsOverride`<sup>Optional</sup> <a name="canaryTestLatencyMetricsOverride" id="@cdklabs/multi-az-observability.Operation.property.canaryTestLatencyMetricsOverride"></a>
 
 ```typescript
-public readonly canaryTestLatencyMetricsOverride: ICanaryTestMetricsOverride;
+public readonly canaryTestLatencyMetricsOverride: ICanaryTestLatencyMetricsOverride;
 ```
 
-- *Type:* <a href="#@cdklabs/multi-az-observability.ICanaryTestMetricsOverride">ICanaryTestMetricsOverride</a>
+- *Type:* <a href="#@cdklabs/multi-az-observability.ICanaryTestLatencyMetricsOverride">ICanaryTestLatencyMetricsOverride</a>
 
 The override values for automatically created canary tests so you can use values other than the service defaults to define the thresholds for latency.
 
@@ -3030,6 +4115,459 @@ public readonly serverSideContributorInsightRuleDetails: IContributorInsightRule
 - *Type:* <a href="#@cdklabs/multi-az-observability.IContributorInsightRuleDetails">IContributorInsightRuleDetails</a>
 
 The server side details for contributor insights rules.
+
+---
+
+
+### OperationAvailabilityMetricDetails <a name="OperationAvailabilityMetricDetails" id="@cdklabs/multi-az-observability.OperationAvailabilityMetricDetails"></a>
+
+- *Implements:* <a href="#@cdklabs/multi-az-observability.IOperationAvailabilityMetricDetails">IOperationAvailabilityMetricDetails</a>
+
+Availability metric details for an operation.
+
+#### Initializers <a name="Initializers" id="@cdklabs/multi-az-observability.OperationAvailabilityMetricDetails.Initializer"></a>
+
+```typescript
+import { OperationAvailabilityMetricDetails } from '@cdklabs/multi-az-observability'
+
+new OperationAvailabilityMetricDetails(props: OperationAvailabilityMetricDetailsProps, defaultProps: IServiceAvailabilityMetricDetails)
+```
+
+| **Name** | **Type** | **Description** |
+| --- | --- | --- |
+| <code><a href="#@cdklabs/multi-az-observability.OperationAvailabilityMetricDetails.Initializer.parameter.props">props</a></code> | <code><a href="#@cdklabs/multi-az-observability.OperationAvailabilityMetricDetailsProps">OperationAvailabilityMetricDetailsProps</a></code> | *No description.* |
+| <code><a href="#@cdklabs/multi-az-observability.OperationAvailabilityMetricDetails.Initializer.parameter.defaultProps">defaultProps</a></code> | <code><a href="#@cdklabs/multi-az-observability.IServiceAvailabilityMetricDetails">IServiceAvailabilityMetricDetails</a></code> | *No description.* |
+
+---
+
+##### `props`<sup>Required</sup> <a name="props" id="@cdklabs/multi-az-observability.OperationAvailabilityMetricDetails.Initializer.parameter.props"></a>
+
+- *Type:* <a href="#@cdklabs/multi-az-observability.OperationAvailabilityMetricDetailsProps">OperationAvailabilityMetricDetailsProps</a>
+
+---
+
+##### `defaultProps`<sup>Required</sup> <a name="defaultProps" id="@cdklabs/multi-az-observability.OperationAvailabilityMetricDetails.Initializer.parameter.defaultProps"></a>
+
+- *Type:* <a href="#@cdklabs/multi-az-observability.IServiceAvailabilityMetricDetails">IServiceAvailabilityMetricDetails</a>
+
+---
+
+
+
+#### Properties <a name="Properties" id="Properties"></a>
+
+| **Name** | **Type** | **Description** |
+| --- | --- | --- |
+| <code><a href="#@cdklabs/multi-az-observability.OperationAvailabilityMetricDetails.property.alarmStatistic">alarmStatistic</a></code> | <code>string</code> | The statistic used for alarms, for availability metrics this should be "Sum", for latency metrics it could something like "p99" or "p99.9". |
+| <code><a href="#@cdklabs/multi-az-observability.OperationAvailabilityMetricDetails.property.datapointsToAlarm">datapointsToAlarm</a></code> | <code>number</code> | The number of datapoints to alarm on for latency and availability alarms. |
+| <code><a href="#@cdklabs/multi-az-observability.OperationAvailabilityMetricDetails.property.evaluationPeriods">evaluationPeriods</a></code> | <code>number</code> | The number of evaluation periods for latency and availabiltiy alarms. |
+| <code><a href="#@cdklabs/multi-az-observability.OperationAvailabilityMetricDetails.property.faultMetricNames">faultMetricNames</a></code> | <code>string[]</code> | The names of fault indicating metrics. |
+| <code><a href="#@cdklabs/multi-az-observability.OperationAvailabilityMetricDetails.property.metricDimensions">metricDimensions</a></code> | <code><a href="#@cdklabs/multi-az-observability.MetricDimensions">MetricDimensions</a></code> | The metric dimensions for this operation, must be implemented as a concrete class by the user. |
+| <code><a href="#@cdklabs/multi-az-observability.OperationAvailabilityMetricDetails.property.metricNamespace">metricNamespace</a></code> | <code>string</code> | The CloudWatch metric namespace for these metrics. |
+| <code><a href="#@cdklabs/multi-az-observability.OperationAvailabilityMetricDetails.property.operationName">operationName</a></code> | <code>string</code> | The operation these metric details are for. |
+| <code><a href="#@cdklabs/multi-az-observability.OperationAvailabilityMetricDetails.property.period">period</a></code> | <code>aws-cdk-lib.Duration</code> | The period for the metrics. |
+| <code><a href="#@cdklabs/multi-az-observability.OperationAvailabilityMetricDetails.property.successMetricNames">successMetricNames</a></code> | <code>string[]</code> | The names of success indicating metrics. |
+| <code><a href="#@cdklabs/multi-az-observability.OperationAvailabilityMetricDetails.property.unit">unit</a></code> | <code>aws-cdk-lib.aws_cloudwatch.Unit</code> | The unit used for these metrics. |
+| <code><a href="#@cdklabs/multi-az-observability.OperationAvailabilityMetricDetails.property.graphedFaultStatistics">graphedFaultStatistics</a></code> | <code>string[]</code> | The statistics for faults you want to appear on dashboards, for example, with latency metrics, you might want p50, p99, and tm99. |
+| <code><a href="#@cdklabs/multi-az-observability.OperationAvailabilityMetricDetails.property.graphedSuccessStatistics">graphedSuccessStatistics</a></code> | <code>string[]</code> | The statistics for successes you want to appear on dashboards, for example, with latency metrics, you might want p50, p99, and tm99. |
+| <code><a href="#@cdklabs/multi-az-observability.OperationAvailabilityMetricDetails.property.faultAlarmThreshold">faultAlarmThreshold</a></code> | <code>number</code> | The threshold for alarms associated with availability fault metrics, for example if measuring fault rate, the threshold may be 1, meaning you would want an alarm that triggers if the fault rate goes above 1%. |
+| <code><a href="#@cdklabs/multi-az-observability.OperationAvailabilityMetricDetails.property.successAlarmThreshold">successAlarmThreshold</a></code> | <code>number</code> | The threshold for alarms associated with availability success metrics, for example if measuring success rate, the threshold may be 99, meaning you would want an alarm that triggers if success drops below 99%. |
+
+---
+
+##### `alarmStatistic`<sup>Required</sup> <a name="alarmStatistic" id="@cdklabs/multi-az-observability.OperationAvailabilityMetricDetails.property.alarmStatistic"></a>
+
+```typescript
+public readonly alarmStatistic: string;
+```
+
+- *Type:* string
+
+The statistic used for alarms, for availability metrics this should be "Sum", for latency metrics it could something like "p99" or "p99.9".
+
+---
+
+##### `datapointsToAlarm`<sup>Required</sup> <a name="datapointsToAlarm" id="@cdklabs/multi-az-observability.OperationAvailabilityMetricDetails.property.datapointsToAlarm"></a>
+
+```typescript
+public readonly datapointsToAlarm: number;
+```
+
+- *Type:* number
+
+The number of datapoints to alarm on for latency and availability alarms.
+
+---
+
+##### `evaluationPeriods`<sup>Required</sup> <a name="evaluationPeriods" id="@cdklabs/multi-az-observability.OperationAvailabilityMetricDetails.property.evaluationPeriods"></a>
+
+```typescript
+public readonly evaluationPeriods: number;
+```
+
+- *Type:* number
+
+The number of evaluation periods for latency and availabiltiy alarms.
+
+---
+
+##### `faultMetricNames`<sup>Required</sup> <a name="faultMetricNames" id="@cdklabs/multi-az-observability.OperationAvailabilityMetricDetails.property.faultMetricNames"></a>
+
+```typescript
+public readonly faultMetricNames: string[];
+```
+
+- *Type:* string[]
+
+The names of fault indicating metrics.
+
+---
+
+##### `metricDimensions`<sup>Required</sup> <a name="metricDimensions" id="@cdklabs/multi-az-observability.OperationAvailabilityMetricDetails.property.metricDimensions"></a>
+
+```typescript
+public readonly metricDimensions: MetricDimensions;
+```
+
+- *Type:* <a href="#@cdklabs/multi-az-observability.MetricDimensions">MetricDimensions</a>
+
+The metric dimensions for this operation, must be implemented as a concrete class by the user.
+
+---
+
+##### `metricNamespace`<sup>Required</sup> <a name="metricNamespace" id="@cdklabs/multi-az-observability.OperationAvailabilityMetricDetails.property.metricNamespace"></a>
+
+```typescript
+public readonly metricNamespace: string;
+```
+
+- *Type:* string
+
+The CloudWatch metric namespace for these metrics.
+
+---
+
+##### `operationName`<sup>Required</sup> <a name="operationName" id="@cdklabs/multi-az-observability.OperationAvailabilityMetricDetails.property.operationName"></a>
+
+```typescript
+public readonly operationName: string;
+```
+
+- *Type:* string
+
+The operation these metric details are for.
+
+---
+
+##### `period`<sup>Required</sup> <a name="period" id="@cdklabs/multi-az-observability.OperationAvailabilityMetricDetails.property.period"></a>
+
+```typescript
+public readonly period: Duration;
+```
+
+- *Type:* aws-cdk-lib.Duration
+
+The period for the metrics.
+
+---
+
+##### `successMetricNames`<sup>Required</sup> <a name="successMetricNames" id="@cdklabs/multi-az-observability.OperationAvailabilityMetricDetails.property.successMetricNames"></a>
+
+```typescript
+public readonly successMetricNames: string[];
+```
+
+- *Type:* string[]
+
+The names of success indicating metrics.
+
+---
+
+##### `unit`<sup>Required</sup> <a name="unit" id="@cdklabs/multi-az-observability.OperationAvailabilityMetricDetails.property.unit"></a>
+
+```typescript
+public readonly unit: Unit;
+```
+
+- *Type:* aws-cdk-lib.aws_cloudwatch.Unit
+
+The unit used for these metrics.
+
+---
+
+##### `graphedFaultStatistics`<sup>Optional</sup> <a name="graphedFaultStatistics" id="@cdklabs/multi-az-observability.OperationAvailabilityMetricDetails.property.graphedFaultStatistics"></a>
+
+```typescript
+public readonly graphedFaultStatistics: string[];
+```
+
+- *Type:* string[]
+- *Default:* For availability metrics, this will be "Sum", for latency metrics it will be just "p99"
+
+The statistics for faults you want to appear on dashboards, for example, with latency metrics, you might want p50, p99, and tm99.
+
+For availability
+metrics this will typically just be "Sum".
+
+---
+
+##### `graphedSuccessStatistics`<sup>Optional</sup> <a name="graphedSuccessStatistics" id="@cdklabs/multi-az-observability.OperationAvailabilityMetricDetails.property.graphedSuccessStatistics"></a>
+
+```typescript
+public readonly graphedSuccessStatistics: string[];
+```
+
+- *Type:* string[]
+- *Default:* For availability metrics, this will be "Sum", for latency metrics it will be just "p99"
+
+The statistics for successes you want to appear on dashboards, for example, with latency metrics, you might want p50, p99, and tm99.
+
+For availability
+metrics this will typically just be "Sum".
+
+---
+
+##### `faultAlarmThreshold`<sup>Required</sup> <a name="faultAlarmThreshold" id="@cdklabs/multi-az-observability.OperationAvailabilityMetricDetails.property.faultAlarmThreshold"></a>
+
+```typescript
+public readonly faultAlarmThreshold: number;
+```
+
+- *Type:* number
+
+The threshold for alarms associated with availability fault metrics, for example if measuring fault rate, the threshold may be 1, meaning you would want an alarm that triggers if the fault rate goes above 1%.
+
+---
+
+##### `successAlarmThreshold`<sup>Required</sup> <a name="successAlarmThreshold" id="@cdklabs/multi-az-observability.OperationAvailabilityMetricDetails.property.successAlarmThreshold"></a>
+
+```typescript
+public readonly successAlarmThreshold: number;
+```
+
+- *Type:* number
+
+The threshold for alarms associated with availability success metrics, for example if measuring success rate, the threshold may be 99, meaning you would want an alarm that triggers if success drops below 99%.
+
+---
+
+
+### OperationLatencyMetricDetails <a name="OperationLatencyMetricDetails" id="@cdklabs/multi-az-observability.OperationLatencyMetricDetails"></a>
+
+- *Implements:* <a href="#@cdklabs/multi-az-observability.IOperationLatencyMetricDetails">IOperationLatencyMetricDetails</a>
+
+Latency metric details for an operation.
+
+#### Initializers <a name="Initializers" id="@cdklabs/multi-az-observability.OperationLatencyMetricDetails.Initializer"></a>
+
+```typescript
+import { OperationLatencyMetricDetails } from '@cdklabs/multi-az-observability'
+
+new OperationLatencyMetricDetails(props: OperationLatencyMetricDetailsProps, defaultProps: IServiceLatencyMetricDetails)
+```
+
+| **Name** | **Type** | **Description** |
+| --- | --- | --- |
+| <code><a href="#@cdklabs/multi-az-observability.OperationLatencyMetricDetails.Initializer.parameter.props">props</a></code> | <code><a href="#@cdklabs/multi-az-observability.OperationLatencyMetricDetailsProps">OperationLatencyMetricDetailsProps</a></code> | *No description.* |
+| <code><a href="#@cdklabs/multi-az-observability.OperationLatencyMetricDetails.Initializer.parameter.defaultProps">defaultProps</a></code> | <code><a href="#@cdklabs/multi-az-observability.IServiceLatencyMetricDetails">IServiceLatencyMetricDetails</a></code> | *No description.* |
+
+---
+
+##### `props`<sup>Required</sup> <a name="props" id="@cdklabs/multi-az-observability.OperationLatencyMetricDetails.Initializer.parameter.props"></a>
+
+- *Type:* <a href="#@cdklabs/multi-az-observability.OperationLatencyMetricDetailsProps">OperationLatencyMetricDetailsProps</a>
+
+---
+
+##### `defaultProps`<sup>Required</sup> <a name="defaultProps" id="@cdklabs/multi-az-observability.OperationLatencyMetricDetails.Initializer.parameter.defaultProps"></a>
+
+- *Type:* <a href="#@cdklabs/multi-az-observability.IServiceLatencyMetricDetails">IServiceLatencyMetricDetails</a>
+
+---
+
+
+
+#### Properties <a name="Properties" id="Properties"></a>
+
+| **Name** | **Type** | **Description** |
+| --- | --- | --- |
+| <code><a href="#@cdklabs/multi-az-observability.OperationLatencyMetricDetails.property.alarmStatistic">alarmStatistic</a></code> | <code>string</code> | The statistic used for alarms, for availability metrics this should be "Sum", for latency metrics it could something like "p99" or "p99.9". |
+| <code><a href="#@cdklabs/multi-az-observability.OperationLatencyMetricDetails.property.datapointsToAlarm">datapointsToAlarm</a></code> | <code>number</code> | The number of datapoints to alarm on for latency and availability alarms. |
+| <code><a href="#@cdklabs/multi-az-observability.OperationLatencyMetricDetails.property.evaluationPeriods">evaluationPeriods</a></code> | <code>number</code> | The number of evaluation periods for latency and availabiltiy alarms. |
+| <code><a href="#@cdklabs/multi-az-observability.OperationLatencyMetricDetails.property.faultMetricNames">faultMetricNames</a></code> | <code>string[]</code> | The names of fault indicating metrics. |
+| <code><a href="#@cdklabs/multi-az-observability.OperationLatencyMetricDetails.property.metricDimensions">metricDimensions</a></code> | <code><a href="#@cdklabs/multi-az-observability.MetricDimensions">MetricDimensions</a></code> | The metric dimensions for this operation, must be implemented as a concrete class by the user. |
+| <code><a href="#@cdklabs/multi-az-observability.OperationLatencyMetricDetails.property.metricNamespace">metricNamespace</a></code> | <code>string</code> | The CloudWatch metric namespace for these metrics. |
+| <code><a href="#@cdklabs/multi-az-observability.OperationLatencyMetricDetails.property.operationName">operationName</a></code> | <code>string</code> | The operation these metric details are for. |
+| <code><a href="#@cdklabs/multi-az-observability.OperationLatencyMetricDetails.property.period">period</a></code> | <code>aws-cdk-lib.Duration</code> | The period for the metrics. |
+| <code><a href="#@cdklabs/multi-az-observability.OperationLatencyMetricDetails.property.successMetricNames">successMetricNames</a></code> | <code>string[]</code> | The names of success indicating metrics. |
+| <code><a href="#@cdklabs/multi-az-observability.OperationLatencyMetricDetails.property.unit">unit</a></code> | <code>aws-cdk-lib.aws_cloudwatch.Unit</code> | The unit used for these metrics. |
+| <code><a href="#@cdklabs/multi-az-observability.OperationLatencyMetricDetails.property.graphedFaultStatistics">graphedFaultStatistics</a></code> | <code>string[]</code> | The statistics for faults you want to appear on dashboards, for example, with latency metrics, you might want p50, p99, and tm99. |
+| <code><a href="#@cdklabs/multi-az-observability.OperationLatencyMetricDetails.property.graphedSuccessStatistics">graphedSuccessStatistics</a></code> | <code>string[]</code> | The statistics for successes you want to appear on dashboards, for example, with latency metrics, you might want p50, p99, and tm99. |
+| <code><a href="#@cdklabs/multi-az-observability.OperationLatencyMetricDetails.property.successAlarmThreshold">successAlarmThreshold</a></code> | <code>aws-cdk-lib.Duration</code> | The threshold for alarms associated with latency success metrics, for example if success latency exceeds 500 milliseconds. |
+
+---
+
+##### `alarmStatistic`<sup>Required</sup> <a name="alarmStatistic" id="@cdklabs/multi-az-observability.OperationLatencyMetricDetails.property.alarmStatistic"></a>
+
+```typescript
+public readonly alarmStatistic: string;
+```
+
+- *Type:* string
+
+The statistic used for alarms, for availability metrics this should be "Sum", for latency metrics it could something like "p99" or "p99.9".
+
+---
+
+##### `datapointsToAlarm`<sup>Required</sup> <a name="datapointsToAlarm" id="@cdklabs/multi-az-observability.OperationLatencyMetricDetails.property.datapointsToAlarm"></a>
+
+```typescript
+public readonly datapointsToAlarm: number;
+```
+
+- *Type:* number
+
+The number of datapoints to alarm on for latency and availability alarms.
+
+---
+
+##### `evaluationPeriods`<sup>Required</sup> <a name="evaluationPeriods" id="@cdklabs/multi-az-observability.OperationLatencyMetricDetails.property.evaluationPeriods"></a>
+
+```typescript
+public readonly evaluationPeriods: number;
+```
+
+- *Type:* number
+
+The number of evaluation periods for latency and availabiltiy alarms.
+
+---
+
+##### `faultMetricNames`<sup>Required</sup> <a name="faultMetricNames" id="@cdklabs/multi-az-observability.OperationLatencyMetricDetails.property.faultMetricNames"></a>
+
+```typescript
+public readonly faultMetricNames: string[];
+```
+
+- *Type:* string[]
+
+The names of fault indicating metrics.
+
+---
+
+##### `metricDimensions`<sup>Required</sup> <a name="metricDimensions" id="@cdklabs/multi-az-observability.OperationLatencyMetricDetails.property.metricDimensions"></a>
+
+```typescript
+public readonly metricDimensions: MetricDimensions;
+```
+
+- *Type:* <a href="#@cdklabs/multi-az-observability.MetricDimensions">MetricDimensions</a>
+
+The metric dimensions for this operation, must be implemented as a concrete class by the user.
+
+---
+
+##### `metricNamespace`<sup>Required</sup> <a name="metricNamespace" id="@cdklabs/multi-az-observability.OperationLatencyMetricDetails.property.metricNamespace"></a>
+
+```typescript
+public readonly metricNamespace: string;
+```
+
+- *Type:* string
+
+The CloudWatch metric namespace for these metrics.
+
+---
+
+##### `operationName`<sup>Required</sup> <a name="operationName" id="@cdklabs/multi-az-observability.OperationLatencyMetricDetails.property.operationName"></a>
+
+```typescript
+public readonly operationName: string;
+```
+
+- *Type:* string
+
+The operation these metric details are for.
+
+---
+
+##### `period`<sup>Required</sup> <a name="period" id="@cdklabs/multi-az-observability.OperationLatencyMetricDetails.property.period"></a>
+
+```typescript
+public readonly period: Duration;
+```
+
+- *Type:* aws-cdk-lib.Duration
+
+The period for the metrics.
+
+---
+
+##### `successMetricNames`<sup>Required</sup> <a name="successMetricNames" id="@cdklabs/multi-az-observability.OperationLatencyMetricDetails.property.successMetricNames"></a>
+
+```typescript
+public readonly successMetricNames: string[];
+```
+
+- *Type:* string[]
+
+The names of success indicating metrics.
+
+---
+
+##### `unit`<sup>Required</sup> <a name="unit" id="@cdklabs/multi-az-observability.OperationLatencyMetricDetails.property.unit"></a>
+
+```typescript
+public readonly unit: Unit;
+```
+
+- *Type:* aws-cdk-lib.aws_cloudwatch.Unit
+
+The unit used for these metrics.
+
+---
+
+##### `graphedFaultStatistics`<sup>Optional</sup> <a name="graphedFaultStatistics" id="@cdklabs/multi-az-observability.OperationLatencyMetricDetails.property.graphedFaultStatistics"></a>
+
+```typescript
+public readonly graphedFaultStatistics: string[];
+```
+
+- *Type:* string[]
+- *Default:* For availability metrics, this will be "Sum", for latency metrics it will be just "p99"
+
+The statistics for faults you want to appear on dashboards, for example, with latency metrics, you might want p50, p99, and tm99.
+
+For availability
+metrics this will typically just be "Sum".
+
+---
+
+##### `graphedSuccessStatistics`<sup>Optional</sup> <a name="graphedSuccessStatistics" id="@cdklabs/multi-az-observability.OperationLatencyMetricDetails.property.graphedSuccessStatistics"></a>
+
+```typescript
+public readonly graphedSuccessStatistics: string[];
+```
+
+- *Type:* string[]
+- *Default:* For availability metrics, this will be "Sum", for latency metrics it will be just "p99"
+
+The statistics for successes you want to appear on dashboards, for example, with latency metrics, you might want p50, p99, and tm99.
+
+For availability
+metrics this will typically just be "Sum".
+
+---
+
+##### `successAlarmThreshold`<sup>Required</sup> <a name="successAlarmThreshold" id="@cdklabs/multi-az-observability.OperationLatencyMetricDetails.property.successAlarmThreshold"></a>
+
+```typescript
+public readonly successAlarmThreshold: Duration;
+```
+
+- *Type:* aws-cdk-lib.Duration
+
+The threshold for alarms associated with latency success metrics, for example if success latency exceeds 500 milliseconds.
 
 ---
 
@@ -3076,13 +4614,11 @@ new OperationMetricDetails(props: OperationMetricDetailsProps, defaultProps: ISe
 | <code><a href="#@cdklabs/multi-az-observability.OperationMetricDetails.property.alarmStatistic">alarmStatistic</a></code> | <code>string</code> | The statistic used for alarms, for availability metrics this should be "Sum", for latency metrics it could something like "p99" or "p99.9". |
 | <code><a href="#@cdklabs/multi-az-observability.OperationMetricDetails.property.datapointsToAlarm">datapointsToAlarm</a></code> | <code>number</code> | The number of datapoints to alarm on for latency and availability alarms. |
 | <code><a href="#@cdklabs/multi-az-observability.OperationMetricDetails.property.evaluationPeriods">evaluationPeriods</a></code> | <code>number</code> | The number of evaluation periods for latency and availabiltiy alarms. |
-| <code><a href="#@cdklabs/multi-az-observability.OperationMetricDetails.property.faultAlarmThreshold">faultAlarmThreshold</a></code> | <code>number</code> | The threshold for alarms associated with fault metrics, for example if measuring fault rate, the threshold may be 1, meaning you would want an alarm that triggers if the fault rate goes above 1%. |
 | <code><a href="#@cdklabs/multi-az-observability.OperationMetricDetails.property.faultMetricNames">faultMetricNames</a></code> | <code>string[]</code> | The names of fault indicating metrics. |
 | <code><a href="#@cdklabs/multi-az-observability.OperationMetricDetails.property.metricDimensions">metricDimensions</a></code> | <code><a href="#@cdklabs/multi-az-observability.MetricDimensions">MetricDimensions</a></code> | The metric dimensions for this operation, must be implemented as a concrete class by the user. |
 | <code><a href="#@cdklabs/multi-az-observability.OperationMetricDetails.property.metricNamespace">metricNamespace</a></code> | <code>string</code> | The CloudWatch metric namespace for these metrics. |
 | <code><a href="#@cdklabs/multi-az-observability.OperationMetricDetails.property.operationName">operationName</a></code> | <code>string</code> | The operation these metric details are for. |
 | <code><a href="#@cdklabs/multi-az-observability.OperationMetricDetails.property.period">period</a></code> | <code>aws-cdk-lib.Duration</code> | The period for the metrics. |
-| <code><a href="#@cdklabs/multi-az-observability.OperationMetricDetails.property.successAlarmThreshold">successAlarmThreshold</a></code> | <code>number</code> | The threshold for alarms associated with success metrics, for example if measuring success rate, the threshold may be 99, meaning you would want an alarm that triggers if success drops below 99%. |
 | <code><a href="#@cdklabs/multi-az-observability.OperationMetricDetails.property.successMetricNames">successMetricNames</a></code> | <code>string[]</code> | The names of success indicating metrics. |
 | <code><a href="#@cdklabs/multi-az-observability.OperationMetricDetails.property.unit">unit</a></code> | <code>aws-cdk-lib.aws_cloudwatch.Unit</code> | The unit used for these metrics. |
 | <code><a href="#@cdklabs/multi-az-observability.OperationMetricDetails.property.graphedFaultStatistics">graphedFaultStatistics</a></code> | <code>string[]</code> | The statistics for faults you want to appear on dashboards, for example, with latency metrics, you might want p50, p99, and tm99. |
@@ -3123,18 +4659,6 @@ public readonly evaluationPeriods: number;
 - *Type:* number
 
 The number of evaluation periods for latency and availabiltiy alarms.
-
----
-
-##### `faultAlarmThreshold`<sup>Required</sup> <a name="faultAlarmThreshold" id="@cdklabs/multi-az-observability.OperationMetricDetails.property.faultAlarmThreshold"></a>
-
-```typescript
-public readonly faultAlarmThreshold: number;
-```
-
-- *Type:* number
-
-The threshold for alarms associated with fault metrics, for example if measuring fault rate, the threshold may be 1, meaning you would want an alarm that triggers if the fault rate goes above 1%.
 
 ---
 
@@ -3195,18 +4719,6 @@ public readonly period: Duration;
 - *Type:* aws-cdk-lib.Duration
 
 The period for the metrics.
-
----
-
-##### `successAlarmThreshold`<sup>Required</sup> <a name="successAlarmThreshold" id="@cdklabs/multi-az-observability.OperationMetricDetails.property.successAlarmThreshold"></a>
-
-```typescript
-public readonly successAlarmThreshold: number;
-```
-
-- *Type:* number
-
-The threshold for alarms associated with success metrics, for example if measuring success rate, the threshold may be 99, meaning you would want an alarm that triggers if success drops below 99%.
 
 ---
 
@@ -3322,8 +4834,8 @@ Adds an operation to this service and sets the operation's service property.
 | --- | --- | --- |
 | <code><a href="#@cdklabs/multi-az-observability.Service.property.availabilityZoneNames">availabilityZoneNames</a></code> | <code>string[]</code> | A list of the Availability Zone names used by this application. |
 | <code><a href="#@cdklabs/multi-az-observability.Service.property.baseUrl">baseUrl</a></code> | <code>string</code> | The base endpoint for this service, like "https://www.example.com". Operation paths will be appended to this endpoint for canary testing the service. |
-| <code><a href="#@cdklabs/multi-az-observability.Service.property.defaultAvailabilityMetricDetails">defaultAvailabilityMetricDetails</a></code> | <code><a href="#@cdklabs/multi-az-observability.IServiceMetricDetails">IServiceMetricDetails</a></code> | The default settings that are used for availability metrics for all operations unless specifically overridden in an operation definition. |
-| <code><a href="#@cdklabs/multi-az-observability.Service.property.defaultLatencyMetricDetails">defaultLatencyMetricDetails</a></code> | <code><a href="#@cdklabs/multi-az-observability.IServiceMetricDetails">IServiceMetricDetails</a></code> | The default settings that are used for availability metrics for all operations unless specifically overridden in an operation definition. |
+| <code><a href="#@cdklabs/multi-az-observability.Service.property.defaultAvailabilityMetricDetails">defaultAvailabilityMetricDetails</a></code> | <code><a href="#@cdklabs/multi-az-observability.IServiceAvailabilityMetricDetails">IServiceAvailabilityMetricDetails</a></code> | The default settings that are used for availability metrics for all operations unless specifically overridden in an operation definition. |
+| <code><a href="#@cdklabs/multi-az-observability.Service.property.defaultLatencyMetricDetails">defaultLatencyMetricDetails</a></code> | <code><a href="#@cdklabs/multi-az-observability.IServiceLatencyMetricDetails">IServiceLatencyMetricDetails</a></code> | The default settings that are used for availability metrics for all operations unless specifically overridden in an operation definition. |
 | <code><a href="#@cdklabs/multi-az-observability.Service.property.faultCountThreshold">faultCountThreshold</a></code> | <code>number</code> | The fault count threshold that indicates the service is unhealthy. |
 | <code><a href="#@cdklabs/multi-az-observability.Service.property.operations">operations</a></code> | <code><a href="#@cdklabs/multi-az-observability.IOperation">IOperation</a>[]</code> | The operations that are part of this service. |
 | <code><a href="#@cdklabs/multi-az-observability.Service.property.period">period</a></code> | <code>aws-cdk-lib.Duration</code> | The period for which metrics for the service should be aggregated. |
@@ -3361,10 +4873,10 @@ The base endpoint for this service, like "https://www.example.com". Operation pa
 ##### `defaultAvailabilityMetricDetails`<sup>Required</sup> <a name="defaultAvailabilityMetricDetails" id="@cdklabs/multi-az-observability.Service.property.defaultAvailabilityMetricDetails"></a>
 
 ```typescript
-public readonly defaultAvailabilityMetricDetails: IServiceMetricDetails;
+public readonly defaultAvailabilityMetricDetails: IServiceAvailabilityMetricDetails;
 ```
 
-- *Type:* <a href="#@cdklabs/multi-az-observability.IServiceMetricDetails">IServiceMetricDetails</a>
+- *Type:* <a href="#@cdklabs/multi-az-observability.IServiceAvailabilityMetricDetails">IServiceAvailabilityMetricDetails</a>
 
 The default settings that are used for availability metrics for all operations unless specifically overridden in an operation definition.
 
@@ -3373,10 +4885,10 @@ The default settings that are used for availability metrics for all operations u
 ##### `defaultLatencyMetricDetails`<sup>Required</sup> <a name="defaultLatencyMetricDetails" id="@cdklabs/multi-az-observability.Service.property.defaultLatencyMetricDetails"></a>
 
 ```typescript
-public readonly defaultLatencyMetricDetails: IServiceMetricDetails;
+public readonly defaultLatencyMetricDetails: IServiceLatencyMetricDetails;
 ```
 
-- *Type:* <a href="#@cdklabs/multi-az-observability.IServiceMetricDetails">IServiceMetricDetails</a>
+- *Type:* <a href="#@cdklabs/multi-az-observability.IServiceLatencyMetricDetails">IServiceLatencyMetricDetails</a>
 
 The default settings that are used for availability metrics for all operations unless specifically overridden in an operation definition.
 
@@ -3476,6 +4988,393 @@ The load balancer this service sits behind.
 ---
 
 
+### ServiceAvailabilityMetricDetails <a name="ServiceAvailabilityMetricDetails" id="@cdklabs/multi-az-observability.ServiceAvailabilityMetricDetails"></a>
+
+- *Implements:* <a href="#@cdklabs/multi-az-observability.IServiceAvailabilityMetricDetails">IServiceAvailabilityMetricDetails</a>
+
+Default availability metric details for a service.
+
+#### Initializers <a name="Initializers" id="@cdklabs/multi-az-observability.ServiceAvailabilityMetricDetails.Initializer"></a>
+
+```typescript
+import { ServiceAvailabilityMetricDetails } from '@cdklabs/multi-az-observability'
+
+new ServiceAvailabilityMetricDetails(props: ServiceAvailabilityMetricDetailsProps)
+```
+
+| **Name** | **Type** | **Description** |
+| --- | --- | --- |
+| <code><a href="#@cdklabs/multi-az-observability.ServiceAvailabilityMetricDetails.Initializer.parameter.props">props</a></code> | <code><a href="#@cdklabs/multi-az-observability.ServiceAvailabilityMetricDetailsProps">ServiceAvailabilityMetricDetailsProps</a></code> | *No description.* |
+
+---
+
+##### `props`<sup>Required</sup> <a name="props" id="@cdklabs/multi-az-observability.ServiceAvailabilityMetricDetails.Initializer.parameter.props"></a>
+
+- *Type:* <a href="#@cdklabs/multi-az-observability.ServiceAvailabilityMetricDetailsProps">ServiceAvailabilityMetricDetailsProps</a>
+
+---
+
+
+
+#### Properties <a name="Properties" id="Properties"></a>
+
+| **Name** | **Type** | **Description** |
+| --- | --- | --- |
+| <code><a href="#@cdklabs/multi-az-observability.ServiceAvailabilityMetricDetails.property.alarmStatistic">alarmStatistic</a></code> | <code>string</code> | The statistic used for alarms, for availability metrics this should be "Sum", for latency metrics it could something like "p99" or "p99.9". |
+| <code><a href="#@cdklabs/multi-az-observability.ServiceAvailabilityMetricDetails.property.datapointsToAlarm">datapointsToAlarm</a></code> | <code>number</code> | The number of datapoints to alarm on for latency and availability alarms. |
+| <code><a href="#@cdklabs/multi-az-observability.ServiceAvailabilityMetricDetails.property.evaluationPeriods">evaluationPeriods</a></code> | <code>number</code> | The number of evaluation periods for latency and availabiltiy alarms. |
+| <code><a href="#@cdklabs/multi-az-observability.ServiceAvailabilityMetricDetails.property.faultMetricNames">faultMetricNames</a></code> | <code>string[]</code> | The names of fault indicating metrics. |
+| <code><a href="#@cdklabs/multi-az-observability.ServiceAvailabilityMetricDetails.property.metricNamespace">metricNamespace</a></code> | <code>string</code> | The CloudWatch metric namespace for these metrics. |
+| <code><a href="#@cdklabs/multi-az-observability.ServiceAvailabilityMetricDetails.property.period">period</a></code> | <code>aws-cdk-lib.Duration</code> | The period for the metrics. |
+| <code><a href="#@cdklabs/multi-az-observability.ServiceAvailabilityMetricDetails.property.successMetricNames">successMetricNames</a></code> | <code>string[]</code> | The names of success indicating metrics. |
+| <code><a href="#@cdklabs/multi-az-observability.ServiceAvailabilityMetricDetails.property.unit">unit</a></code> | <code>aws-cdk-lib.aws_cloudwatch.Unit</code> | The unit used for these metrics. |
+| <code><a href="#@cdklabs/multi-az-observability.ServiceAvailabilityMetricDetails.property.graphedFaultStatistics">graphedFaultStatistics</a></code> | <code>string[]</code> | The statistics for faults you want to appear on dashboards, for example, with latency metrics, you might want p50, p99, and tm99. |
+| <code><a href="#@cdklabs/multi-az-observability.ServiceAvailabilityMetricDetails.property.graphedSuccessStatistics">graphedSuccessStatistics</a></code> | <code>string[]</code> | The statistics for successes you want to appear on dashboards, for example, with latency metrics, you might want p50, p99, and tm99. |
+| <code><a href="#@cdklabs/multi-az-observability.ServiceAvailabilityMetricDetails.property.faultAlarmThreshold">faultAlarmThreshold</a></code> | <code>number</code> | The threshold for alarms associated with availability fault metrics, for example if measuring fault rate, the threshold may be 1, meaning you would want an alarm that triggers if the fault rate goes above 1%. |
+| <code><a href="#@cdklabs/multi-az-observability.ServiceAvailabilityMetricDetails.property.successAlarmThreshold">successAlarmThreshold</a></code> | <code>number</code> | The threshold for alarms associated with availability success metrics, for example if measuring success rate, the threshold may be 99, meaning you would want an alarm that triggers if success drops below 99%. |
+
+---
+
+##### `alarmStatistic`<sup>Required</sup> <a name="alarmStatistic" id="@cdklabs/multi-az-observability.ServiceAvailabilityMetricDetails.property.alarmStatistic"></a>
+
+```typescript
+public readonly alarmStatistic: string;
+```
+
+- *Type:* string
+
+The statistic used for alarms, for availability metrics this should be "Sum", for latency metrics it could something like "p99" or "p99.9".
+
+---
+
+##### `datapointsToAlarm`<sup>Required</sup> <a name="datapointsToAlarm" id="@cdklabs/multi-az-observability.ServiceAvailabilityMetricDetails.property.datapointsToAlarm"></a>
+
+```typescript
+public readonly datapointsToAlarm: number;
+```
+
+- *Type:* number
+
+The number of datapoints to alarm on for latency and availability alarms.
+
+---
+
+##### `evaluationPeriods`<sup>Required</sup> <a name="evaluationPeriods" id="@cdklabs/multi-az-observability.ServiceAvailabilityMetricDetails.property.evaluationPeriods"></a>
+
+```typescript
+public readonly evaluationPeriods: number;
+```
+
+- *Type:* number
+
+The number of evaluation periods for latency and availabiltiy alarms.
+
+---
+
+##### `faultMetricNames`<sup>Required</sup> <a name="faultMetricNames" id="@cdklabs/multi-az-observability.ServiceAvailabilityMetricDetails.property.faultMetricNames"></a>
+
+```typescript
+public readonly faultMetricNames: string[];
+```
+
+- *Type:* string[]
+
+The names of fault indicating metrics.
+
+---
+
+##### `metricNamespace`<sup>Required</sup> <a name="metricNamespace" id="@cdklabs/multi-az-observability.ServiceAvailabilityMetricDetails.property.metricNamespace"></a>
+
+```typescript
+public readonly metricNamespace: string;
+```
+
+- *Type:* string
+
+The CloudWatch metric namespace for these metrics.
+
+---
+
+##### `period`<sup>Required</sup> <a name="period" id="@cdklabs/multi-az-observability.ServiceAvailabilityMetricDetails.property.period"></a>
+
+```typescript
+public readonly period: Duration;
+```
+
+- *Type:* aws-cdk-lib.Duration
+
+The period for the metrics.
+
+---
+
+##### `successMetricNames`<sup>Required</sup> <a name="successMetricNames" id="@cdklabs/multi-az-observability.ServiceAvailabilityMetricDetails.property.successMetricNames"></a>
+
+```typescript
+public readonly successMetricNames: string[];
+```
+
+- *Type:* string[]
+
+The names of success indicating metrics.
+
+---
+
+##### `unit`<sup>Required</sup> <a name="unit" id="@cdklabs/multi-az-observability.ServiceAvailabilityMetricDetails.property.unit"></a>
+
+```typescript
+public readonly unit: Unit;
+```
+
+- *Type:* aws-cdk-lib.aws_cloudwatch.Unit
+
+The unit used for these metrics.
+
+---
+
+##### `graphedFaultStatistics`<sup>Optional</sup> <a name="graphedFaultStatistics" id="@cdklabs/multi-az-observability.ServiceAvailabilityMetricDetails.property.graphedFaultStatistics"></a>
+
+```typescript
+public readonly graphedFaultStatistics: string[];
+```
+
+- *Type:* string[]
+- *Default:* For availability metrics, this will be "Sum", for latency metrics it will be just "p99"
+
+The statistics for faults you want to appear on dashboards, for example, with latency metrics, you might want p50, p99, and tm99.
+
+For availability
+metrics this will typically just be "Sum".
+
+---
+
+##### `graphedSuccessStatistics`<sup>Optional</sup> <a name="graphedSuccessStatistics" id="@cdklabs/multi-az-observability.ServiceAvailabilityMetricDetails.property.graphedSuccessStatistics"></a>
+
+```typescript
+public readonly graphedSuccessStatistics: string[];
+```
+
+- *Type:* string[]
+- *Default:* For availability metrics, this will be "Sum", for latency metrics it will be just "p99"
+
+The statistics for successes you want to appear on dashboards, for example, with latency metrics, you might want p50, p99, and tm99.
+
+For availability
+metrics this will typically just be "Sum".
+
+---
+
+##### `faultAlarmThreshold`<sup>Required</sup> <a name="faultAlarmThreshold" id="@cdklabs/multi-az-observability.ServiceAvailabilityMetricDetails.property.faultAlarmThreshold"></a>
+
+```typescript
+public readonly faultAlarmThreshold: number;
+```
+
+- *Type:* number
+
+The threshold for alarms associated with availability fault metrics, for example if measuring fault rate, the threshold may be 1, meaning you would want an alarm that triggers if the fault rate goes above 1%.
+
+---
+
+##### `successAlarmThreshold`<sup>Required</sup> <a name="successAlarmThreshold" id="@cdklabs/multi-az-observability.ServiceAvailabilityMetricDetails.property.successAlarmThreshold"></a>
+
+```typescript
+public readonly successAlarmThreshold: number;
+```
+
+- *Type:* number
+
+The threshold for alarms associated with availability success metrics, for example if measuring success rate, the threshold may be 99, meaning you would want an alarm that triggers if success drops below 99%.
+
+---
+
+
+### ServiceLatencyMetricDetails <a name="ServiceLatencyMetricDetails" id="@cdklabs/multi-az-observability.ServiceLatencyMetricDetails"></a>
+
+- *Implements:* <a href="#@cdklabs/multi-az-observability.IServiceLatencyMetricDetails">IServiceLatencyMetricDetails</a>
+
+Default latency metric details for a service.
+
+#### Initializers <a name="Initializers" id="@cdklabs/multi-az-observability.ServiceLatencyMetricDetails.Initializer"></a>
+
+```typescript
+import { ServiceLatencyMetricDetails } from '@cdklabs/multi-az-observability'
+
+new ServiceLatencyMetricDetails(props: ServiceLatencyMetricDetailsProps)
+```
+
+| **Name** | **Type** | **Description** |
+| --- | --- | --- |
+| <code><a href="#@cdklabs/multi-az-observability.ServiceLatencyMetricDetails.Initializer.parameter.props">props</a></code> | <code><a href="#@cdklabs/multi-az-observability.ServiceLatencyMetricDetailsProps">ServiceLatencyMetricDetailsProps</a></code> | *No description.* |
+
+---
+
+##### `props`<sup>Required</sup> <a name="props" id="@cdklabs/multi-az-observability.ServiceLatencyMetricDetails.Initializer.parameter.props"></a>
+
+- *Type:* <a href="#@cdklabs/multi-az-observability.ServiceLatencyMetricDetailsProps">ServiceLatencyMetricDetailsProps</a>
+
+---
+
+
+
+#### Properties <a name="Properties" id="Properties"></a>
+
+| **Name** | **Type** | **Description** |
+| --- | --- | --- |
+| <code><a href="#@cdklabs/multi-az-observability.ServiceLatencyMetricDetails.property.alarmStatistic">alarmStatistic</a></code> | <code>string</code> | The statistic used for alarms, for availability metrics this should be "Sum", for latency metrics it could something like "p99" or "p99.9". |
+| <code><a href="#@cdklabs/multi-az-observability.ServiceLatencyMetricDetails.property.datapointsToAlarm">datapointsToAlarm</a></code> | <code>number</code> | The number of datapoints to alarm on for latency and availability alarms. |
+| <code><a href="#@cdklabs/multi-az-observability.ServiceLatencyMetricDetails.property.evaluationPeriods">evaluationPeriods</a></code> | <code>number</code> | The number of evaluation periods for latency and availabiltiy alarms. |
+| <code><a href="#@cdklabs/multi-az-observability.ServiceLatencyMetricDetails.property.faultMetricNames">faultMetricNames</a></code> | <code>string[]</code> | The names of fault indicating metrics. |
+| <code><a href="#@cdklabs/multi-az-observability.ServiceLatencyMetricDetails.property.metricNamespace">metricNamespace</a></code> | <code>string</code> | The CloudWatch metric namespace for these metrics. |
+| <code><a href="#@cdklabs/multi-az-observability.ServiceLatencyMetricDetails.property.period">period</a></code> | <code>aws-cdk-lib.Duration</code> | The period for the metrics. |
+| <code><a href="#@cdklabs/multi-az-observability.ServiceLatencyMetricDetails.property.successMetricNames">successMetricNames</a></code> | <code>string[]</code> | The names of success indicating metrics. |
+| <code><a href="#@cdklabs/multi-az-observability.ServiceLatencyMetricDetails.property.unit">unit</a></code> | <code>aws-cdk-lib.aws_cloudwatch.Unit</code> | The unit used for these metrics. |
+| <code><a href="#@cdklabs/multi-az-observability.ServiceLatencyMetricDetails.property.graphedFaultStatistics">graphedFaultStatistics</a></code> | <code>string[]</code> | The statistics for faults you want to appear on dashboards, for example, with latency metrics, you might want p50, p99, and tm99. |
+| <code><a href="#@cdklabs/multi-az-observability.ServiceLatencyMetricDetails.property.graphedSuccessStatistics">graphedSuccessStatistics</a></code> | <code>string[]</code> | The statistics for successes you want to appear on dashboards, for example, with latency metrics, you might want p50, p99, and tm99. |
+| <code><a href="#@cdklabs/multi-az-observability.ServiceLatencyMetricDetails.property.successAlarmThreshold">successAlarmThreshold</a></code> | <code>aws-cdk-lib.Duration</code> | The threshold for alarms associated with latency success metrics, for example if success latency exceeds 500 milliseconds. |
+
+---
+
+##### `alarmStatistic`<sup>Required</sup> <a name="alarmStatistic" id="@cdklabs/multi-az-observability.ServiceLatencyMetricDetails.property.alarmStatistic"></a>
+
+```typescript
+public readonly alarmStatistic: string;
+```
+
+- *Type:* string
+
+The statistic used for alarms, for availability metrics this should be "Sum", for latency metrics it could something like "p99" or "p99.9".
+
+---
+
+##### `datapointsToAlarm`<sup>Required</sup> <a name="datapointsToAlarm" id="@cdklabs/multi-az-observability.ServiceLatencyMetricDetails.property.datapointsToAlarm"></a>
+
+```typescript
+public readonly datapointsToAlarm: number;
+```
+
+- *Type:* number
+
+The number of datapoints to alarm on for latency and availability alarms.
+
+---
+
+##### `evaluationPeriods`<sup>Required</sup> <a name="evaluationPeriods" id="@cdklabs/multi-az-observability.ServiceLatencyMetricDetails.property.evaluationPeriods"></a>
+
+```typescript
+public readonly evaluationPeriods: number;
+```
+
+- *Type:* number
+
+The number of evaluation periods for latency and availabiltiy alarms.
+
+---
+
+##### `faultMetricNames`<sup>Required</sup> <a name="faultMetricNames" id="@cdklabs/multi-az-observability.ServiceLatencyMetricDetails.property.faultMetricNames"></a>
+
+```typescript
+public readonly faultMetricNames: string[];
+```
+
+- *Type:* string[]
+
+The names of fault indicating metrics.
+
+---
+
+##### `metricNamespace`<sup>Required</sup> <a name="metricNamespace" id="@cdklabs/multi-az-observability.ServiceLatencyMetricDetails.property.metricNamespace"></a>
+
+```typescript
+public readonly metricNamespace: string;
+```
+
+- *Type:* string
+
+The CloudWatch metric namespace for these metrics.
+
+---
+
+##### `period`<sup>Required</sup> <a name="period" id="@cdklabs/multi-az-observability.ServiceLatencyMetricDetails.property.period"></a>
+
+```typescript
+public readonly period: Duration;
+```
+
+- *Type:* aws-cdk-lib.Duration
+
+The period for the metrics.
+
+---
+
+##### `successMetricNames`<sup>Required</sup> <a name="successMetricNames" id="@cdklabs/multi-az-observability.ServiceLatencyMetricDetails.property.successMetricNames"></a>
+
+```typescript
+public readonly successMetricNames: string[];
+```
+
+- *Type:* string[]
+
+The names of success indicating metrics.
+
+---
+
+##### `unit`<sup>Required</sup> <a name="unit" id="@cdklabs/multi-az-observability.ServiceLatencyMetricDetails.property.unit"></a>
+
+```typescript
+public readonly unit: Unit;
+```
+
+- *Type:* aws-cdk-lib.aws_cloudwatch.Unit
+
+The unit used for these metrics.
+
+---
+
+##### `graphedFaultStatistics`<sup>Optional</sup> <a name="graphedFaultStatistics" id="@cdklabs/multi-az-observability.ServiceLatencyMetricDetails.property.graphedFaultStatistics"></a>
+
+```typescript
+public readonly graphedFaultStatistics: string[];
+```
+
+- *Type:* string[]
+- *Default:* For availability metrics, this will be "Sum", for latency metrics it will be just "p99"
+
+The statistics for faults you want to appear on dashboards, for example, with latency metrics, you might want p50, p99, and tm99.
+
+For availability
+metrics this will typically just be "Sum".
+
+---
+
+##### `graphedSuccessStatistics`<sup>Optional</sup> <a name="graphedSuccessStatistics" id="@cdklabs/multi-az-observability.ServiceLatencyMetricDetails.property.graphedSuccessStatistics"></a>
+
+```typescript
+public readonly graphedSuccessStatistics: string[];
+```
+
+- *Type:* string[]
+- *Default:* For availability metrics, this will be "Sum", for latency metrics it will be just "p99"
+
+The statistics for successes you want to appear on dashboards, for example, with latency metrics, you might want p50, p99, and tm99.
+
+For availability
+metrics this will typically just be "Sum".
+
+---
+
+##### `successAlarmThreshold`<sup>Required</sup> <a name="successAlarmThreshold" id="@cdklabs/multi-az-observability.ServiceLatencyMetricDetails.property.successAlarmThreshold"></a>
+
+```typescript
+public readonly successAlarmThreshold: Duration;
+```
+
+- *Type:* aws-cdk-lib.Duration
+
+The threshold for alarms associated with latency success metrics, for example if success latency exceeds 500 milliseconds.
+
+---
+
+
 ### ServiceMetricDetails <a name="ServiceMetricDetails" id="@cdklabs/multi-az-observability.ServiceMetricDetails"></a>
 
 - *Implements:* <a href="#@cdklabs/multi-az-observability.IServiceMetricDetails">IServiceMetricDetails</a>
@@ -3511,11 +5410,9 @@ new ServiceMetricDetails(props: ServiceMetricDetailsProps)
 | <code><a href="#@cdklabs/multi-az-observability.ServiceMetricDetails.property.alarmStatistic">alarmStatistic</a></code> | <code>string</code> | The statistic used for alarms, for availability metrics this should be "Sum", for latency metrics it could something like "p99" or "p99.9". |
 | <code><a href="#@cdklabs/multi-az-observability.ServiceMetricDetails.property.datapointsToAlarm">datapointsToAlarm</a></code> | <code>number</code> | The number of datapoints to alarm on for latency and availability alarms. |
 | <code><a href="#@cdklabs/multi-az-observability.ServiceMetricDetails.property.evaluationPeriods">evaluationPeriods</a></code> | <code>number</code> | The number of evaluation periods for latency and availabiltiy alarms. |
-| <code><a href="#@cdklabs/multi-az-observability.ServiceMetricDetails.property.faultAlarmThreshold">faultAlarmThreshold</a></code> | <code>number</code> | The threshold for alarms associated with fault metrics, for example if measuring fault rate, the threshold may be 1, meaning you would want an alarm that triggers if the fault rate goes above 1%. |
 | <code><a href="#@cdklabs/multi-az-observability.ServiceMetricDetails.property.faultMetricNames">faultMetricNames</a></code> | <code>string[]</code> | The names of fault indicating metrics. |
 | <code><a href="#@cdklabs/multi-az-observability.ServiceMetricDetails.property.metricNamespace">metricNamespace</a></code> | <code>string</code> | The CloudWatch metric namespace for these metrics. |
 | <code><a href="#@cdklabs/multi-az-observability.ServiceMetricDetails.property.period">period</a></code> | <code>aws-cdk-lib.Duration</code> | The period for the metrics. |
-| <code><a href="#@cdklabs/multi-az-observability.ServiceMetricDetails.property.successAlarmThreshold">successAlarmThreshold</a></code> | <code>number</code> | The threshold for alarms associated with success metrics, for example if measuring success rate, the threshold may be 99, meaning you would want an alarm that triggers if success drops below 99%. |
 | <code><a href="#@cdklabs/multi-az-observability.ServiceMetricDetails.property.successMetricNames">successMetricNames</a></code> | <code>string[]</code> | The names of success indicating metrics. |
 | <code><a href="#@cdklabs/multi-az-observability.ServiceMetricDetails.property.unit">unit</a></code> | <code>aws-cdk-lib.aws_cloudwatch.Unit</code> | The unit used for these metrics. |
 | <code><a href="#@cdklabs/multi-az-observability.ServiceMetricDetails.property.graphedFaultStatistics">graphedFaultStatistics</a></code> | <code>string[]</code> | The statistics for faults you want to appear on dashboards, for example, with latency metrics, you might want p50, p99, and tm99. |
@@ -3559,18 +5456,6 @@ The number of evaluation periods for latency and availabiltiy alarms.
 
 ---
 
-##### `faultAlarmThreshold`<sup>Required</sup> <a name="faultAlarmThreshold" id="@cdklabs/multi-az-observability.ServiceMetricDetails.property.faultAlarmThreshold"></a>
-
-```typescript
-public readonly faultAlarmThreshold: number;
-```
-
-- *Type:* number
-
-The threshold for alarms associated with fault metrics, for example if measuring fault rate, the threshold may be 1, meaning you would want an alarm that triggers if the fault rate goes above 1%.
-
----
-
 ##### `faultMetricNames`<sup>Required</sup> <a name="faultMetricNames" id="@cdklabs/multi-az-observability.ServiceMetricDetails.property.faultMetricNames"></a>
 
 ```typescript
@@ -3604,18 +5489,6 @@ public readonly period: Duration;
 - *Type:* aws-cdk-lib.Duration
 
 The period for the metrics.
-
----
-
-##### `successAlarmThreshold`<sup>Required</sup> <a name="successAlarmThreshold" id="@cdklabs/multi-az-observability.ServiceMetricDetails.property.successAlarmThreshold"></a>
-
-```typescript
-public readonly successAlarmThreshold: number;
-```
-
-- *Type:* number
-
-The threshold for alarms associated with success metrics, for example if measuring success rate, the threshold may be 99, meaning you would want an alarm that triggers if success drops below 99%.
 
 ---
 
@@ -3872,6 +5745,125 @@ The custom resource that can be referenced to use Fn::GetAtt functions on to ret
 
 ---
 
+### IBaseOperationRegionalAlarmsAndRules <a name="IBaseOperationRegionalAlarmsAndRules" id="@cdklabs/multi-az-observability.IBaseOperationRegionalAlarmsAndRules"></a>
+
+- *Implemented By:* <a href="#@cdklabs/multi-az-observability.IBaseOperationRegionalAlarmsAndRules">IBaseOperationRegionalAlarmsAndRules</a>, <a href="#@cdklabs/multi-az-observability.ICanaryOperationRegionalAlarmsAndRules">ICanaryOperationRegionalAlarmsAndRules</a>, <a href="#@cdklabs/multi-az-observability.IServerSideOperationRegionalAlarmsAndRules">IServerSideOperationRegionalAlarmsAndRules</a>
+
+Base regional alarms and rules.
+
+
+#### Properties <a name="Properties" id="Properties"></a>
+
+| **Name** | **Type** | **Description** |
+| --- | --- | --- |
+| <code><a href="#@cdklabs/multi-az-observability.IBaseOperationRegionalAlarmsAndRules.property.availabilityAlarm">availabilityAlarm</a></code> | <code>aws-cdk-lib.aws_cloudwatch.IAlarm</code> | Availability alarm for this operation. |
+| <code><a href="#@cdklabs/multi-az-observability.IBaseOperationRegionalAlarmsAndRules.property.availabilityOrLatencyAlarm">availabilityOrLatencyAlarm</a></code> | <code>aws-cdk-lib.aws_cloudwatch.IAlarm</code> | Composite alarm for either availabiltiy or latency impact to this operation. |
+| <code><a href="#@cdklabs/multi-az-observability.IBaseOperationRegionalAlarmsAndRules.property.latencyAlarm">latencyAlarm</a></code> | <code>aws-cdk-lib.aws_cloudwatch.IAlarm</code> | Latency alarm for this operation. |
+
+---
+
+##### `availabilityAlarm`<sup>Required</sup> <a name="availabilityAlarm" id="@cdklabs/multi-az-observability.IBaseOperationRegionalAlarmsAndRules.property.availabilityAlarm"></a>
+
+```typescript
+public readonly availabilityAlarm: IAlarm;
+```
+
+- *Type:* aws-cdk-lib.aws_cloudwatch.IAlarm
+
+Availability alarm for this operation.
+
+---
+
+##### `availabilityOrLatencyAlarm`<sup>Required</sup> <a name="availabilityOrLatencyAlarm" id="@cdklabs/multi-az-observability.IBaseOperationRegionalAlarmsAndRules.property.availabilityOrLatencyAlarm"></a>
+
+```typescript
+public readonly availabilityOrLatencyAlarm: IAlarm;
+```
+
+- *Type:* aws-cdk-lib.aws_cloudwatch.IAlarm
+
+Composite alarm for either availabiltiy or latency impact to this operation.
+
+---
+
+##### `latencyAlarm`<sup>Required</sup> <a name="latencyAlarm" id="@cdklabs/multi-az-observability.IBaseOperationRegionalAlarmsAndRules.property.latencyAlarm"></a>
+
+```typescript
+public readonly latencyAlarm: IAlarm;
+```
+
+- *Type:* aws-cdk-lib.aws_cloudwatch.IAlarm
+
+Latency alarm for this operation.
+
+---
+
+### IBaseOperationZonalAlarmsAndRules <a name="IBaseOperationZonalAlarmsAndRules" id="@cdklabs/multi-az-observability.IBaseOperationZonalAlarmsAndRules"></a>
+
+- *Implemented By:* <a href="#@cdklabs/multi-az-observability.IBaseOperationZonalAlarmsAndRules">IBaseOperationZonalAlarmsAndRules</a>, <a href="#@cdklabs/multi-az-observability.ICanaryOperationZonalAlarmsAndRules">ICanaryOperationZonalAlarmsAndRules</a>, <a href="#@cdklabs/multi-az-observability.IServerSideOperationZonalAlarmsAndRules">IServerSideOperationZonalAlarmsAndRules</a>
+
+The base operation zonal alarms and rules.
+
+
+#### Properties <a name="Properties" id="Properties"></a>
+
+| **Name** | **Type** | **Description** |
+| --- | --- | --- |
+| <code><a href="#@cdklabs/multi-az-observability.IBaseOperationZonalAlarmsAndRules.property.availabilityAlarm">availabilityAlarm</a></code> | <code>aws-cdk-lib.aws_cloudwatch.IAlarm</code> | Availability alarm for this operation. |
+| <code><a href="#@cdklabs/multi-az-observability.IBaseOperationZonalAlarmsAndRules.property.availabilityZoneIsOutlierForFaults">availabilityZoneIsOutlierForFaults</a></code> | <code>aws-cdk-lib.aws_cloudwatch.IAlarm</code> | Alarm that indicates that this AZ is an outlier for fault rate. |
+| <code><a href="#@cdklabs/multi-az-observability.IBaseOperationZonalAlarmsAndRules.property.availabilityZoneIsOutlierForLatency">availabilityZoneIsOutlierForLatency</a></code> | <code>aws-cdk-lib.aws_cloudwatch.IAlarm</code> | Alarm that indicates this AZ is an outlier for high latency. |
+| <code><a href="#@cdklabs/multi-az-observability.IBaseOperationZonalAlarmsAndRules.property.latencyAlarm">latencyAlarm</a></code> | <code>aws-cdk-lib.aws_cloudwatch.IAlarm</code> | Latency alarm for this operation. |
+
+---
+
+##### `availabilityAlarm`<sup>Required</sup> <a name="availabilityAlarm" id="@cdklabs/multi-az-observability.IBaseOperationZonalAlarmsAndRules.property.availabilityAlarm"></a>
+
+```typescript
+public readonly availabilityAlarm: IAlarm;
+```
+
+- *Type:* aws-cdk-lib.aws_cloudwatch.IAlarm
+
+Availability alarm for this operation.
+
+---
+
+##### `availabilityZoneIsOutlierForFaults`<sup>Required</sup> <a name="availabilityZoneIsOutlierForFaults" id="@cdklabs/multi-az-observability.IBaseOperationZonalAlarmsAndRules.property.availabilityZoneIsOutlierForFaults"></a>
+
+```typescript
+public readonly availabilityZoneIsOutlierForFaults: IAlarm;
+```
+
+- *Type:* aws-cdk-lib.aws_cloudwatch.IAlarm
+
+Alarm that indicates that this AZ is an outlier for fault rate.
+
+---
+
+##### `availabilityZoneIsOutlierForLatency`<sup>Required</sup> <a name="availabilityZoneIsOutlierForLatency" id="@cdklabs/multi-az-observability.IBaseOperationZonalAlarmsAndRules.property.availabilityZoneIsOutlierForLatency"></a>
+
+```typescript
+public readonly availabilityZoneIsOutlierForLatency: IAlarm;
+```
+
+- *Type:* aws-cdk-lib.aws_cloudwatch.IAlarm
+
+Alarm that indicates this AZ is an outlier for high latency.
+
+---
+
+##### `latencyAlarm`<sup>Required</sup> <a name="latencyAlarm" id="@cdklabs/multi-az-observability.IBaseOperationZonalAlarmsAndRules.property.latencyAlarm"></a>
+
+```typescript
+public readonly latencyAlarm: IAlarm;
+```
+
+- *Type:* aws-cdk-lib.aws_cloudwatch.IAlarm
+
+Latency alarm for this operation.
+
+---
+
 ### IBasicServiceMultiAZObservability <a name="IBasicServiceMultiAZObservability" id="@cdklabs/multi-az-observability.IBasicServiceMultiAZObservability"></a>
 
 - *Extends:* constructs.IConstruct
@@ -3890,6 +5882,7 @@ Properties of a basic service.
 | <code><a href="#@cdklabs/multi-az-observability.IBasicServiceMultiAZObservability.property.serviceName">serviceName</a></code> | <code>string</code> | The name of the service. |
 | <code><a href="#@cdklabs/multi-az-observability.IBasicServiceMultiAZObservability.property.albZonalIsolatedImpactAlarms">albZonalIsolatedImpactAlarms</a></code> | <code>{[ key: string ]: aws-cdk-lib.aws_cloudwatch.IAlarm}</code> | The alarms indicating if an AZ is an outlier for ALB faults and has isolated impact. |
 | <code><a href="#@cdklabs/multi-az-observability.IBasicServiceMultiAZObservability.property.applicationLoadBalancers">applicationLoadBalancers</a></code> | <code>aws-cdk-lib.aws_elasticloadbalancingv2.IApplicationLoadBalancer[]</code> | The application load balancers being used by the service. |
+| <code><a href="#@cdklabs/multi-az-observability.IBasicServiceMultiAZObservability.property.dashboard">dashboard</a></code> | <code>aws-cdk-lib.aws_cloudwatch.Dashboard</code> | The optional dashboard created for observability. |
 | <code><a href="#@cdklabs/multi-az-observability.IBasicServiceMultiAZObservability.property.natGateways">natGateways</a></code> | <code>{[ key: string ]: aws-cdk-lib.aws_ec2.CfnNatGateway[]}</code> | The NAT Gateways being used in the service, each set of NAT Gateways are keyed by their Availability Zone Id. |
 | <code><a href="#@cdklabs/multi-az-observability.IBasicServiceMultiAZObservability.property.natGWZonalIsolatedImpactAlarms">natGWZonalIsolatedImpactAlarms</a></code> | <code>{[ key: string ]: aws-cdk-lib.aws_cloudwatch.IAlarm}</code> | The alarms indicating if an AZ is an outlier for NAT GW packet loss and has isolated impact. |
 
@@ -3941,6 +5934,9 @@ public readonly albZonalIsolatedImpactAlarms: {[ key: string ]: IAlarm};
 
 The alarms indicating if an AZ is an outlier for ALB faults and has isolated impact.
 
+This will be 1 composite alarm 
+per AZ that triggers if any ALB in that AZ sees outlier impact.
+
 ---
 
 ##### `applicationLoadBalancers`<sup>Optional</sup> <a name="applicationLoadBalancers" id="@cdklabs/multi-az-observability.IBasicServiceMultiAZObservability.property.applicationLoadBalancers"></a>
@@ -3952,6 +5948,18 @@ public readonly applicationLoadBalancers: IApplicationLoadBalancer[];
 - *Type:* aws-cdk-lib.aws_elasticloadbalancingv2.IApplicationLoadBalancer[]
 
 The application load balancers being used by the service.
+
+---
+
+##### `dashboard`<sup>Optional</sup> <a name="dashboard" id="@cdklabs/multi-az-observability.IBasicServiceMultiAZObservability.property.dashboard"></a>
+
+```typescript
+public readonly dashboard: Dashboard;
+```
+
+- *Type:* aws-cdk-lib.aws_cloudwatch.Dashboard
+
+The optional dashboard created for observability.
 
 ---
 
@@ -3977,6 +5985,9 @@ public readonly natGWZonalIsolatedImpactAlarms: {[ key: string ]: IAlarm};
 
 The alarms indicating if an AZ is an outlier for NAT GW packet loss and has isolated impact.
 
+This will be 1 composite alarm 
+per AZ that triggers if any NAT GW in that AZ sees outlier impact.
+
 ---
 
 ### ICanaryMetrics <a name="ICanaryMetrics" id="@cdklabs/multi-az-observability.ICanaryMetrics"></a>
@@ -3990,18 +6001,18 @@ The metric definitions for metric produced by the canary.
 
 | **Name** | **Type** | **Description** |
 | --- | --- | --- |
-| <code><a href="#@cdklabs/multi-az-observability.ICanaryMetrics.property.canaryAvailabilityMetricDetails">canaryAvailabilityMetricDetails</a></code> | <code><a href="#@cdklabs/multi-az-observability.IOperationMetricDetails">IOperationMetricDetails</a></code> | The canary availability metric details. |
-| <code><a href="#@cdklabs/multi-az-observability.ICanaryMetrics.property.canaryLatencyMetricDetails">canaryLatencyMetricDetails</a></code> | <code><a href="#@cdklabs/multi-az-observability.IOperationMetricDetails">IOperationMetricDetails</a></code> | The canary latency metric details. |
+| <code><a href="#@cdklabs/multi-az-observability.ICanaryMetrics.property.canaryAvailabilityMetricDetails">canaryAvailabilityMetricDetails</a></code> | <code><a href="#@cdklabs/multi-az-observability.IOperationAvailabilityMetricDetails">IOperationAvailabilityMetricDetails</a></code> | The canary availability metric details. |
+| <code><a href="#@cdklabs/multi-az-observability.ICanaryMetrics.property.canaryLatencyMetricDetails">canaryLatencyMetricDetails</a></code> | <code><a href="#@cdklabs/multi-az-observability.IOperationLatencyMetricDetails">IOperationLatencyMetricDetails</a></code> | The canary latency metric details. |
 
 ---
 
 ##### `canaryAvailabilityMetricDetails`<sup>Required</sup> <a name="canaryAvailabilityMetricDetails" id="@cdklabs/multi-az-observability.ICanaryMetrics.property.canaryAvailabilityMetricDetails"></a>
 
 ```typescript
-public readonly canaryAvailabilityMetricDetails: IOperationMetricDetails;
+public readonly canaryAvailabilityMetricDetails: IOperationAvailabilityMetricDetails;
 ```
 
-- *Type:* <a href="#@cdklabs/multi-az-observability.IOperationMetricDetails">IOperationMetricDetails</a>
+- *Type:* <a href="#@cdklabs/multi-az-observability.IOperationAvailabilityMetricDetails">IOperationAvailabilityMetricDetails</a>
 
 The canary availability metric details.
 
@@ -4010,18 +6021,331 @@ The canary availability metric details.
 ##### `canaryLatencyMetricDetails`<sup>Required</sup> <a name="canaryLatencyMetricDetails" id="@cdklabs/multi-az-observability.ICanaryMetrics.property.canaryLatencyMetricDetails"></a>
 
 ```typescript
-public readonly canaryLatencyMetricDetails: IOperationMetricDetails;
+public readonly canaryLatencyMetricDetails: IOperationLatencyMetricDetails;
 ```
 
-- *Type:* <a href="#@cdklabs/multi-az-observability.IOperationMetricDetails">IOperationMetricDetails</a>
+- *Type:* <a href="#@cdklabs/multi-az-observability.IOperationLatencyMetricDetails">IOperationLatencyMetricDetails</a>
 
 The canary latency metric details.
 
 ---
 
+### ICanaryOperationRegionalAlarmsAndRules <a name="ICanaryOperationRegionalAlarmsAndRules" id="@cdklabs/multi-az-observability.ICanaryOperationRegionalAlarmsAndRules"></a>
+
+- *Extends:* <a href="#@cdklabs/multi-az-observability.IBaseOperationRegionalAlarmsAndRules">IBaseOperationRegionalAlarmsAndRules</a>
+
+- *Implemented By:* <a href="#@cdklabs/multi-az-observability.ICanaryOperationRegionalAlarmsAndRules">ICanaryOperationRegionalAlarmsAndRules</a>
+
+The canary operation regional alarms and rules.
+
+
+#### Properties <a name="Properties" id="Properties"></a>
+
+| **Name** | **Type** | **Description** |
+| --- | --- | --- |
+| <code><a href="#@cdklabs/multi-az-observability.ICanaryOperationRegionalAlarmsAndRules.property.availabilityAlarm">availabilityAlarm</a></code> | <code>aws-cdk-lib.aws_cloudwatch.IAlarm</code> | Availability alarm for this operation. |
+| <code><a href="#@cdklabs/multi-az-observability.ICanaryOperationRegionalAlarmsAndRules.property.availabilityOrLatencyAlarm">availabilityOrLatencyAlarm</a></code> | <code>aws-cdk-lib.aws_cloudwatch.IAlarm</code> | Composite alarm for either availabiltiy or latency impact to this operation. |
+| <code><a href="#@cdklabs/multi-az-observability.ICanaryOperationRegionalAlarmsAndRules.property.latencyAlarm">latencyAlarm</a></code> | <code>aws-cdk-lib.aws_cloudwatch.IAlarm</code> | Latency alarm for this operation. |
+
+---
+
+##### `availabilityAlarm`<sup>Required</sup> <a name="availabilityAlarm" id="@cdklabs/multi-az-observability.ICanaryOperationRegionalAlarmsAndRules.property.availabilityAlarm"></a>
+
+```typescript
+public readonly availabilityAlarm: IAlarm;
+```
+
+- *Type:* aws-cdk-lib.aws_cloudwatch.IAlarm
+
+Availability alarm for this operation.
+
+---
+
+##### `availabilityOrLatencyAlarm`<sup>Required</sup> <a name="availabilityOrLatencyAlarm" id="@cdklabs/multi-az-observability.ICanaryOperationRegionalAlarmsAndRules.property.availabilityOrLatencyAlarm"></a>
+
+```typescript
+public readonly availabilityOrLatencyAlarm: IAlarm;
+```
+
+- *Type:* aws-cdk-lib.aws_cloudwatch.IAlarm
+
+Composite alarm for either availabiltiy or latency impact to this operation.
+
+---
+
+##### `latencyAlarm`<sup>Required</sup> <a name="latencyAlarm" id="@cdklabs/multi-az-observability.ICanaryOperationRegionalAlarmsAndRules.property.latencyAlarm"></a>
+
+```typescript
+public readonly latencyAlarm: IAlarm;
+```
+
+- *Type:* aws-cdk-lib.aws_cloudwatch.IAlarm
+
+Latency alarm for this operation.
+
+---
+
+### ICanaryOperationZonalAlarmsAndRules <a name="ICanaryOperationZonalAlarmsAndRules" id="@cdklabs/multi-az-observability.ICanaryOperationZonalAlarmsAndRules"></a>
+
+- *Extends:* <a href="#@cdklabs/multi-az-observability.IBaseOperationZonalAlarmsAndRules">IBaseOperationZonalAlarmsAndRules</a>
+
+- *Implemented By:* <a href="#@cdklabs/multi-az-observability.ICanaryOperationZonalAlarmsAndRules">ICanaryOperationZonalAlarmsAndRules</a>
+
+Alarms and rules for canary metrics.
+
+
+#### Properties <a name="Properties" id="Properties"></a>
+
+| **Name** | **Type** | **Description** |
+| --- | --- | --- |
+| <code><a href="#@cdklabs/multi-az-observability.ICanaryOperationZonalAlarmsAndRules.property.availabilityAlarm">availabilityAlarm</a></code> | <code>aws-cdk-lib.aws_cloudwatch.IAlarm</code> | Availability alarm for this operation. |
+| <code><a href="#@cdklabs/multi-az-observability.ICanaryOperationZonalAlarmsAndRules.property.availabilityZoneIsOutlierForFaults">availabilityZoneIsOutlierForFaults</a></code> | <code>aws-cdk-lib.aws_cloudwatch.IAlarm</code> | Alarm that indicates that this AZ is an outlier for fault rate. |
+| <code><a href="#@cdklabs/multi-az-observability.ICanaryOperationZonalAlarmsAndRules.property.availabilityZoneIsOutlierForLatency">availabilityZoneIsOutlierForLatency</a></code> | <code>aws-cdk-lib.aws_cloudwatch.IAlarm</code> | Alarm that indicates this AZ is an outlier for high latency. |
+| <code><a href="#@cdklabs/multi-az-observability.ICanaryOperationZonalAlarmsAndRules.property.latencyAlarm">latencyAlarm</a></code> | <code>aws-cdk-lib.aws_cloudwatch.IAlarm</code> | Latency alarm for this operation. |
+| <code><a href="#@cdklabs/multi-az-observability.ICanaryOperationZonalAlarmsAndRules.property.isolatedImpactAlarm">isolatedImpactAlarm</a></code> | <code>aws-cdk-lib.aws_cloudwatch.IAlarm</code> | Alarm that triggers if either latency or availability breach the specified threshold in this AZ and the AZ is an outlier for faults or latency. |
+
+---
+
+##### `availabilityAlarm`<sup>Required</sup> <a name="availabilityAlarm" id="@cdklabs/multi-az-observability.ICanaryOperationZonalAlarmsAndRules.property.availabilityAlarm"></a>
+
+```typescript
+public readonly availabilityAlarm: IAlarm;
+```
+
+- *Type:* aws-cdk-lib.aws_cloudwatch.IAlarm
+
+Availability alarm for this operation.
+
+---
+
+##### `availabilityZoneIsOutlierForFaults`<sup>Required</sup> <a name="availabilityZoneIsOutlierForFaults" id="@cdklabs/multi-az-observability.ICanaryOperationZonalAlarmsAndRules.property.availabilityZoneIsOutlierForFaults"></a>
+
+```typescript
+public readonly availabilityZoneIsOutlierForFaults: IAlarm;
+```
+
+- *Type:* aws-cdk-lib.aws_cloudwatch.IAlarm
+
+Alarm that indicates that this AZ is an outlier for fault rate.
+
+---
+
+##### `availabilityZoneIsOutlierForLatency`<sup>Required</sup> <a name="availabilityZoneIsOutlierForLatency" id="@cdklabs/multi-az-observability.ICanaryOperationZonalAlarmsAndRules.property.availabilityZoneIsOutlierForLatency"></a>
+
+```typescript
+public readonly availabilityZoneIsOutlierForLatency: IAlarm;
+```
+
+- *Type:* aws-cdk-lib.aws_cloudwatch.IAlarm
+
+Alarm that indicates this AZ is an outlier for high latency.
+
+---
+
+##### `latencyAlarm`<sup>Required</sup> <a name="latencyAlarm" id="@cdklabs/multi-az-observability.ICanaryOperationZonalAlarmsAndRules.property.latencyAlarm"></a>
+
+```typescript
+public readonly latencyAlarm: IAlarm;
+```
+
+- *Type:* aws-cdk-lib.aws_cloudwatch.IAlarm
+
+Latency alarm for this operation.
+
+---
+
+##### `isolatedImpactAlarm`<sup>Required</sup> <a name="isolatedImpactAlarm" id="@cdklabs/multi-az-observability.ICanaryOperationZonalAlarmsAndRules.property.isolatedImpactAlarm"></a>
+
+```typescript
+public readonly isolatedImpactAlarm: IAlarm;
+```
+
+- *Type:* aws-cdk-lib.aws_cloudwatch.IAlarm
+
+Alarm that triggers if either latency or availability breach the specified threshold in this AZ and the AZ is an outlier for faults or latency.
+
+---
+
+### ICanaryTestAvailabilityMetricsOverride <a name="ICanaryTestAvailabilityMetricsOverride" id="@cdklabs/multi-az-observability.ICanaryTestAvailabilityMetricsOverride"></a>
+
+- *Extends:* <a href="#@cdklabs/multi-az-observability.ICanaryTestMetricsOverride">ICanaryTestMetricsOverride</a>
+
+- *Implemented By:* <a href="#@cdklabs/multi-az-observability.ICanaryTestAvailabilityMetricsOverride">ICanaryTestAvailabilityMetricsOverride</a>
+
+Provides overrides for the default metric settings used for the automatically created canary tests.
+
+
+#### Properties <a name="Properties" id="Properties"></a>
+
+| **Name** | **Type** | **Description** |
+| --- | --- | --- |
+| <code><a href="#@cdklabs/multi-az-observability.ICanaryTestAvailabilityMetricsOverride.property.alarmStatistic">alarmStatistic</a></code> | <code>string</code> | The statistic used for alarms, for availability metrics this should be "Sum", for latency metrics it could something like "p99" or "p99.9". |
+| <code><a href="#@cdklabs/multi-az-observability.ICanaryTestAvailabilityMetricsOverride.property.datapointsToAlarm">datapointsToAlarm</a></code> | <code>number</code> | The number of datapoints to alarm on for latency and availability alarms. |
+| <code><a href="#@cdklabs/multi-az-observability.ICanaryTestAvailabilityMetricsOverride.property.evaluationPeriods">evaluationPeriods</a></code> | <code>number</code> | The number of evaluation periods for latency and availabiltiy alarms. |
+| <code><a href="#@cdklabs/multi-az-observability.ICanaryTestAvailabilityMetricsOverride.property.period">period</a></code> | <code>aws-cdk-lib.Duration</code> | The period for the metrics. |
+| <code><a href="#@cdklabs/multi-az-observability.ICanaryTestAvailabilityMetricsOverride.property.faultAlarmThreshold">faultAlarmThreshold</a></code> | <code>number</code> | The threshold for alarms associated with fault metrics, for example if measuring fault rate, the threshold may be 1, meaning you would want an alarm that triggers if the fault rate goes above 1%. |
+| <code><a href="#@cdklabs/multi-az-observability.ICanaryTestAvailabilityMetricsOverride.property.successAlarmThreshold">successAlarmThreshold</a></code> | <code>number</code> | The threshold for alarms associated with success metrics, for example if measuring success rate, the threshold may be 99, meaning you would want an alarm that triggers if success drops below 99%. |
+
+---
+
+##### `alarmStatistic`<sup>Optional</sup> <a name="alarmStatistic" id="@cdklabs/multi-az-observability.ICanaryTestAvailabilityMetricsOverride.property.alarmStatistic"></a>
+
+```typescript
+public readonly alarmStatistic: string;
+```
+
+- *Type:* string
+
+The statistic used for alarms, for availability metrics this should be "Sum", for latency metrics it could something like "p99" or "p99.9".
+
+---
+
+##### `datapointsToAlarm`<sup>Optional</sup> <a name="datapointsToAlarm" id="@cdklabs/multi-az-observability.ICanaryTestAvailabilityMetricsOverride.property.datapointsToAlarm"></a>
+
+```typescript
+public readonly datapointsToAlarm: number;
+```
+
+- *Type:* number
+
+The number of datapoints to alarm on for latency and availability alarms.
+
+---
+
+##### `evaluationPeriods`<sup>Optional</sup> <a name="evaluationPeriods" id="@cdklabs/multi-az-observability.ICanaryTestAvailabilityMetricsOverride.property.evaluationPeriods"></a>
+
+```typescript
+public readonly evaluationPeriods: number;
+```
+
+- *Type:* number
+
+The number of evaluation periods for latency and availabiltiy alarms.
+
+---
+
+##### `period`<sup>Optional</sup> <a name="period" id="@cdklabs/multi-az-observability.ICanaryTestAvailabilityMetricsOverride.property.period"></a>
+
+```typescript
+public readonly period: Duration;
+```
+
+- *Type:* aws-cdk-lib.Duration
+
+The period for the metrics.
+
+---
+
+##### `faultAlarmThreshold`<sup>Optional</sup> <a name="faultAlarmThreshold" id="@cdklabs/multi-az-observability.ICanaryTestAvailabilityMetricsOverride.property.faultAlarmThreshold"></a>
+
+```typescript
+public readonly faultAlarmThreshold: number;
+```
+
+- *Type:* number
+- *Default:* This property will use the default defined for the service
+
+The threshold for alarms associated with fault metrics, for example if measuring fault rate, the threshold may be 1, meaning you would want an alarm that triggers if the fault rate goes above 1%.
+
+---
+
+##### `successAlarmThreshold`<sup>Optional</sup> <a name="successAlarmThreshold" id="@cdklabs/multi-az-observability.ICanaryTestAvailabilityMetricsOverride.property.successAlarmThreshold"></a>
+
+```typescript
+public readonly successAlarmThreshold: number;
+```
+
+- *Type:* number
+- *Default:* This property will use the default defined for the service
+
+The threshold for alarms associated with success metrics, for example if measuring success rate, the threshold may be 99, meaning you would want an alarm that triggers if success drops below 99%.
+
+---
+
+### ICanaryTestLatencyMetricsOverride <a name="ICanaryTestLatencyMetricsOverride" id="@cdklabs/multi-az-observability.ICanaryTestLatencyMetricsOverride"></a>
+
+- *Extends:* <a href="#@cdklabs/multi-az-observability.ICanaryTestMetricsOverride">ICanaryTestMetricsOverride</a>
+
+- *Implemented By:* <a href="#@cdklabs/multi-az-observability.ICanaryTestLatencyMetricsOverride">ICanaryTestLatencyMetricsOverride</a>
+
+Provides overrides for the default metric settings used for the automatically created canary tests.
+
+
+#### Properties <a name="Properties" id="Properties"></a>
+
+| **Name** | **Type** | **Description** |
+| --- | --- | --- |
+| <code><a href="#@cdklabs/multi-az-observability.ICanaryTestLatencyMetricsOverride.property.alarmStatistic">alarmStatistic</a></code> | <code>string</code> | The statistic used for alarms, for availability metrics this should be "Sum", for latency metrics it could something like "p99" or "p99.9". |
+| <code><a href="#@cdklabs/multi-az-observability.ICanaryTestLatencyMetricsOverride.property.datapointsToAlarm">datapointsToAlarm</a></code> | <code>number</code> | The number of datapoints to alarm on for latency and availability alarms. |
+| <code><a href="#@cdklabs/multi-az-observability.ICanaryTestLatencyMetricsOverride.property.evaluationPeriods">evaluationPeriods</a></code> | <code>number</code> | The number of evaluation periods for latency and availabiltiy alarms. |
+| <code><a href="#@cdklabs/multi-az-observability.ICanaryTestLatencyMetricsOverride.property.period">period</a></code> | <code>aws-cdk-lib.Duration</code> | The period for the metrics. |
+| <code><a href="#@cdklabs/multi-az-observability.ICanaryTestLatencyMetricsOverride.property.successAlarmThreshold">successAlarmThreshold</a></code> | <code>aws-cdk-lib.Duration</code> | The threshold for alarms associated with latency success metrics, for example if success latency exceeds 500 milliseconds. |
+
+---
+
+##### `alarmStatistic`<sup>Optional</sup> <a name="alarmStatistic" id="@cdklabs/multi-az-observability.ICanaryTestLatencyMetricsOverride.property.alarmStatistic"></a>
+
+```typescript
+public readonly alarmStatistic: string;
+```
+
+- *Type:* string
+
+The statistic used for alarms, for availability metrics this should be "Sum", for latency metrics it could something like "p99" or "p99.9".
+
+---
+
+##### `datapointsToAlarm`<sup>Optional</sup> <a name="datapointsToAlarm" id="@cdklabs/multi-az-observability.ICanaryTestLatencyMetricsOverride.property.datapointsToAlarm"></a>
+
+```typescript
+public readonly datapointsToAlarm: number;
+```
+
+- *Type:* number
+
+The number of datapoints to alarm on for latency and availability alarms.
+
+---
+
+##### `evaluationPeriods`<sup>Optional</sup> <a name="evaluationPeriods" id="@cdklabs/multi-az-observability.ICanaryTestLatencyMetricsOverride.property.evaluationPeriods"></a>
+
+```typescript
+public readonly evaluationPeriods: number;
+```
+
+- *Type:* number
+
+The number of evaluation periods for latency and availabiltiy alarms.
+
+---
+
+##### `period`<sup>Optional</sup> <a name="period" id="@cdklabs/multi-az-observability.ICanaryTestLatencyMetricsOverride.property.period"></a>
+
+```typescript
+public readonly period: Duration;
+```
+
+- *Type:* aws-cdk-lib.Duration
+
+The period for the metrics.
+
+---
+
+##### `successAlarmThreshold`<sup>Optional</sup> <a name="successAlarmThreshold" id="@cdklabs/multi-az-observability.ICanaryTestLatencyMetricsOverride.property.successAlarmThreshold"></a>
+
+```typescript
+public readonly successAlarmThreshold: Duration;
+```
+
+- *Type:* aws-cdk-lib.Duration
+
+The threshold for alarms associated with latency success metrics, for example if success latency exceeds 500 milliseconds.
+
+---
+
 ### ICanaryTestMetricsOverride <a name="ICanaryTestMetricsOverride" id="@cdklabs/multi-az-observability.ICanaryTestMetricsOverride"></a>
 
-- *Implemented By:* <a href="#@cdklabs/multi-az-observability.CanaryTestMetricsOverride">CanaryTestMetricsOverride</a>, <a href="#@cdklabs/multi-az-observability.ICanaryTestMetricsOverride">ICanaryTestMetricsOverride</a>
+- *Implemented By:* <a href="#@cdklabs/multi-az-observability.CanaryTestAvailabilityMetricsOverride">CanaryTestAvailabilityMetricsOverride</a>, <a href="#@cdklabs/multi-az-observability.CanaryTestLatencyMetricsOverride">CanaryTestLatencyMetricsOverride</a>, <a href="#@cdklabs/multi-az-observability.CanaryTestMetricsOverride">CanaryTestMetricsOverride</a>, <a href="#@cdklabs/multi-az-observability.ICanaryTestAvailabilityMetricsOverride">ICanaryTestAvailabilityMetricsOverride</a>, <a href="#@cdklabs/multi-az-observability.ICanaryTestLatencyMetricsOverride">ICanaryTestLatencyMetricsOverride</a>, <a href="#@cdklabs/multi-az-observability.ICanaryTestMetricsOverride">ICanaryTestMetricsOverride</a>
 
 Provides overrides for the default metric settings used for the automatically created canary tests.
 
@@ -4033,9 +6357,7 @@ Provides overrides for the default metric settings used for the automatically cr
 | <code><a href="#@cdklabs/multi-az-observability.ICanaryTestMetricsOverride.property.alarmStatistic">alarmStatistic</a></code> | <code>string</code> | The statistic used for alarms, for availability metrics this should be "Sum", for latency metrics it could something like "p99" or "p99.9". |
 | <code><a href="#@cdklabs/multi-az-observability.ICanaryTestMetricsOverride.property.datapointsToAlarm">datapointsToAlarm</a></code> | <code>number</code> | The number of datapoints to alarm on for latency and availability alarms. |
 | <code><a href="#@cdklabs/multi-az-observability.ICanaryTestMetricsOverride.property.evaluationPeriods">evaluationPeriods</a></code> | <code>number</code> | The number of evaluation periods for latency and availabiltiy alarms. |
-| <code><a href="#@cdklabs/multi-az-observability.ICanaryTestMetricsOverride.property.faultAlarmThreshold">faultAlarmThreshold</a></code> | <code>number</code> | The threshold for alarms associated with fault metrics, for example if measuring fault rate, the threshold may be 1, meaning you would want an alarm that triggers if the fault rate goes above 1%. |
 | <code><a href="#@cdklabs/multi-az-observability.ICanaryTestMetricsOverride.property.period">period</a></code> | <code>aws-cdk-lib.Duration</code> | The period for the metrics. |
-| <code><a href="#@cdklabs/multi-az-observability.ICanaryTestMetricsOverride.property.successAlarmThreshold">successAlarmThreshold</a></code> | <code>number</code> | The threshold for alarms associated with success metrics, for example if measuring success rate, the threshold may be 99, meaning you would want an alarm that triggers if success drops below 99%. |
 
 ---
 
@@ -4075,18 +6397,6 @@ The number of evaluation periods for latency and availabiltiy alarms.
 
 ---
 
-##### `faultAlarmThreshold`<sup>Optional</sup> <a name="faultAlarmThreshold" id="@cdklabs/multi-az-observability.ICanaryTestMetricsOverride.property.faultAlarmThreshold"></a>
-
-```typescript
-public readonly faultAlarmThreshold: number;
-```
-
-- *Type:* number
-
-The threshold for alarms associated with fault metrics, for example if measuring fault rate, the threshold may be 1, meaning you would want an alarm that triggers if the fault rate goes above 1%.
-
----
-
 ##### `period`<sup>Optional</sup> <a name="period" id="@cdklabs/multi-az-observability.ICanaryTestMetricsOverride.property.period"></a>
 
 ```typescript
@@ -4096,18 +6406,6 @@ public readonly period: Duration;
 - *Type:* aws-cdk-lib.Duration
 
 The period for the metrics.
-
----
-
-##### `successAlarmThreshold`<sup>Optional</sup> <a name="successAlarmThreshold" id="@cdklabs/multi-az-observability.ICanaryTestMetricsOverride.property.successAlarmThreshold"></a>
-
-```typescript
-public readonly successAlarmThreshold: number;
-```
-
-- *Type:* number
-
-The threshold for alarms associated with success metrics, for example if measuring success rate, the threshold may be 99, meaning you would want an alarm that triggers if success drops below 99%.
 
 ---
 
@@ -4223,7 +6521,8 @@ Observability for an instrumented service.
 | **Name** | **Type** | **Description** |
 | --- | --- | --- |
 | <code><a href="#@cdklabs/multi-az-observability.IInstrumentedServiceMultiAZObservability.property.node">node</a></code> | <code>constructs.Node</code> | The tree node. |
-| <code><a href="#@cdklabs/multi-az-observability.IInstrumentedServiceMultiAZObservability.property.perOperationZonalImpactAlarms">perOperationZonalImpactAlarms</a></code> | <code>{[ key: string ]: {[ key: string ]: aws-cdk-lib.aws_cloudwatch.IAlarm}}</code> | Index into the dictionary by operation name, then by Availability Zone Id to get the alarms that indicate an AZ shows isolated impact from availability or latency as seen by either the server-side or canary. |
+| <code><a href="#@cdklabs/multi-az-observability.IInstrumentedServiceMultiAZObservability.property.perOperationAlarmsAndRules">perOperationAlarmsAndRules</a></code> | <code>{[ key: string ]: <a href="#@cdklabs/multi-az-observability.IOperationAlarmsAndRules">IOperationAlarmsAndRules</a>}</code> | Key represents the operation name and the value is the set of zonal alarms and rules for that operation. |
+| <code><a href="#@cdklabs/multi-az-observability.IInstrumentedServiceMultiAZObservability.property.perOperationZonalImpactAlarms">perOperationZonalImpactAlarms</a></code> | <code>{[ key: string ]: {[ key: string ]: aws-cdk-lib.aws_cloudwatch.IAlarm}}</code> | Index into the dictionary by operation name, then by Availability Zone Name to get the alarms that indicate an AZ shows isolated impact from availability or latency as seen by either the server-side or canary. |
 | <code><a href="#@cdklabs/multi-az-observability.IInstrumentedServiceMultiAZObservability.property.serviceAlarms">serviceAlarms</a></code> | <code><a href="#@cdklabs/multi-az-observability.IServiceAlarmsAndRules">IServiceAlarmsAndRules</a></code> | The alarms and rules for the overall service. |
 | <code><a href="#@cdklabs/multi-az-observability.IInstrumentedServiceMultiAZObservability.property.canaryLogGroup">canaryLogGroup</a></code> | <code>aws-cdk-lib.aws_logs.ILogGroup</code> | If the service is configured to have canary tests created, this will be the log group where the canary's logs are stored. |
 | <code><a href="#@cdklabs/multi-az-observability.IInstrumentedServiceMultiAZObservability.property.operationDashboards">operationDashboards</a></code> | <code>aws-cdk-lib.aws_cloudwatch.Dashboard[]</code> | The dashboards for each operation. |
@@ -4243,6 +6542,22 @@ The tree node.
 
 ---
 
+##### `perOperationAlarmsAndRules`<sup>Required</sup> <a name="perOperationAlarmsAndRules" id="@cdklabs/multi-az-observability.IInstrumentedServiceMultiAZObservability.property.perOperationAlarmsAndRules"></a>
+
+```typescript
+public readonly perOperationAlarmsAndRules: {[ key: string ]: IOperationAlarmsAndRules};
+```
+
+- *Type:* {[ key: string ]: <a href="#@cdklabs/multi-az-observability.IOperationAlarmsAndRules">IOperationAlarmsAndRules</a>}
+
+Key represents the operation name and the value is the set of zonal alarms and rules for that operation.
+
+You can get the 
+granular alarms that compose the higher level aggregate alarms
+for each operation.
+
+---
+
 ##### `perOperationZonalImpactAlarms`<sup>Required</sup> <a name="perOperationZonalImpactAlarms" id="@cdklabs/multi-az-observability.IInstrumentedServiceMultiAZObservability.property.perOperationZonalImpactAlarms"></a>
 
 ```typescript
@@ -4251,10 +6566,10 @@ public readonly perOperationZonalImpactAlarms: {[ key: string ]: {[ key: string 
 
 - *Type:* {[ key: string ]: {[ key: string ]: aws-cdk-lib.aws_cloudwatch.IAlarm}}
 
-Index into the dictionary by operation name, then by Availability Zone Id to get the alarms that indicate an AZ shows isolated impact from availability or latency as seen by either the server-side or canary.
+Index into the dictionary by operation name, then by Availability Zone Name to get the alarms that indicate an AZ shows isolated impact from availability or latency as seen by either the server-side or canary.
 
-These are the alarms
-you would want to use to trigger automation to evacuate an AZ.
+This is a shortcut to
+access the same alarms from the perOperationAlarmsAndRules property.
 
 ---
 
@@ -4322,12 +6637,12 @@ Represents an operation in a service.
 | <code><a href="#@cdklabs/multi-az-observability.IOperation.property.httpMethods">httpMethods</a></code> | <code>string[]</code> | The http methods supported by the operation. |
 | <code><a href="#@cdklabs/multi-az-observability.IOperation.property.operationName">operationName</a></code> | <code>string</code> | The name of the operation. |
 | <code><a href="#@cdklabs/multi-az-observability.IOperation.property.path">path</a></code> | <code>string</code> | The HTTP path for the operation for canaries to run against, something like "/products/list". |
-| <code><a href="#@cdklabs/multi-az-observability.IOperation.property.serverSideAvailabilityMetricDetails">serverSideAvailabilityMetricDetails</a></code> | <code><a href="#@cdklabs/multi-az-observability.IOperationMetricDetails">IOperationMetricDetails</a></code> | The server side availability metric details. |
-| <code><a href="#@cdklabs/multi-az-observability.IOperation.property.serverSideLatencyMetricDetails">serverSideLatencyMetricDetails</a></code> | <code><a href="#@cdklabs/multi-az-observability.IOperationMetricDetails">IOperationMetricDetails</a></code> | The server side latency metric details. |
+| <code><a href="#@cdklabs/multi-az-observability.IOperation.property.serverSideAvailabilityMetricDetails">serverSideAvailabilityMetricDetails</a></code> | <code><a href="#@cdklabs/multi-az-observability.IOperationAvailabilityMetricDetails">IOperationAvailabilityMetricDetails</a></code> | The server side availability metric details. |
+| <code><a href="#@cdklabs/multi-az-observability.IOperation.property.serverSideLatencyMetricDetails">serverSideLatencyMetricDetails</a></code> | <code><a href="#@cdklabs/multi-az-observability.IOperationLatencyMetricDetails">IOperationLatencyMetricDetails</a></code> | The server side latency metric details. |
 | <code><a href="#@cdklabs/multi-az-observability.IOperation.property.service">service</a></code> | <code><a href="#@cdklabs/multi-az-observability.IService">IService</a></code> | The service the operation is associated with. |
 | <code><a href="#@cdklabs/multi-az-observability.IOperation.property.canaryMetricDetails">canaryMetricDetails</a></code> | <code><a href="#@cdklabs/multi-az-observability.ICanaryMetrics">ICanaryMetrics</a></code> | Optional metric details if the service has an existing canary. |
-| <code><a href="#@cdklabs/multi-az-observability.IOperation.property.canaryTestAvailabilityMetricsOverride">canaryTestAvailabilityMetricsOverride</a></code> | <code><a href="#@cdklabs/multi-az-observability.ICanaryTestMetricsOverride">ICanaryTestMetricsOverride</a></code> | The override values for automatically created canary tests so you can use values other than the service defaults to define the thresholds for availability. |
-| <code><a href="#@cdklabs/multi-az-observability.IOperation.property.canaryTestLatencyMetricsOverride">canaryTestLatencyMetricsOverride</a></code> | <code><a href="#@cdklabs/multi-az-observability.ICanaryTestMetricsOverride">ICanaryTestMetricsOverride</a></code> | The override values for automatically created canary tests so you can use values other than the service defaults to define the thresholds for latency. |
+| <code><a href="#@cdklabs/multi-az-observability.IOperation.property.canaryTestAvailabilityMetricsOverride">canaryTestAvailabilityMetricsOverride</a></code> | <code><a href="#@cdklabs/multi-az-observability.ICanaryTestAvailabilityMetricsOverride">ICanaryTestAvailabilityMetricsOverride</a></code> | The override values for automatically created canary tests so you can use values other than the service defaults to define the thresholds for availability. |
+| <code><a href="#@cdklabs/multi-az-observability.IOperation.property.canaryTestLatencyMetricsOverride">canaryTestLatencyMetricsOverride</a></code> | <code><a href="#@cdklabs/multi-az-observability.ICanaryTestLatencyMetricsOverride">ICanaryTestLatencyMetricsOverride</a></code> | The override values for automatically created canary tests so you can use values other than the service defaults to define the thresholds for latency. |
 | <code><a href="#@cdklabs/multi-az-observability.IOperation.property.canaryTestProps">canaryTestProps</a></code> | <code><a href="#@cdklabs/multi-az-observability.AddCanaryTestProps">AddCanaryTestProps</a></code> | If they have been added, the properties for creating new canary tests on this operation. |
 | <code><a href="#@cdklabs/multi-az-observability.IOperation.property.optOutOfServiceCreatedCanary">optOutOfServiceCreatedCanary</a></code> | <code>boolean</code> | Set to true if you have defined CanaryTestProps for your service, which applies to all operations, but you want to opt out of creating the canary test for this operation. |
 | <code><a href="#@cdklabs/multi-az-observability.IOperation.property.serverSideContributorInsightRuleDetails">serverSideContributorInsightRuleDetails</a></code> | <code><a href="#@cdklabs/multi-az-observability.IContributorInsightRuleDetails">IContributorInsightRuleDetails</a></code> | The server side details for contributor insights rules. |
@@ -4385,10 +6700,10 @@ The HTTP path for the operation for canaries to run against, something like "/pr
 ##### `serverSideAvailabilityMetricDetails`<sup>Required</sup> <a name="serverSideAvailabilityMetricDetails" id="@cdklabs/multi-az-observability.IOperation.property.serverSideAvailabilityMetricDetails"></a>
 
 ```typescript
-public readonly serverSideAvailabilityMetricDetails: IOperationMetricDetails;
+public readonly serverSideAvailabilityMetricDetails: IOperationAvailabilityMetricDetails;
 ```
 
-- *Type:* <a href="#@cdklabs/multi-az-observability.IOperationMetricDetails">IOperationMetricDetails</a>
+- *Type:* <a href="#@cdklabs/multi-az-observability.IOperationAvailabilityMetricDetails">IOperationAvailabilityMetricDetails</a>
 
 The server side availability metric details.
 
@@ -4397,10 +6712,10 @@ The server side availability metric details.
 ##### `serverSideLatencyMetricDetails`<sup>Required</sup> <a name="serverSideLatencyMetricDetails" id="@cdklabs/multi-az-observability.IOperation.property.serverSideLatencyMetricDetails"></a>
 
 ```typescript
-public readonly serverSideLatencyMetricDetails: IOperationMetricDetails;
+public readonly serverSideLatencyMetricDetails: IOperationLatencyMetricDetails;
 ```
 
-- *Type:* <a href="#@cdklabs/multi-az-observability.IOperationMetricDetails">IOperationMetricDetails</a>
+- *Type:* <a href="#@cdklabs/multi-az-observability.IOperationLatencyMetricDetails">IOperationLatencyMetricDetails</a>
 
 The server side latency metric details.
 
@@ -4433,10 +6748,10 @@ Optional metric details if the service has an existing canary.
 ##### `canaryTestAvailabilityMetricsOverride`<sup>Optional</sup> <a name="canaryTestAvailabilityMetricsOverride" id="@cdklabs/multi-az-observability.IOperation.property.canaryTestAvailabilityMetricsOverride"></a>
 
 ```typescript
-public readonly canaryTestAvailabilityMetricsOverride: ICanaryTestMetricsOverride;
+public readonly canaryTestAvailabilityMetricsOverride: ICanaryTestAvailabilityMetricsOverride;
 ```
 
-- *Type:* <a href="#@cdklabs/multi-az-observability.ICanaryTestMetricsOverride">ICanaryTestMetricsOverride</a>
+- *Type:* <a href="#@cdklabs/multi-az-observability.ICanaryTestAvailabilityMetricsOverride">ICanaryTestAvailabilityMetricsOverride</a>
 
 The override values for automatically created canary tests so you can use values other than the service defaults to define the thresholds for availability.
 
@@ -4445,10 +6760,10 @@ The override values for automatically created canary tests so you can use values
 ##### `canaryTestLatencyMetricsOverride`<sup>Optional</sup> <a name="canaryTestLatencyMetricsOverride" id="@cdklabs/multi-az-observability.IOperation.property.canaryTestLatencyMetricsOverride"></a>
 
 ```typescript
-public readonly canaryTestLatencyMetricsOverride: ICanaryTestMetricsOverride;
+public readonly canaryTestLatencyMetricsOverride: ICanaryTestLatencyMetricsOverride;
 ```
 
-- *Type:* <a href="#@cdklabs/multi-az-observability.ICanaryTestMetricsOverride">ICanaryTestMetricsOverride</a>
+- *Type:* <a href="#@cdklabs/multi-az-observability.ICanaryTestLatencyMetricsOverride">ICanaryTestLatencyMetricsOverride</a>
 
 The override values for automatically created canary tests so you can use values other than the service defaults to define the thresholds for latency.
 
@@ -4491,9 +6806,514 @@ The server side details for contributor insights rules.
 
 ---
 
+### IOperationAlarmsAndRules <a name="IOperationAlarmsAndRules" id="@cdklabs/multi-az-observability.IOperationAlarmsAndRules"></a>
+
+- *Implemented By:* <a href="#@cdklabs/multi-az-observability.IOperationAlarmsAndRules">IOperationAlarmsAndRules</a>
+
+Creates alarms and rules for an operation for both regional and zonal metrics.
+
+
+#### Properties <a name="Properties" id="Properties"></a>
+
+| **Name** | **Type** | **Description** |
+| --- | --- | --- |
+| <code><a href="#@cdklabs/multi-az-observability.IOperationAlarmsAndRules.property.aggregateZonalAlarms">aggregateZonalAlarms</a></code> | <code>{[ key: string ]: aws-cdk-lib.aws_cloudwatch.IAlarm}</code> | The aggregate, server-side and canary combined, zonal alarm indexed by Availability Zone name. |
+| <code><a href="#@cdklabs/multi-az-observability.IOperationAlarmsAndRules.property.operation">operation</a></code> | <code><a href="#@cdklabs/multi-az-observability.IOperation">IOperation</a></code> | The operation the alarms and rules are created for. |
+| <code><a href="#@cdklabs/multi-az-observability.IOperationAlarmsAndRules.property.regionalImpactAlarm">regionalImpactAlarm</a></code> | <code>aws-cdk-lib.aws_cloudwatch.IAlarm</code> | An alarm indicating availability or latency impact has been detected by the server-side  and/or canary (if present) and the impact is regionally scoped, not zonal. |
+| <code><a href="#@cdklabs/multi-az-observability.IOperationAlarmsAndRules.property.serverSideRegionalAlarmsAndRules">serverSideRegionalAlarmsAndRules</a></code> | <code><a href="#@cdklabs/multi-az-observability.IServerSideOperationRegionalAlarmsAndRules">IServerSideOperationRegionalAlarmsAndRules</a></code> | The server side regional alarms and rules. |
+| <code><a href="#@cdklabs/multi-az-observability.IOperationAlarmsAndRules.property.serverSideZonalAlarmsAndRules">serverSideZonalAlarmsAndRules</a></code> | <code>{[ key: string ]: <a href="#@cdklabs/multi-az-observability.IServerSideOperationZonalAlarmsAndRules">IServerSideOperationZonalAlarmsAndRules</a>}</code> | The server side zonal alarms and rules, indexed by Availability Zone name. |
+| <code><a href="#@cdklabs/multi-az-observability.IOperationAlarmsAndRules.property.canaryRegionalAlarmsAndRules">canaryRegionalAlarmsAndRules</a></code> | <code><a href="#@cdklabs/multi-az-observability.ICanaryOperationRegionalAlarmsAndRules">ICanaryOperationRegionalAlarmsAndRules</a></code> | The canary regional alarms and rules. |
+| <code><a href="#@cdklabs/multi-az-observability.IOperationAlarmsAndRules.property.canaryZonalAlarmsAndRules">canaryZonalAlarmsAndRules</a></code> | <code>{[ key: string ]: <a href="#@cdklabs/multi-az-observability.ICanaryOperationZonalAlarmsAndRules">ICanaryOperationZonalAlarmsAndRules</a>}</code> | The canary zonal alarms and rules, indexed by Availability Zone name. |
+
+---
+
+##### `aggregateZonalAlarms`<sup>Required</sup> <a name="aggregateZonalAlarms" id="@cdklabs/multi-az-observability.IOperationAlarmsAndRules.property.aggregateZonalAlarms"></a>
+
+```typescript
+public readonly aggregateZonalAlarms: {[ key: string ]: IAlarm};
+```
+
+- *Type:* {[ key: string ]: aws-cdk-lib.aws_cloudwatch.IAlarm}
+
+The aggregate, server-side and canary combined, zonal alarm indexed by Availability Zone name.
+
+---
+
+##### `operation`<sup>Required</sup> <a name="operation" id="@cdklabs/multi-az-observability.IOperationAlarmsAndRules.property.operation"></a>
+
+```typescript
+public readonly operation: IOperation;
+```
+
+- *Type:* <a href="#@cdklabs/multi-az-observability.IOperation">IOperation</a>
+
+The operation the alarms and rules are created for.
+
+---
+
+##### `regionalImpactAlarm`<sup>Required</sup> <a name="regionalImpactAlarm" id="@cdklabs/multi-az-observability.IOperationAlarmsAndRules.property.regionalImpactAlarm"></a>
+
+```typescript
+public readonly regionalImpactAlarm: IAlarm;
+```
+
+- *Type:* aws-cdk-lib.aws_cloudwatch.IAlarm
+
+An alarm indicating availability or latency impact has been detected by the server-side  and/or canary (if present) and the impact is regionally scoped, not zonal.
+
+---
+
+##### `serverSideRegionalAlarmsAndRules`<sup>Required</sup> <a name="serverSideRegionalAlarmsAndRules" id="@cdklabs/multi-az-observability.IOperationAlarmsAndRules.property.serverSideRegionalAlarmsAndRules"></a>
+
+```typescript
+public readonly serverSideRegionalAlarmsAndRules: IServerSideOperationRegionalAlarmsAndRules;
+```
+
+- *Type:* <a href="#@cdklabs/multi-az-observability.IServerSideOperationRegionalAlarmsAndRules">IServerSideOperationRegionalAlarmsAndRules</a>
+
+The server side regional alarms and rules.
+
+---
+
+##### `serverSideZonalAlarmsAndRules`<sup>Required</sup> <a name="serverSideZonalAlarmsAndRules" id="@cdklabs/multi-az-observability.IOperationAlarmsAndRules.property.serverSideZonalAlarmsAndRules"></a>
+
+```typescript
+public readonly serverSideZonalAlarmsAndRules: {[ key: string ]: IServerSideOperationZonalAlarmsAndRules};
+```
+
+- *Type:* {[ key: string ]: <a href="#@cdklabs/multi-az-observability.IServerSideOperationZonalAlarmsAndRules">IServerSideOperationZonalAlarmsAndRules</a>}
+
+The server side zonal alarms and rules, indexed by Availability Zone name.
+
+---
+
+##### `canaryRegionalAlarmsAndRules`<sup>Optional</sup> <a name="canaryRegionalAlarmsAndRules" id="@cdklabs/multi-az-observability.IOperationAlarmsAndRules.property.canaryRegionalAlarmsAndRules"></a>
+
+```typescript
+public readonly canaryRegionalAlarmsAndRules: ICanaryOperationRegionalAlarmsAndRules;
+```
+
+- *Type:* <a href="#@cdklabs/multi-az-observability.ICanaryOperationRegionalAlarmsAndRules">ICanaryOperationRegionalAlarmsAndRules</a>
+
+The canary regional alarms and rules.
+
+---
+
+##### `canaryZonalAlarmsAndRules`<sup>Optional</sup> <a name="canaryZonalAlarmsAndRules" id="@cdklabs/multi-az-observability.IOperationAlarmsAndRules.property.canaryZonalAlarmsAndRules"></a>
+
+```typescript
+public readonly canaryZonalAlarmsAndRules: {[ key: string ]: ICanaryOperationZonalAlarmsAndRules};
+```
+
+- *Type:* {[ key: string ]: <a href="#@cdklabs/multi-az-observability.ICanaryOperationZonalAlarmsAndRules">ICanaryOperationZonalAlarmsAndRules</a>}
+- *Default:* This is an empty dictionary if canary metric details are not provided
+
+The canary zonal alarms and rules, indexed by Availability Zone name.
+
+---
+
+### IOperationAvailabilityMetricDetails <a name="IOperationAvailabilityMetricDetails" id="@cdklabs/multi-az-observability.IOperationAvailabilityMetricDetails"></a>
+
+- *Extends:* <a href="#@cdklabs/multi-az-observability.IOperationMetricDetails">IOperationMetricDetails</a>
+
+- *Implemented By:* <a href="#@cdklabs/multi-az-observability.OperationAvailabilityMetricDetails">OperationAvailabilityMetricDetails</a>, <a href="#@cdklabs/multi-az-observability.IOperationAvailabilityMetricDetails">IOperationAvailabilityMetricDetails</a>
+
+Details for operation metrics in one perspective, such as server side latency.
+
+
+#### Properties <a name="Properties" id="Properties"></a>
+
+| **Name** | **Type** | **Description** |
+| --- | --- | --- |
+| <code><a href="#@cdklabs/multi-az-observability.IOperationAvailabilityMetricDetails.property.alarmStatistic">alarmStatistic</a></code> | <code>string</code> | The statistic used for alarms, for availability metrics this should be "Sum", for latency metrics it could something like "p99" or "p99.9". |
+| <code><a href="#@cdklabs/multi-az-observability.IOperationAvailabilityMetricDetails.property.datapointsToAlarm">datapointsToAlarm</a></code> | <code>number</code> | The number of datapoints to alarm on for latency and availability alarms. |
+| <code><a href="#@cdklabs/multi-az-observability.IOperationAvailabilityMetricDetails.property.evaluationPeriods">evaluationPeriods</a></code> | <code>number</code> | The number of evaluation periods for latency and availabiltiy alarms. |
+| <code><a href="#@cdklabs/multi-az-observability.IOperationAvailabilityMetricDetails.property.faultMetricNames">faultMetricNames</a></code> | <code>string[]</code> | The names of fault indicating metrics. |
+| <code><a href="#@cdklabs/multi-az-observability.IOperationAvailabilityMetricDetails.property.metricDimensions">metricDimensions</a></code> | <code><a href="#@cdklabs/multi-az-observability.MetricDimensions">MetricDimensions</a></code> | The metric dimensions for this operation, must be implemented as a concrete class by the user. |
+| <code><a href="#@cdklabs/multi-az-observability.IOperationAvailabilityMetricDetails.property.metricNamespace">metricNamespace</a></code> | <code>string</code> | The CloudWatch metric namespace for these metrics. |
+| <code><a href="#@cdklabs/multi-az-observability.IOperationAvailabilityMetricDetails.property.operationName">operationName</a></code> | <code>string</code> | The operation these metric details are for. |
+| <code><a href="#@cdklabs/multi-az-observability.IOperationAvailabilityMetricDetails.property.period">period</a></code> | <code>aws-cdk-lib.Duration</code> | The period for the metrics. |
+| <code><a href="#@cdklabs/multi-az-observability.IOperationAvailabilityMetricDetails.property.successMetricNames">successMetricNames</a></code> | <code>string[]</code> | The names of success indicating metrics. |
+| <code><a href="#@cdklabs/multi-az-observability.IOperationAvailabilityMetricDetails.property.unit">unit</a></code> | <code>aws-cdk-lib.aws_cloudwatch.Unit</code> | The unit used for these metrics. |
+| <code><a href="#@cdklabs/multi-az-observability.IOperationAvailabilityMetricDetails.property.graphedFaultStatistics">graphedFaultStatistics</a></code> | <code>string[]</code> | The statistics for faults you want to appear on dashboards, for example, with latency metrics, you might want p50, p99, and tm99. |
+| <code><a href="#@cdklabs/multi-az-observability.IOperationAvailabilityMetricDetails.property.graphedSuccessStatistics">graphedSuccessStatistics</a></code> | <code>string[]</code> | The statistics for successes you want to appear on dashboards, for example, with latency metrics, you might want p50, p99, and tm99. |
+| <code><a href="#@cdklabs/multi-az-observability.IOperationAvailabilityMetricDetails.property.faultAlarmThreshold">faultAlarmThreshold</a></code> | <code>number</code> | The threshold for alarms associated with availability fault metrics, for example if measuring fault rate, the threshold may be 1, meaning you would want an alarm that triggers if the fault rate goes above 1%. |
+| <code><a href="#@cdklabs/multi-az-observability.IOperationAvailabilityMetricDetails.property.successAlarmThreshold">successAlarmThreshold</a></code> | <code>number</code> | The threshold for alarms associated with availability success metrics, for example if measuring success rate, the threshold may be 99, meaning you would want an alarm that triggers if success drops below 99%. |
+
+---
+
+##### `alarmStatistic`<sup>Required</sup> <a name="alarmStatistic" id="@cdklabs/multi-az-observability.IOperationAvailabilityMetricDetails.property.alarmStatistic"></a>
+
+```typescript
+public readonly alarmStatistic: string;
+```
+
+- *Type:* string
+
+The statistic used for alarms, for availability metrics this should be "Sum", for latency metrics it could something like "p99" or "p99.9".
+
+---
+
+##### `datapointsToAlarm`<sup>Required</sup> <a name="datapointsToAlarm" id="@cdklabs/multi-az-observability.IOperationAvailabilityMetricDetails.property.datapointsToAlarm"></a>
+
+```typescript
+public readonly datapointsToAlarm: number;
+```
+
+- *Type:* number
+
+The number of datapoints to alarm on for latency and availability alarms.
+
+---
+
+##### `evaluationPeriods`<sup>Required</sup> <a name="evaluationPeriods" id="@cdklabs/multi-az-observability.IOperationAvailabilityMetricDetails.property.evaluationPeriods"></a>
+
+```typescript
+public readonly evaluationPeriods: number;
+```
+
+- *Type:* number
+
+The number of evaluation periods for latency and availabiltiy alarms.
+
+---
+
+##### `faultMetricNames`<sup>Required</sup> <a name="faultMetricNames" id="@cdklabs/multi-az-observability.IOperationAvailabilityMetricDetails.property.faultMetricNames"></a>
+
+```typescript
+public readonly faultMetricNames: string[];
+```
+
+- *Type:* string[]
+
+The names of fault indicating metrics.
+
+---
+
+##### `metricDimensions`<sup>Required</sup> <a name="metricDimensions" id="@cdklabs/multi-az-observability.IOperationAvailabilityMetricDetails.property.metricDimensions"></a>
+
+```typescript
+public readonly metricDimensions: MetricDimensions;
+```
+
+- *Type:* <a href="#@cdklabs/multi-az-observability.MetricDimensions">MetricDimensions</a>
+
+The metric dimensions for this operation, must be implemented as a concrete class by the user.
+
+---
+
+##### `metricNamespace`<sup>Required</sup> <a name="metricNamespace" id="@cdklabs/multi-az-observability.IOperationAvailabilityMetricDetails.property.metricNamespace"></a>
+
+```typescript
+public readonly metricNamespace: string;
+```
+
+- *Type:* string
+
+The CloudWatch metric namespace for these metrics.
+
+---
+
+##### `operationName`<sup>Required</sup> <a name="operationName" id="@cdklabs/multi-az-observability.IOperationAvailabilityMetricDetails.property.operationName"></a>
+
+```typescript
+public readonly operationName: string;
+```
+
+- *Type:* string
+
+The operation these metric details are for.
+
+---
+
+##### `period`<sup>Required</sup> <a name="period" id="@cdklabs/multi-az-observability.IOperationAvailabilityMetricDetails.property.period"></a>
+
+```typescript
+public readonly period: Duration;
+```
+
+- *Type:* aws-cdk-lib.Duration
+
+The period for the metrics.
+
+---
+
+##### `successMetricNames`<sup>Required</sup> <a name="successMetricNames" id="@cdklabs/multi-az-observability.IOperationAvailabilityMetricDetails.property.successMetricNames"></a>
+
+```typescript
+public readonly successMetricNames: string[];
+```
+
+- *Type:* string[]
+
+The names of success indicating metrics.
+
+---
+
+##### `unit`<sup>Required</sup> <a name="unit" id="@cdklabs/multi-az-observability.IOperationAvailabilityMetricDetails.property.unit"></a>
+
+```typescript
+public readonly unit: Unit;
+```
+
+- *Type:* aws-cdk-lib.aws_cloudwatch.Unit
+
+The unit used for these metrics.
+
+---
+
+##### `graphedFaultStatistics`<sup>Optional</sup> <a name="graphedFaultStatistics" id="@cdklabs/multi-az-observability.IOperationAvailabilityMetricDetails.property.graphedFaultStatistics"></a>
+
+```typescript
+public readonly graphedFaultStatistics: string[];
+```
+
+- *Type:* string[]
+- *Default:* For availability metrics, this will be "Sum", for latency metrics it will be just "p99"
+
+The statistics for faults you want to appear on dashboards, for example, with latency metrics, you might want p50, p99, and tm99.
+
+For availability
+metrics this will typically just be "Sum".
+
+---
+
+##### `graphedSuccessStatistics`<sup>Optional</sup> <a name="graphedSuccessStatistics" id="@cdklabs/multi-az-observability.IOperationAvailabilityMetricDetails.property.graphedSuccessStatistics"></a>
+
+```typescript
+public readonly graphedSuccessStatistics: string[];
+```
+
+- *Type:* string[]
+- *Default:* For availability metrics, this will be "Sum", for latency metrics it will be just "p99"
+
+The statistics for successes you want to appear on dashboards, for example, with latency metrics, you might want p50, p99, and tm99.
+
+For availability
+metrics this will typically just be "Sum".
+
+---
+
+##### `faultAlarmThreshold`<sup>Required</sup> <a name="faultAlarmThreshold" id="@cdklabs/multi-az-observability.IOperationAvailabilityMetricDetails.property.faultAlarmThreshold"></a>
+
+```typescript
+public readonly faultAlarmThreshold: number;
+```
+
+- *Type:* number
+
+The threshold for alarms associated with availability fault metrics, for example if measuring fault rate, the threshold may be 1, meaning you would want an alarm that triggers if the fault rate goes above 1%.
+
+---
+
+##### `successAlarmThreshold`<sup>Required</sup> <a name="successAlarmThreshold" id="@cdklabs/multi-az-observability.IOperationAvailabilityMetricDetails.property.successAlarmThreshold"></a>
+
+```typescript
+public readonly successAlarmThreshold: number;
+```
+
+- *Type:* number
+
+The threshold for alarms associated with availability success metrics, for example if measuring success rate, the threshold may be 99, meaning you would want an alarm that triggers if success drops below 99%.
+
+---
+
+### IOperationLatencyMetricDetails <a name="IOperationLatencyMetricDetails" id="@cdklabs/multi-az-observability.IOperationLatencyMetricDetails"></a>
+
+- *Extends:* <a href="#@cdklabs/multi-az-observability.IOperationMetricDetails">IOperationMetricDetails</a>
+
+- *Implemented By:* <a href="#@cdklabs/multi-az-observability.OperationLatencyMetricDetails">OperationLatencyMetricDetails</a>, <a href="#@cdklabs/multi-az-observability.IOperationLatencyMetricDetails">IOperationLatencyMetricDetails</a>
+
+Details for operation metrics in one perspective, such as server side latency.
+
+
+#### Properties <a name="Properties" id="Properties"></a>
+
+| **Name** | **Type** | **Description** |
+| --- | --- | --- |
+| <code><a href="#@cdklabs/multi-az-observability.IOperationLatencyMetricDetails.property.alarmStatistic">alarmStatistic</a></code> | <code>string</code> | The statistic used for alarms, for availability metrics this should be "Sum", for latency metrics it could something like "p99" or "p99.9". |
+| <code><a href="#@cdklabs/multi-az-observability.IOperationLatencyMetricDetails.property.datapointsToAlarm">datapointsToAlarm</a></code> | <code>number</code> | The number of datapoints to alarm on for latency and availability alarms. |
+| <code><a href="#@cdklabs/multi-az-observability.IOperationLatencyMetricDetails.property.evaluationPeriods">evaluationPeriods</a></code> | <code>number</code> | The number of evaluation periods for latency and availabiltiy alarms. |
+| <code><a href="#@cdklabs/multi-az-observability.IOperationLatencyMetricDetails.property.faultMetricNames">faultMetricNames</a></code> | <code>string[]</code> | The names of fault indicating metrics. |
+| <code><a href="#@cdklabs/multi-az-observability.IOperationLatencyMetricDetails.property.metricDimensions">metricDimensions</a></code> | <code><a href="#@cdklabs/multi-az-observability.MetricDimensions">MetricDimensions</a></code> | The metric dimensions for this operation, must be implemented as a concrete class by the user. |
+| <code><a href="#@cdklabs/multi-az-observability.IOperationLatencyMetricDetails.property.metricNamespace">metricNamespace</a></code> | <code>string</code> | The CloudWatch metric namespace for these metrics. |
+| <code><a href="#@cdklabs/multi-az-observability.IOperationLatencyMetricDetails.property.operationName">operationName</a></code> | <code>string</code> | The operation these metric details are for. |
+| <code><a href="#@cdklabs/multi-az-observability.IOperationLatencyMetricDetails.property.period">period</a></code> | <code>aws-cdk-lib.Duration</code> | The period for the metrics. |
+| <code><a href="#@cdklabs/multi-az-observability.IOperationLatencyMetricDetails.property.successMetricNames">successMetricNames</a></code> | <code>string[]</code> | The names of success indicating metrics. |
+| <code><a href="#@cdklabs/multi-az-observability.IOperationLatencyMetricDetails.property.unit">unit</a></code> | <code>aws-cdk-lib.aws_cloudwatch.Unit</code> | The unit used for these metrics. |
+| <code><a href="#@cdklabs/multi-az-observability.IOperationLatencyMetricDetails.property.graphedFaultStatistics">graphedFaultStatistics</a></code> | <code>string[]</code> | The statistics for faults you want to appear on dashboards, for example, with latency metrics, you might want p50, p99, and tm99. |
+| <code><a href="#@cdklabs/multi-az-observability.IOperationLatencyMetricDetails.property.graphedSuccessStatistics">graphedSuccessStatistics</a></code> | <code>string[]</code> | The statistics for successes you want to appear on dashboards, for example, with latency metrics, you might want p50, p99, and tm99. |
+| <code><a href="#@cdklabs/multi-az-observability.IOperationLatencyMetricDetails.property.successAlarmThreshold">successAlarmThreshold</a></code> | <code>aws-cdk-lib.Duration</code> | The threshold for alarms associated with latency success metrics, for example if success latency exceeds 500 milliseconds. |
+
+---
+
+##### `alarmStatistic`<sup>Required</sup> <a name="alarmStatistic" id="@cdklabs/multi-az-observability.IOperationLatencyMetricDetails.property.alarmStatistic"></a>
+
+```typescript
+public readonly alarmStatistic: string;
+```
+
+- *Type:* string
+
+The statistic used for alarms, for availability metrics this should be "Sum", for latency metrics it could something like "p99" or "p99.9".
+
+---
+
+##### `datapointsToAlarm`<sup>Required</sup> <a name="datapointsToAlarm" id="@cdklabs/multi-az-observability.IOperationLatencyMetricDetails.property.datapointsToAlarm"></a>
+
+```typescript
+public readonly datapointsToAlarm: number;
+```
+
+- *Type:* number
+
+The number of datapoints to alarm on for latency and availability alarms.
+
+---
+
+##### `evaluationPeriods`<sup>Required</sup> <a name="evaluationPeriods" id="@cdklabs/multi-az-observability.IOperationLatencyMetricDetails.property.evaluationPeriods"></a>
+
+```typescript
+public readonly evaluationPeriods: number;
+```
+
+- *Type:* number
+
+The number of evaluation periods for latency and availabiltiy alarms.
+
+---
+
+##### `faultMetricNames`<sup>Required</sup> <a name="faultMetricNames" id="@cdklabs/multi-az-observability.IOperationLatencyMetricDetails.property.faultMetricNames"></a>
+
+```typescript
+public readonly faultMetricNames: string[];
+```
+
+- *Type:* string[]
+
+The names of fault indicating metrics.
+
+---
+
+##### `metricDimensions`<sup>Required</sup> <a name="metricDimensions" id="@cdklabs/multi-az-observability.IOperationLatencyMetricDetails.property.metricDimensions"></a>
+
+```typescript
+public readonly metricDimensions: MetricDimensions;
+```
+
+- *Type:* <a href="#@cdklabs/multi-az-observability.MetricDimensions">MetricDimensions</a>
+
+The metric dimensions for this operation, must be implemented as a concrete class by the user.
+
+---
+
+##### `metricNamespace`<sup>Required</sup> <a name="metricNamespace" id="@cdklabs/multi-az-observability.IOperationLatencyMetricDetails.property.metricNamespace"></a>
+
+```typescript
+public readonly metricNamespace: string;
+```
+
+- *Type:* string
+
+The CloudWatch metric namespace for these metrics.
+
+---
+
+##### `operationName`<sup>Required</sup> <a name="operationName" id="@cdklabs/multi-az-observability.IOperationLatencyMetricDetails.property.operationName"></a>
+
+```typescript
+public readonly operationName: string;
+```
+
+- *Type:* string
+
+The operation these metric details are for.
+
+---
+
+##### `period`<sup>Required</sup> <a name="period" id="@cdklabs/multi-az-observability.IOperationLatencyMetricDetails.property.period"></a>
+
+```typescript
+public readonly period: Duration;
+```
+
+- *Type:* aws-cdk-lib.Duration
+
+The period for the metrics.
+
+---
+
+##### `successMetricNames`<sup>Required</sup> <a name="successMetricNames" id="@cdklabs/multi-az-observability.IOperationLatencyMetricDetails.property.successMetricNames"></a>
+
+```typescript
+public readonly successMetricNames: string[];
+```
+
+- *Type:* string[]
+
+The names of success indicating metrics.
+
+---
+
+##### `unit`<sup>Required</sup> <a name="unit" id="@cdklabs/multi-az-observability.IOperationLatencyMetricDetails.property.unit"></a>
+
+```typescript
+public readonly unit: Unit;
+```
+
+- *Type:* aws-cdk-lib.aws_cloudwatch.Unit
+
+The unit used for these metrics.
+
+---
+
+##### `graphedFaultStatistics`<sup>Optional</sup> <a name="graphedFaultStatistics" id="@cdklabs/multi-az-observability.IOperationLatencyMetricDetails.property.graphedFaultStatistics"></a>
+
+```typescript
+public readonly graphedFaultStatistics: string[];
+```
+
+- *Type:* string[]
+- *Default:* For availability metrics, this will be "Sum", for latency metrics it will be just "p99"
+
+The statistics for faults you want to appear on dashboards, for example, with latency metrics, you might want p50, p99, and tm99.
+
+For availability
+metrics this will typically just be "Sum".
+
+---
+
+##### `graphedSuccessStatistics`<sup>Optional</sup> <a name="graphedSuccessStatistics" id="@cdklabs/multi-az-observability.IOperationLatencyMetricDetails.property.graphedSuccessStatistics"></a>
+
+```typescript
+public readonly graphedSuccessStatistics: string[];
+```
+
+- *Type:* string[]
+- *Default:* For availability metrics, this will be "Sum", for latency metrics it will be just "p99"
+
+The statistics for successes you want to appear on dashboards, for example, with latency metrics, you might want p50, p99, and tm99.
+
+For availability
+metrics this will typically just be "Sum".
+
+---
+
+##### `successAlarmThreshold`<sup>Required</sup> <a name="successAlarmThreshold" id="@cdklabs/multi-az-observability.IOperationLatencyMetricDetails.property.successAlarmThreshold"></a>
+
+```typescript
+public readonly successAlarmThreshold: Duration;
+```
+
+- *Type:* aws-cdk-lib.Duration
+
+The threshold for alarms associated with latency success metrics, for example if success latency exceeds 500 milliseconds.
+
+---
+
 ### IOperationMetricDetails <a name="IOperationMetricDetails" id="@cdklabs/multi-az-observability.IOperationMetricDetails"></a>
 
-- *Implemented By:* <a href="#@cdklabs/multi-az-observability.OperationMetricDetails">OperationMetricDetails</a>, <a href="#@cdklabs/multi-az-observability.IOperationMetricDetails">IOperationMetricDetails</a>
+- *Implemented By:* <a href="#@cdklabs/multi-az-observability.OperationAvailabilityMetricDetails">OperationAvailabilityMetricDetails</a>, <a href="#@cdklabs/multi-az-observability.OperationLatencyMetricDetails">OperationLatencyMetricDetails</a>, <a href="#@cdklabs/multi-az-observability.OperationMetricDetails">OperationMetricDetails</a>, <a href="#@cdklabs/multi-az-observability.IOperationAvailabilityMetricDetails">IOperationAvailabilityMetricDetails</a>, <a href="#@cdklabs/multi-az-observability.IOperationLatencyMetricDetails">IOperationLatencyMetricDetails</a>, <a href="#@cdklabs/multi-az-observability.IOperationMetricDetails">IOperationMetricDetails</a>
 
 Details for operation metrics in one perspective, such as server side latency.
 
@@ -4505,13 +7325,11 @@ Details for operation metrics in one perspective, such as server side latency.
 | <code><a href="#@cdklabs/multi-az-observability.IOperationMetricDetails.property.alarmStatistic">alarmStatistic</a></code> | <code>string</code> | The statistic used for alarms, for availability metrics this should be "Sum", for latency metrics it could something like "p99" or "p99.9". |
 | <code><a href="#@cdklabs/multi-az-observability.IOperationMetricDetails.property.datapointsToAlarm">datapointsToAlarm</a></code> | <code>number</code> | The number of datapoints to alarm on for latency and availability alarms. |
 | <code><a href="#@cdklabs/multi-az-observability.IOperationMetricDetails.property.evaluationPeriods">evaluationPeriods</a></code> | <code>number</code> | The number of evaluation periods for latency and availabiltiy alarms. |
-| <code><a href="#@cdklabs/multi-az-observability.IOperationMetricDetails.property.faultAlarmThreshold">faultAlarmThreshold</a></code> | <code>number</code> | The threshold for alarms associated with fault metrics, for example if measuring fault rate, the threshold may be 1, meaning you would want an alarm that triggers if the fault rate goes above 1%. |
 | <code><a href="#@cdklabs/multi-az-observability.IOperationMetricDetails.property.faultMetricNames">faultMetricNames</a></code> | <code>string[]</code> | The names of fault indicating metrics. |
 | <code><a href="#@cdklabs/multi-az-observability.IOperationMetricDetails.property.metricDimensions">metricDimensions</a></code> | <code><a href="#@cdklabs/multi-az-observability.MetricDimensions">MetricDimensions</a></code> | The metric dimensions for this operation, must be implemented as a concrete class by the user. |
 | <code><a href="#@cdklabs/multi-az-observability.IOperationMetricDetails.property.metricNamespace">metricNamespace</a></code> | <code>string</code> | The CloudWatch metric namespace for these metrics. |
 | <code><a href="#@cdklabs/multi-az-observability.IOperationMetricDetails.property.operationName">operationName</a></code> | <code>string</code> | The operation these metric details are for. |
 | <code><a href="#@cdklabs/multi-az-observability.IOperationMetricDetails.property.period">period</a></code> | <code>aws-cdk-lib.Duration</code> | The period for the metrics. |
-| <code><a href="#@cdklabs/multi-az-observability.IOperationMetricDetails.property.successAlarmThreshold">successAlarmThreshold</a></code> | <code>number</code> | The threshold for alarms associated with success metrics, for example if measuring success rate, the threshold may be 99, meaning you would want an alarm that triggers if success drops below 99%. |
 | <code><a href="#@cdklabs/multi-az-observability.IOperationMetricDetails.property.successMetricNames">successMetricNames</a></code> | <code>string[]</code> | The names of success indicating metrics. |
 | <code><a href="#@cdklabs/multi-az-observability.IOperationMetricDetails.property.unit">unit</a></code> | <code>aws-cdk-lib.aws_cloudwatch.Unit</code> | The unit used for these metrics. |
 | <code><a href="#@cdklabs/multi-az-observability.IOperationMetricDetails.property.graphedFaultStatistics">graphedFaultStatistics</a></code> | <code>string[]</code> | The statistics for faults you want to appear on dashboards, for example, with latency metrics, you might want p50, p99, and tm99. |
@@ -4552,18 +7370,6 @@ public readonly evaluationPeriods: number;
 - *Type:* number
 
 The number of evaluation periods for latency and availabiltiy alarms.
-
----
-
-##### `faultAlarmThreshold`<sup>Required</sup> <a name="faultAlarmThreshold" id="@cdklabs/multi-az-observability.IOperationMetricDetails.property.faultAlarmThreshold"></a>
-
-```typescript
-public readonly faultAlarmThreshold: number;
-```
-
-- *Type:* number
-
-The threshold for alarms associated with fault metrics, for example if measuring fault rate, the threshold may be 1, meaning you would want an alarm that triggers if the fault rate goes above 1%.
 
 ---
 
@@ -4627,18 +7433,6 @@ The period for the metrics.
 
 ---
 
-##### `successAlarmThreshold`<sup>Required</sup> <a name="successAlarmThreshold" id="@cdklabs/multi-az-observability.IOperationMetricDetails.property.successAlarmThreshold"></a>
-
-```typescript
-public readonly successAlarmThreshold: number;
-```
-
-- *Type:* number
-
-The threshold for alarms associated with success metrics, for example if measuring success rate, the threshold may be 99, meaning you would want an alarm that triggers if success drops below 99%.
-
----
-
 ##### `successMetricNames`<sup>Required</sup> <a name="successMetricNames" id="@cdklabs/multi-az-observability.IOperationMetricDetails.property.successMetricNames"></a>
 
 ```typescript
@@ -4695,6 +7489,233 @@ metrics this will typically just be "Sum".
 
 ---
 
+### IServerSideOperationRegionalAlarmsAndRules <a name="IServerSideOperationRegionalAlarmsAndRules" id="@cdklabs/multi-az-observability.IServerSideOperationRegionalAlarmsAndRules"></a>
+
+- *Extends:* <a href="#@cdklabs/multi-az-observability.IBaseOperationRegionalAlarmsAndRules">IBaseOperationRegionalAlarmsAndRules</a>
+
+- *Implemented By:* <a href="#@cdklabs/multi-az-observability.IServerSideOperationRegionalAlarmsAndRules">IServerSideOperationRegionalAlarmsAndRules</a>
+
+The server side operation regional alarms and rules.
+
+
+#### Properties <a name="Properties" id="Properties"></a>
+
+| **Name** | **Type** | **Description** |
+| --- | --- | --- |
+| <code><a href="#@cdklabs/multi-az-observability.IServerSideOperationRegionalAlarmsAndRules.property.availabilityAlarm">availabilityAlarm</a></code> | <code>aws-cdk-lib.aws_cloudwatch.IAlarm</code> | Availability alarm for this operation. |
+| <code><a href="#@cdklabs/multi-az-observability.IServerSideOperationRegionalAlarmsAndRules.property.availabilityOrLatencyAlarm">availabilityOrLatencyAlarm</a></code> | <code>aws-cdk-lib.aws_cloudwatch.IAlarm</code> | Composite alarm for either availabiltiy or latency impact to this operation. |
+| <code><a href="#@cdklabs/multi-az-observability.IServerSideOperationRegionalAlarmsAndRules.property.latencyAlarm">latencyAlarm</a></code> | <code>aws-cdk-lib.aws_cloudwatch.IAlarm</code> | Latency alarm for this operation. |
+| <code><a href="#@cdklabs/multi-az-observability.IServerSideOperationRegionalAlarmsAndRules.property.instanceContributorsToRegionalFaults">instanceContributorsToRegionalFaults</a></code> | <code>aws-cdk-lib.aws_cloudwatch.CfnInsightRule</code> | A rule that shows which instances are contributing to faults. |
+| <code><a href="#@cdklabs/multi-az-observability.IServerSideOperationRegionalAlarmsAndRules.property.instanceContributorsToRegionalHighLatency">instanceContributorsToRegionalHighLatency</a></code> | <code>aws-cdk-lib.aws_cloudwatch.CfnInsightRule</code> | A rule that shows which instances are contributing to high latency responses. |
+
+---
+
+##### `availabilityAlarm`<sup>Required</sup> <a name="availabilityAlarm" id="@cdklabs/multi-az-observability.IServerSideOperationRegionalAlarmsAndRules.property.availabilityAlarm"></a>
+
+```typescript
+public readonly availabilityAlarm: IAlarm;
+```
+
+- *Type:* aws-cdk-lib.aws_cloudwatch.IAlarm
+
+Availability alarm for this operation.
+
+---
+
+##### `availabilityOrLatencyAlarm`<sup>Required</sup> <a name="availabilityOrLatencyAlarm" id="@cdklabs/multi-az-observability.IServerSideOperationRegionalAlarmsAndRules.property.availabilityOrLatencyAlarm"></a>
+
+```typescript
+public readonly availabilityOrLatencyAlarm: IAlarm;
+```
+
+- *Type:* aws-cdk-lib.aws_cloudwatch.IAlarm
+
+Composite alarm for either availabiltiy or latency impact to this operation.
+
+---
+
+##### `latencyAlarm`<sup>Required</sup> <a name="latencyAlarm" id="@cdklabs/multi-az-observability.IServerSideOperationRegionalAlarmsAndRules.property.latencyAlarm"></a>
+
+```typescript
+public readonly latencyAlarm: IAlarm;
+```
+
+- *Type:* aws-cdk-lib.aws_cloudwatch.IAlarm
+
+Latency alarm for this operation.
+
+---
+
+##### `instanceContributorsToRegionalFaults`<sup>Optional</sup> <a name="instanceContributorsToRegionalFaults" id="@cdklabs/multi-az-observability.IServerSideOperationRegionalAlarmsAndRules.property.instanceContributorsToRegionalFaults"></a>
+
+```typescript
+public readonly instanceContributorsToRegionalFaults: CfnInsightRule;
+```
+
+- *Type:* aws-cdk-lib.aws_cloudwatch.CfnInsightRule
+
+A rule that shows which instances are contributing to faults.
+
+---
+
+##### `instanceContributorsToRegionalHighLatency`<sup>Optional</sup> <a name="instanceContributorsToRegionalHighLatency" id="@cdklabs/multi-az-observability.IServerSideOperationRegionalAlarmsAndRules.property.instanceContributorsToRegionalHighLatency"></a>
+
+```typescript
+public readonly instanceContributorsToRegionalHighLatency: CfnInsightRule;
+```
+
+- *Type:* aws-cdk-lib.aws_cloudwatch.CfnInsightRule
+
+A rule that shows which instances are contributing to high latency responses.
+
+---
+
+### IServerSideOperationZonalAlarmsAndRules <a name="IServerSideOperationZonalAlarmsAndRules" id="@cdklabs/multi-az-observability.IServerSideOperationZonalAlarmsAndRules"></a>
+
+- *Extends:* <a href="#@cdklabs/multi-az-observability.IBaseOperationZonalAlarmsAndRules">IBaseOperationZonalAlarmsAndRules</a>
+
+- *Implemented By:* <a href="#@cdklabs/multi-az-observability.IServerSideOperationZonalAlarmsAndRules">IServerSideOperationZonalAlarmsAndRules</a>
+
+Server side opertaion zonal alarms and rules.
+
+
+#### Properties <a name="Properties" id="Properties"></a>
+
+| **Name** | **Type** | **Description** |
+| --- | --- | --- |
+| <code><a href="#@cdklabs/multi-az-observability.IServerSideOperationZonalAlarmsAndRules.property.availabilityAlarm">availabilityAlarm</a></code> | <code>aws-cdk-lib.aws_cloudwatch.IAlarm</code> | Availability alarm for this operation. |
+| <code><a href="#@cdklabs/multi-az-observability.IServerSideOperationZonalAlarmsAndRules.property.availabilityZoneIsOutlierForFaults">availabilityZoneIsOutlierForFaults</a></code> | <code>aws-cdk-lib.aws_cloudwatch.IAlarm</code> | Alarm that indicates that this AZ is an outlier for fault rate. |
+| <code><a href="#@cdklabs/multi-az-observability.IServerSideOperationZonalAlarmsAndRules.property.availabilityZoneIsOutlierForLatency">availabilityZoneIsOutlierForLatency</a></code> | <code>aws-cdk-lib.aws_cloudwatch.IAlarm</code> | Alarm that indicates this AZ is an outlier for high latency. |
+| <code><a href="#@cdklabs/multi-az-observability.IServerSideOperationZonalAlarmsAndRules.property.latencyAlarm">latencyAlarm</a></code> | <code>aws-cdk-lib.aws_cloudwatch.IAlarm</code> | Latency alarm for this operation. |
+| <code><a href="#@cdklabs/multi-az-observability.IServerSideOperationZonalAlarmsAndRules.property.isolatedImpactAlarm">isolatedImpactAlarm</a></code> | <code>aws-cdk-lib.aws_cloudwatch.IAlarm</code> | Alarm that triggers if either latency or availability breach the specified threshold in this AZ and the AZ is an outlier for faults or latency. |
+| <code><a href="#@cdklabs/multi-az-observability.IServerSideOperationZonalAlarmsAndRules.property.instanceContributorsToFaultsInThisAZ">instanceContributorsToFaultsInThisAZ</a></code> | <code>aws-cdk-lib.aws_cloudwatch.CfnInsightRule</code> | Insight rule that measures the number of instances contributing to faults in this AZ. |
+| <code><a href="#@cdklabs/multi-az-observability.IServerSideOperationZonalAlarmsAndRules.property.instanceContributorsToHighLatencyInThisAZ">instanceContributorsToHighLatencyInThisAZ</a></code> | <code>aws-cdk-lib.aws_cloudwatch.CfnInsightRule</code> | Insight rule that measures the number of instances contributing to high latency in this AZ. |
+| <code><a href="#@cdklabs/multi-az-observability.IServerSideOperationZonalAlarmsAndRules.property.instancesHandlingRequestsInThisAZ">instancesHandlingRequestsInThisAZ</a></code> | <code>aws-cdk-lib.aws_cloudwatch.CfnInsightRule</code> | Insight rule that is used to calculate the number of instances in this particular AZ that is used with metric math to calculate the percent of instances contributing to latency or faults. |
+| <code><a href="#@cdklabs/multi-az-observability.IServerSideOperationZonalAlarmsAndRules.property.multipleInstancesProducingFaultsInThisAvailabilityZone">multipleInstancesProducingFaultsInThisAvailabilityZone</a></code> | <code>aws-cdk-lib.aws_cloudwatch.IAlarm</code> | Alarm indicating that there are multiple instances producing faults in this AZ indicating the fault rate is not being caused by a single instance. |
+| <code><a href="#@cdklabs/multi-az-observability.IServerSideOperationZonalAlarmsAndRules.property.multipleInstancesProducingHighLatencyInThisAZ">multipleInstancesProducingHighLatencyInThisAZ</a></code> | <code>aws-cdk-lib.aws_cloudwatch.IAlarm</code> | Alarm indicating that there are multiple instances producing high latency responses in this AZ indicating the latency is not being caused by a single instance. |
+
+---
+
+##### `availabilityAlarm`<sup>Required</sup> <a name="availabilityAlarm" id="@cdklabs/multi-az-observability.IServerSideOperationZonalAlarmsAndRules.property.availabilityAlarm"></a>
+
+```typescript
+public readonly availabilityAlarm: IAlarm;
+```
+
+- *Type:* aws-cdk-lib.aws_cloudwatch.IAlarm
+
+Availability alarm for this operation.
+
+---
+
+##### `availabilityZoneIsOutlierForFaults`<sup>Required</sup> <a name="availabilityZoneIsOutlierForFaults" id="@cdklabs/multi-az-observability.IServerSideOperationZonalAlarmsAndRules.property.availabilityZoneIsOutlierForFaults"></a>
+
+```typescript
+public readonly availabilityZoneIsOutlierForFaults: IAlarm;
+```
+
+- *Type:* aws-cdk-lib.aws_cloudwatch.IAlarm
+
+Alarm that indicates that this AZ is an outlier for fault rate.
+
+---
+
+##### `availabilityZoneIsOutlierForLatency`<sup>Required</sup> <a name="availabilityZoneIsOutlierForLatency" id="@cdklabs/multi-az-observability.IServerSideOperationZonalAlarmsAndRules.property.availabilityZoneIsOutlierForLatency"></a>
+
+```typescript
+public readonly availabilityZoneIsOutlierForLatency: IAlarm;
+```
+
+- *Type:* aws-cdk-lib.aws_cloudwatch.IAlarm
+
+Alarm that indicates this AZ is an outlier for high latency.
+
+---
+
+##### `latencyAlarm`<sup>Required</sup> <a name="latencyAlarm" id="@cdklabs/multi-az-observability.IServerSideOperationZonalAlarmsAndRules.property.latencyAlarm"></a>
+
+```typescript
+public readonly latencyAlarm: IAlarm;
+```
+
+- *Type:* aws-cdk-lib.aws_cloudwatch.IAlarm
+
+Latency alarm for this operation.
+
+---
+
+##### `isolatedImpactAlarm`<sup>Required</sup> <a name="isolatedImpactAlarm" id="@cdklabs/multi-az-observability.IServerSideOperationZonalAlarmsAndRules.property.isolatedImpactAlarm"></a>
+
+```typescript
+public readonly isolatedImpactAlarm: IAlarm;
+```
+
+- *Type:* aws-cdk-lib.aws_cloudwatch.IAlarm
+
+Alarm that triggers if either latency or availability breach the specified threshold in this AZ and the AZ is an outlier for faults or latency.
+
+---
+
+##### `instanceContributorsToFaultsInThisAZ`<sup>Optional</sup> <a name="instanceContributorsToFaultsInThisAZ" id="@cdklabs/multi-az-observability.IServerSideOperationZonalAlarmsAndRules.property.instanceContributorsToFaultsInThisAZ"></a>
+
+```typescript
+public readonly instanceContributorsToFaultsInThisAZ: CfnInsightRule;
+```
+
+- *Type:* aws-cdk-lib.aws_cloudwatch.CfnInsightRule
+
+Insight rule that measures the number of instances contributing to faults in this AZ.
+
+---
+
+##### `instanceContributorsToHighLatencyInThisAZ`<sup>Optional</sup> <a name="instanceContributorsToHighLatencyInThisAZ" id="@cdklabs/multi-az-observability.IServerSideOperationZonalAlarmsAndRules.property.instanceContributorsToHighLatencyInThisAZ"></a>
+
+```typescript
+public readonly instanceContributorsToHighLatencyInThisAZ: CfnInsightRule;
+```
+
+- *Type:* aws-cdk-lib.aws_cloudwatch.CfnInsightRule
+
+Insight rule that measures the number of instances contributing to high latency in this AZ.
+
+---
+
+##### `instancesHandlingRequestsInThisAZ`<sup>Optional</sup> <a name="instancesHandlingRequestsInThisAZ" id="@cdklabs/multi-az-observability.IServerSideOperationZonalAlarmsAndRules.property.instancesHandlingRequestsInThisAZ"></a>
+
+```typescript
+public readonly instancesHandlingRequestsInThisAZ: CfnInsightRule;
+```
+
+- *Type:* aws-cdk-lib.aws_cloudwatch.CfnInsightRule
+
+Insight rule that is used to calculate the number of instances in this particular AZ that is used with metric math to calculate the percent of instances contributing to latency or faults.
+
+---
+
+##### `multipleInstancesProducingFaultsInThisAvailabilityZone`<sup>Optional</sup> <a name="multipleInstancesProducingFaultsInThisAvailabilityZone" id="@cdklabs/multi-az-observability.IServerSideOperationZonalAlarmsAndRules.property.multipleInstancesProducingFaultsInThisAvailabilityZone"></a>
+
+```typescript
+public readonly multipleInstancesProducingFaultsInThisAvailabilityZone: IAlarm;
+```
+
+- *Type:* aws-cdk-lib.aws_cloudwatch.IAlarm
+
+Alarm indicating that there are multiple instances producing faults in this AZ indicating the fault rate is not being caused by a single instance.
+
+---
+
+##### `multipleInstancesProducingHighLatencyInThisAZ`<sup>Optional</sup> <a name="multipleInstancesProducingHighLatencyInThisAZ" id="@cdklabs/multi-az-observability.IServerSideOperationZonalAlarmsAndRules.property.multipleInstancesProducingHighLatencyInThisAZ"></a>
+
+```typescript
+public readonly multipleInstancesProducingHighLatencyInThisAZ: IAlarm;
+```
+
+- *Type:* aws-cdk-lib.aws_cloudwatch.IAlarm
+
+Alarm indicating that there are multiple instances producing high latency responses in this AZ indicating the latency is not being caused by a single instance.
+
+---
+
 ### IService <a name="IService" id="@cdklabs/multi-az-observability.IService"></a>
 
 - *Implemented By:* <a href="#@cdklabs/multi-az-observability.Service">Service</a>, <a href="#@cdklabs/multi-az-observability.IService">IService</a>
@@ -4729,8 +7750,8 @@ Adds an operation to this service.
 | --- | --- | --- |
 | <code><a href="#@cdklabs/multi-az-observability.IService.property.availabilityZoneNames">availabilityZoneNames</a></code> | <code>string[]</code> | A list of the Availability Zone names used by this application. |
 | <code><a href="#@cdklabs/multi-az-observability.IService.property.baseUrl">baseUrl</a></code> | <code>string</code> | The base endpoint for this service, like "https://www.example.com". Operation paths will be appended to this endpoint for canary testing the service. |
-| <code><a href="#@cdklabs/multi-az-observability.IService.property.defaultAvailabilityMetricDetails">defaultAvailabilityMetricDetails</a></code> | <code><a href="#@cdklabs/multi-az-observability.IServiceMetricDetails">IServiceMetricDetails</a></code> | The default settings that are used for availability metrics for all operations unless specifically overridden in an operation definition. |
-| <code><a href="#@cdklabs/multi-az-observability.IService.property.defaultLatencyMetricDetails">defaultLatencyMetricDetails</a></code> | <code><a href="#@cdklabs/multi-az-observability.IServiceMetricDetails">IServiceMetricDetails</a></code> | The default settings that are used for availability metrics for all operations unless specifically overridden in an operation definition. |
+| <code><a href="#@cdklabs/multi-az-observability.IService.property.defaultAvailabilityMetricDetails">defaultAvailabilityMetricDetails</a></code> | <code><a href="#@cdklabs/multi-az-observability.IServiceAvailabilityMetricDetails">IServiceAvailabilityMetricDetails</a></code> | The default settings that are used for availability metrics for all operations unless specifically overridden in an operation definition. |
+| <code><a href="#@cdklabs/multi-az-observability.IService.property.defaultLatencyMetricDetails">defaultLatencyMetricDetails</a></code> | <code><a href="#@cdklabs/multi-az-observability.IServiceLatencyMetricDetails">IServiceLatencyMetricDetails</a></code> | The default settings that are used for availability metrics for all operations unless specifically overridden in an operation definition. |
 | <code><a href="#@cdklabs/multi-az-observability.IService.property.faultCountThreshold">faultCountThreshold</a></code> | <code>number</code> | The fault count threshold that indicates the service is unhealthy. |
 | <code><a href="#@cdklabs/multi-az-observability.IService.property.operations">operations</a></code> | <code><a href="#@cdklabs/multi-az-observability.IOperation">IOperation</a>[]</code> | The operations that are part of this service. |
 | <code><a href="#@cdklabs/multi-az-observability.IService.property.period">period</a></code> | <code>aws-cdk-lib.Duration</code> | The period for which metrics for the service should be aggregated. |
@@ -4768,10 +7789,10 @@ The base endpoint for this service, like "https://www.example.com". Operation pa
 ##### `defaultAvailabilityMetricDetails`<sup>Required</sup> <a name="defaultAvailabilityMetricDetails" id="@cdklabs/multi-az-observability.IService.property.defaultAvailabilityMetricDetails"></a>
 
 ```typescript
-public readonly defaultAvailabilityMetricDetails: IServiceMetricDetails;
+public readonly defaultAvailabilityMetricDetails: IServiceAvailabilityMetricDetails;
 ```
 
-- *Type:* <a href="#@cdklabs/multi-az-observability.IServiceMetricDetails">IServiceMetricDetails</a>
+- *Type:* <a href="#@cdklabs/multi-az-observability.IServiceAvailabilityMetricDetails">IServiceAvailabilityMetricDetails</a>
 
 The default settings that are used for availability metrics for all operations unless specifically overridden in an operation definition.
 
@@ -4780,10 +7801,10 @@ The default settings that are used for availability metrics for all operations u
 ##### `defaultLatencyMetricDetails`<sup>Required</sup> <a name="defaultLatencyMetricDetails" id="@cdklabs/multi-az-observability.IService.property.defaultLatencyMetricDetails"></a>
 
 ```typescript
-public readonly defaultLatencyMetricDetails: IServiceMetricDetails;
+public readonly defaultLatencyMetricDetails: IServiceLatencyMetricDetails;
 ```
 
-- *Type:* <a href="#@cdklabs/multi-az-observability.IServiceMetricDetails">IServiceMetricDetails</a>
+- *Type:* <a href="#@cdklabs/multi-az-observability.IServiceLatencyMetricDetails">IServiceLatencyMetricDetails</a>
 
 The default settings that are used for availability metrics for all operations unless specifically overridden in an operation definition.
 
@@ -4999,9 +8020,356 @@ An alarm indicating the canary has discovered an availability or latency impact 
 
 ---
 
+### IServiceAvailabilityMetricDetails <a name="IServiceAvailabilityMetricDetails" id="@cdklabs/multi-az-observability.IServiceAvailabilityMetricDetails"></a>
+
+- *Extends:* <a href="#@cdklabs/multi-az-observability.IServiceMetricDetails">IServiceMetricDetails</a>
+
+- *Implemented By:* <a href="#@cdklabs/multi-az-observability.ServiceAvailabilityMetricDetails">ServiceAvailabilityMetricDetails</a>, <a href="#@cdklabs/multi-az-observability.IServiceAvailabilityMetricDetails">IServiceAvailabilityMetricDetails</a>
+
+Details for the defaults used in a service for metrics in one perspective, such as server side latency.
+
+
+#### Properties <a name="Properties" id="Properties"></a>
+
+| **Name** | **Type** | **Description** |
+| --- | --- | --- |
+| <code><a href="#@cdklabs/multi-az-observability.IServiceAvailabilityMetricDetails.property.alarmStatistic">alarmStatistic</a></code> | <code>string</code> | The statistic used for alarms, for availability metrics this should be "Sum", for latency metrics it could something like "p99" or "p99.9". |
+| <code><a href="#@cdklabs/multi-az-observability.IServiceAvailabilityMetricDetails.property.datapointsToAlarm">datapointsToAlarm</a></code> | <code>number</code> | The number of datapoints to alarm on for latency and availability alarms. |
+| <code><a href="#@cdklabs/multi-az-observability.IServiceAvailabilityMetricDetails.property.evaluationPeriods">evaluationPeriods</a></code> | <code>number</code> | The number of evaluation periods for latency and availabiltiy alarms. |
+| <code><a href="#@cdklabs/multi-az-observability.IServiceAvailabilityMetricDetails.property.faultMetricNames">faultMetricNames</a></code> | <code>string[]</code> | The names of fault indicating metrics. |
+| <code><a href="#@cdklabs/multi-az-observability.IServiceAvailabilityMetricDetails.property.metricNamespace">metricNamespace</a></code> | <code>string</code> | The CloudWatch metric namespace for these metrics. |
+| <code><a href="#@cdklabs/multi-az-observability.IServiceAvailabilityMetricDetails.property.period">period</a></code> | <code>aws-cdk-lib.Duration</code> | The period for the metrics. |
+| <code><a href="#@cdklabs/multi-az-observability.IServiceAvailabilityMetricDetails.property.successMetricNames">successMetricNames</a></code> | <code>string[]</code> | The names of success indicating metrics. |
+| <code><a href="#@cdklabs/multi-az-observability.IServiceAvailabilityMetricDetails.property.unit">unit</a></code> | <code>aws-cdk-lib.aws_cloudwatch.Unit</code> | The unit used for these metrics. |
+| <code><a href="#@cdklabs/multi-az-observability.IServiceAvailabilityMetricDetails.property.graphedFaultStatistics">graphedFaultStatistics</a></code> | <code>string[]</code> | The statistics for faults you want to appear on dashboards, for example, with latency metrics, you might want p50, p99, and tm99. |
+| <code><a href="#@cdklabs/multi-az-observability.IServiceAvailabilityMetricDetails.property.graphedSuccessStatistics">graphedSuccessStatistics</a></code> | <code>string[]</code> | The statistics for successes you want to appear on dashboards, for example, with latency metrics, you might want p50, p99, and tm99. |
+| <code><a href="#@cdklabs/multi-az-observability.IServiceAvailabilityMetricDetails.property.faultAlarmThreshold">faultAlarmThreshold</a></code> | <code>number</code> | The threshold for alarms associated with availability fault metrics, for example if measuring fault rate, the threshold may be 1, meaning you would want an alarm that triggers if the fault rate goes above 1%. |
+| <code><a href="#@cdklabs/multi-az-observability.IServiceAvailabilityMetricDetails.property.successAlarmThreshold">successAlarmThreshold</a></code> | <code>number</code> | The threshold for alarms associated with availability success metrics, for example if measuring success rate, the threshold may be 99, meaning you would want an alarm that triggers if success drops below 99%. |
+
+---
+
+##### `alarmStatistic`<sup>Required</sup> <a name="alarmStatistic" id="@cdklabs/multi-az-observability.IServiceAvailabilityMetricDetails.property.alarmStatistic"></a>
+
+```typescript
+public readonly alarmStatistic: string;
+```
+
+- *Type:* string
+
+The statistic used for alarms, for availability metrics this should be "Sum", for latency metrics it could something like "p99" or "p99.9".
+
+---
+
+##### `datapointsToAlarm`<sup>Required</sup> <a name="datapointsToAlarm" id="@cdklabs/multi-az-observability.IServiceAvailabilityMetricDetails.property.datapointsToAlarm"></a>
+
+```typescript
+public readonly datapointsToAlarm: number;
+```
+
+- *Type:* number
+
+The number of datapoints to alarm on for latency and availability alarms.
+
+---
+
+##### `evaluationPeriods`<sup>Required</sup> <a name="evaluationPeriods" id="@cdklabs/multi-az-observability.IServiceAvailabilityMetricDetails.property.evaluationPeriods"></a>
+
+```typescript
+public readonly evaluationPeriods: number;
+```
+
+- *Type:* number
+
+The number of evaluation periods for latency and availabiltiy alarms.
+
+---
+
+##### `faultMetricNames`<sup>Required</sup> <a name="faultMetricNames" id="@cdklabs/multi-az-observability.IServiceAvailabilityMetricDetails.property.faultMetricNames"></a>
+
+```typescript
+public readonly faultMetricNames: string[];
+```
+
+- *Type:* string[]
+
+The names of fault indicating metrics.
+
+---
+
+##### `metricNamespace`<sup>Required</sup> <a name="metricNamespace" id="@cdklabs/multi-az-observability.IServiceAvailabilityMetricDetails.property.metricNamespace"></a>
+
+```typescript
+public readonly metricNamespace: string;
+```
+
+- *Type:* string
+
+The CloudWatch metric namespace for these metrics.
+
+---
+
+##### `period`<sup>Required</sup> <a name="period" id="@cdklabs/multi-az-observability.IServiceAvailabilityMetricDetails.property.period"></a>
+
+```typescript
+public readonly period: Duration;
+```
+
+- *Type:* aws-cdk-lib.Duration
+
+The period for the metrics.
+
+---
+
+##### `successMetricNames`<sup>Required</sup> <a name="successMetricNames" id="@cdklabs/multi-az-observability.IServiceAvailabilityMetricDetails.property.successMetricNames"></a>
+
+```typescript
+public readonly successMetricNames: string[];
+```
+
+- *Type:* string[]
+
+The names of success indicating metrics.
+
+---
+
+##### `unit`<sup>Required</sup> <a name="unit" id="@cdklabs/multi-az-observability.IServiceAvailabilityMetricDetails.property.unit"></a>
+
+```typescript
+public readonly unit: Unit;
+```
+
+- *Type:* aws-cdk-lib.aws_cloudwatch.Unit
+
+The unit used for these metrics.
+
+---
+
+##### `graphedFaultStatistics`<sup>Optional</sup> <a name="graphedFaultStatistics" id="@cdklabs/multi-az-observability.IServiceAvailabilityMetricDetails.property.graphedFaultStatistics"></a>
+
+```typescript
+public readonly graphedFaultStatistics: string[];
+```
+
+- *Type:* string[]
+- *Default:* For availability metrics, this will be "Sum", for latency metrics it will be just "p99"
+
+The statistics for faults you want to appear on dashboards, for example, with latency metrics, you might want p50, p99, and tm99.
+
+For availability
+metrics this will typically just be "Sum".
+
+---
+
+##### `graphedSuccessStatistics`<sup>Optional</sup> <a name="graphedSuccessStatistics" id="@cdklabs/multi-az-observability.IServiceAvailabilityMetricDetails.property.graphedSuccessStatistics"></a>
+
+```typescript
+public readonly graphedSuccessStatistics: string[];
+```
+
+- *Type:* string[]
+- *Default:* For availability metrics, this will be "Sum", for latency metrics it will be just "p99"
+
+The statistics for successes you want to appear on dashboards, for example, with latency metrics, you might want p50, p99, and tm99.
+
+For availability
+metrics this will typically just be "Sum".
+
+---
+
+##### `faultAlarmThreshold`<sup>Required</sup> <a name="faultAlarmThreshold" id="@cdklabs/multi-az-observability.IServiceAvailabilityMetricDetails.property.faultAlarmThreshold"></a>
+
+```typescript
+public readonly faultAlarmThreshold: number;
+```
+
+- *Type:* number
+
+The threshold for alarms associated with availability fault metrics, for example if measuring fault rate, the threshold may be 1, meaning you would want an alarm that triggers if the fault rate goes above 1%.
+
+---
+
+##### `successAlarmThreshold`<sup>Required</sup> <a name="successAlarmThreshold" id="@cdklabs/multi-az-observability.IServiceAvailabilityMetricDetails.property.successAlarmThreshold"></a>
+
+```typescript
+public readonly successAlarmThreshold: number;
+```
+
+- *Type:* number
+
+The threshold for alarms associated with availability success metrics, for example if measuring success rate, the threshold may be 99, meaning you would want an alarm that triggers if success drops below 99%.
+
+---
+
+### IServiceLatencyMetricDetails <a name="IServiceLatencyMetricDetails" id="@cdklabs/multi-az-observability.IServiceLatencyMetricDetails"></a>
+
+- *Extends:* <a href="#@cdklabs/multi-az-observability.IServiceMetricDetails">IServiceMetricDetails</a>
+
+- *Implemented By:* <a href="#@cdklabs/multi-az-observability.ServiceLatencyMetricDetails">ServiceLatencyMetricDetails</a>, <a href="#@cdklabs/multi-az-observability.IServiceLatencyMetricDetails">IServiceLatencyMetricDetails</a>
+
+Details for the defaults used in a service for metrics in one perspective, such as server side latency.
+
+
+#### Properties <a name="Properties" id="Properties"></a>
+
+| **Name** | **Type** | **Description** |
+| --- | --- | --- |
+| <code><a href="#@cdklabs/multi-az-observability.IServiceLatencyMetricDetails.property.alarmStatistic">alarmStatistic</a></code> | <code>string</code> | The statistic used for alarms, for availability metrics this should be "Sum", for latency metrics it could something like "p99" or "p99.9". |
+| <code><a href="#@cdklabs/multi-az-observability.IServiceLatencyMetricDetails.property.datapointsToAlarm">datapointsToAlarm</a></code> | <code>number</code> | The number of datapoints to alarm on for latency and availability alarms. |
+| <code><a href="#@cdklabs/multi-az-observability.IServiceLatencyMetricDetails.property.evaluationPeriods">evaluationPeriods</a></code> | <code>number</code> | The number of evaluation periods for latency and availabiltiy alarms. |
+| <code><a href="#@cdklabs/multi-az-observability.IServiceLatencyMetricDetails.property.faultMetricNames">faultMetricNames</a></code> | <code>string[]</code> | The names of fault indicating metrics. |
+| <code><a href="#@cdklabs/multi-az-observability.IServiceLatencyMetricDetails.property.metricNamespace">metricNamespace</a></code> | <code>string</code> | The CloudWatch metric namespace for these metrics. |
+| <code><a href="#@cdklabs/multi-az-observability.IServiceLatencyMetricDetails.property.period">period</a></code> | <code>aws-cdk-lib.Duration</code> | The period for the metrics. |
+| <code><a href="#@cdklabs/multi-az-observability.IServiceLatencyMetricDetails.property.successMetricNames">successMetricNames</a></code> | <code>string[]</code> | The names of success indicating metrics. |
+| <code><a href="#@cdklabs/multi-az-observability.IServiceLatencyMetricDetails.property.unit">unit</a></code> | <code>aws-cdk-lib.aws_cloudwatch.Unit</code> | The unit used for these metrics. |
+| <code><a href="#@cdklabs/multi-az-observability.IServiceLatencyMetricDetails.property.graphedFaultStatistics">graphedFaultStatistics</a></code> | <code>string[]</code> | The statistics for faults you want to appear on dashboards, for example, with latency metrics, you might want p50, p99, and tm99. |
+| <code><a href="#@cdklabs/multi-az-observability.IServiceLatencyMetricDetails.property.graphedSuccessStatistics">graphedSuccessStatistics</a></code> | <code>string[]</code> | The statistics for successes you want to appear on dashboards, for example, with latency metrics, you might want p50, p99, and tm99. |
+| <code><a href="#@cdklabs/multi-az-observability.IServiceLatencyMetricDetails.property.successAlarmThreshold">successAlarmThreshold</a></code> | <code>aws-cdk-lib.Duration</code> | The threshold for alarms associated with latency success metrics, for example if success latency exceeds 500 milliseconds. |
+
+---
+
+##### `alarmStatistic`<sup>Required</sup> <a name="alarmStatistic" id="@cdklabs/multi-az-observability.IServiceLatencyMetricDetails.property.alarmStatistic"></a>
+
+```typescript
+public readonly alarmStatistic: string;
+```
+
+- *Type:* string
+
+The statistic used for alarms, for availability metrics this should be "Sum", for latency metrics it could something like "p99" or "p99.9".
+
+---
+
+##### `datapointsToAlarm`<sup>Required</sup> <a name="datapointsToAlarm" id="@cdklabs/multi-az-observability.IServiceLatencyMetricDetails.property.datapointsToAlarm"></a>
+
+```typescript
+public readonly datapointsToAlarm: number;
+```
+
+- *Type:* number
+
+The number of datapoints to alarm on for latency and availability alarms.
+
+---
+
+##### `evaluationPeriods`<sup>Required</sup> <a name="evaluationPeriods" id="@cdklabs/multi-az-observability.IServiceLatencyMetricDetails.property.evaluationPeriods"></a>
+
+```typescript
+public readonly evaluationPeriods: number;
+```
+
+- *Type:* number
+
+The number of evaluation periods for latency and availabiltiy alarms.
+
+---
+
+##### `faultMetricNames`<sup>Required</sup> <a name="faultMetricNames" id="@cdklabs/multi-az-observability.IServiceLatencyMetricDetails.property.faultMetricNames"></a>
+
+```typescript
+public readonly faultMetricNames: string[];
+```
+
+- *Type:* string[]
+
+The names of fault indicating metrics.
+
+---
+
+##### `metricNamespace`<sup>Required</sup> <a name="metricNamespace" id="@cdklabs/multi-az-observability.IServiceLatencyMetricDetails.property.metricNamespace"></a>
+
+```typescript
+public readonly metricNamespace: string;
+```
+
+- *Type:* string
+
+The CloudWatch metric namespace for these metrics.
+
+---
+
+##### `period`<sup>Required</sup> <a name="period" id="@cdklabs/multi-az-observability.IServiceLatencyMetricDetails.property.period"></a>
+
+```typescript
+public readonly period: Duration;
+```
+
+- *Type:* aws-cdk-lib.Duration
+
+The period for the metrics.
+
+---
+
+##### `successMetricNames`<sup>Required</sup> <a name="successMetricNames" id="@cdklabs/multi-az-observability.IServiceLatencyMetricDetails.property.successMetricNames"></a>
+
+```typescript
+public readonly successMetricNames: string[];
+```
+
+- *Type:* string[]
+
+The names of success indicating metrics.
+
+---
+
+##### `unit`<sup>Required</sup> <a name="unit" id="@cdklabs/multi-az-observability.IServiceLatencyMetricDetails.property.unit"></a>
+
+```typescript
+public readonly unit: Unit;
+```
+
+- *Type:* aws-cdk-lib.aws_cloudwatch.Unit
+
+The unit used for these metrics.
+
+---
+
+##### `graphedFaultStatistics`<sup>Optional</sup> <a name="graphedFaultStatistics" id="@cdklabs/multi-az-observability.IServiceLatencyMetricDetails.property.graphedFaultStatistics"></a>
+
+```typescript
+public readonly graphedFaultStatistics: string[];
+```
+
+- *Type:* string[]
+- *Default:* For availability metrics, this will be "Sum", for latency metrics it will be just "p99"
+
+The statistics for faults you want to appear on dashboards, for example, with latency metrics, you might want p50, p99, and tm99.
+
+For availability
+metrics this will typically just be "Sum".
+
+---
+
+##### `graphedSuccessStatistics`<sup>Optional</sup> <a name="graphedSuccessStatistics" id="@cdklabs/multi-az-observability.IServiceLatencyMetricDetails.property.graphedSuccessStatistics"></a>
+
+```typescript
+public readonly graphedSuccessStatistics: string[];
+```
+
+- *Type:* string[]
+- *Default:* For availability metrics, this will be "Sum", for latency metrics it will be just "p99"
+
+The statistics for successes you want to appear on dashboards, for example, with latency metrics, you might want p50, p99, and tm99.
+
+For availability
+metrics this will typically just be "Sum".
+
+---
+
+##### `successAlarmThreshold`<sup>Required</sup> <a name="successAlarmThreshold" id="@cdklabs/multi-az-observability.IServiceLatencyMetricDetails.property.successAlarmThreshold"></a>
+
+```typescript
+public readonly successAlarmThreshold: Duration;
+```
+
+- *Type:* aws-cdk-lib.Duration
+
+The threshold for alarms associated with latency success metrics, for example if success latency exceeds 500 milliseconds.
+
+---
+
 ### IServiceMetricDetails <a name="IServiceMetricDetails" id="@cdklabs/multi-az-observability.IServiceMetricDetails"></a>
 
-- *Implemented By:* <a href="#@cdklabs/multi-az-observability.ServiceMetricDetails">ServiceMetricDetails</a>, <a href="#@cdklabs/multi-az-observability.IServiceMetricDetails">IServiceMetricDetails</a>
+- *Implemented By:* <a href="#@cdklabs/multi-az-observability.ServiceAvailabilityMetricDetails">ServiceAvailabilityMetricDetails</a>, <a href="#@cdklabs/multi-az-observability.ServiceLatencyMetricDetails">ServiceLatencyMetricDetails</a>, <a href="#@cdklabs/multi-az-observability.ServiceMetricDetails">ServiceMetricDetails</a>, <a href="#@cdklabs/multi-az-observability.IServiceAvailabilityMetricDetails">IServiceAvailabilityMetricDetails</a>, <a href="#@cdklabs/multi-az-observability.IServiceLatencyMetricDetails">IServiceLatencyMetricDetails</a>, <a href="#@cdklabs/multi-az-observability.IServiceMetricDetails">IServiceMetricDetails</a>
 
 Details for the defaults used in a service for metrics in one perspective, such as server side latency.
 
@@ -5013,11 +8381,9 @@ Details for the defaults used in a service for metrics in one perspective, such 
 | <code><a href="#@cdklabs/multi-az-observability.IServiceMetricDetails.property.alarmStatistic">alarmStatistic</a></code> | <code>string</code> | The statistic used for alarms, for availability metrics this should be "Sum", for latency metrics it could something like "p99" or "p99.9". |
 | <code><a href="#@cdklabs/multi-az-observability.IServiceMetricDetails.property.datapointsToAlarm">datapointsToAlarm</a></code> | <code>number</code> | The number of datapoints to alarm on for latency and availability alarms. |
 | <code><a href="#@cdklabs/multi-az-observability.IServiceMetricDetails.property.evaluationPeriods">evaluationPeriods</a></code> | <code>number</code> | The number of evaluation periods for latency and availabiltiy alarms. |
-| <code><a href="#@cdklabs/multi-az-observability.IServiceMetricDetails.property.faultAlarmThreshold">faultAlarmThreshold</a></code> | <code>number</code> | The threshold for alarms associated with fault metrics, for example if measuring fault rate, the threshold may be 1, meaning you would want an alarm that triggers if the fault rate goes above 1%. |
 | <code><a href="#@cdklabs/multi-az-observability.IServiceMetricDetails.property.faultMetricNames">faultMetricNames</a></code> | <code>string[]</code> | The names of fault indicating metrics. |
 | <code><a href="#@cdklabs/multi-az-observability.IServiceMetricDetails.property.metricNamespace">metricNamespace</a></code> | <code>string</code> | The CloudWatch metric namespace for these metrics. |
 | <code><a href="#@cdklabs/multi-az-observability.IServiceMetricDetails.property.period">period</a></code> | <code>aws-cdk-lib.Duration</code> | The period for the metrics. |
-| <code><a href="#@cdklabs/multi-az-observability.IServiceMetricDetails.property.successAlarmThreshold">successAlarmThreshold</a></code> | <code>number</code> | The threshold for alarms associated with success metrics, for example if measuring success rate, the threshold may be 99, meaning you would want an alarm that triggers if success drops below 99%. |
 | <code><a href="#@cdklabs/multi-az-observability.IServiceMetricDetails.property.successMetricNames">successMetricNames</a></code> | <code>string[]</code> | The names of success indicating metrics. |
 | <code><a href="#@cdklabs/multi-az-observability.IServiceMetricDetails.property.unit">unit</a></code> | <code>aws-cdk-lib.aws_cloudwatch.Unit</code> | The unit used for these metrics. |
 | <code><a href="#@cdklabs/multi-az-observability.IServiceMetricDetails.property.graphedFaultStatistics">graphedFaultStatistics</a></code> | <code>string[]</code> | The statistics for faults you want to appear on dashboards, for example, with latency metrics, you might want p50, p99, and tm99. |
@@ -5061,18 +8427,6 @@ The number of evaluation periods for latency and availabiltiy alarms.
 
 ---
 
-##### `faultAlarmThreshold`<sup>Required</sup> <a name="faultAlarmThreshold" id="@cdklabs/multi-az-observability.IServiceMetricDetails.property.faultAlarmThreshold"></a>
-
-```typescript
-public readonly faultAlarmThreshold: number;
-```
-
-- *Type:* number
-
-The threshold for alarms associated with fault metrics, for example if measuring fault rate, the threshold may be 1, meaning you would want an alarm that triggers if the fault rate goes above 1%.
-
----
-
 ##### `faultMetricNames`<sup>Required</sup> <a name="faultMetricNames" id="@cdklabs/multi-az-observability.IServiceMetricDetails.property.faultMetricNames"></a>
 
 ```typescript
@@ -5106,18 +8460,6 @@ public readonly period: Duration;
 - *Type:* aws-cdk-lib.Duration
 
 The period for the metrics.
-
----
-
-##### `successAlarmThreshold`<sup>Required</sup> <a name="successAlarmThreshold" id="@cdklabs/multi-az-observability.IServiceMetricDetails.property.successAlarmThreshold"></a>
-
-```typescript
-public readonly successAlarmThreshold: number;
-```
-
-- *Type:* number
-
-The threshold for alarms associated with success metrics, for example if measuring success rate, the threshold may be 99, meaning you would want an alarm that triggers if success drops below 99%.
 
 ---
 

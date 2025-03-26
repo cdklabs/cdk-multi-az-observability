@@ -256,7 +256,7 @@ export class BasicServiceMultiAZObservability
           alb,
           availabilityZoneId,
           az,
-          (props.applicationLoadBalancerProps!.latencyThreshold / 1000), // threshold is provided in milliseconds, but latency is provided in seconds
+          props.applicationLoadBalancerProps!.latencyThreshold,
           props.applicationLoadBalancerProps!.latencyStatistic,
           keyPrefix,
           period,
@@ -285,7 +285,7 @@ export class BasicServiceMultiAZObservability
           latencyOutlierDetectionAlgorithm,
           az,
           props.applicationLoadBalancerProps!.latencyStatistic,
-          (props.applicationLoadBalancerProps!.latencyThreshold / 1000), // threshold is provided in milliseconds, but latency is provided in seconds
+          props.applicationLoadBalancerProps!.latencyThreshold,
           latencyOutlierThreshold,
           period,
           props.evaluationPeriods,

@@ -12,7 +12,7 @@ import { ApplicationLoadBalancer } from 'aws-cdk-lib/aws-elasticloadbalancingv2'
 import { BasicServiceMultiAZObservability } from '../src/basic_observability/BasicServiceMultiAZObservability';
 import { ApplicationLoadBalancerLatencyOutlierAlgorithm } from '../src/outlier-detection/ApplicationLoadBalancerLatencyOutlierAlgorithm';
 import { Stats } from 'aws-cdk-lib/aws-cloudwatch';
-import { Aws } from 'aws-cdk-lib';
+import { Aws, Duration } from 'aws-cdk-lib';
 
 test('Basic service observability test', () => {
   const app = new cdk.App();
@@ -65,7 +65,7 @@ test('Basic service observability test', () => {
       ],
       faultCountPercentThreshold: 1,
       latencyStatistic: Stats.percentile(99),
-      latencyThreshold: 200,
+      latencyThreshold: Duration.millis(200),
     },
     natGatewayProps: {
        natGateways: natGateways,
@@ -130,8 +130,8 @@ test('Basic service observability with static latency outlier detection', () => 
         }),
       ],
       faultCountPercentThreshold: 1,
-      latencyStatistic: "p99",
-      latencyThreshold: 200,
+      latencyStatistic: Stats.percentile(99),
+      latencyThreshold: Duration.millis(200),
       latencyOutlierAlgorithm: ApplicationLoadBalancerLatencyOutlierAlgorithm.STATIC,
       latencyOutlierThreshold: 45
     },

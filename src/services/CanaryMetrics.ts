@@ -1,7 +1,8 @@
 // Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 import { ICanaryMetrics } from './ICanaryMetrics';
-import { IOperationMetricDetails } from './IOperationMetricDetails';
+import { IOperationAvailabilityMetricDetails } from './IOperationAvailabilityMetricDetails';
+import { IOperationLatencyMetricDetails } from './IOperationLatencyMetricDetails';
 import { CanaryMetricProps } from './props/CanaryMetricProps';
 
 /**
@@ -11,16 +12,15 @@ export class CanaryMetrics implements ICanaryMetrics {
   /**
    * The canary availability metric details
    */
-  readonly canaryAvailabilityMetricDetails: IOperationMetricDetails;
+  readonly canaryAvailabilityMetricDetails: IOperationAvailabilityMetricDetails;
 
   /**
    * The canary latency metric details
    */
-  readonly canaryLatencyMetricDetails: IOperationMetricDetails;
+  readonly canaryLatencyMetricDetails: IOperationLatencyMetricDetails;
 
   constructor(props: CanaryMetricProps) {
-    this.canaryAvailabilityMetricDetails =
-      props.canaryAvailabilityMetricDetails;
+    this.canaryAvailabilityMetricDetails = props.canaryAvailabilityMetricDetails;
     this.canaryLatencyMetricDetails = props.canaryLatencyMetricDetails;
   }
 }

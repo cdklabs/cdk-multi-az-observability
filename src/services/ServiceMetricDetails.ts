@@ -8,7 +8,7 @@ import { ServiceMetricDetailsProps } from './props/ServiceMetricDetailsProps';
 /**
  * Default metric details for a service
  */
-export class ServiceMetricDetails implements IServiceMetricDetails {
+export abstract class ServiceMetricDetails implements IServiceMetricDetails {
   /**
    * The CloudWatch metric namespace for these metrics
    */
@@ -68,31 +68,15 @@ export class ServiceMetricDetails implements IServiceMetricDetails {
    */
   readonly datapointsToAlarm: number;
 
-  /**
-   * The threshold for alarms associated with success metrics, for example if measuring
-   * success rate, the threshold may be 99, meaning you would want an alarm that triggers
-   * if success drops below 99%.
-   */
-  readonly successAlarmThreshold: number;
-
-  /**
-   * The threshold for alarms associated with fault metrics, for example if measuring
-   * fault rate, the threshold may be 1, meaning you would want an alarm that triggers
-   * if the fault rate goes above 1%.
-   */
-  readonly faultAlarmThreshold: number;
-
   constructor(props: ServiceMetricDetailsProps) {
     this.alarmStatistic = props.alarmStatistic;
     this.datapointsToAlarm = props.datapointsToAlarm;
     this.evaluationPeriods = props.evaluationPeriods;
-    this.faultAlarmThreshold = props.faultAlarmThreshold;
     this.faultMetricNames = props.faultMetricNames;
     this.graphedFaultStatistics = props.graphedFaultStatistics;
     this.graphedSuccessStatistics = props.graphedSuccessStatistics;
     this.metricNamespace = props.metricNamespace;
     this.period = props.period;
-    this.successAlarmThreshold = props.successAlarmThreshold;
     this.successMetricNames = props.successMetricNames;
     this.unit = props.unit;
   }

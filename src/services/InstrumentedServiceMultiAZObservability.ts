@@ -8,9 +8,7 @@ import { Construct, IConstruct } from 'constructs';
 import { CanaryMetrics } from './CanaryMetrics';
 import { IInstrumentedServiceMultiAZObservability } from './IInstrumentedServiceMultiAZObservability';
 import { IOperation } from './IOperation';
-import { IOperationMetricDetails } from './IOperationMetricDetails';
 import { Operation } from './Operation';
-import { OperationMetricDetails } from './OperationMetricDetails';
 import { InstrumentedServiceMultiAZObservabilityProps } from './props/InstrumentedServiceMultiAZObservabilityProps';
 import { MetricDimensions } from './props/MetricDimensions';
 import { IOperationAlarmsAndRules } from '../alarmsandrules/IOperationAlarmsAndRules';
@@ -26,6 +24,10 @@ import { ServiceAvailabilityAndLatencyDashboard } from '../dashboards/ServiceAva
 import { OutlierDetectionFunction } from '../outlier-detection/OutlierDetectionFunction';
 import { OutlierDetectionAlgorithm } from '../utilities/OutlierDetectionAlgorithm';
 import { StackWithDynamicSource } from '../utilities/StackWithDynamicSource';
+import { OperationAvailabilityMetricDetails } from './OperationAvailabilityMetricDetails';
+import { OperationLatencyMetricDetails } from './OperationLatencyMetricDetails';
+import { IOperationAvailabilityMetricDetails } from './IOperationAvailabilityMetricDetails';
+import { IOperationLatencyMetricDetails } from './IOperationLatencyMetricDetails';
 
 /**
  * An service that implements its own instrumentation to record
@@ -35,12 +37,12 @@ import { StackWithDynamicSource } from '../utilities/StackWithDynamicSource';
 export class InstrumentedServiceMultiAZObservability
   extends Construct
   implements IInstrumentedServiceMultiAZObservability {
+
   /**
    * Key represents the operation name and the value is the set
-   * of zonal alarms and rules for that operation. The values themselves
-   * are dictionaries that have a key for each AZ ID.
+   * of zonal alarms and rules for that operation.
    */
-  private readonly perOperationAlarmsAndRules: {
+  readonly perOperationAlarmsAndRules: {
     [key: string]: IOperationAlarmsAndRules;
   };
 
@@ -137,11 +139,11 @@ export class InstrumentedServiceMultiAZObservability
           azMapper: this.azMapper,
         });
 
-        let defaultAvailabilityMetricDetails: IOperationMetricDetails;
-        let defaultLatencyMetricDetails: IOperationMetricDetails;
+        let defaultAvailabilityMetricDetails: IOperationAvailabilityMetricDetails;
+        let defaultLatencyMetricDetails: IOperationLatencyMetricDetails;
 
         if (operation.canaryMetricDetails?.canaryAvailabilityMetricDetails) {
-          defaultAvailabilityMetricDetails = new OperationMetricDetails(
+          defaultAvailabilityMetricDetails = new OperationAvailabilityMetricDetails(
             {
               operationName: operation.operationName,
               metricDimensions: new MetricDimensions(
@@ -188,7 +190,7 @@ export class InstrumentedServiceMultiAZObservability
             operation.service.defaultAvailabilityMetricDetails,
           );
         } else if (operation.canaryTestAvailabilityMetricsOverride) {
-          defaultAvailabilityMetricDetails = new OperationMetricDetails(
+          defaultAvailabilityMetricDetails = new OperationAvailabilityMetricDetails(
             {
               operationName: operation.operationName,
               metricNamespace: test.metricNamespace,
@@ -220,7 +222,7 @@ export class InstrumentedServiceMultiAZObservability
             props.service.defaultAvailabilityMetricDetails,
           );
         } else {
-          defaultAvailabilityMetricDetails = new OperationMetricDetails(
+          defaultAvailabilityMetricDetails = new OperationAvailabilityMetricDetails(
             {
               operationName: operation.operationName,
               metricNamespace: test.metricNamespace,
@@ -237,7 +239,7 @@ export class InstrumentedServiceMultiAZObservability
         }
 
         if (operation.canaryMetricDetails?.canaryLatencyMetricDetails) {
-          defaultLatencyMetricDetails = new OperationMetricDetails(
+          defaultLatencyMetricDetails = new OperationLatencyMetricDetails(
             {
               operationName: operation.operationName,
               metricDimensions: new MetricDimensions(
@@ -254,9 +256,6 @@ export class InstrumentedServiceMultiAZObservability
               evaluationPeriods:
                 operation.canaryMetricDetails.canaryLatencyMetricDetails
                   .evaluationPeriods,
-              faultAlarmThreshold:
-                operation.canaryMetricDetails.canaryLatencyMetricDetails
-                  .faultAlarmThreshold,
               faultMetricNames:
                 operation.canaryMetricDetails.canaryLatencyMetricDetails
                   .faultMetricNames,
@@ -284,7 +283,7 @@ export class InstrumentedServiceMultiAZObservability
             operation.service.defaultLatencyMetricDetails,
           );
         } else if (operation.canaryTestLatencyMetricsOverride) {
-          defaultLatencyMetricDetails = new OperationMetricDetails(
+          defaultLatencyMetricDetails = new OperationLatencyMetricDetails(
             {
               operationName: operation.operationName,
               metricNamespace: test.metricNamespace,
@@ -302,9 +301,6 @@ export class InstrumentedServiceMultiAZObservability
                 operation.canaryTestLatencyMetricsOverride.datapointsToAlarm,
               evaluationPeriods:
                 operation.canaryTestLatencyMetricsOverride.evaluationPeriods,
-              faultAlarmThreshold:
-                operation.canaryTestLatencyMetricsOverride
-                  .faultAlarmThreshold,
               period: operation.canaryTestLatencyMetricsOverride.period,
               successAlarmThreshold:
                 operation.canaryTestLatencyMetricsOverride
@@ -313,7 +309,7 @@ export class InstrumentedServiceMultiAZObservability
             props.service.defaultLatencyMetricDetails,
           );
         } else {
-          defaultLatencyMetricDetails = new OperationMetricDetails(
+          defaultLatencyMetricDetails = new OperationLatencyMetricDetails(
             {
               operationName: operation.operationName,
               metricNamespace: test.metricNamespace,
@@ -447,8 +443,8 @@ export class InstrumentedServiceMultiAZObservability
     );
 
     this.perOperationZonalImpactAlarms = Object.fromEntries(
-      Object.entries(this.perOperationAlarmsAndRules).map(([key, value]) => {
-        return [key, value.aggregateZonalAlarms];
+      Object.entries(this.perOperationAlarmsAndRules).map(([operationName, operationAlarmsAndRules]) => {
+        return [operationName, operationAlarmsAndRules.aggregateZonalAlarms];
       }),
     );
 

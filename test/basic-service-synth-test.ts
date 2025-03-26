@@ -9,7 +9,7 @@ import {
 } from 'aws-cdk-lib/aws-ec2';
 import { ApplicationLoadBalancer } from 'aws-cdk-lib/aws-elasticloadbalancingv2';
 import { BasicServiceMultiAZObservability } from '../src/basic_observability/BasicServiceMultiAZObservability';
-import { Aws } from 'aws-cdk-lib';
+import { Aws, Duration } from 'aws-cdk-lib';
 
 const app = new cdk.App();
 const stack = new cdk.Stack(app, 'TestStack', {
@@ -63,7 +63,7 @@ new BasicServiceMultiAZObservability(stack, 'MAZObservability', {
       ],
       faultCountPercentThreshold: 1,
       latencyStatistic: "p99",
-      latencyThreshold: 200,
+      latencyThreshold: Duration.millis(200),
     },
     natGatewayProps: {
        natGateways: natGateways,

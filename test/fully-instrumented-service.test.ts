@@ -15,11 +15,11 @@ import { InstrumentedServiceMultiAZObservability } from '../src/services/Instrum
 import { IOperation } from '../src/services/IOperation';
 import { IService } from '../src/services/IService';
 import { Operation } from '../src/services/Operation';
-import { OperationMetricDetails } from '../src/services/OperationMetricDetails';
 import { MetricDimensions } from '../src/services/props/MetricDimensions';
 import { Service } from '../src/services/Service';
-import { ServiceMetricDetails } from '../src/services/ServiceMetricDetails';
 import { OutlierDetectionAlgorithm } from '../src/utilities/OutlierDetectionAlgorithm';
+import { OperationAvailabilityMetricDetails } from '../src/services/OperationAvailabilityMetricDetails';
+import { OperationLatencyMetricDetails } from '../src/services/OperationLatencyMetricDetails';
 
 test('Fully instrumented service', () => {
   const app = new cdk.App();
@@ -67,7 +67,7 @@ test('Fully instrumented service', () => {
     faultCountThreshold: 25,
     period: Duration.seconds(60),
     loadBalancer: loadBalancer,
-    defaultAvailabilityMetricDetails: new ServiceMetricDetails({
+    defaultAvailabilityMetricDetails: {
       metricNamespace: 'front-end/metrics',
       successMetricNames: ['Success'],
       faultMetricNames: ['Fault', 'Error'],
@@ -80,8 +80,8 @@ test('Fully instrumented service', () => {
       faultAlarmThreshold: 0.1,
       graphedFaultStatistics: ['Sum'],
       graphedSuccessStatistics: ['Sum'],
-    }),
-    defaultLatencyMetricDetails: new ServiceMetricDetails({
+    },
+    defaultLatencyMetricDetails: {
       metricNamespace: 'front-end/metrics',
       successMetricNames: ['SuccessLatency'],
       faultMetricNames: ['FaultLatency'],
@@ -90,11 +90,10 @@ test('Fully instrumented service', () => {
       period: Duration.seconds(60),
       evaluationPeriods: 5,
       datapointsToAlarm: 3,
-      successAlarmThreshold: 100,
-      faultAlarmThreshold: 1,
+      successAlarmThreshold: Duration.millis(100),
       graphedFaultStatistics: ['p99'],
       graphedSuccessStatistics: ['p50', 'p99', 'tm99'],
-    }),
+    },
     defaultContributorInsightRuleDetails: {
       successLatencyMetricJsonPath: '$.SuccessLatency',
       faultMetricJsonPath: '$.Faults',
@@ -119,7 +118,7 @@ test('Fully instrumented service', () => {
       instanceIdJsonPath: '$.InstanceId',
       availabilityZoneIdJsonPath: '$.AZ-ID',
     },
-    serverSideAvailabilityMetricDetails: new OperationMetricDetails(
+    serverSideAvailabilityMetricDetails: new OperationAvailabilityMetricDetails(
       {
         operationName: 'ride',
         metricDimensions: new MetricDimensions(
@@ -130,7 +129,7 @@ test('Fully instrumented service', () => {
       },
       service.defaultAvailabilityMetricDetails,
     ),
-    serverSideLatencyMetricDetails: new OperationMetricDetails(
+    serverSideLatencyMetricDetails: new OperationLatencyMetricDetails(
       {
         operationName: 'ride',
         metricDimensions: new MetricDimensions(
@@ -159,7 +158,7 @@ test('Fully instrumented service', () => {
       instanceIdJsonPath: '$.InstanceId',
       availabilityZoneIdJsonPath: '$.AZ-ID',
     },
-    serverSideAvailabilityMetricDetails: new OperationMetricDetails(
+    serverSideAvailabilityMetricDetails: new OperationAvailabilityMetricDetails(
       {
         operationName: 'home',
         metricDimensions: new MetricDimensions(
@@ -170,7 +169,7 @@ test('Fully instrumented service', () => {
       },
       service.defaultAvailabilityMetricDetails,
     ),
-    serverSideLatencyMetricDetails: new OperationMetricDetails(
+    serverSideLatencyMetricDetails: new OperationLatencyMetricDetails(
       {
         operationName: 'home',
         metricDimensions: new MetricDimensions(
@@ -199,7 +198,7 @@ test('Fully instrumented service', () => {
       instanceIdJsonPath: '$.InstanceId',
       availabilityZoneIdJsonPath: '$.AZ-ID',
     },
-    serverSideAvailabilityMetricDetails: new OperationMetricDetails(
+    serverSideAvailabilityMetricDetails: new OperationAvailabilityMetricDetails(
       {
         operationName: 'pay',
         metricDimensions: new MetricDimensions(
@@ -210,7 +209,7 @@ test('Fully instrumented service', () => {
       },
       service.defaultAvailabilityMetricDetails,
     ),
-    serverSideLatencyMetricDetails: new OperationMetricDetails(
+    serverSideLatencyMetricDetails: new OperationLatencyMetricDetails(
       {
         operationName: 'pay',
         metricDimensions: new MetricDimensions(
@@ -278,7 +277,7 @@ test('Fully instrumented service with NLB', () => {
     faultCountThreshold: 25,
     period: Duration.seconds(60),
     loadBalancer: loadBalancer,
-    defaultAvailabilityMetricDetails: new ServiceMetricDetails({
+    defaultAvailabilityMetricDetails: {
       metricNamespace: 'front-end/metrics',
       successMetricNames: ['Success'],
       faultMetricNames: ['Fault', 'Error'],
@@ -291,8 +290,8 @@ test('Fully instrumented service with NLB', () => {
       faultAlarmThreshold: 0.1,
       graphedFaultStatistics: ['Sum'],
       graphedSuccessStatistics: ['Sum'],
-    }),
-    defaultLatencyMetricDetails: new ServiceMetricDetails({
+    },
+    defaultLatencyMetricDetails: {
       metricNamespace: 'front-end/metrics',
       successMetricNames: ['SuccessLatency'],
       faultMetricNames: ['FaultLatency'],
@@ -301,11 +300,10 @@ test('Fully instrumented service with NLB', () => {
       period: Duration.seconds(60),
       evaluationPeriods: 5,
       datapointsToAlarm: 3,
-      successAlarmThreshold: 100,
-      faultAlarmThreshold: 1,
+      successAlarmThreshold: Duration.millis(100),
       graphedFaultStatistics: ['p99'],
       graphedSuccessStatistics: ['p50', 'p99', 'tm99'],
-    }),
+    },
     defaultContributorInsightRuleDetails: {
       successLatencyMetricJsonPath: '$.SuccessLatency',
       faultMetricJsonPath: '$.Faults',
@@ -330,7 +328,7 @@ test('Fully instrumented service with NLB', () => {
       instanceIdJsonPath: '$.InstanceId',
       availabilityZoneIdJsonPath: '$.AZ-ID',
     },
-    serverSideAvailabilityMetricDetails: new OperationMetricDetails(
+    serverSideAvailabilityMetricDetails: new OperationAvailabilityMetricDetails(
       {
         operationName: 'ride',
         metricDimensions: new MetricDimensions(
@@ -341,7 +339,7 @@ test('Fully instrumented service with NLB', () => {
       },
       service.defaultAvailabilityMetricDetails,
     ),
-    serverSideLatencyMetricDetails: new OperationMetricDetails(
+    serverSideLatencyMetricDetails: new OperationLatencyMetricDetails(
       {
         operationName: 'ride',
         metricDimensions: new MetricDimensions(
@@ -412,7 +410,7 @@ test('Fully instrumented service with chi-squared', () => {
     faultCountThreshold: 25,
     period: Duration.seconds(60),
     loadBalancer: loadBalancer,
-    defaultAvailabilityMetricDetails: new ServiceMetricDetails({
+    defaultAvailabilityMetricDetails: {
       metricNamespace: 'front-end/metrics',
       successMetricNames: ['Success'],
       faultMetricNames: ['Fault', 'Error'],
@@ -425,8 +423,8 @@ test('Fully instrumented service with chi-squared', () => {
       faultAlarmThreshold: 0.1,
       graphedFaultStatistics: ['Sum'],
       graphedSuccessStatistics: ['Sum'],
-    }),
-    defaultLatencyMetricDetails: new ServiceMetricDetails({
+    },
+    defaultLatencyMetricDetails: {
       metricNamespace: 'front-end/metrics',
       successMetricNames: ['SuccessLatency'],
       faultMetricNames: ['FaultLatency'],
@@ -435,11 +433,10 @@ test('Fully instrumented service with chi-squared', () => {
       period: Duration.seconds(60),
       evaluationPeriods: 5,
       datapointsToAlarm: 3,
-      successAlarmThreshold: 100,
-      faultAlarmThreshold: 1,
+      successAlarmThreshold: Duration.millis(100),
       graphedFaultStatistics: ['p99'],
       graphedSuccessStatistics: ['p50', 'p99', 'tm99'],
-    }),
+    },
     defaultContributorInsightRuleDetails: {
       successLatencyMetricJsonPath: '$.SuccessLatency',
       faultMetricJsonPath: '$.Faults',
@@ -464,7 +461,7 @@ test('Fully instrumented service with chi-squared', () => {
       instanceIdJsonPath: '$.InstanceId',
       availabilityZoneIdJsonPath: '$.AZ-ID',
     },
-    serverSideAvailabilityMetricDetails: new OperationMetricDetails(
+    serverSideAvailabilityMetricDetails: new OperationAvailabilityMetricDetails(
       {
         operationName: 'ride',
         metricDimensions: new MetricDimensions(
@@ -475,7 +472,7 @@ test('Fully instrumented service with chi-squared', () => {
       },
       service.defaultAvailabilityMetricDetails,
     ),
-    serverSideLatencyMetricDetails: new OperationMetricDetails(
+    serverSideLatencyMetricDetails: new OperationLatencyMetricDetails(
       {
         operationName: 'ride',
         metricDimensions: new MetricDimensions(
@@ -724,7 +721,7 @@ test('Fully instrumented service adding canaries with dynamic source', () => {
     faultCountThreshold: 25,
     period: Duration.seconds(60),
     loadBalancer: loadBalancer,
-    defaultAvailabilityMetricDetails: new ServiceMetricDetails({
+    defaultAvailabilityMetricDetails: {
       metricNamespace: 'front-end/metrics',
       successMetricNames: ['Success'],
       faultMetricNames: ['Fault', 'Error'],
@@ -737,8 +734,8 @@ test('Fully instrumented service adding canaries with dynamic source', () => {
       faultAlarmThreshold: 0.1,
       graphedFaultStatistics: ['Sum'],
       graphedSuccessStatistics: ['Sum'],
-    }),
-    defaultLatencyMetricDetails: new ServiceMetricDetails({
+    },
+    defaultLatencyMetricDetails: {
       metricNamespace: 'front-end/metrics',
       successMetricNames: ['SuccessLatency'],
       faultMetricNames: ['FaultLatency'],
@@ -747,11 +744,10 @@ test('Fully instrumented service adding canaries with dynamic source', () => {
       period: Duration.seconds(60),
       evaluationPeriods: 5,
       datapointsToAlarm: 3,
-      successAlarmThreshold: 100,
-      faultAlarmThreshold: 1,
+      successAlarmThreshold: Duration.millis(100),
       graphedFaultStatistics: ['p99'],
       graphedSuccessStatistics: ['p50', 'p99', 'tm99'],
-    }),
+    },
     canaryTestProps: {
       requestCount: 10,
       schedule: 'rate(1 minute)',
@@ -779,7 +775,7 @@ test('Fully instrumented service adding canaries with dynamic source', () => {
       instanceIdJsonPath: '$.InstanceId',
       availabilityZoneIdJsonPath: '$.AZ-ID',
     },
-    serverSideAvailabilityMetricDetails: new OperationMetricDetails(
+    serverSideAvailabilityMetricDetails: new OperationAvailabilityMetricDetails(
       {
         operationName: 'ride',
         metricDimensions: new MetricDimensions(
@@ -790,7 +786,7 @@ test('Fully instrumented service adding canaries with dynamic source', () => {
       },
       service.defaultAvailabilityMetricDetails,
     ),
-    serverSideLatencyMetricDetails: new OperationMetricDetails(
+    serverSideLatencyMetricDetails: new OperationLatencyMetricDetails(
       {
         operationName: 'ride',
         metricDimensions: new MetricDimensions(
@@ -817,7 +813,7 @@ test('Fully instrumented service adding canaries with dynamic source', () => {
       instanceIdJsonPath: '$.InstanceId',
       availabilityZoneIdJsonPath: '$.AZ-ID',
     },
-    serverSideAvailabilityMetricDetails: new OperationMetricDetails(
+    serverSideAvailabilityMetricDetails: new OperationAvailabilityMetricDetails(
       {
         operationName: 'pay',
         metricDimensions: new MetricDimensions(
@@ -828,7 +824,7 @@ test('Fully instrumented service adding canaries with dynamic source', () => {
       },
       service.defaultAvailabilityMetricDetails,
     ),
-    serverSideLatencyMetricDetails: new OperationMetricDetails(
+    serverSideLatencyMetricDetails: new OperationLatencyMetricDetails(
       {
         operationName: 'pay',
         metricDimensions: new MetricDimensions(

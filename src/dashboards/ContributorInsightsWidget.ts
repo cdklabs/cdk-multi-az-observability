@@ -13,18 +13,15 @@ export class ContributorInsightsWidget
   /**
    * The widget properties
    */
-  properties: ContributorInsightWidgetProps;
+  private readonly props: ContributorInsightWidgetProps;
 
   /**
    * Creates the widget
    * @param props
    */
   constructor(props: ContributorInsightWidgetProps) {
-    super(
-      props.width === undefined ? 6 : props.width,
-      props.height === undefined ? 6 : props.height,
-    );
-    this.properties = props;
+    super(props.width || 6, props.height || 6);
+    this.props = props;
   }
 
   /**
@@ -41,22 +38,17 @@ export class ContributorInsightsWidget
         x: this.x,
         y: this.y,
         properties: {
-          insightRule: {
-            maxContributorCount: this.properties.topContributors,
-            orderBy: this.properties.orderStatistic,
-            ruleName: this.properties.insightRule.attrRuleName,
-          },
-          region:
-            this.properties.region !== undefined
-              ? this.properties.region
-              :Aws.REGION,
-          legend: {
-            position: this.properties.legendPosition,
-          },
           view: 'timeSeries',
-          period: this.properties.period.toSeconds(),
-          title: this.properties.title,
-          accountId: this.properties.accountId,
+          title: this.props.title,
+          region: this.props.region|| Aws.REGION,     
+          insightRule: {
+            maxContributorCount: this.props.topContributors,
+            orderBy: this.props.orderStatistic,
+            ruleName: this.props.insightRule.attrRuleName,
+          },
+          legend: this.props.legendPosition !== undefined ? { position: this.props.legendPosition } : undefined,
+          period: this.props.period?.toSeconds(),
+          accountId: this.props.accountId
         },
       },
     ];

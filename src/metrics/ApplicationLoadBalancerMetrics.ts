@@ -1123,7 +1123,7 @@ export class ApplicationLoadBalancerMetrics {
         });
 
         latencyPerZone[availabiltityZone] = new MathExpression({
-          expression: `((${latencyKeys.join("+")}) / (${requestKeys.join("+")})) * 1000`,
+          expression: `((${latencyKeys.join("+")}) / (${requestKeys.join("+")})) * 1000`, // Converts the calculation to milliseconds
           usingMetrics: usingMetrics,
           label: availabilityZoneId,
           period: period,
@@ -1378,7 +1378,7 @@ export class ApplicationLoadBalancerMetrics {
       alb: IApplicationLoadBalancer, 
       availabilityZoneId: string,
       availabilityZone: string,
-      threshold: number,
+      threshold: Duration,
       statistic: string,
       keyprefix: string,
       period: Duration,
@@ -1404,7 +1404,7 @@ export class ApplicationLoadBalancerMetrics {
           }),
           evaluationPeriods: evaluationPeriods,
           datapointsToAlarm: datapointsToAlarm,
-          threshold: threshold,
+          threshold: threshold.toSeconds({integral: false}), // ALB latency is measured in seconds
           comparisonOperator: ComparisonOperator.GREATER_THAN_THRESHOLD,
           treatMissingData: TreatMissingData.IGNORE
         }
@@ -1484,7 +1484,7 @@ export class ApplicationLoadBalancerMetrics {
       algorithm: ApplicationLoadBalancerLatencyOutlierAlgorithm,
       availabilityZone: string,
       statistic: string,
-      latencyThresold: number,
+      latencyThresold: Duration,
       outlierThreshold: number,
       period: Duration,
       evaluationPeriods: number,
@@ -1530,7 +1530,7 @@ export class ApplicationLoadBalancerMetrics {
               alb: alb,
               availabilityZone: az,
               label: azId,
-              statistic: `TC(${latencyThresold}:)`,
+              statistic: Stats.trimmedCount(MetricsHelper.convertDurationByUnit(latencyThresold, Unit.SECONDS)),
               period: period
             });
 
@@ -1565,7 +1565,7 @@ export class ApplicationLoadBalancerMetrics {
         azMapper: AvailabilityZoneMapper,
         period: Duration,
         latencyStatistic: string,
-        latencyThreshold: number,
+        latencyThreshold: Duration,
         faultRateThreshold: number
       ): IWidget[] {
         let albWidgets: IWidget[] = [];
@@ -1697,7 +1697,7 @@ export class ApplicationLoadBalancerMetrics {
             leftAnnotations: [
               {
                 label: "High Severity",
-                value: latencyThreshold,
+                value: latencyThreshold.toMilliseconds(),
                 color: Color.RED
               }
             ]

@@ -11,7 +11,8 @@ import {
   LegendPosition,
   TextWidget,
   TextWidgetBackground,
-  AlarmWidget
+  AlarmWidget,
+  Stats
 } from 'aws-cdk-lib/aws-cloudwatch';
 import { Construct } from 'constructs';
 import { ContributorInsightsWidget } from './ContributorInsightsWidget';
@@ -220,14 +221,14 @@ export class OperationAvailabilityAndLatencyDashboard
               ))
             ],
             leftYAxis: {
-              max: operation.serverSideLatencyMetricDetails.successAlarmThreshold * 1.5,
+              max: MetricsHelper.convertDurationByUnit(operation.serverSideLatencyMetricDetails.successAlarmThreshold, operation.serverSideLatencyMetricDetails.unit) * 1.5,
               min: 0,
               label: operation.serverSideLatencyMetricDetails.unit,
               showUnits: false,
             },
             leftAnnotations: [
               {
-                value: operation.serverSideLatencyMetricDetails.successAlarmThreshold,
+                value: MetricsHelper.convertDurationByUnit(operation.serverSideLatencyMetricDetails.successAlarmThreshold, operation.serverSideLatencyMetricDetails.unit),
                 visible: true,
                 color: Color.RED,
                 label: 'High Severity',
@@ -256,7 +257,7 @@ export class OperationAvailabilityAndLatencyDashboard
             metricDetails: operation.serverSideLatencyMetricDetails,
             label: availabilityZoneId + " (avg: ${AVG}  max: ${MAX})",
             metricType: LatencyMetricType.SUCCESS_LATENCY,
-            statistic: `TC(${operation.serverSideLatencyMetricDetails.successAlarmThreshold}:)`,
+            statistic: Stats.trimmedCount(MetricsHelper.convertDurationByUnit(operation.serverSideLatencyMetricDetails.successAlarmThreshold, operation.serverSideLatencyMetricDetails.unit)),
             color: MetricsHelper.colors[index]
           })
         }),
@@ -519,14 +520,14 @@ export class OperationAvailabilityAndLatencyDashboard
               ))
             ],
             leftYAxis: {
-              max: operation.canaryMetricDetails!.canaryLatencyMetricDetails.successAlarmThreshold * 1.5,
+              max: MetricsHelper.convertDurationByUnit(operation.canaryMetricDetails!.canaryLatencyMetricDetails.successAlarmThreshold, operation.canaryMetricDetails!.canaryLatencyMetricDetails.unit) * 1.5,
               min: 0,
               label: operation.canaryMetricDetails!.canaryLatencyMetricDetails.unit,
               showUnits: false,
             },
             leftAnnotations: [
               {
-                value: operation.canaryMetricDetails!.canaryLatencyMetricDetails.successAlarmThreshold,
+                value: MetricsHelper.convertDurationByUnit(operation.canaryMetricDetails!.canaryLatencyMetricDetails.successAlarmThreshold, operation.canaryMetricDetails!.canaryLatencyMetricDetails.unit),
                 visible: true,
                 color: Color.RED,
                 label: 'High Severity',
@@ -556,7 +557,7 @@ export class OperationAvailabilityAndLatencyDashboard
               metricDetails: operation.canaryMetricDetails!.canaryLatencyMetricDetails,
               label: availabilityZoneId + " (avg: ${AVG}  max: ${MAX})",
               metricType: LatencyMetricType.SUCCESS_LATENCY,
-              statistic: `TC(${operation.canaryMetricDetails!.canaryLatencyMetricDetails.successAlarmThreshold}:)`,
+              statistic: Stats.trimmedCount(MetricsHelper.convertDurationByUnit(operation.canaryMetricDetails!.canaryLatencyMetricDetails.successAlarmThreshold, operation.canaryMetricDetails!.canaryLatencyMetricDetails.unit)),
               color: MetricsHelper.colors[index]
             })
           }),
@@ -564,7 +565,7 @@ export class OperationAvailabilityAndLatencyDashboard
             label: Aws.REGION + " (avg: ${AVG}  max: ${MAX})", 
             metricDetails: operation.canaryMetricDetails!.canaryLatencyMetricDetails,
             metricType: LatencyMetricType.SUCCESS_LATENCY,
-            statistic: `TC(${operation.canaryMetricDetails!.canaryLatencyMetricDetails.successAlarmThreshold}:)`,
+            statistic: Stats.trimmedCount(MetricsHelper.convertDurationByUnit(operation.canaryMetricDetails!.canaryLatencyMetricDetails.successAlarmThreshold, operation.canaryMetricDetails!.canaryLatencyMetricDetails.unit)),
             color: MetricsHelper.regionColor
           },
           operation.canaryMetricDetails!.canaryLatencyMetricDetails.metricDimensions.regionalDimensions(

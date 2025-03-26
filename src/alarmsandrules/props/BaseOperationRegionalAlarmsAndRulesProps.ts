@@ -1,7 +1,8 @@
 // Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 import { IContributorInsightRuleDetails } from '../../services/IContributorInsightRuleDetails';
-import { IOperationMetricDetails } from '../../services/IOperationMetricDetails';
+import { IOperationAvailabilityMetricDetails } from '../../services/IOperationAvailabilityMetricDetails';
+import { IOperationLatencyMetricDetails } from '../../services/IOperationLatencyMetricDetails';
 
 /**
  * The base props for an operation regional alarms and rules configuration
@@ -10,12 +11,12 @@ export interface BaseOperationRegionalAlarmsAndRulesProps {
   /**
    * The metric details for availability metrics
    */
-  readonly availabilityMetricDetails: IOperationMetricDetails;
+  readonly availabilityMetricDetails: IOperationAvailabilityMetricDetails;
 
   /**
    * The metric details for latency metrics
    */
-  readonly latencyMetricDetails: IOperationMetricDetails;
+  readonly latencyMetricDetails: IOperationLatencyMetricDetails;
 
   /**
    * (Optional) A suffix to be appended to alarm and rule names
