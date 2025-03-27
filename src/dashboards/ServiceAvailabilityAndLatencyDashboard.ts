@@ -10,7 +10,6 @@ import {
   IWidget,
   MathExpression,
   PeriodOverride,
-  Stats,
   TextWidget,
   TextWidgetBackground,
 } from 'aws-cdk-lib/aws-cloudwatch';
@@ -170,7 +169,7 @@ export class ServiceAvailabilityAndLatencyDashboard
           metricDetails: operation.serverSideLatencyMetricDetails,
           metricType: LatencyMetricType.SUCCESS_LATENCY,
           color: MetricsHelper.colors[index],
-          statistic: Stats.trimmedCount(MetricsHelper.convertDurationByUnit(operation.serverSideLatencyMetricDetails.successAlarmThreshold, operation.serverSideLatencyMetricDetails.unit)),
+          statistic: `TC(${MetricsHelper.convertDurationByUnit(operation.serverSideLatencyMetricDetails.successAlarmThreshold, operation.serverSideLatencyMetricDetails.unit)}:)`,
         },
         operation.serverSideLatencyMetricDetails.metricDimensions.zonalDimensions(
           availabilityZoneId,
@@ -390,12 +389,10 @@ export class ServiceAvailabilityAndLatencyDashboard
           metricDetails: operation.canaryMetricDetails!.canaryLatencyMetricDetails,
           metricType: LatencyMetricType.SUCCESS_LATENCY,
           color: MetricsHelper.colors[index],
-          statistic: Stats.trimmedCount(
-            MetricsHelper.convertDurationByUnit(
+          statistic: `TC(${MetricsHelper.convertDurationByUnit(
               operation.canaryMetricDetails!.canaryLatencyMetricDetails.successAlarmThreshold,
               operation.canaryMetricDetails!.canaryLatencyMetricDetails.unit 
-            )
-          )
+            )}:)`
         },
         operation.canaryMetricDetails!.canaryLatencyMetricDetails.metricDimensions.zonalDimensions(
           availabilityZoneId,

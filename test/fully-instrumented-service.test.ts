@@ -90,7 +90,7 @@ test('Fully instrumented service', () => {
       period: Duration.seconds(60),
       evaluationPeriods: 5,
       datapointsToAlarm: 3,
-      successAlarmThreshold: Duration.millis(100),
+      successAlarmThreshold: Duration.millis(150),
       graphedFaultStatistics: ['p99'],
       graphedSuccessStatistics: ['p50', 'p99', 'tm99'],
     },
