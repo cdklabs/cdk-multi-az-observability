@@ -622,8 +622,7 @@ export class AvailabilityAndLatencyAlarmsAndRules {
           '-high-latency-requests',
         metricDetails: metricDetails,
         metricType: LatencyMetricType.SUCCESS_LATENCY,
-        //statistic: `TC(${MetricsHelper.convertDurationByUnit(metricDetails.successAlarmThreshold, metricDetails.unit)}:)`
-        statistic: "SampleCount"
+        statistic: `TC(${MetricsHelper.convertDurationByUnit(metricDetails.successAlarmThreshold, metricDetails.unit)}:)`
       });
 
     let regionalLatency: IMetric =
@@ -635,8 +634,7 @@ export class AvailabilityAndLatencyAlarmsAndRules {
           '-high-latency-requests',
         metricDetails: metricDetails,
         metricType: LatencyMetricType.SUCCESS_LATENCY,
-        //statistic: `TC(${MetricsHelper.convertDurationByUnit(metricDetails.successAlarmThreshold, metricDetails.unit)}:)`,
-        statistic: "SampleCount",
+        statistic: `TC(${MetricsHelper.convertDurationByUnit(metricDetails.successAlarmThreshold, metricDetails.unit)}:)`,
         keyPrefix: 'b',
       });
 
