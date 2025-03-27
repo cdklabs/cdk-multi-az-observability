@@ -8,6 +8,7 @@ import { ICanaryOperationZonalAlarmsAndRules } from './ICanaryOperationZonalAlar
 import { CanaryOperationZonalAlarmsAndRulesProps } from './props/CanaryOperationZonalAlarmsAndRulesProps';
 import { OutlierDetectionAlgorithm } from '../utilities/OutlierDetectionAlgorithm';
 import { IOperation } from '../services/IOperation';
+import { LatencyOutlierMetricAggregation } from '../outlier-detection/LatencyOutlierMetricAggregation';
 
 /**
  * Creates the alarms and rules for a particular operation as measured by the canary
@@ -132,6 +133,7 @@ export class CanaryOperationZonalAlarmsAndRules
           }),
           props.operationAlarmsAndRulesProps.latencyOutlierThreshold,
           props.operationAlarmsAndRulesProps.outlierDetectionFunction!,
+          props.operationAlarmsAndRulesProps.latencyOutlierMetricAggregation || LatencyOutlierMetricAggregation.COUNT,
           props.operationAlarmsAndRulesProps.latencyOutlierDetectionAlgorithm,
           props.counter,
           props.nameSuffix,

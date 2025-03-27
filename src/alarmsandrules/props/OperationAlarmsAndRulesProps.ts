@@ -5,6 +5,7 @@ import { IFunction } from 'aws-cdk-lib/aws-lambda';
 import { IAvailabilityZoneMapper } from '../../azmapper/IAvailabilityZoneMapper';
 import { Operation } from '../../services/Operation';
 import { OutlierDetectionAlgorithm } from '../../utilities/OutlierDetectionAlgorithm';
+import { LatencyOutlierMetricAggregation } from '../../outlier-detection/LatencyOutlierMetricAggregation';
 
 /**
  * The properties for the operation alarms and rules
@@ -63,6 +64,16 @@ export interface OperationAlarmsAndRulesProps {
    * is ignored and only STATIC is used.
    */
   readonly latencyOutlierDetectionAlgorithm: OutlierDetectionAlgorithm;
+
+  /**
+     * The metric for latency to use in outlier detection, which means whether
+     * the algorithm uses a count of requests exceeding your latency threshold or
+     * whether it uses the actual latency values at your latency alarm threshold
+     * statistic.
+     * 
+     * @default LatencyOutlierMetricAggregation.COUNT
+     */
+    readonly latencyOutlierMetricAggregation?: LatencyOutlierMetricAggregation;
 
   /**
    * The AZ Mapper

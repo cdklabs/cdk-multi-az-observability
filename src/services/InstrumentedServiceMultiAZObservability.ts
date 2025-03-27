@@ -28,6 +28,7 @@ import { OperationAvailabilityMetricDetails } from './OperationAvailabilityMetri
 import { OperationLatencyMetricDetails } from './OperationLatencyMetricDetails';
 import { IOperationAvailabilityMetricDetails } from './IOperationAvailabilityMetricDetails';
 import { IOperationLatencyMetricDetails } from './IOperationLatencyMetricDetails';
+import { LatencyOutlierMetricAggregation } from '../outlier-detection/LatencyOutlierMetricAggregation';
 
 /**
  * An service that implements its own instrumentation to record
@@ -355,30 +356,69 @@ export class InstrumentedServiceMultiAZObservability
   ) {
     super(scope, id);
 
-    let outlierThreshold: number;
+    
 
-    // Set defaults
-    if (!props.outlierThreshold) {
-      switch (props.outlierDetectionAlgorithm) {
+    let availabilityOutlierDetectionAlgorithm: OutlierDetectionAlgorithm = props.availabilityOutlierDetectionAlgorithm || OutlierDetectionAlgorithm.STATIC;
+    let availabilityOutlierThreshold: number;
+
+    let latencyOutlierDetectionAlgorithm: OutlierDetectionAlgorithm = props.latencyOutlierDetectionAlgorithm || OutlierDetectionAlgorithm.STATIC;
+    let latencyOutlierThreshold: number;
+
+    // TEMP: Force outlier detection to be static until the Lambda outlier detection function is scalable
+    availabilityOutlierDetectionAlgorithm = OutlierDetectionAlgorithm.STATIC;
+    latencyOutlierDetectionAlgorithm = OutlierDetectionAlgorithm.STATIC;
+    availabilityOutlierThreshold = props.availabilityOutlierThreshold || 0.7
+    latencyOutlierThreshold = props.latencyOutlierThreshold || 0.7;
+
+    if (props.latencyOutlierMetricAggregation == LatencyOutlierMetricAggregation.VALUE && latencyOutlierDetectionAlgorithm == OutlierDetectionAlgorithm.STATIC) {
+      throw new Error("You cannot use LatencyOutlierMetric.VALUE with OutlierDetectionAlgorithm.STATIC.");
+    }
+
+    /*if (!props.availabilityOutlierThreshold) {
+      switch (availabilityOutlierDetectionAlgorithm) {
         case OutlierDetectionAlgorithm.CHI_SQUARED:
-          outlierThreshold = 0.05;
+          availabilityOutlierThreshold = 0.05;
           break;
         case OutlierDetectionAlgorithm.IQR:
-          outlierThreshold = 1.5;
+          availabilityOutlierThreshold = 1.5;
           break;
         case OutlierDetectionAlgorithm.MAD:
-          outlierThreshold = 3;
+          availabilityOutlierThreshold = 3;
           break;
         case OutlierDetectionAlgorithm.STATIC:
-          outlierThreshold = 0.7;
+          availabilityOutlierThreshold = 0.7;
           break;
         case OutlierDetectionAlgorithm.Z_SCORE:
-          outlierThreshold = 3;
+          availabilityOutlierThreshold = 3;
           break;
       }
-    } else {
-      outlierThreshold = props.outlierThreshold;
     }
+    else {
+      availabilityOutlierThreshold = props.availabilityOutlierThreshold;
+    }
+
+    if (!props.latencyOutlierThreshold) {
+      switch (latencyOutlierDetectionAlgorithm) {
+        case OutlierDetectionAlgorithm.CHI_SQUARED:
+          latencyOutlierThreshold = 0.05;
+          break;
+        case OutlierDetectionAlgorithm.IQR:
+          latencyOutlierThreshold = 1.5;
+          break;
+        case OutlierDetectionAlgorithm.MAD:
+          latencyOutlierThreshold = 3;
+          break;
+        case OutlierDetectionAlgorithm.STATIC:
+          latencyOutlierThreshold = 0.7;
+          break;
+        case OutlierDetectionAlgorithm.Z_SCORE:
+          latencyOutlierThreshold = 3;
+          break;
+      }
+    }
+    else {
+      latencyOutlierThreshold = props.latencyOutlierThreshold;
+    }*/
 
     // Create the AZ mapper resource that all of the resources
     // will share
@@ -403,7 +443,7 @@ export class InstrumentedServiceMultiAZObservability
 
     // Create the outlier detection lambda function stack if we're not
     // using static outlier detection
-    if (props.outlierDetectionAlgorithm != OutlierDetectionAlgorithm.STATIC) {
+    if (availabilityOutlierDetectionAlgorithm != OutlierDetectionAlgorithm.STATIC || latencyOutlierDetectionAlgorithm != OutlierDetectionAlgorithm.STATIC) {
       let outlierDetectionStack: StackWithDynamicSource =
         new StackWithDynamicSource(this, 'OutlierDetectionStack', {
           assetsBucketsParameterName: props.assetsBucketParameterName,
@@ -430,13 +470,14 @@ export class InstrumentedServiceMultiAZObservability
           operation.operationName,
           new OperationAlarmsAndRules(nestedStack, operation.operationName, {
             operation: operation,
-            latencyOutlierDetectionAlgorithm: props.outlierDetectionAlgorithm,
-            availabilityOutlierDetectionAlgorithm: props.outlierDetectionAlgorithm,
-            latencyOutlierThreshold: outlierThreshold,
-            availabilityOutlierThreshold: outlierThreshold,
+            latencyOutlierDetectionAlgorithm: latencyOutlierDetectionAlgorithm,
+            availabilityOutlierDetectionAlgorithm: availabilityOutlierDetectionAlgorithm,
+            latencyOutlierThreshold: latencyOutlierThreshold,
+            availabilityOutlierThreshold: availabilityOutlierThreshold,
             loadBalancer: props.service.loadBalancer,
             azMapper: this.azMapper,
             outlierDetectionFunction: this.outlierDetectionFunction,
+            latencyOutlierMetricAggregation: props.latencyOutlierMetricAggregation
           }),
         ];
       }),
@@ -494,7 +535,6 @@ export class InstrumentedServiceMultiAZObservability
         {},
       );
 
-      // TOOD: Revamp service level dashboard and rethink alarms
       this.serviceDashboard = new ServiceAvailabilityAndLatencyDashboard(
         dashboardStack,
         props.service.serviceName.toLowerCase(),

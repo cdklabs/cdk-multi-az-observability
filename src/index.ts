@@ -34,6 +34,7 @@ export { NatGatewayDetectionProps } from './basic_observability/props/NatGateway
 export { ApplicationLoadBalancerDetectionProps } from './basic_observability/props/ApplicationLoadBalancerDetectionProps';
 
 export { OutlierDetectionAlgorithm } from './utilities/OutlierDetectionAlgorithm';
+export { LatencyOutlierMetricAggregation } from './outlier-detection/LatencyOutlierMetricAggregation';
 export { ApplicationLoadBalancerLatencyOutlierAlgorithm } from './outlier-detection/ApplicationLoadBalancerLatencyOutlierAlgorithm';
 export { ApplicationLoadBalancerAvailabilityOutlierAlgorithm } from './outlier-detection/ApplicationLoadBalancerAvailabilityOutlierAlgorithm';
 export { PacketLossOutlierAlgorithm } from './outlier-detection/PacketLossOutlierAlgorithm';

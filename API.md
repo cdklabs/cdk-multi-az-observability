@@ -1570,25 +1570,16 @@ const instrumentedServiceMultiAZObservabilityProps: InstrumentedServiceMultiAZOb
 
 | **Name** | **Type** | **Description** |
 | --- | --- | --- |
-| <code><a href="#@cdklabs/multi-az-observability.InstrumentedServiceMultiAZObservabilityProps.property.outlierDetectionAlgorithm">outlierDetectionAlgorithm</a></code> | <code><a href="#@cdklabs/multi-az-observability.OutlierDetectionAlgorithm">OutlierDetectionAlgorithm</a></code> | The algorithm to use for performing outlier detection. |
 | <code><a href="#@cdklabs/multi-az-observability.InstrumentedServiceMultiAZObservabilityProps.property.service">service</a></code> | <code><a href="#@cdklabs/multi-az-observability.IService">IService</a></code> | The service that the alarms and dashboards are being crated for. |
 | <code><a href="#@cdklabs/multi-az-observability.InstrumentedServiceMultiAZObservabilityProps.property.assetsBucketParameterName">assetsBucketParameterName</a></code> | <code>string</code> | If you are not using a static bucket to deploy assets, for example you are synthing this and it gets uploaded to a bucket whose name is unknown to you (maybe used as part of a central CI/CD system) and is provided as a parameter to your stack, specify that parameter name here. |
 | <code><a href="#@cdklabs/multi-az-observability.InstrumentedServiceMultiAZObservabilityProps.property.assetsBucketPrefixParameterName">assetsBucketPrefixParameterName</a></code> | <code>string</code> | If you are not using a static bucket to deploy assets, for example you are synthing this and it gets uploaded to a bucket that uses a prefix that is unknown to you (maybe used as part of a central CI/CD system) and is provided as a parameter to your stack, specify that parameter name here. |
+| <code><a href="#@cdklabs/multi-az-observability.InstrumentedServiceMultiAZObservabilityProps.property.availabilityOutlierDetectionAlgorithm">availabilityOutlierDetectionAlgorithm</a></code> | <code><a href="#@cdklabs/multi-az-observability.OutlierDetectionAlgorithm">OutlierDetectionAlgorithm</a></code> | The algorithm to use for performing outlier detection for availability metrics. |
+| <code><a href="#@cdklabs/multi-az-observability.InstrumentedServiceMultiAZObservabilityProps.property.availabilityOutlierThreshold">availabilityOutlierThreshold</a></code> | <code>number</code> | The outlier threshold for determining if an AZ is an outlier for faults. |
 | <code><a href="#@cdklabs/multi-az-observability.InstrumentedServiceMultiAZObservabilityProps.property.createDashboards">createDashboards</a></code> | <code>boolean</code> | Indicates whether to create per operation and overall service dashboards. |
 | <code><a href="#@cdklabs/multi-az-observability.InstrumentedServiceMultiAZObservabilityProps.property.interval">interval</a></code> | <code>aws-cdk-lib.Duration</code> | The interval used in the dashboard, defaults to 60 minutes. |
-| <code><a href="#@cdklabs/multi-az-observability.InstrumentedServiceMultiAZObservabilityProps.property.outlierThreshold">outlierThreshold</a></code> | <code>number</code> | The outlier threshold for determining if an AZ is an outlier for latency or faults. |
-
----
-
-##### `outlierDetectionAlgorithm`<sup>Required</sup> <a name="outlierDetectionAlgorithm" id="@cdklabs/multi-az-observability.InstrumentedServiceMultiAZObservabilityProps.property.outlierDetectionAlgorithm"></a>
-
-```typescript
-public readonly outlierDetectionAlgorithm: OutlierDetectionAlgorithm;
-```
-
-- *Type:* <a href="#@cdklabs/multi-az-observability.OutlierDetectionAlgorithm">OutlierDetectionAlgorithm</a>
-
-The algorithm to use for performing outlier detection.
+| <code><a href="#@cdklabs/multi-az-observability.InstrumentedServiceMultiAZObservabilityProps.property.latencyOutlierDetectionAlgorithm">latencyOutlierDetectionAlgorithm</a></code> | <code><a href="#@cdklabs/multi-az-observability.OutlierDetectionAlgorithm">OutlierDetectionAlgorithm</a></code> | The algorithm to use for performing outlier detection for latency metrics. |
+| <code><a href="#@cdklabs/multi-az-observability.InstrumentedServiceMultiAZObservabilityProps.property.latencyOutlierMetricAggregation">latencyOutlierMetricAggregation</a></code> | <code><a href="#@cdklabs/multi-az-observability.LatencyOutlierMetricAggregation">LatencyOutlierMetricAggregation</a></code> | The metric for latency to use in outlier detection, which means whether the algorithm uses a count of requests exceeding your latency threshold or whether it uses the actual latency values at your latency alarm threshold statistic. |
+| <code><a href="#@cdklabs/multi-az-observability.InstrumentedServiceMultiAZObservabilityProps.property.latencyOutlierThreshold">latencyOutlierThreshold</a></code> | <code>number</code> | The outlier threshold for determining if an AZ is an outlier for latency. |
 
 ---
 
@@ -1643,6 +1634,52 @@ value for this property.
 
 ---
 
+##### `availabilityOutlierDetectionAlgorithm`<sup>Optional</sup> <a name="availabilityOutlierDetectionAlgorithm" id="@cdklabs/multi-az-observability.InstrumentedServiceMultiAZObservabilityProps.property.availabilityOutlierDetectionAlgorithm"></a>
+
+```typescript
+public readonly availabilityOutlierDetectionAlgorithm: OutlierDetectionAlgorithm;
+```
+
+- *Type:* <a href="#@cdklabs/multi-az-observability.OutlierDetectionAlgorithm">OutlierDetectionAlgorithm</a>
+- *Default:* OutlierDetectionAlgorithm.STATIC
+
+The algorithm to use for performing outlier detection for availability metrics.
+
+** Currently only STATIC is supported **
+
+---
+
+##### `availabilityOutlierThreshold`<sup>Optional</sup> <a name="availabilityOutlierThreshold" id="@cdklabs/multi-az-observability.InstrumentedServiceMultiAZObservabilityProps.property.availabilityOutlierThreshold"></a>
+
+```typescript
+public readonly availabilityOutlierThreshold: number;
+```
+
+- *Type:* number
+- *Default:* Depends on the outlier detection algorithm selected
+
+The outlier threshold for determining if an AZ is an outlier for faults.
+
+This number is interpreted
+differently for different outlier algorithms. When used with
+STATIC, the number should be between 0 and 1 to represent the
+percentage of errors (like .7) that an AZ must be responsible
+for to be considered an outlier. When used with CHI_SQUARED, it
+represents the p value that indicates statistical significance, like
+0.05 which means the skew has less than or equal to a 5% chance of
+occuring. When used with Z_SCORE it indicates how many standard
+deviations to evaluate for an AZ being an outlier, typically 3 is
+standard for Z_SCORE.
+
+Standard defaults based on the outlier detection algorithm:
+STATIC: 0.7
+CHI_SQUARED: 0.05
+Z_SCORE: 3
+IQR: 1.5
+MAD: 3
+
+---
+
 ##### `createDashboards`<sup>Optional</sup> <a name="createDashboards" id="@cdklabs/multi-az-observability.InstrumentedServiceMultiAZObservabilityProps.property.createDashboards"></a>
 
 ```typescript
@@ -1669,16 +1706,44 @@ The interval used in the dashboard, defaults to 60 minutes.
 
 ---
 
-##### `outlierThreshold`<sup>Optional</sup> <a name="outlierThreshold" id="@cdklabs/multi-az-observability.InstrumentedServiceMultiAZObservabilityProps.property.outlierThreshold"></a>
+##### `latencyOutlierDetectionAlgorithm`<sup>Optional</sup> <a name="latencyOutlierDetectionAlgorithm" id="@cdklabs/multi-az-observability.InstrumentedServiceMultiAZObservabilityProps.property.latencyOutlierDetectionAlgorithm"></a>
 
 ```typescript
-public readonly outlierThreshold: number;
+public readonly latencyOutlierDetectionAlgorithm: OutlierDetectionAlgorithm;
+```
+
+- *Type:* <a href="#@cdklabs/multi-az-observability.OutlierDetectionAlgorithm">OutlierDetectionAlgorithm</a>
+- *Default:* OutlierDetectionAlgorithm.STATIC
+
+The algorithm to use for performing outlier detection for latency metrics.
+
+** Currently only STATIC is supported **
+
+---
+
+##### `latencyOutlierMetricAggregation`<sup>Optional</sup> <a name="latencyOutlierMetricAggregation" id="@cdklabs/multi-az-observability.InstrumentedServiceMultiAZObservabilityProps.property.latencyOutlierMetricAggregation"></a>
+
+```typescript
+public readonly latencyOutlierMetricAggregation: LatencyOutlierMetricAggregation;
+```
+
+- *Type:* <a href="#@cdklabs/multi-az-observability.LatencyOutlierMetricAggregation">LatencyOutlierMetricAggregation</a>
+- *Default:* LatencyOutlierMetric.COUNT
+
+The metric for latency to use in outlier detection, which means whether the algorithm uses a count of requests exceeding your latency threshold or whether it uses the actual latency values at your latency alarm threshold statistic.
+
+---
+
+##### `latencyOutlierThreshold`<sup>Optional</sup> <a name="latencyOutlierThreshold" id="@cdklabs/multi-az-observability.InstrumentedServiceMultiAZObservabilityProps.property.latencyOutlierThreshold"></a>
+
+```typescript
+public readonly latencyOutlierThreshold: number;
 ```
 
 - *Type:* number
 - *Default:* Depends on the outlier detection algorithm selected
 
-The outlier threshold for determining if an AZ is an outlier for latency or faults.
+The outlier threshold for determining if an AZ is an outlier for latency.
 
 This number is interpreted
 differently for different outlier algorithms. When used with
@@ -8570,6 +8635,44 @@ This calculates the z score of latency in one AZ against the other AZs.
 It uses
 the target response time of all requests to calculate the standard deviation and
 average for all AZs. This is the default.
+
+---
+
+
+### LatencyOutlierMetricAggregation <a name="LatencyOutlierMetricAggregation" id="@cdklabs/multi-az-observability.LatencyOutlierMetricAggregation"></a>
+
+The latency metric aggregation to use for latency outlier detection.
+
+#### Members <a name="Members" id="Members"></a>
+
+| **Name** | **Description** |
+| --- | --- |
+| <code><a href="#@cdklabs/multi-az-observability.LatencyOutlierMetricAggregation.COUNT">COUNT</a></code> | This option will use the count of the number of requests exceeding a latency threshold to make an outlier comparison. |
+| <code><a href="#@cdklabs/multi-az-observability.LatencyOutlierMetricAggregation.VALUE">VALUE</a></code> | This option will use the value of your provided latency statistic, like p99, and the value of the latency in each AZ will be compared. |
+
+---
+
+##### `COUNT` <a name="COUNT" id="@cdklabs/multi-az-observability.LatencyOutlierMetricAggregation.COUNT"></a>
+
+This option will use the count of the number of requests exceeding a latency threshold to make an outlier comparison.
+
+This option works
+with all outlier detection algorithms
+
+---
+
+
+##### `VALUE` <a name="VALUE" id="@cdklabs/multi-az-observability.LatencyOutlierMetricAggregation.VALUE"></a>
+
+This option will use the value of your provided latency statistic, like p99, and the value of the latency in each AZ will be compared.
+
+For example,
+AZ1: p99 = 125ms
+AZ2: p99 = 130ms
+AZ3: p99 = 250ms
+
+These values will be compared using the provided outlier detection algorithm. This
+option is not compatible with the STATIC outlier detection algorithm.
 
 ---
 

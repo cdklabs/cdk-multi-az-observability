@@ -35,6 +35,7 @@ import { MetricsHelper } from '../utilities/MetricsHelper';
 import { AvailabilityAndLatencyMetrics } from '../metrics/AvailabilityAndLatencyMetrics';
 import { IOperationAvailabilityMetricDetails } from '../services/IOperationAvailabilityMetricDetails';
 import { IOperationLatencyMetricDetails } from '../services/IOperationLatencyMetricDetails';
+import { LatencyOutlierMetricAggregation } from '../outlier-detection/LatencyOutlierMetricAggregation';
 
 /**
  * Class used to create availability and latency alarms and Contributor Insight rules
@@ -539,6 +540,7 @@ export class AvailabilityAndLatencyAlarmsAndRules {
     allAvailabilityZoneIds: string[],
     outlierThreshold: number,
     outlierDetectionFunction: IFunction,
+    outlierMetric: LatencyOutlierMetricAggregation,
     outlierDetectionAlgorithm: OutlierDetectionAlgorithm,
     counter: number,
     nameSuffix?: string,
@@ -564,6 +566,9 @@ export class AvailabilityAndLatencyAlarmsAndRules {
       .replace(/[\r]/g, '\\r')
       .replace(/[\t]/g, '\\t');
 
+    // TODO: Incorporate this into the Lambda function logic
+    outlierMetric;
+
     let outlierMetrics: IMetric = new MathExpression({
       expression:
         `MAX(LAMBDA("${outlierDetectionFunction.functionName}",` +
@@ -573,7 +578,6 @@ export class AvailabilityAndLatencyAlarmsAndRules {
         `"${str}",` +
         `"${metricDetails.metricNamespace}",` +
         `"${metricDetails.successMetricNames.join(':')}",` +
-        // TODO: Convert to metric math IF() statement
         `"TC(${MetricsHelper.convertDurationByUnit(metricDetails.successAlarmThreshold, metricDetails.unit)}:)"`+
         '"Milliseconds"' +
         '))',
