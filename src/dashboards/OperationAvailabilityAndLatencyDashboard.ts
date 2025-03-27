@@ -12,7 +12,6 @@ import {
   TextWidget,
   TextWidgetBackground,
   AlarmWidget,
-  Stats
 } from 'aws-cdk-lib/aws-cloudwatch';
 import { Construct } from 'constructs';
 import { ContributorInsightsWidget } from './ContributorInsightsWidget';
@@ -257,7 +256,7 @@ export class OperationAvailabilityAndLatencyDashboard
             metricDetails: operation.serverSideLatencyMetricDetails,
             label: availabilityZoneId + " (avg: ${AVG}  max: ${MAX})",
             metricType: LatencyMetricType.SUCCESS_LATENCY,
-            statistic: Stats.trimmedCount(MetricsHelper.convertDurationByUnit(operation.serverSideLatencyMetricDetails.successAlarmThreshold, operation.serverSideLatencyMetricDetails.unit)),
+            statistic: `TC(${MetricsHelper.convertDurationByUnit(operation.serverSideLatencyMetricDetails.successAlarmThreshold, operation.serverSideLatencyMetricDetails.unit)}:)`,
             color: MetricsHelper.colors[index]
           })
         }),
@@ -557,7 +556,7 @@ export class OperationAvailabilityAndLatencyDashboard
               metricDetails: operation.canaryMetricDetails!.canaryLatencyMetricDetails,
               label: availabilityZoneId + " (avg: ${AVG}  max: ${MAX})",
               metricType: LatencyMetricType.SUCCESS_LATENCY,
-              statistic: Stats.trimmedCount(MetricsHelper.convertDurationByUnit(operation.canaryMetricDetails!.canaryLatencyMetricDetails.successAlarmThreshold, operation.canaryMetricDetails!.canaryLatencyMetricDetails.unit)),
+              statistic: `TC(${MetricsHelper.convertDurationByUnit(operation.canaryMetricDetails!.canaryLatencyMetricDetails.successAlarmThreshold, operation.canaryMetricDetails!.canaryLatencyMetricDetails.unit)}:)`,
               color: MetricsHelper.colors[index]
             })
           }),
@@ -565,7 +564,7 @@ export class OperationAvailabilityAndLatencyDashboard
             label: Aws.REGION + " (avg: ${AVG}  max: ${MAX})", 
             metricDetails: operation.canaryMetricDetails!.canaryLatencyMetricDetails,
             metricType: LatencyMetricType.SUCCESS_LATENCY,
-            statistic: Stats.trimmedCount(MetricsHelper.convertDurationByUnit(operation.canaryMetricDetails!.canaryLatencyMetricDetails.successAlarmThreshold, operation.canaryMetricDetails!.canaryLatencyMetricDetails.unit)),
+            statistic: `TC(${MetricsHelper.convertDurationByUnit(operation.canaryMetricDetails!.canaryLatencyMetricDetails.successAlarmThreshold, operation.canaryMetricDetails!.canaryLatencyMetricDetails.unit)}:)`,
             color: MetricsHelper.regionColor
           },
           operation.canaryMetricDetails!.canaryLatencyMetricDetails.metricDimensions.regionalDimensions(

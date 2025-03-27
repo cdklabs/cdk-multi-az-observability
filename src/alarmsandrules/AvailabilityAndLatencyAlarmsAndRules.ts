@@ -10,8 +10,7 @@ import {
   MathExpression,
   CfnInsightRule,
   ComparisonOperator,
-  TreatMissingData,
-  Stats
+  TreatMissingData
 } from 'aws-cdk-lib/aws-cloudwatch';
 import { CfnNatGateway } from 'aws-cdk-lib/aws-ec2';
 import {
@@ -574,7 +573,8 @@ export class AvailabilityAndLatencyAlarmsAndRules {
         `"${str}",` +
         `"${metricDetails.metricNamespace}",` +
         `"${metricDetails.successMetricNames.join(':')}",` +
-        Stats.trimmedCount(MetricsHelper.convertDurationByUnit(metricDetails.successAlarmThreshold, metricDetails.unit)) +
+        // TODO: Convert to metric math IF() statement
+        `"TC(${MetricsHelper.convertDurationByUnit(metricDetails.successAlarmThreshold, metricDetails.unit)}:)"`+
         '"Milliseconds"' +
         '))',
       period: metricDetails.period
@@ -622,7 +622,8 @@ export class AvailabilityAndLatencyAlarmsAndRules {
           '-high-latency-requests',
         metricDetails: metricDetails,
         metricType: LatencyMetricType.SUCCESS_LATENCY,
-        statistic: Stats.trimmedCount(MetricsHelper.convertDurationByUnit(metricDetails.successAlarmThreshold, metricDetails.unit))
+        //statistic: `TC(${MetricsHelper.convertDurationByUnit(metricDetails.successAlarmThreshold, metricDetails.unit)}:)`
+        statistic: "SampleCount"
       });
 
     let regionalLatency: IMetric =
@@ -634,7 +635,8 @@ export class AvailabilityAndLatencyAlarmsAndRules {
           '-high-latency-requests',
         metricDetails: metricDetails,
         metricType: LatencyMetricType.SUCCESS_LATENCY,
-        statistic: Stats.trimmedCount(MetricsHelper.convertDurationByUnit(metricDetails.successAlarmThreshold, metricDetails.unit)),
+        //statistic: `TC(${MetricsHelper.convertDurationByUnit(metricDetails.successAlarmThreshold, metricDetails.unit)}:)`,
+        statistic: "SampleCount",
         keyPrefix: 'b',
       });
 
@@ -689,7 +691,7 @@ export class AvailabilityAndLatencyAlarmsAndRules {
           '-high-latency-requests',
         metricDetails: metricDetails,
         metricType: LatencyMetricType.SUCCESS_LATENCY,
-        statistic: Stats.trimmedCount(MetricsHelper.convertDurationByUnit(metricDetails.successAlarmThreshold, metricDetails.unit))
+        statistic: `TC(${MetricsHelper.convertDurationByUnit(metricDetails.successAlarmThreshold, metricDetails.unit)}:)`
       });
 
       let prefix = 'b';
@@ -705,7 +707,7 @@ export class AvailabilityAndLatencyAlarmsAndRules {
           metricDetails: metricDetails,
           metricType: LatencyMetricType.SUCCESS_LATENCY,
           keyPrefix: prefix,
-          statistic: Stats.trimmedCount(MetricsHelper.convertDurationByUnit(metricDetails.successAlarmThreshold, metricDetails.unit))
+          statistic: `TC(${MetricsHelper.convertDurationByUnit(metricDetails.successAlarmThreshold, metricDetails.unit)}:)`
         });
 
         prefix = MetricsHelper.nextChar(prefix);

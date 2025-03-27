@@ -215,9 +215,9 @@ export class AvailabilityAndLatencyMetrics {
     }
 
     return names.map(
-      (x) =>
+      (metricName: string) =>
         new Metric({
-          metricName: x,
+          metricName: metricName,
           namespace: props.metricDetails.metricNamespace,
           unit: props.metricDetails.unit,
           period: props.metricDetails.period,

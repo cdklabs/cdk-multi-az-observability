@@ -1530,7 +1530,7 @@ export class ApplicationLoadBalancerMetrics {
               alb: alb,
               availabilityZone: az,
               label: azId,
-              statistic: Stats.trimmedCount(MetricsHelper.convertDurationByUnit(latencyThresold, Unit.SECONDS)),
+              statistic: `TC(${MetricsHelper.convertDurationByUnit(latencyThresold, Unit.SECONDS)}:)`,
               period: period
             });
 
