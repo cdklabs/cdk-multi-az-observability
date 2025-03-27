@@ -17,7 +17,6 @@ import { IService } from '../src/services/IService';
 import { Operation } from '../src/services/Operation';
 import { MetricDimensions } from '../src/services/props/MetricDimensions';
 import { Service } from '../src/services/Service';
-import { OutlierDetectionAlgorithm } from '../src/utilities/OutlierDetectionAlgorithm';
 import { OperationAvailabilityMetricDetails } from '../src/services/OperationAvailabilityMetricDetails';
 import { OperationLatencyMetricDetails } from '../src/services/OperationLatencyMetricDetails';
 
@@ -227,9 +226,7 @@ test('Fully instrumented service', () => {
   new InstrumentedServiceMultiAZObservability(stack, 'MAZObservability', {
     createDashboards: true,
     service: service,
-    outlierThreshold: 0.7,
-    interval: Duration.minutes(30),
-    outlierDetectionAlgorithm: OutlierDetectionAlgorithm.STATIC,
+    interval: Duration.minutes(30)
   });
 
   Template.fromStack(stack);
@@ -357,8 +354,7 @@ test('Fully instrumented service with NLB', () => {
   new InstrumentedServiceMultiAZObservability(stack, 'MAZObservability', {
     createDashboards: true,
     service: service,
-    interval: Duration.minutes(30),
-    outlierDetectionAlgorithm: OutlierDetectionAlgorithm.STATIC,
+    interval: Duration.minutes(30)
   });
 
   Template.fromStack(stack);
@@ -490,9 +486,7 @@ test('Fully instrumented service with chi-squared', () => {
   new InstrumentedServiceMultiAZObservability(stack, 'MAZObservability', {
     createDashboards: true,
     service: service,
-    outlierThreshold: 0.7,
-    interval: Duration.minutes(30),
-    outlierDetectionAlgorithm: OutlierDetectionAlgorithm.CHI_SQUARED,
+    interval: Duration.minutes(30)
   });
 
   Template.fromStack(stack);
@@ -843,11 +837,9 @@ test('Fully instrumented service adding canaries with dynamic source', () => {
   new InstrumentedServiceMultiAZObservability(stack, 'MAZObservability', {
     createDashboards: true,
     service: service,
-    outlierThreshold: 0.7,
     interval: Duration.minutes(30),
     assetsBucketParameterName: 'AssetsBucket',
-    assetsBucketPrefixParameterName: 'AssetsBucketPrefix',
-    outlierDetectionAlgorithm: OutlierDetectionAlgorithm.STATIC,
+    assetsBucketPrefixParameterName: 'AssetsBucketPrefix'
   });
 
   //Template.fromStack(stack);

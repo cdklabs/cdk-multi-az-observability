@@ -13,6 +13,7 @@ import { IServerSideOperationZonalAlarmsAndRules } from "./IServerSideOperationZ
 import { ServerSideOperationZonalAlarmsAndRulesProps } from "./props/ServerSideOperationZonalAlarmsAndRulesProps";
 import { OutlierDetectionAlgorithm } from "../utilities/OutlierDetectionAlgorithm";
 import { IOperation } from "../services/IOperation";
+import { LatencyOutlierMetricAggregation } from "../outlier-detection/LatencyOutlierMetricAggregation";
 
 /**
  * The server side alarms and rules for an operation in an Availability Zone
@@ -172,6 +173,7 @@ export class ServerSideOperationZonalAlarmsAndRules
           }),
           props.operationAlarmsAndRulesProps.latencyOutlierThreshold,
           props.operationAlarmsAndRulesProps.outlierDetectionFunction!,
+          props.operationAlarmsAndRulesProps.latencyOutlierMetricAggregation || LatencyOutlierMetricAggregation.COUNT,
           props.operationAlarmsAndRulesProps.latencyOutlierDetectionAlgorithm,
           props.counter,
           props.nameSuffix,

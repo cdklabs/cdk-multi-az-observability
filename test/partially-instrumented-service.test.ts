@@ -16,7 +16,6 @@ import { IService } from '../src/services/IService';
 import { Operation } from '../src/services/Operation';
 import { MetricDimensions } from '../src/services/props/MetricDimensions';
 import { Service } from '../src/services/Service';
-import { OutlierDetectionAlgorithm } from '../src/utilities/OutlierDetectionAlgorithm';
 import { OperationAvailabilityMetricDetails } from '../src/services/OperationAvailabilityMetricDetails';
 import { OperationLatencyMetricDetails } from '../src/services/OperationLatencyMetricDetails';
 
@@ -128,9 +127,7 @@ test('Partially instrumented service', () => {
   new InstrumentedServiceMultiAZObservability(stack, 'MAZObservability', {
     createDashboards: false,
     service: service,
-    outlierThreshold: 0.7,
-    interval: Duration.minutes(30),
-    outlierDetectionAlgorithm: OutlierDetectionAlgorithm.STATIC,
+    interval: Duration.minutes(30)
   });
 
   Template.fromStack(stack);
@@ -240,8 +237,7 @@ test('Partially instrumented service with NLB and dashboard', () => {
   new InstrumentedServiceMultiAZObservability(stack, 'MAZObservability', {
     createDashboards: true,
     service: service,
-    interval: Duration.minutes(30),
-    outlierDetectionAlgorithm: OutlierDetectionAlgorithm.STATIC,
+    interval: Duration.minutes(30)
   });
 
   Template.fromStack(stack);
@@ -355,9 +351,7 @@ test('Partially instrumented service with chi-squared', () => {
   new InstrumentedServiceMultiAZObservability(stack, 'MAZObservability', {
     createDashboards: false,
     service: service,
-    outlierThreshold: 0.7,
-    interval: Duration.minutes(30),
-    outlierDetectionAlgorithm: OutlierDetectionAlgorithm.CHI_SQUARED,
+    interval: Duration.minutes(30)
   });
 
   Template.fromStack(stack);
@@ -601,9 +595,7 @@ test('Partially instrumented service with canaries', () => {
   new InstrumentedServiceMultiAZObservability(stack, 'MAZObservability', {
     createDashboards: true,
     service: service,
-    outlierThreshold: 0.7,
-    interval: Duration.minutes(30),
-    outlierDetectionAlgorithm: OutlierDetectionAlgorithm.STATIC,
+    interval: Duration.minutes(30)
   });
 
   Template.fromStack(stack);

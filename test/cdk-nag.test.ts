@@ -9,7 +9,6 @@ import { AwsSolutionsChecks } from 'cdk-nag';
 import { IService } from '../src/services/IService';
 import { Service } from '../src/services/Service';
 import { InstrumentedServiceMultiAZObservability } from '../src/services/InstrumentedServiceMultiAZObservability';
-import { OutlierDetectionAlgorithm } from '../src/utilities/OutlierDetectionAlgorithm';
 import { Template } from 'aws-cdk-lib/assertions';
 import { Aspects, Aws, Duration } from 'aws-cdk-lib';
 import { MetricDimensions } from '../src/services/props/MetricDimensions';
@@ -144,9 +143,7 @@ test('Fully instrumented service', () => {
     new InstrumentedServiceMultiAZObservability(stack, 'MAZObservability', {
       createDashboards: true,
       service: service,
-      outlierThreshold: 0.7,
-      interval: cdk.Duration.minutes(30),
-      outlierDetectionAlgorithm: OutlierDetectionAlgorithm.STATIC,
+      interval: cdk.Duration.minutes(30)
     });
   
     Template.fromStack(stack);
