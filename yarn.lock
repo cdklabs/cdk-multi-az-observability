@@ -1169,10 +1169,10 @@ case@1.6.3, case@^1.6.3:
   resolved "https://registry.yarnpkg.com/case/-/case-1.6.3.tgz#0a4386e3e9825351ca2e6216c60467ff5f1ea1c9"
   integrity sha512-mzDSXIPaFwVDvZAHqZ9VlbyF4yyXRuX6IvB06WvPYkqJVO24kX1PPhv9bfpKNFZyxYFmmgo03HUiD8iklmJYRQ==
 
-cdk-nag@^2.35.58:
-  version "2.35.58"
-  resolved "https://registry.yarnpkg.com/cdk-nag/-/cdk-nag-2.35.58.tgz#2b7fcf9ce7f10bb436ca28234be690880fd4c008"
-  integrity sha512-isWkFX9vKhid5yg01g9zg+dd2GTtDd1xU2jTLlRByvLqtsjoNPkmqUjoGP5QmjUN1jJQy2dTY2+JOZXT04fcnA==
+cdk-nag@^2.35.59:
+  version "2.35.59"
+  resolved "https://registry.yarnpkg.com/cdk-nag/-/cdk-nag-2.35.59.tgz#8ccb3acd880be3a9f5c68e4f70330eb2594a54eb"
+  integrity sha512-CtCvSSW3GzVoe/tliRCz2HgMANWEuIhA96UoKGU3TaxQv40jSVJdCsz0h9Bai92yEfjawWy7gw9I9JH5JPIqHQ==
 
 cdklabs-projen-project-types@^0.1.211:
   version "0.1.234"
@@ -4092,9 +4092,9 @@ typescript@^5.8.2, typescript@~5.8:
   integrity sha512-aJn6wq13/afZp/jT9QZmwEjDqqvSGp1VT5GVg+f/t6/oVyrgXM6BY1h9BRh/O5p3PlUPAe+WuiEZOmb/49RqoQ==
 
 typescript@next:
-  version "5.9.0-dev.20250328"
-  resolved "https://registry.yarnpkg.com/typescript/-/typescript-5.9.0-dev.20250328.tgz#8cc102d7a4462e4b2d68208c1b5b25b29bc5470c"
-  integrity sha512-m38Gb1vTDu8LugpOKL4cw7FbjQhZDYf7X2oumF4GvAs7T9O3q0Apv26ckQKuSXTQJAUUCiRfST+QHWXvssdCpQ==
+  version "5.9.0-dev.20250329"
+  resolved "https://registry.yarnpkg.com/typescript/-/typescript-5.9.0-dev.20250329.tgz#13ef480578ca521adfbe462bca41b5cf73f36b7a"
+  integrity sha512-l/lWiKqKbdKJqlfXmSnDRp37JvuNlgRIO5vHvp4e26OIx3Dk4rfgylozvQ0+n0PxLwgIR+Z71j971gO1IkQulA==
 
 typescript@~5.5:
   version "5.5.4"
@@ -4309,7 +4309,12 @@ yaml@^2.2.2:
   resolved "https://registry.npmjs.org/yaml/-/yaml-2.6.1.tgz"
   integrity sha512-7r0XPzioN/Q9kXBro/XPnA6kznR73DHq+GXh5ON7ZozRO6aMjbmiBuKste2wslTFkC5d1dw0GooOCepZXJ2SAg==
 
-yaml@^2.4.1, yaml@^2.7.0:
+yaml@^2.4.1:
+  version "2.7.1"
+  resolved "https://registry.yarnpkg.com/yaml/-/yaml-2.7.1.tgz#44a247d1b88523855679ac7fa7cda6ed7e135cf6"
+  integrity sha512-10ULxpnOCQXxJvBgxsn9ptjq6uviG/htZKk9veJGhlqn3w/DxQ631zFF+nlQXLwmImeS5amR2dl2U8sg6U9jsQ==
+
+yaml@^2.7.0:
   version "2.7.0"
   resolved "https://registry.yarnpkg.com/yaml/-/yaml-2.7.0.tgz#aef9bb617a64c937a9a748803786ad8d3ffe1e98"
   integrity sha512-+hSoy/QHluxmC9kCIJyL/uyFmLmc+e5CFR5Wa+bpIhIj85LVb9ZH2nVnqrHoSvKogwODv0ClqZkmiSSaIH5LTA==
