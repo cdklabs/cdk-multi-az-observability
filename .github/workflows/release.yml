@@ -11,7 +11,7 @@ concurrency:
   cancel-in-progress: false
 jobs:
   release:
-    runs-on: ubuntu-24.04-arm
+    runs-on: codebuild-Arm64CdkLabsGithubRunner-${{ github.run_id }}-${{ github.run_attempt }}
     permissions:
       contents: write
     outputs:
@@ -67,7 +67,7 @@ jobs:
       - release_pypi
       - release_nuget
       - release_golang
-    runs-on: ubuntu-24.04-arm
+    runs-on: codebuild-Arm64CdkLabsGithubRunner-${{ github.run_id }}-${{ github.run_attempt }}
     permissions:
       contents: write
     if: needs.release.outputs.tag_exists != 'true' && needs.release.outputs.latest_commit == github.sha
@@ -92,7 +92,7 @@ jobs:
   release_npm:
     name: Publish to npm
     needs: release
-    runs-on: ubuntu-24.04-arm
+    runs-on: codebuild-Arm64CdkLabsGithubRunner-${{ github.run_id }}-${{ github.run_attempt }}
     permissions:
       contents: read
     if: needs.release.outputs.tag_exists != 'true' && needs.release.outputs.latest_commit == github.sha
@@ -131,7 +131,7 @@ jobs:
   release_maven:
     name: Publish to Maven Central
     needs: release
-    runs-on: ubuntu-24.04-arm
+    runs-on: codebuild-Arm64CdkLabsGithubRunner-${{ github.run_id }}-${{ github.run_attempt }}
     permissions:
       contents: read
     if: needs.release.outputs.tag_exists != 'true' && needs.release.outputs.latest_commit == github.sha
@@ -179,7 +179,7 @@ jobs:
   release_pypi:
     name: Publish to PyPI
     needs: release
-    runs-on: ubuntu-24.04-arm
+    runs-on: codebuild-Arm64CdkLabsGithubRunner-${{ github.run_id }}-${{ github.run_attempt }}
     permissions:
       contents: read
     if: needs.release.outputs.tag_exists != 'true' && needs.release.outputs.latest_commit == github.sha
@@ -217,7 +217,7 @@ jobs:
   release_nuget:
     name: Publish to NuGet Gallery
     needs: release
-    runs-on: ubuntu-24.04-arm
+    runs-on: codebuild-Arm64CdkLabsGithubRunner-${{ github.run_id }}-${{ github.run_attempt }}
     permissions:
       contents: read
     if: needs.release.outputs.tag_exists != 'true' && needs.release.outputs.latest_commit == github.sha
@@ -257,7 +257,7 @@ jobs:
   release_golang:
     name: Publish to GitHub Go Module Repository
     needs: release
-    runs-on: ubuntu-24.04-arm
+    runs-on: codebuild-Arm64CdkLabsGithubRunner-${{ github.run_id }}-${{ github.run_attempt }}
     permissions:
       contents: read
     if: needs.release.outputs.tag_exists != 'true' && needs.release.outputs.latest_commit == github.sha
