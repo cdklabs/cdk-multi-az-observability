@@ -48,6 +48,18 @@ export class OperationAlarmsAndRules
   readonly regionalImpactAlarm: IAlarm;
 
   /**
+   * An alarm indicating availability or latency impact has been detected by the server-side
+   * and the impact is regionally scoped, not zonal
+   */
+  readonly serverSideRegionalImpactAlarm: IAlarm;
+
+  /**
+   * An alarm indicating availability or latency impact has been detected by the canary
+   * and the impact is regionally scoped, not zonal
+   */
+  readonly canaryRegionalImpactAlarm?: IAlarm;
+
+  /**
    * The server side zonal alarms and rules, indexed by Availability Zone name.
    */
   readonly serverSideZonalAlarmsAndRules: {[key: string]: IServerSideOperationZonalAlarmsAndRules};
@@ -202,6 +214,18 @@ export class OperationAlarmsAndRules
           )
         )
       });
+
+      this.canaryRegionalImpactAlarm = new CompositeAlarm(this, props.operation.operationName + "-canary-regional-impact-alarm", {
+        compositeAlarmName: `${props.operation.service.serviceName.toLowerCase()}-${props.operation.operationName.toLowerCase()}-canary-regional-impact`,
+        alarmRule: AlarmRule.allOf(
+          this.canaryRegionalAlarmsAndRules!.availabilityOrLatencyAlarm,
+          AlarmRule.not(
+            AlarmRule.anyOf(
+              ...Object.values(this.aggregateZonalAlarms)
+            )
+          )
+        )
+      });
     }
     else {
       this.regionalImpactAlarm = new CompositeAlarm(this, props.operation.operationName + "-regional-impact-alarm", {
@@ -216,5 +240,17 @@ export class OperationAlarmsAndRules
         )
       });
     }
+
+    this.serverSideRegionalImpactAlarm = new CompositeAlarm(this, props.operation.operationName + "-server-regional-impact-alarm", {
+      compositeAlarmName: `${props.operation.service.serviceName.toLowerCase()}-${props.operation.operationName.toLowerCase()}-server-regional-impact`,
+      alarmRule: AlarmRule.allOf(
+        this.serverSideRegionalAlarmsAndRules.availabilityOrLatencyAlarm,
+        AlarmRule.not(
+          AlarmRule.anyOf(
+            ...Object.values(this.aggregateZonalAlarms)
+          )
+        )
+      )
+    });
   }
 }

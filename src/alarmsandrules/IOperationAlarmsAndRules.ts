@@ -23,6 +23,18 @@ export interface IOperationAlarmsAndRules {
   readonly regionalImpactAlarm: IAlarm;
 
   /**
+   * An alarm indicating availability or latency impact has been detected by the server-side
+   * and the impact is regionally scoped, not zonal
+   */
+  readonly serverSideRegionalImpactAlarm: IAlarm;
+
+  /**
+   * An alarm indicating availability or latency impact has been detected by the canary
+   * and the impact is regionally scoped, not zonal
+   */
+  readonly canaryRegionalImpactAlarm?: IAlarm;
+
+  /**
    * The server side regional alarms and rules
    */
   readonly serverSideRegionalAlarmsAndRules: IServerSideOperationRegionalAlarmsAndRules;
