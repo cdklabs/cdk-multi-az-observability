@@ -11,7 +11,7 @@ concurrency:
   cancel-in-progress: false
 jobs:
   release:
-    runs-on: ubuntu-24.04-arm
+    runs-on: codebuild-Arm64CdkLabsGithubRunner-${{ github.run_id }}-${{ github.run_attempt }}
     permissions:
       contents: write
     outputs:
@@ -31,7 +31,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: "20"
+          node-version: lts/*
       - name: Install dependencies
         run: yarn install --check-files --frozen-lockfile
       - name: release
@@ -67,14 +67,14 @@ jobs:
       - release_pypi
       - release_nuget
       - release_golang
-    runs-on: ubuntu-24.04-arm
+    runs-on: codebuild-Arm64CdkLabsGithubRunner-${{ github.run_id }}-${{ github.run_attempt }}
     permissions:
       contents: write
     if: needs.release.outputs.tag_exists != 'true' && needs.release.outputs.latest_commit == github.sha
     steps:
       - uses: actions/setup-node@v4
         with:
-          node-version: "20"
+          node-version: lts/*
       - name: Download build artifacts
         uses: actions/download-artifact@v4
         with:
@@ -92,14 +92,14 @@ jobs:
   release_npm:
     name: Publish to npm
     needs: release
-    runs-on: ubuntu-24.04-arm
+    runs-on: codebuild-Arm64CdkLabsGithubRunner-${{ github.run_id }}-${{ github.run_attempt }}
     permissions:
       contents: read
     if: needs.release.outputs.tag_exists != 'true' && needs.release.outputs.latest_commit == github.sha
     steps:
       - uses: actions/setup-node@v4
         with:
-          node-version: "20"
+          node-version: lts/*
       - name: Download build artifacts
         uses: actions/download-artifact@v4
         with:
@@ -131,7 +131,7 @@ jobs:
   release_maven:
     name: Publish to Maven Central
     needs: release
-    runs-on: ubuntu-24.04-arm
+    runs-on: codebuild-Arm64CdkLabsGithubRunner-${{ github.run_id }}-${{ github.run_attempt }}
     permissions:
       contents: read
     if: needs.release.outputs.tag_exists != 'true' && needs.release.outputs.latest_commit == github.sha
@@ -142,7 +142,7 @@ jobs:
           java-version: "11"
       - uses: actions/setup-node@v4
         with:
-          node-version: "20"
+          node-version: lts/*
       - name: Install gpg-agent
         run: dnf install --assumeyes --allowerasing gnupg2
       - name: Download build artifacts
@@ -179,14 +179,14 @@ jobs:
   release_pypi:
     name: Publish to PyPI
     needs: release
-    runs-on: ubuntu-24.04-arm
+    runs-on: codebuild-Arm64CdkLabsGithubRunner-${{ github.run_id }}-${{ github.run_attempt }}
     permissions:
       contents: read
     if: needs.release.outputs.tag_exists != 'true' && needs.release.outputs.latest_commit == github.sha
     steps:
       - uses: actions/setup-node@v4
         with:
-          node-version: "20"
+          node-version: lts/*
       - name: Download build artifacts
         uses: actions/download-artifact@v4
         with:
@@ -217,14 +217,14 @@ jobs:
   release_nuget:
     name: Publish to NuGet Gallery
     needs: release
-    runs-on: ubuntu-24.04-arm
+    runs-on: codebuild-Arm64CdkLabsGithubRunner-${{ github.run_id }}-${{ github.run_attempt }}
     permissions:
       contents: read
     if: needs.release.outputs.tag_exists != 'true' && needs.release.outputs.latest_commit == github.sha
     steps:
       - uses: actions/setup-node@v4
         with:
-          node-version: "20"
+          node-version: lts/*
       - uses: actions/setup-dotnet@v4
         with:
           dotnet-version: 6.x
@@ -257,14 +257,14 @@ jobs:
   release_golang:
     name: Publish to GitHub Go Module Repository
     needs: release
-    runs-on: ubuntu-24.04-arm
+    runs-on: codebuild-Arm64CdkLabsGithubRunner-${{ github.run_id }}-${{ github.run_attempt }}
     permissions:
       contents: read
     if: needs.release.outputs.tag_exists != 'true' && needs.release.outputs.latest_commit == github.sha
     steps:
       - uses: actions/setup-node@v4
         with:
-          node-version: "20"
+          node-version: lts/*
       - uses: actions/setup-go@v5
         with:
           go-version: ^1.18.0

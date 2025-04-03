@@ -133,7 +133,7 @@ export class ServiceAlarmsAndRules
     )
 
     let serverSideRegionalAvailabilityOrLatencyAlarmsForCriticalOperations: IAlarm[] = criticalOperationAlarmsAndRules
-      .map((operation: IOperationAlarmsAndRules) => operation.serverSideRegionalAlarmsAndRules.availabilityOrLatencyAlarm);
+      .map((operation: IOperationAlarmsAndRules) => operation.serverSideRegionalImpactAlarm);
 
     this.regionalServerSideImpactAlarm = new CompositeAlarm(
       this,
@@ -145,8 +145,8 @@ export class ServiceAlarmsAndRules
     );
 
     let canaryRegionalAvailabilityOrLatencyAlarmsForCriticalOperations: IAlarm[] = criticalOperationAlarmsAndRules
-      .filter((operation: IOperationAlarmsAndRules) => operation.canaryRegionalAlarmsAndRules)
-      .map((operation: IOperationAlarmsAndRules) => operation.canaryRegionalAlarmsAndRules!.availabilityOrLatencyAlarm);
+      .filter((operation: IOperationAlarmsAndRules) => operation.canaryRegionalImpactAlarm)
+      .map((operation: IOperationAlarmsAndRules) => operation.canaryRegionalImpactAlarm!);
 
     if (canaryRegionalAvailabilityOrLatencyAlarmsForCriticalOperations) {
       this.regionalCanaryAlarm = new CompositeAlarm(

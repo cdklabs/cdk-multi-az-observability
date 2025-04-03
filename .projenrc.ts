@@ -65,10 +65,9 @@ const project = new CdklabsConstructLibrary ({
       schedule: UpgradeDependenciesSchedule.WEEKLY,
     },
   },
-  workflowNodeVersion: '20',
   workflowRunsOn: [
-    //'codebuild-Arm64CdkLabsGithubRunner-${{ github.run_id }}-${{ github.run_attempt }}',
-    "ubuntu-24.04-arm"
+    'codebuild-Arm64CdkLabsGithubRunner-${{ github.run_id }}-${{ github.run_attempt }}',
+    //"ubuntu-24.04-arm"
   ],
   keywords: [
     'cdk',

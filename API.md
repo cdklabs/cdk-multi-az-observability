@@ -6886,8 +6886,10 @@ Creates alarms and rules for an operation for both regional and zonal metrics.
 | <code><a href="#@cdklabs/multi-az-observability.IOperationAlarmsAndRules.property.operation">operation</a></code> | <code><a href="#@cdklabs/multi-az-observability.IOperation">IOperation</a></code> | The operation the alarms and rules are created for. |
 | <code><a href="#@cdklabs/multi-az-observability.IOperationAlarmsAndRules.property.regionalImpactAlarm">regionalImpactAlarm</a></code> | <code>aws-cdk-lib.aws_cloudwatch.IAlarm</code> | An alarm indicating availability or latency impact has been detected by the server-side  and/or canary (if present) and the impact is regionally scoped, not zonal. |
 | <code><a href="#@cdklabs/multi-az-observability.IOperationAlarmsAndRules.property.serverSideRegionalAlarmsAndRules">serverSideRegionalAlarmsAndRules</a></code> | <code><a href="#@cdklabs/multi-az-observability.IServerSideOperationRegionalAlarmsAndRules">IServerSideOperationRegionalAlarmsAndRules</a></code> | The server side regional alarms and rules. |
+| <code><a href="#@cdklabs/multi-az-observability.IOperationAlarmsAndRules.property.serverSideRegionalImpactAlarm">serverSideRegionalImpactAlarm</a></code> | <code>aws-cdk-lib.aws_cloudwatch.IAlarm</code> | An alarm indicating availability or latency impact has been detected by the server-side and the impact is regionally scoped, not zonal. |
 | <code><a href="#@cdklabs/multi-az-observability.IOperationAlarmsAndRules.property.serverSideZonalAlarmsAndRules">serverSideZonalAlarmsAndRules</a></code> | <code>{[ key: string ]: <a href="#@cdklabs/multi-az-observability.IServerSideOperationZonalAlarmsAndRules">IServerSideOperationZonalAlarmsAndRules</a>}</code> | The server side zonal alarms and rules, indexed by Availability Zone name. |
 | <code><a href="#@cdklabs/multi-az-observability.IOperationAlarmsAndRules.property.canaryRegionalAlarmsAndRules">canaryRegionalAlarmsAndRules</a></code> | <code><a href="#@cdklabs/multi-az-observability.ICanaryOperationRegionalAlarmsAndRules">ICanaryOperationRegionalAlarmsAndRules</a></code> | The canary regional alarms and rules. |
+| <code><a href="#@cdklabs/multi-az-observability.IOperationAlarmsAndRules.property.canaryRegionalImpactAlarm">canaryRegionalImpactAlarm</a></code> | <code>aws-cdk-lib.aws_cloudwatch.IAlarm</code> | An alarm indicating availability or latency impact has been detected by the canary and the impact is regionally scoped, not zonal. |
 | <code><a href="#@cdklabs/multi-az-observability.IOperationAlarmsAndRules.property.canaryZonalAlarmsAndRules">canaryZonalAlarmsAndRules</a></code> | <code>{[ key: string ]: <a href="#@cdklabs/multi-az-observability.ICanaryOperationZonalAlarmsAndRules">ICanaryOperationZonalAlarmsAndRules</a>}</code> | The canary zonal alarms and rules, indexed by Availability Zone name. |
 
 ---
@@ -6940,6 +6942,18 @@ The server side regional alarms and rules.
 
 ---
 
+##### `serverSideRegionalImpactAlarm`<sup>Required</sup> <a name="serverSideRegionalImpactAlarm" id="@cdklabs/multi-az-observability.IOperationAlarmsAndRules.property.serverSideRegionalImpactAlarm"></a>
+
+```typescript
+public readonly serverSideRegionalImpactAlarm: IAlarm;
+```
+
+- *Type:* aws-cdk-lib.aws_cloudwatch.IAlarm
+
+An alarm indicating availability or latency impact has been detected by the server-side and the impact is regionally scoped, not zonal.
+
+---
+
 ##### `serverSideZonalAlarmsAndRules`<sup>Required</sup> <a name="serverSideZonalAlarmsAndRules" id="@cdklabs/multi-az-observability.IOperationAlarmsAndRules.property.serverSideZonalAlarmsAndRules"></a>
 
 ```typescript
@@ -6961,6 +6975,18 @@ public readonly canaryRegionalAlarmsAndRules: ICanaryOperationRegionalAlarmsAndR
 - *Type:* <a href="#@cdklabs/multi-az-observability.ICanaryOperationRegionalAlarmsAndRules">ICanaryOperationRegionalAlarmsAndRules</a>
 
 The canary regional alarms and rules.
+
+---
+
+##### `canaryRegionalImpactAlarm`<sup>Optional</sup> <a name="canaryRegionalImpactAlarm" id="@cdklabs/multi-az-observability.IOperationAlarmsAndRules.property.canaryRegionalImpactAlarm"></a>
+
+```typescript
+public readonly canaryRegionalImpactAlarm: IAlarm;
+```
+
+- *Type:* aws-cdk-lib.aws_cloudwatch.IAlarm
+
+An alarm indicating availability or latency impact has been detected by the canary and the impact is regionally scoped, not zonal.
 
 ---
 
