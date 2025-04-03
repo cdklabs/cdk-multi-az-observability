@@ -9,7 +9,7 @@ const project = new CdklabsConstructLibrary ({
   authorAddress: 'aws-cdk-dev@amazon.com',
   homepage: 'https://github.com/cdklabs/cdk-multi-az-observability',
   repositoryUrl: 'https://github.com/cdklabs/cdk-multi-az-observability/',
-  cdkVersion: '2.184.0',
+  cdkVersion: '2.187.0',
   defaultReleaseBranch: 'main',
   jsiiVersion: '~5.5.0',
   name: '@cdklabs/multi-az-observability',
@@ -67,7 +67,8 @@ const project = new CdklabsConstructLibrary ({
   },
   workflowNodeVersion: '20',
   workflowRunsOn: [
-    'codebuild-Arm64CdkLabsGithubRunner-${{ github.run_id }}-${{ github.run_attempt }}',
+    //'codebuild-Arm64CdkLabsGithubRunner-${{ github.run_id }}-${{ github.run_attempt }}',
+    "ubuntu-24.04-arm"
   ],
   keywords: [
     'cdk',
