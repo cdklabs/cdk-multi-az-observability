@@ -67,7 +67,8 @@ const project = new CdklabsConstructLibrary ({
   },
   workflowNodeVersion: '20',
   workflowRunsOn: [
-    'codebuild-Arm64CdkLabsGithubRunner-${{ github.run_id }}-${{ github.run_attempt }}',
+    //'codebuild-Arm64CdkLabsGithubRunner-${{ github.run_id }}-${{ github.run_attempt }}',
+    "ubuntu-24.04-arm"
   ],
   keywords: [
     'cdk',
