@@ -107,8 +107,8 @@ export class ServiceAvailabilityAndLatencyDashboard
       });
 
       return new GraphWidget({
-          height: 6,
-          width: 8,
+          height: 8,
+          width: 6,
           title: `Fault Count - ${availabilityZoneId} `,
           region: Aws.REGION,
           left: criticalOperationsZonalMetrics,
@@ -197,13 +197,57 @@ export class ServiceAvailabilityAndLatencyDashboard
 
       ...zonalAvailabilityWidgets,
 
+      // Canary per AZ request count
+      new GraphWidget({
+        height: 8,
+        width: 6,
+        title: 'Request Count',
+        region: Aws.REGION,
+        left: availabilityZones.map((availabilityZone: string, index: number) => {
+          let azLetter: string = availabilityZone.substring(availabilityZone.length - 1);
+          let availabilityZoneId: string = props.azMapper.availabilityZoneIdFromAvailabilityZoneLetter(azLetter);      
+    
+          let usingMetrics: { [key: string]: IMetric } = {};
+    
+          criticalOperations.forEach((operation: IOperation) => {
+              
+            usingMetrics[`${azLetter}_${operation.operationName}`] =
+              AvailabilityAndLatencyMetrics.createZonalAvailabilityMetric({
+                availabilityZoneId: availabilityZoneId,
+                metricDetails: operation.serverSideAvailabilityMetricDetails,
+                label: availabilityZoneId,
+                metricType: AvailabilityMetricType.REQUEST_COUNT,
+                availabilityZone: availabilityZone,
+                color: MetricsHelper.colors[index]
+              },
+              operation.serverSideAvailabilityMetricDetails.metricDimensions.zonalDimensions(
+                availabilityZoneId,
+                Aws.REGION
+              ));
+          });
+    
+          return new MathExpression({
+            expression: Object.keys(usingMetrics).join('+'),
+            label: availabilityZoneId,
+            usingMetrics: usingMetrics,
+            period: props.service.period
+          });
+        }),
+        statistic: 'Sum',
+        leftYAxis: {
+          min: 0,
+          label: 'Count',
+          showUnits: false,
+        }
+      }),
+
       // Server-side per AZ fault count
       new GraphWidget({
         height: 8,
         width: 6,
         title: 'Fault Count',
         region: Aws.REGION,
-        left: availabilityZones.map((availabilityZone: string) => {
+        left: availabilityZones.map((availabilityZone: string, index: number) => {
           let azLetter: string = availabilityZone.substring(availabilityZone.length - 1);
           let availabilityZoneId: string = props.azMapper.availabilityZoneIdFromAvailabilityZoneLetter(azLetter);      
     
@@ -217,7 +261,8 @@ export class ServiceAvailabilityAndLatencyDashboard
                 metricDetails: operation.serverSideAvailabilityMetricDetails,
                 label: availabilityZoneId,
                 metricType: AvailabilityMetricType.FAULT_COUNT,
-                availabilityZone: availabilityZone
+                availabilityZone: availabilityZone,
+                color: MetricsHelper.colors[index]
               },
               operation.serverSideAvailabilityMetricDetails.metricDimensions.zonalDimensions(
                 availabilityZoneId,
@@ -327,8 +372,8 @@ export class ServiceAvailabilityAndLatencyDashboard
       });
 
       return new GraphWidget({
-          height: 6,
-          width: 8,
+          height: 8,
+          width: 6,
           title: `Fault Count - ${availabilityZoneId}`,
           region: Aws.REGION,
           left: criticalOperationsZonalMetrics,
@@ -363,7 +408,7 @@ export class ServiceAvailabilityAndLatencyDashboard
       });
 
       return new GraphWidget({
-          height: 6,
+          height: 8,
           width: 8,
           title: `Latency - ${availabilityZoneId}`,
           region: Aws.REGION,
@@ -420,13 +465,13 @@ export class ServiceAvailabilityAndLatencyDashboard
 
       ...zonalAvailabilityWidgets,
 
-      // Server-side per AZ fault count
+      // Canary per AZ request count
       new GraphWidget({
         height: 8,
         width: 6,
-        title: 'Fault Count',
+        title: 'Request Count',
         region: Aws.REGION,
-        left: availabilityZones.map((availabilityZone: string) => {
+        left: availabilityZones.map((availabilityZone: string, index: number) => {
           let azLetter: string = availabilityZone.substring(availabilityZone.length - 1);
           let availabilityZoneId: string = props.azMapper.availabilityZoneIdFromAvailabilityZoneLetter(azLetter);      
     
@@ -437,12 +482,57 @@ export class ServiceAvailabilityAndLatencyDashboard
             usingMetrics[`${azLetter}_${operation.operationName}`] =
               AvailabilityAndLatencyMetrics.createZonalAvailabilityMetric({
                 availabilityZoneId: availabilityZoneId,
-                metricDetails: operation.serverSideAvailabilityMetricDetails,
+                metricDetails: operation.canaryMetricDetails!.canaryAvailabilityMetricDetails,
+                label: availabilityZoneId,
+                metricType: AvailabilityMetricType.REQUEST_COUNT,
+                availabilityZone: availabilityZone,
+                color: MetricsHelper.colors[index]
+              },
+              operation.canaryMetricDetails!.canaryAvailabilityMetricDetails.metricDimensions.zonalDimensions(
+                availabilityZoneId,
+                Aws.REGION
+              ));
+          });
+    
+          return new MathExpression({
+            expression: Object.keys(usingMetrics).join('+'),
+            label: availabilityZoneId,
+            usingMetrics: usingMetrics,
+            period: props.service.period
+          });
+        }),
+        statistic: 'Sum',
+        leftYAxis: {
+          min: 0,
+          label: 'Count',
+          showUnits: false,
+        }
+      }),
+
+      // Canary per AZ fault count
+      new GraphWidget({
+        height: 8,
+        width: 6,
+        title: 'Fault Count',
+        region: Aws.REGION,
+        left: availabilityZones.map((availabilityZone: string, index: number) => {
+          let azLetter: string = availabilityZone.substring(availabilityZone.length - 1);
+          let availabilityZoneId: string = props.azMapper.availabilityZoneIdFromAvailabilityZoneLetter(azLetter);      
+    
+          let usingMetrics: { [key: string]: IMetric } = {};
+    
+          criticalOperations.forEach((operation: IOperation) => {
+              
+            usingMetrics[`${azLetter}_${operation.operationName}`] =
+              AvailabilityAndLatencyMetrics.createZonalAvailabilityMetric({
+                availabilityZoneId: availabilityZoneId,
+                metricDetails: operation.canaryMetricDetails!.canaryAvailabilityMetricDetails,
                 label: availabilityZoneId,
                 metricType: AvailabilityMetricType.FAULT_COUNT,
-                availabilityZone: availabilityZone
+                availabilityZone: availabilityZone,
+                color: MetricsHelper.colors[index]
               },
-              operation.serverSideAvailabilityMetricDetails.metricDimensions.zonalDimensions(
+              operation.canaryMetricDetails!.canaryAvailabilityMetricDetails.metricDimensions.zonalDimensions(
                 availabilityZoneId,
                 Aws.REGION
               ));
