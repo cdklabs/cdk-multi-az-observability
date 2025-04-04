@@ -54,7 +54,7 @@ export class OperationAvailabilityAndLatencyDashboard
       new GraphWidget({
         height: 8,
         width: 6,
-        title: 'Server-side Availability',
+        title: 'Availability',
         region: Aws.REGION,
         left: [
           ...availabilityZones.map((availabilityZone: string, index: number) => {
@@ -105,7 +105,7 @@ export class OperationAvailabilityAndLatencyDashboard
       new GraphWidget({
         height: 8,
         width: 6,
-        title: 'Server-side Fault Count',
+        title: 'Fault Count',
         region: Aws.REGION,
         left: availabilityZones.map((availabilityZone: string, index: number) => {
           let azLetter: string = availabilityZone.substring(availabilityZone.length - 1);
@@ -136,7 +136,7 @@ export class OperationAvailabilityAndLatencyDashboard
       new GraphWidget({
         height: 8,
         width: 6,
-        title: "Server-side Request Count",
+        title: "Request Count",
         region: Aws.REGION,
         left: availabilityZones.map((availabilityZone: string, index: number) => {
           let azLetter: string = availabilityZone.substring(availabilityZone.length - 1);
@@ -189,7 +189,7 @@ export class OperationAvailabilityAndLatencyDashboard
           new GraphWidget({
             height: 8,
             width: 6,
-            title: `Server-side ${metricName} ${statistic} Latency`,
+            title: `${metricName} Latency (${statistic})`,
             region: Aws.REGION,
             left: [
               ...availabilityZones.map((availabilityZone: string, index: number) => {
@@ -245,7 +245,7 @@ export class OperationAvailabilityAndLatencyDashboard
       new GraphWidget({
         height: 8,
         width: 6,
-        title: 'Server-side High Latency Request Count',
+        title: 'High Latency Request Count',
         left: availabilityZones.map((availabilityZone: string, index: number) => {
           let azLetter: string = availabilityZone.substring(availabilityZone.length - 1);
           let availabilityZoneId: string = props.azMapper.availabilityZoneIdFromAvailabilityZoneLetter(azLetter);
@@ -290,40 +290,30 @@ export class OperationAvailabilityAndLatencyDashboard
         width: 24,
         markdown: "### Alarms",
         background: TextWidgetBackground.TRANSPARENT
+      }),
+      ...Object.keys(props.operationAlarmsAndRules.serverSideZonalAlarmsAndRules).map((availabilityZone: string) => {
+        let azLetter: string = availabilityZone.substring(availabilityZone.length - 1);
+        let availabilityZoneId: string = props.azMapper.availabilityZoneIdFromAvailabilityZoneLetter(azLetter);
+  
+        return new AlarmWidget({
+          alarm: props.operationAlarmsAndRules.serverSideZonalAlarmsAndRules[availabilityZone].availabilityAlarm,
+          title: `${availabilityZoneId} Availability`,
+          height: 2,
+          width: 8
+        });
+      }),
+      ...Object.keys(props.operationAlarmsAndRules.serverSideZonalAlarmsAndRules).map((availabilityZone: string) => {
+        let azLetter: string = availabilityZone.substring(availabilityZone.length - 1);
+        let availabilityZoneId: string = props.azMapper.availabilityZoneIdFromAvailabilityZoneLetter(azLetter);
+  
+        return new AlarmWidget({
+          alarm: props.operationAlarmsAndRules.serverSideZonalAlarmsAndRules[availabilityZone].latencyAlarm,
+          title: `${availabilityZoneId} Latency`,
+          height: 2,
+          width: 8
+        });
       })
     );
-
-    let availabilityAlarmWidgets: IWidget[] = []
-
-    Object.keys(props.operationAlarmsAndRules.serverSideZonalAlarmsAndRules).forEach((availabilityZone: string) => {
-      let azLetter: string = availabilityZone.substring(availabilityZone.length - 1);
-      let availabilityZoneId: string = props.azMapper.availabilityZoneIdFromAvailabilityZoneLetter(azLetter);
-
-      availabilityAlarmWidgets.push(new AlarmWidget({
-        alarm: props.operationAlarmsAndRules.serverSideZonalAlarmsAndRules[availabilityZone].availabilityAlarm,
-        title: `${availabilityZoneId} Availability`,
-        height: 2,
-        width: 8
-      }));
-    });
-
-    dashboard.addWidgets(...availabilityAlarmWidgets);
-
-    let latencyAlarmWidgets: IWidget[] = [];
-
-    Object.keys(props.operationAlarmsAndRules.serverSideZonalAlarmsAndRules).forEach((availabilityZone: string) => {
-      let azLetter: string = availabilityZone.substring(availabilityZone.length - 1);
-      let availabilityZoneId: string = props.azMapper.availabilityZoneIdFromAvailabilityZoneLetter(azLetter);
-
-      latencyAlarmWidgets.push(new AlarmWidget({
-        alarm: props.operationAlarmsAndRules.serverSideZonalAlarmsAndRules[availabilityZone].latencyAlarm,
-        title: `${availabilityZoneId} Latency`,
-        height: 2,
-        width: 8
-      }));
-    });
-
-    dashboard.addWidgets(...latencyAlarmWidgets);
   }
   
   private static createCanaryWidgets(
@@ -348,7 +338,7 @@ export class OperationAvailabilityAndLatencyDashboard
       new GraphWidget({
         height: 8,
         width: 6,
-        title: 'Canary Measured Availability',
+        title: 'Availability',
         region: Aws.REGION,
         left: [
           ...availabilityZones.map((availabilityZone: string, index: number) => {
@@ -399,7 +389,7 @@ export class OperationAvailabilityAndLatencyDashboard
       new GraphWidget({
         height: 8,
         width: 6,
-        title: 'Canary Measured Fault Count',
+        title: 'Fault Count',
         region: Aws.REGION,
         left: [
           ...availabilityZones.map((availabilityZone: string, index: number) => {
@@ -441,7 +431,7 @@ export class OperationAvailabilityAndLatencyDashboard
       new GraphWidget({
         height: 8,
         width: 6,
-        title: 'Canary Measured Request Count',
+        title: 'Request Count',
         region: Aws.REGION,
         left: [
           ...availabilityZones.map((availabilityZone: string, index: number) => {
@@ -488,7 +478,7 @@ export class OperationAvailabilityAndLatencyDashboard
           new GraphWidget({
             height: 8,
             width: 6,
-            title: `Canary Measured ${metricName} ${statistic} Latency`,
+            title: `${metricName} Latency (${statistic})`,
             region: Aws.REGION,
             left: [
               ...availabilityZones.map((availabilityZone: string, index: number) => {
@@ -544,7 +534,7 @@ export class OperationAvailabilityAndLatencyDashboard
       new GraphWidget({
         height: 8,
         width: 6,
-        title: 'Canary Measured High Latency Request Count',
+        title: 'High Latency Request Count',
         left: [
           ...availabilityZones.map((availabilityZone: string, index: number) => {
             let azLetter: string = availabilityZone.substring(availabilityZone.length - 1);
@@ -585,53 +575,42 @@ export class OperationAvailabilityAndLatencyDashboard
         width: 24,
         markdown: "### Alarms",
         background: TextWidgetBackground.TRANSPARENT
-      })
-    );
-
-    dashboard.addWidgets(
+      }),
       new AlarmWidget({
         alarm: props.operationAlarmsAndRules.canaryRegionalAlarmsAndRules!.availabilityAlarm,
         title: "Regional Availability",
         height: 2,
-        width: 8
+        width: 12
       }),
       new AlarmWidget({
         alarm: props.operationAlarmsAndRules.canaryRegionalAlarmsAndRules!.latencyAlarm,
         title: "Regional Latency",
         height: 2,
-        width: 8
+        width: 12
       }),
+      ...Object.keys(props.operationAlarmsAndRules.canaryZonalAlarmsAndRules!).map((availabilityZone: string) => {
+        let azLetter: string = availabilityZone.substring(availabilityZone.length - 1);
+        let availabilityZoneId: string = props.azMapper.availabilityZoneIdFromAvailabilityZoneLetter(azLetter);
+        
+        return new AlarmWidget({
+          alarm: props.operationAlarmsAndRules.canaryZonalAlarmsAndRules![availabilityZone].availabilityAlarm,
+          title: `${availabilityZoneId} Availability`,
+          height: 2,
+          width: 8
+        });
+      }),
+      ...Object.keys(props.operationAlarmsAndRules.canaryZonalAlarmsAndRules!).map((availabilityZone: string) => {
+        let azLetter: string = availabilityZone.substring(availabilityZone.length - 1);
+        let availabilityZoneId: string = props.azMapper.availabilityZoneIdFromAvailabilityZoneLetter(azLetter);
+  
+        return new AlarmWidget({
+          alarm: props.operationAlarmsAndRules.canaryZonalAlarmsAndRules![availabilityZone].latencyAlarm,
+          title: `${availabilityZoneId} Latency`,
+          height: 2,
+          width: 8
+        });
+      })
     );
-
-    let availabilityAlarmWidgets: IWidget[] = []
-
-    Object.keys(props.operationAlarmsAndRules.canaryZonalAlarmsAndRules!).forEach((availabilityZone: string) => {
-      let azLetter: string = availabilityZone.substring(availabilityZone.length - 1);
-      let availabilityZoneId: string = props.azMapper.availabilityZoneIdFromAvailabilityZoneLetter(azLetter);
-      
-      availabilityAlarmWidgets.push(new AlarmWidget({
-        alarm: props.operationAlarmsAndRules.canaryZonalAlarmsAndRules![availabilityZone].availabilityAlarm,
-        title: `${availabilityZoneId} Availability`,
-        height: 2,
-        width: 8
-      }));
-    });
-
-    dashboard.addWidgets(...availabilityAlarmWidgets);
-
-    let latencyAlarmWidgets: IWidget[] = [];
-
-    Object.keys(props.operationAlarmsAndRules.canaryZonalAlarmsAndRules!).forEach((availabilityZone: string) => {
-      let azLetter: string = availabilityZone.substring(availabilityZone.length - 1);
-      let availabilityZoneId: string = props.azMapper.availabilityZoneIdFromAvailabilityZoneLetter(azLetter);
-
-      latencyAlarmWidgets.push(new AlarmWidget({
-        alarm: props.operationAlarmsAndRules.canaryZonalAlarmsAndRules![availabilityZone].latencyAlarm,
-        title: `${availabilityZoneId} Latency`,
-        height: 2,
-        width: 8
-      }));
-    });
   }
 
   /**

@@ -217,8 +217,7 @@ export class ServiceAvailabilityAndLatencyDashboard
                 metricDetails: operation.serverSideAvailabilityMetricDetails,
                 label: availabilityZoneId,
                 metricType: AvailabilityMetricType.REQUEST_COUNT,
-                availabilityZone: availabilityZone,
-                color: MetricsHelper.colors[index]
+                availabilityZone: availabilityZone
               },
               operation.serverSideAvailabilityMetricDetails.metricDimensions.zonalDimensions(
                 availabilityZoneId,
@@ -230,7 +229,8 @@ export class ServiceAvailabilityAndLatencyDashboard
             expression: Object.keys(usingMetrics).join('+'),
             label: availabilityZoneId,
             usingMetrics: usingMetrics,
-            period: props.service.period
+            period: props.service.period,
+            color: MetricsHelper.colors[index]
           });
         }),
         statistic: 'Sum',
@@ -261,8 +261,7 @@ export class ServiceAvailabilityAndLatencyDashboard
                 metricDetails: operation.serverSideAvailabilityMetricDetails,
                 label: availabilityZoneId,
                 metricType: AvailabilityMetricType.FAULT_COUNT,
-                availabilityZone: availabilityZone,
-                color: MetricsHelper.colors[index]
+                availabilityZone: availabilityZone
               },
               operation.serverSideAvailabilityMetricDetails.metricDimensions.zonalDimensions(
                 availabilityZoneId,
@@ -274,7 +273,8 @@ export class ServiceAvailabilityAndLatencyDashboard
             expression: Object.keys(usingMetrics).join('+'),
             label: availabilityZoneId + " (avg: ${AVG}  max: ${MAX})",
             usingMetrics: usingMetrics,
-            period: props.service.period
+            period: props.service.period,
+            color: MetricsHelper.colors[index]
           });
         }),
         statistic: 'Sum',
