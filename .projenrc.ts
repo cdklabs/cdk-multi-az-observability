@@ -262,23 +262,27 @@ project.tasks.tryFind('compile')?.spawn(buildAssets);
 project.tasks.tryFind('post-compile')?.exec('npx --yes awslint');
 
 // tsconfig.json gets the exclude list updated and isn't tracked
-project.tasks.tryFind('release')?.updateStep(4, {
-  exec: "git diff --ignore-space-at-eol --exit-code ':!tsconfig.json'",
-});
+//project.tasks.tryFind('release')?.updateStep(4, {
+//  exec: "git diff --ignore-space-at-eol --exit-code ':!tsconfig.json'",
+//});
 
+// Only required for codebuild runner
 //project.github
 //  ?.tryFindWorkflow('release')
 //  ?.file?.patch(JsonPatch.remove('/jobs/release_pypi/steps/1'));
 
+// Only required for codebuild runner
 //project.github
 //  ?.tryFindWorkflow('release')
 //  ?.file?.patch(JsonPatch.add('/jobs/release_maven/steps/2', {"name": 'Install gpg-agent', "run": 'dnf install --assumeyes --allowerasing gnupg2'}));
+
+// Only required for codebuild runner
+//project.github
+//  ?.tryFindWorkflow('build')
+//  ?.file?.patch(JsonPatch.remove('/jobs/package-python/steps/1'));
 
 project.github
   ?.tryFindWorkflow('auto-approve')
   ?.file?.patch(JsonPatch.replace('/jobs/approve/if', "contains(github.event.pull_request.labels.*.name, 'auto-approve') && (github.event.pull_request.user.login == 'cdklabs-automation' || github.event.pull_request.user.login == 'hakenmt' || github.event.pull_request.user.login == 'github-bot' || github.event.pull_request.user.login == 'dependabot[bot]')"));
 
-//project.github
-//  ?.tryFindWorkflow('build')
-//  ?.file?.patch(JsonPatch.remove('/jobs/package-python/steps/1'));
 project.synth();
