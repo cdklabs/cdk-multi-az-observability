@@ -197,7 +197,7 @@ export class ServiceAvailabilityAndLatencyDashboard
 
       ...zonalAvailabilityWidgets,
 
-      // Canary per AZ request count
+      // Server-side per AZ request count
       new GraphWidget({
         height: 8,
         width: 6,
@@ -408,7 +408,7 @@ export class ServiceAvailabilityAndLatencyDashboard
       });
 
       return new GraphWidget({
-          height: 8,
+          height: 6,
           width: 8,
           title: `Latency - ${availabilityZoneId}`,
           region: Aws.REGION,
