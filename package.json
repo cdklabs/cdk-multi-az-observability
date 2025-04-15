@@ -52,7 +52,7 @@
     "@aws-cdk/integ-tests-alpha": "latest",
     "@types/jest": "^29.5.14",
     "@types/node": "^18",
-    "aws-cdk-lib": "2.189.0",
+    "aws-cdk-lib": "2.187.0",
     "cdk-nag": "^2.35.70",
     "cdklabs-projen-project-types": "^0.1.211",
     "commit-and-tag-version": "^12",
