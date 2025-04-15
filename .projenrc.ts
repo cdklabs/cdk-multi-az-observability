@@ -9,17 +9,14 @@ const project = new CdklabsConstructLibrary ({
   authorAddress: 'aws-cdk-dev@amazon.com',
   homepage: 'https://github.com/cdklabs/cdk-multi-az-observability',
   repositoryUrl: 'https://github.com/cdklabs/cdk-multi-az-observability/',
-  cdkVersion: '2.187.0',
+  cdkVersion: '2.189.1',
   defaultReleaseBranch: 'main',
-  jsiiVersion: '~5.5.0',
+  jsiiVersion: '5.8.0',
   name: '@cdklabs/multi-az-observability',
   devDeps: [
     'cdklabs-projen-project-types',
     'aws-cdk-lib',
     'cdk-nag'
-  ],
-  peerDeps: [
-    'aws-cdk-lib@^2.184.1',
   ],
   private: false,
   npmAccess: javascript.NpmAccess.PUBLIC,
