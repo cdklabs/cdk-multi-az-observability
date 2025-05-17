@@ -48,19 +48,19 @@
     semver "^7.7.1"
 
 "@aws-cdk/integ-runner@latest":
-  version "2.186.7"
-  resolved "https://registry.yarnpkg.com/@aws-cdk/integ-runner/-/integ-runner-2.186.7.tgz#b70f64a56dd2dcca00df8124d036ed2c86c06aa9"
-  integrity sha512-13wOsBnTTzx+0MV5tjCiztRfWpAqkl23hMq5r1Dq+Zuu8bx0nuSDgXJ1aQIrV0vXYMeaRzxWPWALuZtNu4tI5g==
+  version "2.186.8"
+  resolved "https://registry.yarnpkg.com/@aws-cdk/integ-runner/-/integ-runner-2.186.8.tgz#13b1e43d54bf3548eee9e87a1521b08b5dc15df6"
+  integrity sha512-v0nmWU8QCSC6dle+Xoyjv2tBnedqfI3GTBfrWgjDUC7hGOVAkQNNbgK+eoJK2iWgm5O8IU0HEs+8FCy3JYm9pg==
   dependencies:
     "@aws-cdk/aws-service-spec" "0.1.72"
-    aws-cdk "2.1015.0"
+    aws-cdk "2.1016.0"
   optionalDependencies:
     fsevents "2.3.2"
 
 "@aws-cdk/integ-tests-alpha@latest":
-  version "2.195.0-alpha.0"
-  resolved "https://registry.yarnpkg.com/@aws-cdk/integ-tests-alpha/-/integ-tests-alpha-2.195.0-alpha.0.tgz#fe4d884b4d5a75d451deb04c6c6c787b83df99cd"
-  integrity sha512-vG/WX65gLngHDlTkrizjZcF9ohOx3t6bVQD4lABHEF72QyQ5sH9wvA5plekOGnwfT17v9FNpiBKMR2w9Ju/iWg==
+  version "2.196.0-alpha.0"
+  resolved "https://registry.yarnpkg.com/@aws-cdk/integ-tests-alpha/-/integ-tests-alpha-2.196.0-alpha.0.tgz#fe92bcb99a14c6e48426399792f61392ce3a4a62"
+  integrity sha512-Vgt74OKyyaJA8F3eF3SQ5zLc/KTBMCzJTkudRffwMczpgK1BjRslUgno9siGJ2CpEhav1t/MHzBVwKJzsEAyJQ==
 
 "@aws-cdk/service-spec-types@^0.0.138":
   version "0.0.138"
@@ -1009,10 +1009,10 @@ aws-cdk-lib@2.189.1:
     table "^6.9.0"
     yaml "1.10.2"
 
-aws-cdk@2.1015.0:
-  version "2.1015.0"
-  resolved "https://registry.yarnpkg.com/aws-cdk/-/aws-cdk-2.1015.0.tgz#fda8c4c7fca90ae42aa23a44b28cf1c4c963dd85"
-  integrity sha512-txd+yMVVybtLfiwT409+fahbP0SkiwhmQvQf6PVVYnWzDPSknxYlUNJHisHV4tJEcbHWn1QPsLmqqMT0bw8hBg==
+aws-cdk@2.1016.0:
+  version "2.1016.0"
+  resolved "https://registry.yarnpkg.com/aws-cdk/-/aws-cdk-2.1016.0.tgz#d4c63b5a2feee21f77d20b232015cbb4fa878be2"
+  integrity sha512-zdJ/tQp0iE/s8l8zLQPgdUJUHpS6KblkzdP5nOYC/NbD5OCdhS8QS7vLBkT8M7mNyZh3Ep3C+/m6NsxrurRe0A==
   optionalDependencies:
     fsevents "2.3.2"
 
@@ -1177,10 +1177,10 @@ case@1.6.3, case@^1.6.3:
   resolved "https://registry.yarnpkg.com/case/-/case-1.6.3.tgz#0a4386e3e9825351ca2e6216c60467ff5f1ea1c9"
   integrity sha512-mzDSXIPaFwVDvZAHqZ9VlbyF4yyXRuX6IvB06WvPYkqJVO24kX1PPhv9bfpKNFZyxYFmmgo03HUiD8iklmJYRQ==
 
-cdk-nag@^2.35.99:
-  version "2.35.99"
-  resolved "https://registry.yarnpkg.com/cdk-nag/-/cdk-nag-2.35.99.tgz#fff2f938f26a43837b6b0c8bc6864e5713998e2a"
-  integrity sha512-ug5S4+q/0Msk46emhCjP2BBhovtZQV2baekgIDslljDFKUjxt3sS8sdcJG4SJD/LkBhXm5GQfy9RtiUoh9huzw==
+cdk-nag@^2.35.100:
+  version "2.35.100"
+  resolved "https://registry.yarnpkg.com/cdk-nag/-/cdk-nag-2.35.100.tgz#6d7fb9d697400c6eb8911c2b964601deff41da8a"
+  integrity sha512-gG08/6yBKaoYz4WSIe0rK/iGXA6pcHo3E/fy+F12sqhXqPDSI5OftJEQTS282cmvV0ePZSI3XXDHzyZs/dtYYw==
 
 cdklabs-projen-project-types@^0.1.211:
   version "0.1.234"
@@ -4014,10 +4014,10 @@ trim-newlines@^3.0.0:
   resolved "https://registry.yarnpkg.com/trim-newlines/-/trim-newlines-3.0.1.tgz#260a5d962d8b752425b32f3a7db0dcacd176c144"
   integrity sha512-c1PTsA3tYrIsLGkJkzHF+w9F2EyxfXGo4UyJc4pFL++FMjnq0HJS69T3M7d//gKrFKwy429bouPescbjecU+Zw==
 
-ts-jest@^29.3.3:
-  version "29.3.3"
-  resolved "https://registry.yarnpkg.com/ts-jest/-/ts-jest-29.3.3.tgz#c24c31a9d12268f88899e3eeb05912cab42c574c"
-  integrity sha512-y6jLm19SL4GroiBmHwFK4dSHUfDNmOrJbRfp6QmDIlI9p5tT5Q8ItccB4pTIslCIqOZuQnBwpTR0bQ5eUMYwkw==
+ts-jest@^29.3.4:
+  version "29.3.4"
+  resolved "https://registry.yarnpkg.com/ts-jest/-/ts-jest-29.3.4.tgz#9354472aceae1d3867a80e8e02014ea5901aee41"
+  integrity sha512-Iqbrm8IXOmV+ggWHOTEbjwyCf2xZlUMv5npExksXohL+tk8va4Fjhb+X2+Rt9NBmgO7bJ8WpnMLOwih/DnMlFA==
   dependencies:
     bs-logger "^0.2.6"
     ejs "^3.1.10"
