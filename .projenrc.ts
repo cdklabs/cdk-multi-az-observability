@@ -119,6 +119,7 @@ const project = new CdklabsConstructLibrary ({
     mavenGroupId: 'io.github.cdklabs',
     javaPackage: 'io.github.cdklabs.multiazobservability',
     mavenArtifactId: 'cdk-multi-az-observability',
+    mavenServerId: 'central-ossrh',
   },
   jest: true,
   jestOptions: {
