@@ -181,4 +181,4 @@ BasicServiceMultiAZObservability multiAZObservability = new BasicServiceMultiAZO
 
 If you provide a load balancer, the construct assumes it is deployed in each AZ of the VPC the load balancer is associated with and will look for HTTP metrics using those AZs as dimensions.
 
-Both options support running workloads on EC2, ECS, Lambda, and EKS.
+Both options support running workloads on EC2, ECS, Lambda, and EKS.<!-- Updated: Fri May 30 12:30:58 CEST 2025 -->
