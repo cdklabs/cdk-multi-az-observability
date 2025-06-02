@@ -1169,10 +1169,10 @@ case@1.6.3, case@^1.6.3:
   resolved "https://registry.yarnpkg.com/case/-/case-1.6.3.tgz#0a4386e3e9825351ca2e6216c60467ff5f1ea1c9"
   integrity sha512-mzDSXIPaFwVDvZAHqZ9VlbyF4yyXRuX6IvB06WvPYkqJVO24kX1PPhv9bfpKNFZyxYFmmgo03HUiD8iklmJYRQ==
 
-cdk-nag@^2.36.5:
-  version "2.36.5"
-  resolved "https://registry.yarnpkg.com/cdk-nag/-/cdk-nag-2.36.5.tgz#ce86fc8f8a0fd43401cbf7e46bad2c61b3b8f9c0"
-  integrity sha512-CqteCGFdut4K1g6TeokPkX5G9wOigBChPcI2C2Jbc0cQHSzS1nfk8bDikz5xwU3qUd4VDdulVkFXxMp3w11Xpg==
+cdk-nag@^2.36.6:
+  version "2.36.6"
+  resolved "https://registry.yarnpkg.com/cdk-nag/-/cdk-nag-2.36.6.tgz#894fbd21d27c333cfc4dd330d4931ae366f4aea8"
+  integrity sha512-lhx91t+v3rlSYK2y+lVe31Ic2YDF1EZ2aAbYe2u5anU2K8bc9oykc/Tqo5CfNRhcm8LyDIfFMkegf+xnhDHH1Q==
 
 cdklabs-projen-project-types@^0.1.211:
   version "0.1.234"
@@ -2840,10 +2840,10 @@ jsii-reflect@^1.112.0:
     oo-ascii-tree "^1.112.0"
     yargs "^16.2.0"
 
-jsii-rosetta@~5.8.8:
-  version "5.8.8"
-  resolved "https://registry.yarnpkg.com/jsii-rosetta/-/jsii-rosetta-5.8.8.tgz#129d8499187b9039aba05a8df479641db067579f"
-  integrity sha512-zhLu75CwQFAYDiOffMXKLmEiw8QAmgMjDHStgd9z5k91Wt4EGrSI5AG2UNV3N9QLkOWdQCCuYjdyaH4BPRvwEg==
+jsii-rosetta@~5.8.9:
+  version "5.8.9"
+  resolved "https://registry.yarnpkg.com/jsii-rosetta/-/jsii-rosetta-5.8.9.tgz#6ca9437efd34a383791dc3cd9c089e6e63eeea34"
+  integrity sha512-bVVi4638FUeRHzHYu13yZGqgaaWeegHIPs2Sx+F8bvicWWtC8BQlQvKIsnErnd4+yRKxC+J0g+7EQrHA+8qT8w==
   dependencies:
     "@jsii/check-node" "1.112.0"
     "@jsii/spec" "^1.112.0"
