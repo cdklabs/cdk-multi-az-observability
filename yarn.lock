@@ -22,9 +22,9 @@
     lru-cache "^10.4.3"
 
 "@aws-cdk/asset-awscli-v1@^2.2.229":
-  version "2.2.238"
-  resolved "https://registry.yarnpkg.com/@aws-cdk/asset-awscli-v1/-/asset-awscli-v1-2.2.238.tgz#5fc34aa163af548db56c0f55016f1654c2f32f16"
-  integrity sha512-7SoOO1NSI5z8SfQ7q3KHyIpBTx1okG1QcmcBNxxofHu/F1SdfOXZCSOwnAkVqTSrJr6xvCahpqnL6cVGXY27WA==
+  version "2.2.239"
+  resolved "https://registry.yarnpkg.com/@aws-cdk/asset-awscli-v1/-/asset-awscli-v1-2.2.239.tgz#b92542a310d9e950d55ac86150d19cce68dc105d"
+  integrity sha512-dhs0hKNk/PCvpoJb/WIePrWbwieNMxfW/hS2aJLRv6QIh6M6DSPAxhJ2d7ALg8pfk2NQhHpKERNGB4KUiCodmg==
 
 "@aws-cdk/asset-node-proxy-agent-v6@^2.1.0":
   version "2.1.0"
@@ -58,9 +58,9 @@
     fsevents "2.3.2"
 
 "@aws-cdk/integ-tests-alpha@latest":
-  version "2.199.0-alpha.0"
-  resolved "https://registry.yarnpkg.com/@aws-cdk/integ-tests-alpha/-/integ-tests-alpha-2.199.0-alpha.0.tgz#a10fdf12a704d434d6bb4f0d437e3b8b9eca5b2a"
-  integrity sha512-uDe/WcgW4MqI40Zr5EmLw4wz41R9vJMHuc7+b1PdE3iD6ySsbrIs8ERJGk7o/VBUgqdWafFd+CTeI6Cbq7EYFg==
+  version "2.200.0-alpha.0"
+  resolved "https://registry.yarnpkg.com/@aws-cdk/integ-tests-alpha/-/integ-tests-alpha-2.200.0-alpha.0.tgz#5aad5ba09d1ac7b00bdca8eca065cd3368b2e07e"
+  integrity sha512-iKdcVSL2wpPjTDYK4U1n7StH/9wexrmHgtVKZztOu/VRqYOouhQq1k+G5obnzNaO4JQuei1uB+dAi5CuW/thQA==
 
 "@aws-cdk/service-spec-types@^0.0.142":
   version "0.0.142"
@@ -1169,10 +1169,10 @@ case@1.6.3, case@^1.6.3:
   resolved "https://registry.yarnpkg.com/case/-/case-1.6.3.tgz#0a4386e3e9825351ca2e6216c60467ff5f1ea1c9"
   integrity sha512-mzDSXIPaFwVDvZAHqZ9VlbyF4yyXRuX6IvB06WvPYkqJVO24kX1PPhv9bfpKNFZyxYFmmgo03HUiD8iklmJYRQ==
 
-cdk-nag@^2.36.6:
-  version "2.36.6"
-  resolved "https://registry.yarnpkg.com/cdk-nag/-/cdk-nag-2.36.6.tgz#894fbd21d27c333cfc4dd330d4931ae366f4aea8"
-  integrity sha512-lhx91t+v3rlSYK2y+lVe31Ic2YDF1EZ2aAbYe2u5anU2K8bc9oykc/Tqo5CfNRhcm8LyDIfFMkegf+xnhDHH1Q==
+cdk-nag@^2.36.7:
+  version "2.36.7"
+  resolved "https://registry.yarnpkg.com/cdk-nag/-/cdk-nag-2.36.7.tgz#9f8e2d4c27033e3c9d63c9f035cbb5b3b83f0f01"
+  integrity sha512-I28WzenAfFkmiavoB0WUWI4+T68wA/BiHHZCaLbMtB6ZpVxCsmZ+nmlZ5dbHAxTyd5hZMRZ+zhlcj4zQ9OtteQ==
 
 cdklabs-projen-project-types@^0.1.211:
   version "0.1.234"
@@ -1670,9 +1670,9 @@ ejs@^3.1.10:
     jake "^10.8.5"
 
 electron-to-chromium@^1.5.160:
-  version "1.5.161"
-  resolved "https://registry.yarnpkg.com/electron-to-chromium/-/electron-to-chromium-1.5.161.tgz#650376bd3be7ff8e581031409fc2d4f150620b12"
-  integrity sha512-hwtetwfKNZo/UlwHIVBlKZVdy7o8bIZxxKs0Mv/ROPiQQQmDgdm5a+KvKtBsxM8ZjFzTaCeLoodZ8jiBE3o9rA==
+  version "1.5.162"
+  resolved "https://registry.yarnpkg.com/electron-to-chromium/-/electron-to-chromium-1.5.162.tgz#5305c15292a960f36e86f8b330da958f8ae1690d"
+  integrity sha512-hQA+Zb5QQwoSaXJWEAGEw1zhk//O7qDzib05Z4qTqZfNju/FAkrm5ZInp0JbTp4Z18A6bilopdZWEYrFSsfllA==
 
 emittery@^0.13.1:
   version "0.13.1"
@@ -2878,9 +2878,9 @@ jsii@5.8.0:
     yargs "^17.7.2"
 
 jsii@~5.8.0:
-  version "5.8.10"
-  resolved "https://registry.yarnpkg.com/jsii/-/jsii-5.8.10.tgz#95d1d8574a2c542c7558b3ef649c2fe293e3b477"
-  integrity sha512-6rpXNvtUa+NUfI3efkPkJ1HXnNAlPzLu30jIckLdZLTXj91h4XZbXmGxnyCckhKYSuDHDUV932Ag/r16yQD51g==
+  version "5.8.11"
+  resolved "https://registry.yarnpkg.com/jsii/-/jsii-5.8.11.tgz#3c3feab45190d3490de9e56e098f757a0bea328b"
+  integrity sha512-ga00MSW4ZTk5kuPAilxw0l4/g52XM5Dw+THDMXHKnYcgxtNsFnj9ffVjnIBpcD+Ufridjxobnqf9t0WuOSvrww==
   dependencies:
     "@jsii/check-node" "1.112.0"
     "@jsii/spec" "^1.112.0"
