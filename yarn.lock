@@ -58,9 +58,9 @@
     fsevents "2.3.2"
 
 "@aws-cdk/integ-tests-alpha@latest":
-  version "2.200.1-alpha.0"
-  resolved "https://registry.yarnpkg.com/@aws-cdk/integ-tests-alpha/-/integ-tests-alpha-2.200.1-alpha.0.tgz#7c1d58e776e236dbb3ac322de19beaa805e9a691"
-  integrity sha512-n7iP7BJdlNVkDwTF93khu7iM4F4MakcOEcNUWIuuQOSySzL2LxuYizKw72XnSc2g0fBO+NvVLSK++gSNSFsyCQ==
+  version "2.200.2-alpha.0"
+  resolved "https://registry.yarnpkg.com/@aws-cdk/integ-tests-alpha/-/integ-tests-alpha-2.200.2-alpha.0.tgz#a4848aadecddd9b277c9600d6f2cf022d8a35562"
+  integrity sha512-1BeGF/mIaaCmVW8r46nOT8l77aQGqNf/f8Nsa/aU8/YK6lxijgB9WCT6bjS/3CcJ9JP4scxlyzeC+A54WD4UgA==
 
 "@aws-cdk/service-spec-types@^0.0.146":
   version "0.0.146"
@@ -1169,10 +1169,10 @@ case@1.6.3, case@^1.6.3:
   resolved "https://registry.yarnpkg.com/case/-/case-1.6.3.tgz#0a4386e3e9825351ca2e6216c60467ff5f1ea1c9"
   integrity sha512-mzDSXIPaFwVDvZAHqZ9VlbyF4yyXRuX6IvB06WvPYkqJVO24kX1PPhv9bfpKNFZyxYFmmgo03HUiD8iklmJYRQ==
 
-cdk-nag@^2.36.16:
-  version "2.36.16"
-  resolved "https://registry.yarnpkg.com/cdk-nag/-/cdk-nag-2.36.16.tgz#0eed8e062b5598c7ecff840391c01089f5e2e915"
-  integrity sha512-3vLnbDsVPcWds4t7+ybu0osc20RlwqL4oCjupfJf8V+c7XtTyNf0uBX7xT71YhPYpaLaDttjUaGzuo5Z0PR7VA==
+cdk-nag@^2.36.17:
+  version "2.36.17"
+  resolved "https://registry.yarnpkg.com/cdk-nag/-/cdk-nag-2.36.17.tgz#ed777a878ffd68fd9c07c7f48dc4632c99d05c84"
+  integrity sha512-1Ig7ToJQzKdqjOmrKZROzZFkaVIHsI800eDTW+G+UXMsrkuDJ6M6SjvbNrx7VnL0aQEQa/WGui5cxn7PxBrWCw==
 
 cdklabs-projen-project-types@^0.1.211:
   version "0.1.234"
@@ -1670,9 +1670,9 @@ ejs@^3.1.10:
     jake "^10.8.5"
 
 electron-to-chromium@^1.5.160:
-  version "1.5.166"
-  resolved "https://registry.yarnpkg.com/electron-to-chromium/-/electron-to-chromium-1.5.166.tgz#3fff386ed473cc2169dbe2d3ace9592262601114"
-  integrity sha512-QPWqHL0BglzPYyJJ1zSSmwFFL6MFXhbACOCcsCdUMCkzPdS9/OIBVxg516X/Ado2qwAq8k0nJJ7phQPCqiaFAw==
+  version "1.5.167"
+  resolved "https://registry.yarnpkg.com/electron-to-chromium/-/electron-to-chromium-1.5.167.tgz#dab251d7161985306c54d9df2b7c1e651589a4d2"
+  integrity sha512-LxcRvnYO5ez2bMOFpbuuVuAI5QNeY1ncVytE/KXaL6ZNfzX1yPlAO0nSOyIHx2fVAuUprMqPs/TdVhUFZy7SIQ==
 
 emittery@^0.13.1:
   version "0.13.1"
@@ -2682,7 +2682,7 @@ jest-snapshot@^29.7.0:
     pretty-format "^29.7.0"
     semver "^7.5.3"
 
-jest-util@^29.0.0, jest-util@^29.7.0:
+jest-util@^29.7.0:
   version "29.7.0"
   resolved "https://registry.yarnpkg.com/jest-util/-/jest-util-29.7.0.tgz#23c2b62bfb22be82b44de98055802ff3710fc0bc"
   integrity sha512-z6EbKajIpqGKU56y5KBUgy1dt1ihhQJgWzUlZHArA/+X2ad7Cb5iF+AK1EWVL/Bo7Rz9uurpqw6SiBCefUbCGA==
@@ -4007,15 +4007,14 @@ trim-newlines@^3.0.0:
   resolved "https://registry.yarnpkg.com/trim-newlines/-/trim-newlines-3.0.1.tgz#260a5d962d8b752425b32f3a7db0dcacd176c144"
   integrity sha512-c1PTsA3tYrIsLGkJkzHF+w9F2EyxfXGo4UyJc4pFL++FMjnq0HJS69T3M7d//gKrFKwy429bouPescbjecU+Zw==
 
-ts-jest@^29.3.4:
-  version "29.3.4"
-  resolved "https://registry.yarnpkg.com/ts-jest/-/ts-jest-29.3.4.tgz#9354472aceae1d3867a80e8e02014ea5901aee41"
-  integrity sha512-Iqbrm8IXOmV+ggWHOTEbjwyCf2xZlUMv5npExksXohL+tk8va4Fjhb+X2+Rt9NBmgO7bJ8WpnMLOwih/DnMlFA==
+ts-jest@^29.4.0:
+  version "29.4.0"
+  resolved "https://registry.yarnpkg.com/ts-jest/-/ts-jest-29.4.0.tgz#bef0ee98d94c83670af7462a1617bf2367a83740"
+  integrity sha512-d423TJMnJGu80/eSgfQ5w/R+0zFJvdtTxwtF9KzFFunOpSeD+79lHJQIiAhluJoyGRbvj9NZJsl9WjCUo0ND7Q==
   dependencies:
     bs-logger "^0.2.6"
     ejs "^3.1.10"
     fast-json-stable-stringify "^2.1.0"
-    jest-util "^29.0.0"
     json5 "^2.2.3"
     lodash.memoize "^4.1.2"
     make-error "^1.3.6"
