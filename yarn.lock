@@ -48,12 +48,12 @@
     semver "^7.7.1"
 
 "@aws-cdk/integ-runner@latest":
-  version "2.187.2"
-  resolved "https://registry.yarnpkg.com/@aws-cdk/integ-runner/-/integ-runner-2.187.2.tgz#4c7198d07c79f654f35b035b96858ea55827ef7e"
-  integrity sha512-e9DYqpMUNz+ZSMhuAII8QsY5lVvqGJWgoP5nKMPBVmcoD5cvTvmwxcNSUfEMyZW73GfeYTMCsDGaIO+O472Cag==
+  version "2.187.3"
+  resolved "https://registry.yarnpkg.com/@aws-cdk/integ-runner/-/integ-runner-2.187.3.tgz#f6aa07f87f1a85fe89abb7f645d235c00ada98c9"
+  integrity sha512-8hbstY3qljXNmSQ/nHg0Qp65UdT/7QyH70zxD73IZcbz5RwOaSMNUyitv2uBJvWHYqpd8ylHyAn4YGLPfwlGYA==
   dependencies:
     "@aws-cdk/aws-service-spec" "0.1.82"
-    aws-cdk "2.1019.0"
+    aws-cdk "2.1019.1"
   optionalDependencies:
     fsevents "2.3.2"
 
@@ -1001,10 +1001,10 @@ aws-cdk-lib@2.189.1:
     table "^6.9.0"
     yaml "1.10.2"
 
-aws-cdk@2.1019.0:
-  version "2.1019.0"
-  resolved "https://registry.yarnpkg.com/aws-cdk/-/aws-cdk-2.1019.0.tgz#63a1e67fe7cfec469e00b41e5d0ee194df1d6a5b"
-  integrity sha512-sS68bE1rWD9X++FIL/rs+FAOIEhu5Wo0tJmh9j59rHQ+zZWEK2mD0Od4EWMYHnzROZ1aVHsLW+Y7z2Hm0aA88Q==
+aws-cdk@2.1019.1:
+  version "2.1019.1"
+  resolved "https://registry.yarnpkg.com/aws-cdk/-/aws-cdk-2.1019.1.tgz#bfe17975a41afa7e60f0a5b65c8f952c8fbc30d2"
+  integrity sha512-G2jxKuTsYTrYZX80CDApCrKcZ+AuFxxd+b0dkb0KEkfUsela7RqrDGLm5wOzSCIc3iH6GocR8JDVZuJ+0nNuKg==
   optionalDependencies:
     fsevents "2.3.2"
 
@@ -1169,10 +1169,10 @@ case@1.6.3, case@^1.6.3:
   resolved "https://registry.yarnpkg.com/case/-/case-1.6.3.tgz#0a4386e3e9825351ca2e6216c60467ff5f1ea1c9"
   integrity sha512-mzDSXIPaFwVDvZAHqZ9VlbyF4yyXRuX6IvB06WvPYkqJVO24kX1PPhv9bfpKNFZyxYFmmgo03HUiD8iklmJYRQ==
 
-cdk-nag@^2.36.21:
-  version "2.36.21"
-  resolved "https://registry.yarnpkg.com/cdk-nag/-/cdk-nag-2.36.21.tgz#3ded4a7a56b8e82c43b34b4e07192ab8e81fc301"
-  integrity sha512-Sz+78y5K29AhYndvuxXnWKNqq83DjOpqZdFWjS7/WHzkFFpfTDUE7WIgdeu4kHh+RljOYEcAL29Wxw9vlDoKbw==
+cdk-nag@^2.36.22:
+  version "2.36.22"
+  resolved "https://registry.yarnpkg.com/cdk-nag/-/cdk-nag-2.36.22.tgz#5993d7a68a9a199644adaabc2bcb235a844b9a9f"
+  integrity sha512-IgGKRG1hG83a0aYL6Z3M2CS3/vKrcfX6CbYf2UIwLFAZGl5r19EHSPZLFkbCkNbJiYvzXpzJ7XTreFcH9Swacg==
 
 cdklabs-projen-project-types@^0.1.211:
   version "0.1.234"
@@ -1670,9 +1670,9 @@ ejs@^3.1.10:
     jake "^10.8.5"
 
 electron-to-chromium@^1.5.160:
-  version "1.5.170"
-  resolved "https://registry.yarnpkg.com/electron-to-chromium/-/electron-to-chromium-1.5.170.tgz#9f6697de4339e24da8b234e4492a9ecb91f5989c"
-  integrity sha512-GP+M7aeluQo9uAyiTCxgIj/j+PrWhMlY7LFVj8prlsPljd0Fdg9AprlfUi+OCSFWy9Y5/2D/Jrj9HS8Z4rpKWA==
+  version "1.5.171"
+  resolved "https://registry.yarnpkg.com/electron-to-chromium/-/electron-to-chromium-1.5.171.tgz#e552b4fd73d4dd941ee4c70ae288a8a39f818726"
+  integrity sha512-scWpzXEJEMrGJa4Y6m/tVotb0WuvNmasv3wWVzUAeCgKU0ToFOhUW6Z+xWnRQANMYGxN4ngJXIThgBJOqzVPCQ==
 
 emittery@^0.13.1:
   version "0.13.1"
