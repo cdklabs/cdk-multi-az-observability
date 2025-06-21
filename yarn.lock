@@ -58,9 +58,9 @@
     fsevents "2.3.2"
 
 "@aws-cdk/integ-tests-alpha@latest":
-  version "2.201.0-alpha.0"
-  resolved "https://registry.yarnpkg.com/@aws-cdk/integ-tests-alpha/-/integ-tests-alpha-2.201.0-alpha.0.tgz#1769722d9e63005cf043687c5e11453671d50ff6"
-  integrity sha512-+mTNWMSpgnVKAN5lDGk8qMRpXBvDOm2eHJJcZxWC/Z5DzHHa00XulKps/futMHWjeWnxo+rFwem5pfDhM/aBFw==
+  version "2.202.0-alpha.0"
+  resolved "https://registry.yarnpkg.com/@aws-cdk/integ-tests-alpha/-/integ-tests-alpha-2.202.0-alpha.0.tgz#294fec68c615f9db348e294c1db170e07562af84"
+  integrity sha512-dPp49DcCtSyDzlDwo5SQ9d7VSE8ASyeWtb4C8xTVRBA+o4vyugaaGVZC7LphkkVNR8u0OuSte0SLzCkuXu7m0g==
 
 "@aws-cdk/service-spec-types@^0.0.148":
   version "0.0.148"
@@ -1160,19 +1160,19 @@ camelcase@^6.2.0, camelcase@^6.3.0:
   integrity sha512-Gmy6FhYlCY7uOElZUSbxo2UCDH8owEk996gkbrpsgGtrJLM3J7jGxl9Ic7Qwwj4ivOE5AWZWRMecDdF7hqGjFA==
 
 caniuse-lite@^1.0.30001718:
-  version "1.0.30001723"
-  resolved "https://registry.yarnpkg.com/caniuse-lite/-/caniuse-lite-1.0.30001723.tgz#c4f3174f02089720736e1887eab345e09bb10944"
-  integrity sha512-1R/elMjtehrFejxwmexeXAtae5UO9iSyFn6G/I806CYC/BLyyBk1EPhrKBkWhy6wM6Xnm47dSJQec+tLJ39WHw==
+  version "1.0.30001724"
+  resolved "https://registry.yarnpkg.com/caniuse-lite/-/caniuse-lite-1.0.30001724.tgz#312e163553dd70d2c0fb603d74810c85d8ed94a0"
+  integrity sha512-WqJo7p0TbHDOythNTqYujmaJTvtYRZrjpP8TCvH6Vb9CYJerJNKamKzIWOM4BkQatWj9H2lYulpdAQNBe7QhNA==
 
 case@1.6.3, case@^1.6.3:
   version "1.6.3"
   resolved "https://registry.yarnpkg.com/case/-/case-1.6.3.tgz#0a4386e3e9825351ca2e6216c60467ff5f1ea1c9"
   integrity sha512-mzDSXIPaFwVDvZAHqZ9VlbyF4yyXRuX6IvB06WvPYkqJVO24kX1PPhv9bfpKNFZyxYFmmgo03HUiD8iklmJYRQ==
 
-cdk-nag@^2.36.22:
-  version "2.36.22"
-  resolved "https://registry.yarnpkg.com/cdk-nag/-/cdk-nag-2.36.22.tgz#5993d7a68a9a199644adaabc2bcb235a844b9a9f"
-  integrity sha512-IgGKRG1hG83a0aYL6Z3M2CS3/vKrcfX6CbYf2UIwLFAZGl5r19EHSPZLFkbCkNbJiYvzXpzJ7XTreFcH9Swacg==
+cdk-nag@^2.36.23:
+  version "2.36.23"
+  resolved "https://registry.yarnpkg.com/cdk-nag/-/cdk-nag-2.36.23.tgz#6f5779c208cf557f57ee93a9dd30af67246a43e9"
+  integrity sha512-1KLsCHZ8fYgiBIneMKyEq67DH/OfEXYZ5mYasmXdha4bRlJvgllL+XpTkYSSy0Kn43g2Lv92d1lhkOd9xgnMOQ==
 
 cdklabs-projen-project-types@^0.1.211:
   version "0.1.234"
@@ -1533,9 +1533,9 @@ cross-spawn@^7.0.3:
     which "^2.0.1"
 
 cssstyle@^4.1.0:
-  version "4.4.0"
-  resolved "https://registry.yarnpkg.com/cssstyle/-/cssstyle-4.4.0.tgz#a185e81564a6047693586d904d278cbe8565ba07"
-  integrity sha512-W0Y2HOXlPkb2yaKrCVRjinYKciu/qSLEmK0K9mcfDei3zwlnHFEHAs/Du3cIRwPqY+J4JsiBzUjoHyc8RsJ03A==
+  version "4.5.0"
+  resolved "https://registry.yarnpkg.com/cssstyle/-/cssstyle-4.5.0.tgz#b2d6f06884db0de8315443fb75b0a48d60931cac"
+  integrity sha512-/7gw8TGrvH/0g564EnhgFZogTMVe+lifpB7LWU+PEsiq5o83TUXR3fDbzTRXOJhoJwck5IS9ez3Em5LNMMO2aw==
   dependencies:
     "@asamuzakjp/css-color" "^3.2.0"
     rrweb-cssom "^0.8.0"
