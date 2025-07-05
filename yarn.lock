@@ -58,9 +58,9 @@
     fsevents "2.3.2"
 
 "@aws-cdk/integ-tests-alpha@latest":
-  version "2.203.1-alpha.0"
-  resolved "https://registry.yarnpkg.com/@aws-cdk/integ-tests-alpha/-/integ-tests-alpha-2.203.1-alpha.0.tgz#dd420e7da5ac4b124ab92c6cf34cf835c6f654d5"
-  integrity sha512-Q5+8ffWVfBWFrHQPPE1gQxIRVHDDfRGhlQ4GSGbsFwsM51+4f+6MAn2N8jXhMdstBS25RoDTPcly9uMsuYHQdQ==
+  version "2.204.0-alpha.0"
+  resolved "https://registry.yarnpkg.com/@aws-cdk/integ-tests-alpha/-/integ-tests-alpha-2.204.0-alpha.0.tgz#8055f78e0609abbba1e96f5224aad97c8a7aacee"
+  integrity sha512-8on1F+IqLjfKZjCBI5Q6RXg7fPRuwL7HcanbZjCs0yYP09pqCB9BTcK+dLLRZU0vL7K0Dv2d6Fjwe9bFrwSRdw==
 
 "@aws-cdk/service-spec-types@^0.0.150":
   version "0.0.150"
