@@ -2806,10 +2806,10 @@ jsii-reflect@^1.113.0:
     oo-ascii-tree "^1.113.0"
     yargs "^16.2.0"
 
-jsii-rosetta@~5.9.1:
-  version "5.9.1"
-  resolved "https://registry.yarnpkg.com/jsii-rosetta/-/jsii-rosetta-5.9.1.tgz#bce488575436a847da727884857fdee299de68bf"
-  integrity sha512-so+LE84azagpvPebsI/Y9eM61Xqunq/MEjInQ7vH83r8txXllJw+jdSEwqTbnzrx+KgLAqTX6llJnfTCs88S3w==
+jsii-rosetta@~5.9.2:
+  version "5.9.2"
+  resolved "https://registry.yarnpkg.com/jsii-rosetta/-/jsii-rosetta-5.9.2.tgz#5b30c30b4ac145fde3feea4b89b27edd449ff076"
+  integrity sha512-XIUrjhP6wR0D1/cPILv/cTYc7S23sgKFrfPltCGZYrQ77asbaXW71GuJ+rg151RwRwlqpHPK4UCFe7zkvs3ejg==
   dependencies:
     "@jsii/check-node" "1.113.0"
     "@jsii/spec" "^1.113.0"
