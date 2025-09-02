@@ -1163,10 +1163,10 @@ case@1.6.3, case@^1.6.3:
   resolved "https://registry.yarnpkg.com/case/-/case-1.6.3.tgz#0a4386e3e9825351ca2e6216c60467ff5f1ea1c9"
   integrity sha512-mzDSXIPaFwVDvZAHqZ9VlbyF4yyXRuX6IvB06WvPYkqJVO24kX1PPhv9bfpKNFZyxYFmmgo03HUiD8iklmJYRQ==
 
-cdk-nag@^2.37.13:
-  version "2.37.13"
-  resolved "https://registry.yarnpkg.com/cdk-nag/-/cdk-nag-2.37.13.tgz#4c14e67cb458a53ec4f2e158885070eb92eea640"
-  integrity sha512-hV6/d0rjCamBHPuNifn+oUdgl/ZvujpUfapkcdV4Y31hiNU8OgyWvUyxICtA7JA++EHyPTe575s+TPANy23aUQ==
+cdk-nag@^2.37.14:
+  version "2.37.14"
+  resolved "https://registry.yarnpkg.com/cdk-nag/-/cdk-nag-2.37.14.tgz#75c22b259d95d76d2d3dcb8ceb906c4a5ba8901b"
+  integrity sha512-9VIpmWV86pRaA0pY+P49SRe3F6Z4dhio56sHxgxjc6VbAPzJimcg81B8AWc0xJnHY71Bhq/LVl+hAzrgJh8gSA==
 
 cdklabs-projen-project-types@^0.1.211:
   version "0.1.234"
@@ -2844,9 +2844,9 @@ jsii@5.8.0:
     yargs "^17.7.2"
 
 jsii@~5.9.1:
-  version "5.9.3"
-  resolved "https://registry.yarnpkg.com/jsii/-/jsii-5.9.3.tgz#04b62f095ab45f357db2e619ce33b8456f84fd1a"
-  integrity sha512-Qrbg0xKa7nnyXklSZ26x0Vp2TqmtRFmh/Zpod6ho1pZhLjzR3KTpcfvG0Nd809vxJ5b1suKj+m3DRbin14ReQw==
+  version "5.9.4"
+  resolved "https://registry.yarnpkg.com/jsii/-/jsii-5.9.4.tgz#22b38ffa1359dee12e2fd8c5bacb3f9b324f9fa6"
+  integrity sha512-YLNzhSwLyFU6R3DRAykJOM7hTQbRXqPH4/2uBpFJ4y5/Kj/blrK6mKO2W7bG7oRG6crw/Ui5gUTk4/eLuFJguA==
   dependencies:
     "@jsii/check-node" "1.113.0"
     "@jsii/spec" "^1.113.0"
