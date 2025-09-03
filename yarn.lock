@@ -58,9 +58,9 @@
     fsevents "2.3.2"
 
 "@aws-cdk/integ-tests-alpha@latest":
-  version "2.213.0-alpha.0"
-  resolved "https://registry.yarnpkg.com/@aws-cdk/integ-tests-alpha/-/integ-tests-alpha-2.213.0-alpha.0.tgz#5845d80a69cbc9c136b2895c25bafd9d8149dabd"
-  integrity sha512-mIKrC9UM8P8cUdsc7ISL2mp2wPT/rjYvfhrApvzQwLeQAAYrrchrAj6ylq71J9Lyig0Hfcf/9qh00rXLXaKI2A==
+  version "2.214.0-alpha.0"
+  resolved "https://registry.yarnpkg.com/@aws-cdk/integ-tests-alpha/-/integ-tests-alpha-2.214.0-alpha.0.tgz#16d5a849ddc1656c5b8aa1f60bae79c39ee1b79e"
+  integrity sha512-wTZzgpzXmwYL/KKtxcSvZniUUqHXVHuH6w8nlapAzmvQNaEURgsLJ4uZiKsFwgcfgBxlA1fJGMYfM0YRIdZMow==
 
 "@aws-cdk/service-spec-types@^0.0.158":
   version "0.0.158"
@@ -1163,10 +1163,10 @@ case@1.6.3, case@^1.6.3:
   resolved "https://registry.yarnpkg.com/case/-/case-1.6.3.tgz#0a4386e3e9825351ca2e6216c60467ff5f1ea1c9"
   integrity sha512-mzDSXIPaFwVDvZAHqZ9VlbyF4yyXRuX6IvB06WvPYkqJVO24kX1PPhv9bfpKNFZyxYFmmgo03HUiD8iklmJYRQ==
 
-cdk-nag@^2.37.14:
-  version "2.37.14"
-  resolved "https://registry.yarnpkg.com/cdk-nag/-/cdk-nag-2.37.14.tgz#75c22b259d95d76d2d3dcb8ceb906c4a5ba8901b"
-  integrity sha512-9VIpmWV86pRaA0pY+P49SRe3F6Z4dhio56sHxgxjc6VbAPzJimcg81B8AWc0xJnHY71Bhq/LVl+hAzrgJh8gSA==
+cdk-nag@^2.37.15:
+  version "2.37.15"
+  resolved "https://registry.yarnpkg.com/cdk-nag/-/cdk-nag-2.37.15.tgz#115b4be9a4f6dc4a784f33facd84f3a5ce6b0632"
+  integrity sha512-VDSW0+JCnT8j7tzgrCF/PIEz/0Vc8qm48sqbaxHGCnhYl89F0caO8VGfeU2J6g6TaSoFd80tXumLCryfL6ZS5w==
 
 cdklabs-projen-project-types@^0.1.211:
   version "0.1.234"
@@ -1657,9 +1657,9 @@ dunder-proto@^1.0.1:
     gopd "^1.2.0"
 
 electron-to-chromium@^1.5.211:
-  version "1.5.211"
-  resolved "https://registry.yarnpkg.com/electron-to-chromium/-/electron-to-chromium-1.5.211.tgz#749317bf9cf894c06f67980940cf8074e5eb08ca"
-  integrity sha512-IGBvimJkotaLzFnwIVgW9/UD/AOJ2tByUmeOrtqBfACSbAw5b1G0XpvdaieKyc7ULmbwXVx+4e4Be8pOPBrYkw==
+  version "1.5.212"
+  resolved "https://registry.yarnpkg.com/electron-to-chromium/-/electron-to-chromium-1.5.212.tgz#9b541f90d7d8415ccea94d4be4bb86e73e3f9547"
+  integrity sha512-gE7ErIzSW+d8jALWMcOIgf+IB6lpfsg6NwOhPVwKzDtN2qcBix47vlin4yzSregYDxTCXOUqAZjVY/Z3naS7ww==
 
 emittery@^0.13.1:
   version "0.13.1"
