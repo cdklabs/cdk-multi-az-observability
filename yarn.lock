@@ -1177,10 +1177,10 @@ case@1.6.3, case@^1.6.3:
   resolved "https://registry.yarnpkg.com/case/-/case-1.6.3.tgz#0a4386e3e9825351ca2e6216c60467ff5f1ea1c9"
   integrity sha512-mzDSXIPaFwVDvZAHqZ9VlbyF4yyXRuX6IvB06WvPYkqJVO24kX1PPhv9bfpKNFZyxYFmmgo03HUiD8iklmJYRQ==
 
-cdk-nag@^2.37.31:
-  version "2.37.31"
-  resolved "https://registry.yarnpkg.com/cdk-nag/-/cdk-nag-2.37.31.tgz#094566c28fec878bb5861a8059be11d815efb25b"
-  integrity sha512-aFgeW2yKZagw7WA33xKmwc0LegoxbK4NCFn4GbCcOqG6htdIRut8COe8/IX68/lUHKQVhxS/X3FpLgW/lMvy7Q==
+cdk-nag@^2.37.32:
+  version "2.37.32"
+  resolved "https://registry.yarnpkg.com/cdk-nag/-/cdk-nag-2.37.32.tgz#0780e96afe735c02d5043a092f6db0d28d51af02"
+  integrity sha512-JlEhJrI1xOhMFspnxoMwmHzeKrzGIiOdZg3DvL/HV3tqPr0YqARUaq6d9yVqgzO6sohd5po8iviQM2n2pnH6IQ==
 
 cdklabs-projen-project-types@^0.1.211:
   version "0.1.234"
@@ -3986,10 +3986,10 @@ trim-newlines@^3.0.0:
   resolved "https://registry.yarnpkg.com/trim-newlines/-/trim-newlines-3.0.1.tgz#260a5d962d8b752425b32f3a7db0dcacd176c144"
   integrity sha512-c1PTsA3tYrIsLGkJkzHF+w9F2EyxfXGo4UyJc4pFL++FMjnq0HJS69T3M7d//gKrFKwy429bouPescbjecU+Zw==
 
-ts-jest@^29.4.3:
-  version "29.4.3"
-  resolved "https://registry.yarnpkg.com/ts-jest/-/ts-jest-29.4.3.tgz#23264489bebb5b3e2c7966dbf6788e960f244f7c"
-  integrity sha512-KTWbK2Wot8VXargsLoxhSoEQ9OyMdzQXQoUDeIulWu2Tf7gghuBHeg+agZqVLdTOHhQHVKAaeuctBDRkhWE7hg==
+ts-jest@^29.4.4:
+  version "29.4.4"
+  resolved "https://registry.yarnpkg.com/ts-jest/-/ts-jest-29.4.4.tgz#fc6fefe28652ed81b8e1381ef8391901d9f81417"
+  integrity sha512-ccVcRABct5ZELCT5U0+DZwkXMCcOCLi2doHRrKy1nK/s7J7bch6TzJMsrY09WxgUUIP/ITfmcDS8D2yl63rnXw==
   dependencies:
     bs-logger "^0.2.6"
     fast-json-stable-stringify "^2.1.0"
