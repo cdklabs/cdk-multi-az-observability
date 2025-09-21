@@ -1177,10 +1177,10 @@ case@1.6.3, case@^1.6.3:
   resolved "https://registry.yarnpkg.com/case/-/case-1.6.3.tgz#0a4386e3e9825351ca2e6216c60467ff5f1ea1c9"
   integrity sha512-mzDSXIPaFwVDvZAHqZ9VlbyF4yyXRuX6IvB06WvPYkqJVO24kX1PPhv9bfpKNFZyxYFmmgo03HUiD8iklmJYRQ==
 
-cdk-nag@^2.37.32:
-  version "2.37.32"
-  resolved "https://registry.yarnpkg.com/cdk-nag/-/cdk-nag-2.37.32.tgz#0780e96afe735c02d5043a092f6db0d28d51af02"
-  integrity sha512-JlEhJrI1xOhMFspnxoMwmHzeKrzGIiOdZg3DvL/HV3tqPr0YqARUaq6d9yVqgzO6sohd5po8iviQM2n2pnH6IQ==
+cdk-nag@^2.37.33:
+  version "2.37.33"
+  resolved "https://registry.yarnpkg.com/cdk-nag/-/cdk-nag-2.37.33.tgz#1ac0f91f46ba3cdaa9c7df893d0ebbcf5a40128c"
+  integrity sha512-ndSfsrfr2ieVjJ1zRQeQHV/B+Rm7ezyDRlNr2paCOLXdgoTaikCKm9ItFFYaJX12tp7J0vWdVKlQmeNJIUUFFw==
 
 cdklabs-projen-project-types@^0.1.211:
   version "0.1.234"
