@@ -14,9 +14,9 @@
     lru-cache "^10.4.3"
 
 "@aws-cdk/asset-awscli-v1@^2.2.229":
-  version "2.2.252"
-  resolved "https://registry.yarnpkg.com/@aws-cdk/asset-awscli-v1/-/asset-awscli-v1-2.2.252.tgz#81c6c702b53410af3487a1e960a425ee660c77a8"
-  integrity sha512-a+Vy1g0PBqZ1Rd30s1A8XKcYDYluQGcjScwPT3AlWfgwmpzbeD5cygDrNbpmgQT4vxDyg8L8FIwkmL2mlDyAxw==
+  version "2.2.253"
+  resolved "https://registry.yarnpkg.com/@aws-cdk/asset-awscli-v1/-/asset-awscli-v1-2.2.253.tgz#6263089fbd23aab1e80140b61a08e4c4299711b4"
+  integrity sha512-BJ2PeV0kEzZ1rJlcParkLHP0eDkmDc6raKl2lh6nzWs38YKpi4r8Ku7wMNswbSgSzSOAmME/OZUGVa6EpxYJzg==
 
 "@aws-cdk/asset-node-proxy-agent-v6@^2.1.0":
   version "2.1.0"
@@ -50,9 +50,9 @@
     fsevents "2.3.2"
 
 "@aws-cdk/integ-tests-alpha@latest":
-  version "2.215.0-alpha.0"
-  resolved "https://registry.yarnpkg.com/@aws-cdk/integ-tests-alpha/-/integ-tests-alpha-2.215.0-alpha.0.tgz#c28c4053bc8c74e1da36bfc6c45337b43d6ab07a"
-  integrity sha512-Xzc3XAd+Yxw6GNhQ427x1WEtTBUA6c05xwE7UOCl0P/xgyQLpDIuBaZPUerTzy/eLpn7/3bnTxKGrTZg4i18Mg==
+  version "2.216.0-alpha.0"
+  resolved "https://registry.yarnpkg.com/@aws-cdk/integ-tests-alpha/-/integ-tests-alpha-2.216.0-alpha.0.tgz#36a11c8934ab833ce9f0cbf8b702d782f9306d78"
+  integrity sha512-fE53oGZY+rnXgxTEG2Xd5xGNxYDIJGXzItpGMxI5pMazwAGDzAePSi3zVXo6IyW0ynKiPP4rJtmjZjMCXhpExg==
 
 "@aws-cdk/service-spec-types@^0.0.162":
   version "0.0.162"
@@ -1177,10 +1177,10 @@ case@1.6.3, case@^1.6.3:
   resolved "https://registry.yarnpkg.com/case/-/case-1.6.3.tgz#0a4386e3e9825351ca2e6216c60467ff5f1ea1c9"
   integrity sha512-mzDSXIPaFwVDvZAHqZ9VlbyF4yyXRuX6IvB06WvPYkqJVO24kX1PPhv9bfpKNFZyxYFmmgo03HUiD8iklmJYRQ==
 
-cdk-nag@^2.37.33:
-  version "2.37.33"
-  resolved "https://registry.yarnpkg.com/cdk-nag/-/cdk-nag-2.37.33.tgz#1ac0f91f46ba3cdaa9c7df893d0ebbcf5a40128c"
-  integrity sha512-ndSfsrfr2ieVjJ1zRQeQHV/B+Rm7ezyDRlNr2paCOLXdgoTaikCKm9ItFFYaJX12tp7J0vWdVKlQmeNJIUUFFw==
+cdk-nag@^2.37.34:
+  version "2.37.34"
+  resolved "https://registry.yarnpkg.com/cdk-nag/-/cdk-nag-2.37.34.tgz#c5130cda9218d17651b2154ff80d4d3b41ac1492"
+  integrity sha512-9DUf9piTf02ABX6jJVxV82IUteUSKKagodhlaEGy3Dwm9ir5eKHaosUKBouZg1O/cigbsNeJxI+3fgkFhK3y9w==
 
 cdklabs-projen-project-types@^0.1.211:
   version "0.1.234"
