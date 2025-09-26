@@ -102,7 +102,8 @@ export class Operation implements IOperation {
       props.serverSideAvailabilityMetricDetails;
     this.serverSideLatencyMetricDetails = props.serverSideLatencyMetricDetails;
     this.serverSideContributorInsightRuleDetails =
-      props.serverSideContributorInsightRuleDetails;
+      props.serverSideContributorInsightRuleDetails ? 
+      props.serverSideContributorInsightRuleDetails : props.service.defaultContributorInsightRuleDetails;
     this.service = props.service;
     this.canaryTestProps = props.canaryTestProps;
     this.optOutOfServiceCreatedCanary = props.optOutOfServiceCreatedCanary;
