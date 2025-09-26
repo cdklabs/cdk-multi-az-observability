@@ -233,9 +233,9 @@ export class ServerSideOperationZonalAlarmsAndRules
 
       this.isolatedImpactAlarm = new CompositeAlarm(
         scope,
-        `${operation.operationName}-zone-${azLetter}-isolated-impact-alarm`,
+        `${operation.operationName.toLowerCase()}-zone-${azLetter}-isolated-impact-alarm`,
         {
-          compositeAlarmName: `${availabilityZoneId}-${operation.operationName}-isolated-impact-alarm${props.nameSuffix}`,
+          compositeAlarmName: `${availabilityZoneId}-${operation.operationName.toLowerCase()}-isolated-impact-alarm${props.nameSuffix}`,
           alarmRule: AlarmRule.anyOf(
             AlarmRule.allOf(
               this.availabilityZoneIsOutlierForFaults,
@@ -257,7 +257,7 @@ export class ServerSideOperationZonalAlarmsAndRules
         scope,
         `${operation.operationName}-zone-${azLetter}-isolated-impact-alarm`,
         {
-          compositeAlarmName: `${availabilityZoneId}-${operation.operationName}-isolated-impact-alarm${props.nameSuffix}`,
+          compositeAlarmName: `${availabilityZoneId}-${operation.operationName.toLowerCase()}-isolated-impact-alarm${props.nameSuffix}`,
           alarmRule: AlarmRule.anyOf(
             AlarmRule.allOf(
               this.availabilityZoneIsOutlierForFaults,
