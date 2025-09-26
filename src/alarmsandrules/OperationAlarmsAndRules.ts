@@ -141,7 +141,7 @@ export class OperationAlarmsAndRules
           availabilityZone: availabilityZone,
           operationAlarmsAndRulesProps: props,
           counter: index,
-          nameSuffix: '-server'
+          nameSuffix: '-server'       
         },
       );
 

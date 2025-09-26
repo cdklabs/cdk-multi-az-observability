@@ -14,6 +14,7 @@ import { ServerSideOperationZonalAlarmsAndRulesProps } from "./props/ServerSideO
 import { OutlierDetectionAlgorithm } from "../utilities/OutlierDetectionAlgorithm";
 import { IOperation } from "../services/IOperation";
 import { LatencyOutlierMetricAggregation } from "../outlier-detection/LatencyOutlierMetricAggregation";
+import { IContributorInsightRuleDetails } from "../services/IContributorInsightRuleDetails";
 
 /**
  * The server side alarms and rules for an operation in an Availability Zone
@@ -180,13 +181,20 @@ export class ServerSideOperationZonalAlarmsAndRules
         );
     }
 
-    if (operation.serverSideContributorInsightRuleDetails) {
+    if (props.operationAlarmsAndRulesProps.operation.serverSideContributorInsightRuleDetails ||
+      props.operationAlarmsAndRulesProps.operation.service.defaultContributorInsightRuleDetails
+    ) 
+    {
+      let ruleDetails: IContributorInsightRuleDetails | undefined = props.operationAlarmsAndRulesProps.operation.serverSideContributorInsightRuleDetails ?
+        props.operationAlarmsAndRulesProps.operation.serverSideContributorInsightRuleDetails :
+        props.operationAlarmsAndRulesProps.operation.service.defaultContributorInsightRuleDetails;
+
       this.instancesHandlingRequestsInThisAZ =
         AvailabilityAndLatencyAlarmsAndRules.createServerSideInstancesHandlingRequestsInThisAZRule(
           this,
           operation.operationName,
           availabilityZoneId,
-          operation.serverSideContributorInsightRuleDetails!,
+          ruleDetails!,
           props.counter,
           props.nameSuffix,
         );
@@ -195,7 +203,7 @@ export class ServerSideOperationZonalAlarmsAndRules
           this,
           operation.operationName,
           availabilityZoneId,
-          operation.serverSideContributorInsightRuleDetails!,
+          ruleDetails!,
           props.counter,
           props.nameSuffix,
         );
@@ -215,7 +223,7 @@ export class ServerSideOperationZonalAlarmsAndRules
           this,
           operation.serverSideLatencyMetricDetails,
           availabilityZoneId,
-          operation.serverSideContributorInsightRuleDetails!,
+          ruleDetails!,
           props.counter,
           props.nameSuffix,
         );
@@ -255,7 +263,7 @@ export class ServerSideOperationZonalAlarmsAndRules
     else {
       this.isolatedImpactAlarm = new CompositeAlarm(
         scope,
-        `${operation.operationName}-zone-${azLetter}-isolated-impact-alarm`,
+        `${operation.operationName.toLowerCase()}-zone-${azLetter}-isolated-impact-alarm`,
         {
           compositeAlarmName: `${availabilityZoneId}-${operation.operationName.toLowerCase()}-isolated-impact-alarm${props.nameSuffix}`,
           alarmRule: AlarmRule.anyOf(
