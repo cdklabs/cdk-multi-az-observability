@@ -36,6 +36,7 @@ import { AvailabilityAndLatencyMetrics } from '../metrics/AvailabilityAndLatency
 import { IOperationAvailabilityMetricDetails } from '../services/IOperationAvailabilityMetricDetails';
 import { IOperationLatencyMetricDetails } from '../services/IOperationLatencyMetricDetails';
 import { LatencyOutlierMetricAggregation } from '../outlier-detection/LatencyOutlierMetricAggregation';
+import { MinimumUnhealthyTargets } from "../alarmsandrules/props/OperationAlarmsAndRulesProps";
 
 /**
  * Class used to create availability and latency alarms and Contributor Insight rules
@@ -944,6 +945,7 @@ export class AvailabilityAndLatencyAlarmsAndRules {
    * @param counter
    * @param outlierThreshold
    * @param instanceFaultRateContributorsInThisAZ
+   * @param instancesHandlingRequestsInThisAZ
    * @returns
    */
   static createServerSideZonalMoreThanOneInstanceProducingFaultsAlarm(
@@ -951,21 +953,46 @@ export class AvailabilityAndLatencyAlarmsAndRules {
     metricDetails: IOperationMetricDetails,
     availabilityZoneId: string,
     counter: number,
-    outlierThreshold: number,
     instanceFaultRateContributorsInThisAZ: CfnInsightRule,
+    instancesHandlingRequestsInThisAZ: CfnInsightRule,
+    minimumUnhealthyTargets?: MinimumUnhealthyTargets,
     nameSuffix?: string,
   ): IAlarm {
+    let threshold: number = 2;
+    let expression: string = `INSIGHT_RULE_METRIC(\"${instanceFaultRateContributorsInThisAZ.attrRuleName}\", \"UniqueContributors\")`;
+
+    if (minimumUnhealthyTargets) {
+      if (minimumUnhealthyTargets.count) {
+
+        if (minimumUnhealthyTargets.count <= 0) {
+          throw new Error("The minimum unhealthy target count cannot be less than or equal to 0.");
+        }
+
+        expression = `INSIGHT_RULE_METRIC(\"${instanceFaultRateContributorsInThisAZ.attrRuleName}\", \"UniqueContributors\")`;
+        threshold = minimumUnhealthyTargets.count;
+      }
+      else if (minimumUnhealthyTargets.percentage) {
+
+        if (minimumUnhealthyTargets.percentage > 1 || minimumUnhealthyTargets.percentage <= 0) {
+          throw new Error("The minimum unhealthy target percentage cannot be less than or equal to 0 or greater than 1.");
+        }
+
+        expression = `INSIGHT_RULE_METRIC(\"${instanceFaultRateContributorsInThisAZ.attrRuleName}\", \"UniqueContributors\") / INSIGHT_RULE_METRIC(\"${instancesHandlingRequestsInThisAZ.attrRuleName}\", \"UniqueContributors\")`;
+        threshold = minimumUnhealthyTargets.percentage;
+      }
+    }
+
     return new Alarm(scope, 'AZ' + counter + 'MoreThanOneAlarmForErrors', {
       alarmName:
         availabilityZoneId +
         `-${metricDetails.operationName.toLowerCase()}-multiple-instances-faults` +
         nameSuffix,
       metric: new MathExpression({
-        expression: `INSIGHT_RULE_METRIC(\"${instanceFaultRateContributorsInThisAZ.attrRuleName}\", \"UniqueContributors\")`,
+        expression: expression,
         period: metricDetails.period,
       }),
       evaluationPeriods: metricDetails.evaluationPeriods,
-      threshold: outlierThreshold,
+      threshold: threshold,
       comparisonOperator: ComparisonOperator.GREATER_THAN_OR_EQUAL_TO_THRESHOLD,
       datapointsToAlarm: metricDetails.datapointsToAlarm,
       actionsEnabled: false,
@@ -984,6 +1011,7 @@ export class AvailabilityAndLatencyAlarmsAndRules {
    * @param counter
    * @param outlierThreshold
    * @param instanceHighLatencyContributorsInThisAZ
+   * @param instancesHandlingRequestsInThisAZ
    * @returns
    */
   static createServerSideZonalMoreThanOneInstanceProducingHighLatencyAlarm(
@@ -991,21 +1019,47 @@ export class AvailabilityAndLatencyAlarmsAndRules {
     metricDetails: IOperationMetricDetails,
     availabilityZoneId: string,
     counter: number,
-    outlierThreshold: number,
     instanceHighLatencyContributorsInThisAZ: CfnInsightRule,
+    instancesHandlingRequestsInThisAZ: CfnInsightRule,
+    minimumUnhealthyTargets?: MinimumUnhealthyTargets,
     nameSuffix?: string,
   ): IAlarm {
+
+    let threshold: number = 2;
+    let expression: string = `INSIGHT_RULE_METRIC(\"${instanceHighLatencyContributorsInThisAZ.attrRuleName}\", \"UniqueContributors\")`;
+
+    if (minimumUnhealthyTargets) {
+      if (minimumUnhealthyTargets.count) {
+
+        if (minimumUnhealthyTargets.count <= 0) {
+          throw new Error("The minimum unhealthy target count cannot be less than or equal to 0.");
+        }
+
+        expression = `INSIGHT_RULE_METRIC(\"${instanceHighLatencyContributorsInThisAZ.attrRuleName}\", \"UniqueContributors\")`;
+        threshold = minimumUnhealthyTargets.count;
+      }
+      else if (minimumUnhealthyTargets.percentage) {
+
+        if (minimumUnhealthyTargets.percentage > 1 || minimumUnhealthyTargets.percentage <= 0) {
+          throw new Error("The minimum unhealthy target percentage cannot be less than or equal to 0 or greater than 1.");
+        }
+
+        expression = `INSIGHT_RULE_METRIC(\"${instanceHighLatencyContributorsInThisAZ.attrRuleName}\", \"UniqueContributors\") / INSIGHT_RULE_METRIC(\"${instancesHandlingRequestsInThisAZ.attrRuleName}\", \"UniqueContributors\")`;
+        threshold = minimumUnhealthyTargets.percentage;
+      }
+    }
+
     return new Alarm(scope, 'AZ' + counter + 'MoreThanOneAlarmForHighLatency', {
       alarmName:
         availabilityZoneId +
         `-${metricDetails.operationName.toLowerCase()}-multiple-instances-high-latency` +
         nameSuffix,
       metric: new MathExpression({
-        expression: `INSIGHT_RULE_METRIC(\"${instanceHighLatencyContributorsInThisAZ.attrRuleName}\", \"UniqueContributors\")`,
+        expression: expression,
         period: metricDetails.period,
       }),
       evaluationPeriods: metricDetails.evaluationPeriods,
-      threshold: outlierThreshold,
+      threshold: threshold,
       comparisonOperator: ComparisonOperator.GREATER_THAN_OR_EQUAL_TO_THRESHOLD,
       datapointsToAlarm: metricDetails.datapointsToAlarm,
       actionsEnabled: false,
