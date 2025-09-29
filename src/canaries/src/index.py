@@ -71,7 +71,7 @@ def latency_timer(method, metric_parameter_name):
 @metric_scope
 @latency_timer("metrics")
 @xray_recorder.capture('url_check')
-def verify_request(context, item, method, metrics = None):
+def verify_request(context, item, method, id, metrics = None):
   method_start = (time.time() * 1000)
   metrics.set_property("MethodStartTime", round(method_start))
   code = None
@@ -112,12 +112,8 @@ def verify_request(context, item, method, metrics = None):
     else:
       h["User-Agent"] = "{}".format(user_agent)
       
-    if context.aws_request_id:
-      metrics.set_property("AWSRequestIdPresent", True)
-      metrics.set_property("LambdaInvocationId", context.aws_request_id)
-    else:    
-      metrics.set_property("AWSRequestIdPresent", False)
-      metrics.set_property("LambdaInvocationId", "")
+    metrics.set_property("LambdaRequestId", id)
+    h["X-Lambda-RequestId"] = id
          
     invocation_id = str(uuid.uuid4())
     metrics.set_property("InvocationId", invocation_id)
@@ -222,6 +218,15 @@ def handler(event, context, metrics):
   metrics.set_dimensions({"FunctionName": context.function_name, "Region": os.environ.get("AWS_REGION") })
   metrics.set_property("CanaryName", context.function_name)
   metrics.set_property("Event", event)
+  
+  if context.aws_request_id:
+    metrics.set_property("AWSRequestIdPresent", True)
+    metrics.set_property("LambdaRequestId", context.aws_request_id)
+    id = context.aws_request_id
+  else:
+    metrics.set_property("AWSRequestIdPresent", False)
+    id = str(uuid.uuid4())
+    metrics.set_property("LambdaRequestId", id)
 
   xray_recorder.put_annotation("Source", "canary")
 
@@ -241,7 +246,7 @@ def handler(event, context, metrics):
     for method in methods:
       for x in range(0, request_count):
         try:
-          verify_request(context, event["parameters"], method)
+          verify_request(context, event["parameters"], method, id)
           time.sleep(1)
         except Exception as e:
           errors.append(str(e))
