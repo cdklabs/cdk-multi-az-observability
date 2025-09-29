@@ -215,7 +215,6 @@ export class ServerSideOperationZonalAlarmsAndRules
           props.counter,
           props.operationAlarmsAndRulesProps.numberOfInstancesToConsiderAZImpacted ? props.operationAlarmsAndRulesProps.numberOfInstancesToConsiderAZImpacted : 2,
           this.instanceContributorsToFaultsInThisAZ,
-          this.instancesHandlingRequestsInThisAZ,
           props.nameSuffix,
         );
       this.instanceContributorsToHighLatencyInThisAZ =
@@ -235,7 +234,6 @@ export class ServerSideOperationZonalAlarmsAndRules
           props.counter,
           props.operationAlarmsAndRulesProps.numberOfInstancesToConsiderAZImpacted ? props.operationAlarmsAndRulesProps.numberOfInstancesToConsiderAZImpacted : 2,
           this.instanceContributorsToHighLatencyInThisAZ,
-          this.instancesHandlingRequestsInThisAZ,
           props.nameSuffix,
         );
 

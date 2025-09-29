@@ -944,7 +944,6 @@ export class AvailabilityAndLatencyAlarmsAndRules {
    * @param counter
    * @param outlierThreshold
    * @param instanceFaultRateContributorsInThisAZ
-   * @param instancesHandlingRequestsInThisAZ
    * @returns
    */
   static createServerSideZonalMoreThanOneInstanceProducingFaultsAlarm(
@@ -954,7 +953,6 @@ export class AvailabilityAndLatencyAlarmsAndRules {
     counter: number,
     outlierThreshold: number,
     instanceFaultRateContributorsInThisAZ: CfnInsightRule,
-    instancesHandlingRequestsInThisAZ: CfnInsightRule,
     nameSuffix?: string,
   ): IAlarm {
     return new Alarm(scope, 'AZ' + counter + 'MoreThanOneAlarmForErrors', {
@@ -963,7 +961,7 @@ export class AvailabilityAndLatencyAlarmsAndRules {
         `-${metricDetails.operationName.toLowerCase()}-multiple-instances-faults` +
         nameSuffix,
       metric: new MathExpression({
-        expression: `INSIGHT_RULE_METRIC(\"${instanceFaultRateContributorsInThisAZ.attrRuleName}\", \"UniqueContributors\") / INSIGHT_RULE_METRIC(\"${instancesHandlingRequestsInThisAZ.attrRuleName}\", \"UniqueContributors\")`,
+        expression: `INSIGHT_RULE_METRIC(\"${instanceFaultRateContributorsInThisAZ.attrRuleName}\", \"UniqueContributors\")`,
         period: metricDetails.period,
       }),
       evaluationPeriods: metricDetails.evaluationPeriods,
@@ -986,7 +984,6 @@ export class AvailabilityAndLatencyAlarmsAndRules {
    * @param counter
    * @param outlierThreshold
    * @param instanceHighLatencyContributorsInThisAZ
-   * @param instancesHandlingRequestsInThisAZ
    * @returns
    */
   static createServerSideZonalMoreThanOneInstanceProducingHighLatencyAlarm(
@@ -996,7 +993,6 @@ export class AvailabilityAndLatencyAlarmsAndRules {
     counter: number,
     outlierThreshold: number,
     instanceHighLatencyContributorsInThisAZ: CfnInsightRule,
-    instancesHandlingRequestsInThisAZ: CfnInsightRule,
     nameSuffix?: string,
   ): IAlarm {
     return new Alarm(scope, 'AZ' + counter + 'MoreThanOneAlarmForHighLatency', {
@@ -1005,7 +1001,7 @@ export class AvailabilityAndLatencyAlarmsAndRules {
         `-${metricDetails.operationName.toLowerCase()}-multiple-instances-high-latency` +
         nameSuffix,
       metric: new MathExpression({
-        expression: `INSIGHT_RULE_METRIC(\"${instanceHighLatencyContributorsInThisAZ.attrRuleName}\", \"UniqueContributors\") / INSIGHT_RULE_METRIC(\"${instancesHandlingRequestsInThisAZ.attrRuleName}\", \"UniqueContributors\")`,
+        expression: `INSIGHT_RULE_METRIC(\"${instanceHighLatencyContributorsInThisAZ.attrRuleName}\", \"UniqueContributors\")`,
         period: metricDetails.period,
       }),
       evaluationPeriods: metricDetails.evaluationPeriods,
