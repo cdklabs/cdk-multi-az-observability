@@ -213,8 +213,9 @@ export class ServerSideOperationZonalAlarmsAndRules
           operation.serverSideAvailabilityMetricDetails,
           availabilityZoneId,
           props.counter,
-          props.operationAlarmsAndRulesProps.numberOfInstancesToConsiderAZImpacted ? props.operationAlarmsAndRulesProps.numberOfInstancesToConsiderAZImpacted : 2,
           this.instanceContributorsToFaultsInThisAZ,
+          this.instancesHandlingRequestsInThisAZ,
+          props.operationAlarmsAndRulesProps.minimumUnhealthyTargets,
           props.nameSuffix,
         );
       this.instanceContributorsToHighLatencyInThisAZ =
@@ -232,8 +233,9 @@ export class ServerSideOperationZonalAlarmsAndRules
           operation.serverSideLatencyMetricDetails,
           availabilityZoneId,
           props.counter,
-          props.operationAlarmsAndRulesProps.numberOfInstancesToConsiderAZImpacted ? props.operationAlarmsAndRulesProps.numberOfInstancesToConsiderAZImpacted : 2,
           this.instanceContributorsToHighLatencyInThisAZ,
+          this.instancesHandlingRequestsInThisAZ,
+          props.operationAlarmsAndRulesProps.minimumUnhealthyTargets,
           props.nameSuffix,
         );
 

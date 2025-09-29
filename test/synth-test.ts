@@ -12,12 +12,12 @@ import { ILogGroup, LogGroup } from 'aws-cdk-lib/aws-logs';
 import { InstrumentedServiceMultiAZObservability } from '../src/services/InstrumentedServiceMultiAZObservability';
 import { IService } from '../src/services/IService';
 import { Operation } from '../src/services/Operation';
-import { OperationMetricDetails } from '../src/services/OperationMetricDetails';
 import { MetricDimensions } from '../src/services/props/MetricDimensions';
 import { Service } from '../src/services/Service';
-import { ServiceMetricDetails } from '../src/services/ServiceMetricDetails';
 import { OutlierDetectionAlgorithm } from '../src/utilities/OutlierDetectionAlgorithm';
 import { AwsSolutionsChecks } from 'cdk-nag';
+import { OperationAvailabilityMetricDetails } from '../src/services/OperationAvailabilityMetricDetails';
+import { OperationLatencyMetricDetails } from '../src/services/OperationLatencyMetricDetails';
 
 const app = new cdk.App();
 const stack = new cdk.Stack(app, 'TestStack', {
@@ -74,7 +74,7 @@ let service: IService = new Service({
   faultCountThreshold: 25,
   period: Duration.seconds(60),
   loadBalancer: loadBalancer,
-  defaultAvailabilityMetricDetails: new ServiceMetricDetails({
+  defaultAvailabilityMetricDetails: {
     metricNamespace: 'front-end/metrics',
     successMetricNames: ['Success'],
     faultMetricNames: ['Fault', 'Error'],
@@ -87,8 +87,8 @@ let service: IService = new Service({
     faultAlarmThreshold: 0.1,
     graphedFaultStatistics: ['Sum'],
     graphedSuccessStatistics: ['Sum'],
-  }),
-  defaultLatencyMetricDetails: new ServiceMetricDetails({
+  },
+  defaultLatencyMetricDetails: {
     metricNamespace: 'front-end/metrics',
     successMetricNames: ['SuccessLatency'],
     faultMetricNames: ['FaultLatency'],
@@ -97,11 +97,10 @@ let service: IService = new Service({
     period: Duration.seconds(60),
     evaluationPeriods: 5,
     datapointsToAlarm: 3,
-    successAlarmThreshold: 100,
-    faultAlarmThreshold: 1,
+    successAlarmThreshold: Duration.millis(100),
     graphedFaultStatistics: ['p99'],
     graphedSuccessStatistics: ['p50', 'p99', 'tm99'],
-  }),
+  },
   canaryTestProps: {
     requestCount: 10,
     schedule: 'rate(1 minute)',
@@ -135,7 +134,7 @@ let rideOperation: Operation = {
     instanceIdJsonPath: '$.InstanceId',
     availabilityZoneIdJsonPath: '$.AZ-ID',
   },
-  serverSideAvailabilityMetricDetails: new OperationMetricDetails(
+  serverSideAvailabilityMetricDetails: new OperationAvailabilityMetricDetails(
     {
       operationName: 'ride',
       metricDimensions: new MetricDimensions(
@@ -146,7 +145,7 @@ let rideOperation: Operation = {
     },
     service.defaultAvailabilityMetricDetails,
   ),
-  serverSideLatencyMetricDetails: new OperationMetricDetails(
+  serverSideLatencyMetricDetails: new OperationLatencyMetricDetails(
     {
       operationName: 'ride',
       metricDimensions: new MetricDimensions(
@@ -158,7 +157,7 @@ let rideOperation: Operation = {
     service.defaultLatencyMetricDetails,
   ),
   canaryTestLatencyMetricsOverride: {
-    successAlarmThreshold: 251,
+    successAlarmThreshold: Duration.millis(251),
   },
 };
 let payOperation: Operation = {
@@ -167,7 +166,7 @@ let payOperation: Operation = {
   path: '/pay',
   critical: true,
   httpMethods: ['GET'],
-  serverSideAvailabilityMetricDetails: new OperationMetricDetails(
+  serverSideAvailabilityMetricDetails: new OperationAvailabilityMetricDetails(
     {
       operationName: 'pay',
       metricDimensions: new MetricDimensions(
@@ -178,7 +177,7 @@ let payOperation: Operation = {
     },
     service.defaultAvailabilityMetricDetails,
   ),
-  serverSideLatencyMetricDetails: new OperationMetricDetails(
+  serverSideLatencyMetricDetails: new OperationLatencyMetricDetails(
     {
       operationName: 'pay',
       metricDimensions: new MetricDimensions(
@@ -190,7 +189,7 @@ let payOperation: Operation = {
     service.defaultLatencyMetricDetails,
   ),
   canaryTestLatencyMetricsOverride: {
-    successAlarmThreshold: 301,
+    successAlarmThreshold: Duration.millis(301),
   },
 };
 
@@ -200,7 +199,7 @@ let homeOperation: Operation = {
   path: '/home',
   critical: true,
   httpMethods: ['GET'],
-  serverSideAvailabilityMetricDetails: new OperationMetricDetails(
+  serverSideAvailabilityMetricDetails: new OperationAvailabilityMetricDetails(
     {
       operationName: 'home',
       metricDimensions: new MetricDimensions(
@@ -211,7 +210,7 @@ let homeOperation: Operation = {
     },
     service.defaultAvailabilityMetricDetails,
   ),
-  serverSideLatencyMetricDetails: new OperationMetricDetails(
+  serverSideLatencyMetricDetails: new OperationLatencyMetricDetails(
     {
       operationName: 'home',
       metricDimensions: new MetricDimensions(
@@ -223,7 +222,7 @@ let homeOperation: Operation = {
     service.defaultLatencyMetricDetails,
   ),
   canaryTestLatencyMetricsOverride: {
-    successAlarmThreshold: 301,
+    successAlarmThreshold: Duration.millis(301),
   },
 };
 
@@ -233,7 +232,7 @@ let signinOperation: Operation = {
   path: '/signin',
   critical: true,
   httpMethods: ['GET'],
-  serverSideAvailabilityMetricDetails: new OperationMetricDetails(
+  serverSideAvailabilityMetricDetails: new OperationAvailabilityMetricDetails(
     {
       operationName: 'signin',
       metricDimensions: new MetricDimensions(
@@ -244,7 +243,7 @@ let signinOperation: Operation = {
     },
     service.defaultAvailabilityMetricDetails,
   ),
-  serverSideLatencyMetricDetails: new OperationMetricDetails(
+  serverSideLatencyMetricDetails: new OperationLatencyMetricDetails(
     {
       operationName: 'signin',
       metricDimensions: new MetricDimensions(
@@ -256,7 +255,7 @@ let signinOperation: Operation = {
     service.defaultLatencyMetricDetails,
   ),
   canaryTestLatencyMetricsOverride: {
-    successAlarmThreshold: 301,
+    successAlarmThreshold: Duration.millis(301),
   },
 };
 
@@ -271,7 +270,8 @@ new InstrumentedServiceMultiAZObservability(stack, 'MAZObservability', {
   interval: Duration.minutes(30),
   assetsBucketParameterName: 'AssetsBucket',
   assetsBucketPrefixParameterName: 'AssetsBucketPrefix',
-  outlierDetectionAlgorithm: OutlierDetectionAlgorithm.CHI_SQUARED,
+  latencyOutlierDetectionAlgorithm: OutlierDetectionAlgorithm.Z_SCORE,
+  availabilityOutlierDetectionAlgorithm: OutlierDetectionAlgorithm.STATIC
 });
 
 app.synth();

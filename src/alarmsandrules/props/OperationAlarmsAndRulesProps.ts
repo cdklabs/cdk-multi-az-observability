@@ -44,12 +44,12 @@ export interface OperationAlarmsAndRulesProps {
 
   /**
    * The number of instances that need to be impacted to consider
-   * an AZ to be impacted. This helps to ensure "more than one" instance
+   * an AZ to be impacted. This helps to ensure "one" instance
    * isn't making an AZ look bad.
    * 
-   * @default 2
+   * @default Count of 2
    */
-  readonly numberOfInstancesToConsiderAZImpacted?: number;
+  readonly minimumUnhealthyTargets?: MinimumUnhealthyTargets;
 
   /**
    * The outlier detection algorithm used to determine if Availability Zones
@@ -85,4 +85,24 @@ export interface OperationAlarmsAndRulesProps {
    * for chi-squared or z-score algorithms
    */
   readonly outlierDetectionFunction?: IFunction;
+}
+
+/**
+ * The minimum unhealthy targets for an AZ to be considered impaired instead
+ * of individual targets in the zone.
+ */
+export interface MinimumUnhealthyTargets {
+  /**
+   * The minimum number of targets that must be unhealthy. If the number of
+   * unhealthy targets is equal to this, or greater, the impact ot a single AZ
+   * is not considered ot be from a "single" target.
+   */
+  readonly count?: number;
+
+  /**
+   * The minimum percentage of targets that must be unhealthy. If the percentage
+   * of unhealthy targets is equal to this, or greater, the impact to a single AZ
+   * is not considered to be from a "single" target.
+   */
+  readonly percentage?: number;
 }
