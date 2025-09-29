@@ -115,12 +115,12 @@ def verify_request(context, item, method, metrics = None):
     if context.aws_request_id:
       metrics.set_property("AWSRequestIdPresent", True)
       metrics.set_property("RequestId", context.aws_request_id)
-      h["X-Request-Id"] = context.aws_request_id
+      h["X-Invocation-Id"] = context.aws_request_id
     else:
       request_id = str(uuid.uuid4())
       metrics.set_property("AWSRequestIdPresent", False)
       metrics.set_property("RequestId", request_id)
-      h["X-Request-Id"] = request_id
+      h["X-Invocation-Id"] = request_id
     
     metrics.set_property("Headers", h)
     if fault_boundary == "az":
