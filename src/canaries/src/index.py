@@ -114,13 +114,14 @@ def verify_request(context, item, method, metrics = None):
       
     if context.aws_request_id:
       metrics.set_property("AWSRequestIdPresent", True)
-      metrics.set_property("InvocationId", context.aws_request_id)
-      h["X-Invocation-Id"] = context.aws_request_id
-    else:
-      request_id = str(uuid.uuid4())
+      metrics.set_property("LambdaInvocationId", context.aws_request_id)
+    else:    
       metrics.set_property("AWSRequestIdPresent", False)
-      metrics.set_property("InvocationId", request_id)
-      h["X-Invocation-Id"] = request_id
+      metrics.set_property("LambdaInvocationId", "")
+         
+    invocation_id = str(uuid.uuid4())
+    metrics.set_property("InvocationId", invocation_id)
+    h["X-Invocation-Id"] = invocation_id
     
     metrics.set_property("Headers", h)
     if fault_boundary == "az":
@@ -174,17 +175,6 @@ def verify_request(context, item, method, metrics = None):
 
     metrics.set_property("HttpStatusCode", code) 
     metrics.set_property("ResponseHeaders", response_headers)
-    
-    if "X-RequestId" in response_headers:
-      metrics.set_property("RequestId", response_headers["X-RequestId"])
-      xray_recorder.put_metadata("RequestId", response_headers["X-RequestId"])
-    else:
-      metrics.set_property("RequestId", "")   
-      xray_recorder.put_metadata("RequestId", "")   
-
-    if "X-Server-Side-Latency" in response_headers:
-      metrics.put_metric("ServerSideLatency", float(response_headers["X-Server-Side-Latency"]), "Milliseconds") 
-      xray_recorder.put_metadata("ServerSideLatency", float(response_headers["X-Server-Side-Latency"]))
     
     if response.reason:   
       metrics.set_property("Reason", response.reason)
