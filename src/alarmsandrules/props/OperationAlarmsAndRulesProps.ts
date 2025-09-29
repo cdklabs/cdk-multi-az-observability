@@ -6,6 +6,7 @@ import { IAvailabilityZoneMapper } from '../../azmapper/IAvailabilityZoneMapper'
 import { Operation } from '../../services/Operation';
 import { OutlierDetectionAlgorithm } from '../../utilities/OutlierDetectionAlgorithm';
 import { LatencyOutlierMetricAggregation } from '../../outlier-detection/LatencyOutlierMetricAggregation';
+import { MinimumUnhealthyTargets } from '../../utilities/MinimumUnhealthyTargets';
 
 /**
  * The properties for the operation alarms and rules
@@ -66,14 +67,14 @@ export interface OperationAlarmsAndRulesProps {
   readonly latencyOutlierDetectionAlgorithm: OutlierDetectionAlgorithm;
 
   /**
-     * The metric for latency to use in outlier detection, which means whether
-     * the algorithm uses a count of requests exceeding your latency threshold or
-     * whether it uses the actual latency values at your latency alarm threshold
-     * statistic.
-     * 
-     * @default LatencyOutlierMetricAggregation.COUNT
-     */
-    readonly latencyOutlierMetricAggregation?: LatencyOutlierMetricAggregation;
+   * The metric for latency to use in outlier detection, which means whether
+   * the algorithm uses a count of requests exceeding your latency threshold or
+   * whether it uses the actual latency values at your latency alarm threshold
+   * statistic.
+   * 
+   * @default LatencyOutlierMetricAggregation.COUNT
+   */
+  readonly latencyOutlierMetricAggregation?: LatencyOutlierMetricAggregation;
 
   /**
    * The AZ Mapper
@@ -85,24 +86,4 @@ export interface OperationAlarmsAndRulesProps {
    * for chi-squared or z-score algorithms
    */
   readonly outlierDetectionFunction?: IFunction;
-}
-
-/**
- * The minimum unhealthy targets for an AZ to be considered impaired instead
- * of individual targets in the zone.
- */
-export interface MinimumUnhealthyTargets {
-  /**
-   * The minimum number of targets that must be unhealthy. If the number of
-   * unhealthy targets is equal to this, or greater, the impact ot a single AZ
-   * is not considered ot be from a "single" target.
-   */
-  readonly count?: number;
-
-  /**
-   * The minimum percentage of targets that must be unhealthy. If the percentage
-   * of unhealthy targets is equal to this, or greater, the impact to a single AZ
-   * is not considered to be from a "single" target.
-   */
-  readonly percentage?: number;
 }

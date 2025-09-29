@@ -9,6 +9,7 @@ import { ServiceProps } from './props/ServiceProps';
 import { AddCanaryTestProps } from '../canaries/props/AddCanaryTestProps';
 import { IServiceAvailabilityMetricDetails } from './IServiceAvailabilityMetricDetails';
 import { IServiceLatencyMetricDetails } from './IServiceLatencyMetricDetails';
+import { MinimumUnhealthyTargets } from '../utilities/MinimumUnhealthyTargets';
 
 /**
  * The representation of a service composed of multiple operations
@@ -86,6 +87,13 @@ export class Service implements IService {
    */
   readonly defaultContributorInsightRuleDetails?: IContributorInsightRuleDetails;
 
+  /**
+   * The minimum number of unhealthy targets to consider an AZ impaired
+   * 
+   * @default Count of 2
+   */
+  readonly minimumUnhealthyTargets?: MinimumUnhealthyTargets;
+
   constructor(props: ServiceProps) {
     this.serviceName = props.serviceName;
     this.availabilityZoneNames = props.availabilityZoneNames;
@@ -100,6 +108,7 @@ export class Service implements IService {
     this.defaultLatencyMetricDetails = props.defaultLatencyMetricDetails;
     this.defaultContributorInsightRuleDetails =
       props.defaultContributorInsightRuleDetails;
+    this.minimumUnhealthyTargets = props.minimumUnhealthyTargets;
   }
 
   /**

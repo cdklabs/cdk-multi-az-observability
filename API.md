@@ -1765,6 +1765,66 @@ MAD: 3
 
 ---
 
+### MinimumUnhealthyTargets <a name="MinimumUnhealthyTargets" id="@cdklabs/multi-az-observability.MinimumUnhealthyTargets"></a>
+
+The minimum unhealthy targets for an AZ to be considered impaired instead of individual targets in the zone.
+
+You must specify either count or percentage,
+if you specify both, only count will be used.
+
+#### Initializer <a name="Initializer" id="@cdklabs/multi-az-observability.MinimumUnhealthyTargets.Initializer"></a>
+
+```typescript
+import { MinimumUnhealthyTargets } from '@cdklabs/multi-az-observability'
+
+const minimumUnhealthyTargets: MinimumUnhealthyTargets = { ... }
+```
+
+#### Properties <a name="Properties" id="Properties"></a>
+
+| **Name** | **Type** | **Description** |
+| --- | --- | --- |
+| <code><a href="#@cdklabs/multi-az-observability.MinimumUnhealthyTargets.property.count">count</a></code> | <code>number</code> | The minimum number of targets that must be unhealthy. |
+| <code><a href="#@cdklabs/multi-az-observability.MinimumUnhealthyTargets.property.percentage">percentage</a></code> | <code>number</code> | The minimum percentage of targets that must be unhealthy. |
+
+---
+
+##### `count`<sup>Optional</sup> <a name="count" id="@cdklabs/multi-az-observability.MinimumUnhealthyTargets.property.count"></a>
+
+```typescript
+public readonly count: number;
+```
+
+- *Type:* number
+- *Default:* This value is not used
+
+The minimum number of targets that must be unhealthy.
+
+If the number of
+unhealthy targets is equal to this, or greater, the impact ot a single AZ
+is not considered ot be from a "single" target. You must specify either count or percentage,
+if you specify both, only count will be used.
+
+---
+
+##### `percentage`<sup>Optional</sup> <a name="percentage" id="@cdklabs/multi-az-observability.MinimumUnhealthyTargets.property.percentage"></a>
+
+```typescript
+public readonly percentage: number;
+```
+
+- *Type:* number
+- *Default:* This value is not used
+
+The minimum percentage of targets that must be unhealthy.
+
+If the percentage
+of unhealthy targets is equal to this, or greater, the impact to a single AZ
+is not considered to be from a "single" target. You must specify either count or percentage,
+if you specify both, only count will be used.
+
+---
+
 ### NatGatewayDetectionProps <a name="NatGatewayDetectionProps" id="@cdklabs/multi-az-observability.NatGatewayDetectionProps"></a>
 
 The properties for performing zonal impact detection with NAT Gateway(s).
@@ -3233,6 +3293,7 @@ const serviceProps: ServiceProps = { ... }
 | <code><a href="#@cdklabs/multi-az-observability.ServiceProps.property.canaryTestProps">canaryTestProps</a></code> | <code><a href="#@cdklabs/multi-az-observability.AddCanaryTestProps">AddCanaryTestProps</a></code> | Define these settings if you want to automatically add canary tests to your operations. |
 | <code><a href="#@cdklabs/multi-az-observability.ServiceProps.property.defaultContributorInsightRuleDetails">defaultContributorInsightRuleDetails</a></code> | <code><a href="#@cdklabs/multi-az-observability.IContributorInsightRuleDetails">IContributorInsightRuleDetails</a></code> | The default settings that are used for contributor insight rules. |
 | <code><a href="#@cdklabs/multi-az-observability.ServiceProps.property.loadBalancer">loadBalancer</a></code> | <code>aws-cdk-lib.aws_elasticloadbalancingv2.ILoadBalancerV2</code> | The load balancer this service sits behind. |
+| <code><a href="#@cdklabs/multi-az-observability.ServiceProps.property.minimumUnhealthyTargets">minimumUnhealthyTargets</a></code> | <code><a href="#@cdklabs/multi-az-observability.MinimumUnhealthyTargets">MinimumUnhealthyTargets</a></code> | The minimum number of unhealthy targets for an AZ to be considered unhealthy. |
 
 ---
 
@@ -3362,6 +3423,19 @@ public readonly loadBalancer: ILoadBalancerV2;
 - *Default:* Load balancer metrics won't be shown on dashboards and its ARN won't be included in top level alarm descriptions that automation can use to implement a zonal shift.
 
 The load balancer this service sits behind.
+
+---
+
+##### `minimumUnhealthyTargets`<sup>Optional</sup> <a name="minimumUnhealthyTargets" id="@cdklabs/multi-az-observability.ServiceProps.property.minimumUnhealthyTargets"></a>
+
+```typescript
+public readonly minimumUnhealthyTargets: MinimumUnhealthyTargets;
+```
+
+- *Type:* <a href="#@cdklabs/multi-az-observability.MinimumUnhealthyTargets">MinimumUnhealthyTargets</a>
+- *Default:* Count of 2
+
+The minimum number of unhealthy targets for an AZ to be considered unhealthy.
 
 ---
 
@@ -4908,6 +4982,7 @@ Adds an operation to this service and sets the operation's service property.
 | <code><a href="#@cdklabs/multi-az-observability.Service.property.canaryTestProps">canaryTestProps</a></code> | <code><a href="#@cdklabs/multi-az-observability.AddCanaryTestProps">AddCanaryTestProps</a></code> | Define these settings if you want to automatically add canary tests to your operations. |
 | <code><a href="#@cdklabs/multi-az-observability.Service.property.defaultContributorInsightRuleDetails">defaultContributorInsightRuleDetails</a></code> | <code><a href="#@cdklabs/multi-az-observability.IContributorInsightRuleDetails">IContributorInsightRuleDetails</a></code> | The default settings that are used for contributor insight rules. |
 | <code><a href="#@cdklabs/multi-az-observability.Service.property.loadBalancer">loadBalancer</a></code> | <code>aws-cdk-lib.aws_elasticloadbalancingv2.ILoadBalancerV2</code> | The load balancer this service sits behind. |
+| <code><a href="#@cdklabs/multi-az-observability.Service.property.minimumUnhealthyTargets">minimumUnhealthyTargets</a></code> | <code><a href="#@cdklabs/multi-az-observability.MinimumUnhealthyTargets">MinimumUnhealthyTargets</a></code> | The minimum number of unhealthy targets to consider an AZ impaired. |
 
 ---
 
@@ -5049,6 +5124,19 @@ public readonly loadBalancer: ILoadBalancerV2;
 - *Default:* No load balancer metrics will be included in dashboards and its ARN will not be added to top level AZ alarm descriptions.
 
 The load balancer this service sits behind.
+
+---
+
+##### `minimumUnhealthyTargets`<sup>Optional</sup> <a name="minimumUnhealthyTargets" id="@cdklabs/multi-az-observability.Service.property.minimumUnhealthyTargets"></a>
+
+```typescript
+public readonly minimumUnhealthyTargets: MinimumUnhealthyTargets;
+```
+
+- *Type:* <a href="#@cdklabs/multi-az-observability.MinimumUnhealthyTargets">MinimumUnhealthyTargets</a>
+- *Default:* Count of 2
+
+The minimum number of unhealthy targets to consider an AZ impaired.
 
 ---
 
@@ -7850,6 +7938,7 @@ Adds an operation to this service.
 | <code><a href="#@cdklabs/multi-az-observability.IService.property.canaryTestProps">canaryTestProps</a></code> | <code><a href="#@cdklabs/multi-az-observability.AddCanaryTestProps">AddCanaryTestProps</a></code> | Define these settings if you want to automatically add canary tests to your operations. |
 | <code><a href="#@cdklabs/multi-az-observability.IService.property.defaultContributorInsightRuleDetails">defaultContributorInsightRuleDetails</a></code> | <code><a href="#@cdklabs/multi-az-observability.IContributorInsightRuleDetails">IContributorInsightRuleDetails</a></code> | The default settings that are used for contributor insight rules. |
 | <code><a href="#@cdklabs/multi-az-observability.IService.property.loadBalancer">loadBalancer</a></code> | <code>aws-cdk-lib.aws_elasticloadbalancingv2.ILoadBalancerV2</code> | The load balancer this service sits behind. |
+| <code><a href="#@cdklabs/multi-az-observability.IService.property.minimumUnhealthyTargets">minimumUnhealthyTargets</a></code> | <code><a href="#@cdklabs/multi-az-observability.MinimumUnhealthyTargets">MinimumUnhealthyTargets</a></code> | The minimum number of unhealthy targets to consider an AZ impaired. |
 
 ---
 
@@ -7991,6 +8080,19 @@ public readonly loadBalancer: ILoadBalancerV2;
 - *Default:* No load balancer metrics are included in dashboards and its ARN is not added to top level AZ alarm descriptions.
 
 The load balancer this service sits behind.
+
+---
+
+##### `minimumUnhealthyTargets`<sup>Optional</sup> <a name="minimumUnhealthyTargets" id="@cdklabs/multi-az-observability.IService.property.minimumUnhealthyTargets"></a>
+
+```typescript
+public readonly minimumUnhealthyTargets: MinimumUnhealthyTargets;
+```
+
+- *Type:* <a href="#@cdklabs/multi-az-observability.MinimumUnhealthyTargets">MinimumUnhealthyTargets</a>
+- *Default:* Count of 2
+
+The minimum number of unhealthy targets to consider an AZ impaired.
 
 ---
 

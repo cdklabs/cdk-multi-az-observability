@@ -6,6 +6,7 @@ import { AddCanaryTestProps } from '../../canaries/props/AddCanaryTestProps';
 import { IContributorInsightRuleDetails } from '../IContributorInsightRuleDetails';
 import { IServiceAvailabilityMetricDetails } from '../IServiceAvailabilityMetricDetails';
 import { IServiceLatencyMetricDetails } from '../IServiceLatencyMetricDetails';
+import { MinimumUnhealthyTargets } from '../../utilities/MinimumUnhealthyTargets';
 
 /**
  * Properties to initialize a service
@@ -79,4 +80,11 @@ export interface ServiceProps {
    * if the operation has logs that can be queried by contributor insights
    */
   readonly defaultContributorInsightRuleDetails?: IContributorInsightRuleDetails;
+
+  /**
+   * The minimum number of unhealthy targets for an AZ to be considered unhealthy
+   * 
+   * @default Count of 2
+   */
+  readonly minimumUnhealthyTargets?: MinimumUnhealthyTargets;
 }

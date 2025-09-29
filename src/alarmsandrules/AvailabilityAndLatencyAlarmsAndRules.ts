@@ -36,8 +36,7 @@ import { AvailabilityAndLatencyMetrics } from '../metrics/AvailabilityAndLatency
 import { IOperationAvailabilityMetricDetails } from '../services/IOperationAvailabilityMetricDetails';
 import { IOperationLatencyMetricDetails } from '../services/IOperationLatencyMetricDetails';
 import { LatencyOutlierMetricAggregation } from '../outlier-detection/LatencyOutlierMetricAggregation';
-import { MinimumUnhealthyTargets } from "../alarmsandrules/props/OperationAlarmsAndRulesProps";
-
+import { MinimumUnhealthyTargets } from '../utilities/MinimumUnhealthyTargets';
 /**
  * Class used to create availability and latency alarms and Contributor Insight rules
  */

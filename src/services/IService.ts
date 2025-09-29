@@ -7,6 +7,7 @@ import { IOperation } from './IOperation';
 import { AddCanaryTestProps } from '../canaries/props/AddCanaryTestProps';
 import { IServiceAvailabilityMetricDetails } from './IServiceAvailabilityMetricDetails';
 import { IServiceLatencyMetricDetails } from './IServiceLatencyMetricDetails';
+import { MinimumUnhealthyTargets } from '../utilities/MinimumUnhealthyTargets';
 
 /**
  * Represents a complete service composed of one or more operations
@@ -83,6 +84,13 @@ export interface IService {
    * @default - No defaults are provided and must be specified per operation
    */
   readonly defaultContributorInsightRuleDetails?: IContributorInsightRuleDetails;
+
+  /**
+   * The minimum number of unhealthy targets to consider an AZ impaired
+   * 
+   * @default Count of 2
+   */
+  readonly minimumUnhealthyTargets?: MinimumUnhealthyTargets;
 
   /**
    * Adds an operation to this service
