@@ -83,6 +83,8 @@ export { CanaryTestLatencyMetricsOverrideProps } from './services/props/CanaryTe
 export { CanaryTestAvailabilityMetricsOverrideProps } from './services/props/CanaryTestAvailabilityMetricsOverrideProps';
 export { CanaryTestMetricsOverrideProps } from './services/props/CanaryTestMetricsOverrideProps';
 
-export { ICanaryMetrics } from './services/ICanaryMetrics';``
+export { ICanaryMetrics } from './services/ICanaryMetrics';
 export { CanaryMetrics } from './services/CanaryMetrics';
 export { CanaryMetricProps } from './services/props/CanaryMetricProps';
+
+export { MinimumUnhealthyTargets } from './utilities/MinimumUnhealthyTargets';

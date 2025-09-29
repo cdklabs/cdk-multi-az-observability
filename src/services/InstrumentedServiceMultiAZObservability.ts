@@ -356,8 +356,6 @@ export class InstrumentedServiceMultiAZObservability
   ) {
     super(scope, id);
 
-    
-
     let availabilityOutlierDetectionAlgorithm: OutlierDetectionAlgorithm = props.availabilityOutlierDetectionAlgorithm || OutlierDetectionAlgorithm.STATIC;
     let availabilityOutlierThreshold: number;
 
@@ -477,7 +475,8 @@ export class InstrumentedServiceMultiAZObservability
             loadBalancer: props.service.loadBalancer,
             azMapper: this.azMapper,
             outlierDetectionFunction: this.outlierDetectionFunction,
-            latencyOutlierMetricAggregation: props.latencyOutlierMetricAggregation
+            latencyOutlierMetricAggregation: props.latencyOutlierMetricAggregation,
+            minimumUnhealthyTargets: props.service.minimumUnhealthyTargets
           }),
         ];
       }),
