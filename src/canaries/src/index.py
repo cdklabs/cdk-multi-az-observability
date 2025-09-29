@@ -9,6 +9,7 @@ import functools
 import copy
 import os
 import traceback
+import uuid
 import requests
 from inspect import getfullargspec
 from dateutil import parser
@@ -102,7 +103,6 @@ def verify_request(context, item, method, metrics = None):
     metrics.set_property("Method", method)
     metrics.set_property("Url", url)
     metrics.set_property("PostData", post_data)
-    metrics.set_property("RequestId", context.aws_request_id)
     
     parsed_url = urllib.parse.urlparse(url)
     user_agent = "lambda-canary-python3.13"
@@ -111,6 +111,16 @@ def verify_request(context, item, method, metrics = None):
       h["User-Agent"] = " ".join([user_agent, h["User-Agent"]])
     else:
       h["User-Agent"] = "{}".format(user_agent)
+      
+    if context.aws_request_id:
+      metrics.set_property("AWSRequestIdPresent", True)
+      metrics.set_property("RequestId", context.aws_request_id)
+      h["X-Request-Id"] = context.aws_request_id
+    else:
+      request_id = str(uuid.uuid4())
+      metrics.set_property("AWSRequestIdPresent", False)
+      metrics.set_property("RequestId", request_id)
+      h["X-Request-Id"] = request_id
     
     metrics.set_property("Headers", h)
     if fault_boundary == "az":
