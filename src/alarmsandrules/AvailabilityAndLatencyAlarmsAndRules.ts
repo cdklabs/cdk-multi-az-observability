@@ -623,7 +623,7 @@ export class AvailabilityAndLatencyAlarmsAndRules {
         label:
           availabilityZoneId +
           '-' +
-          metricDetails.operationName +
+          metricDetails.operationName.toLowerCase() +
           '-high-latency-requests',
         metricDetails: metricDetails,
         metricType: LatencyMetricType.SUCCESS_LATENCY,
@@ -635,7 +635,7 @@ export class AvailabilityAndLatencyAlarmsAndRules {
         label:
          Aws.REGION +
           '-' +
-          metricDetails.operationName +
+          metricDetails.operationName.toLowerCase() +
           '-high-latency-requests',
         metricDetails: metricDetails,
         metricType: LatencyMetricType.SUCCESS_LATENCY,
@@ -690,7 +690,7 @@ export class AvailabilityAndLatencyAlarmsAndRules {
         label:
           availabilityZoneId +
           '-' +
-          metricDetails.operationName +
+          metricDetails.operationName.toLowerCase() +
           '-high-latency-requests',
         metricDetails: metricDetails,
         metricType: LatencyMetricType.SUCCESS_LATENCY,
