@@ -84,7 +84,11 @@ export class CanaryOperationZonalAlarmsAndRules
           operation.canaryMetricDetails!.canaryAvailabilityMetricDetails,
           props.availabilityZone,
           availabilityZoneId,
-          operation.service.availabilityZoneNames,
+          operation.service.availabilityZoneNames.map((az) => {
+            return props.operationAlarmsAndRulesProps.azMapper.availabilityZoneIdFromAvailabilityZoneLetter(
+              az.substring(az.length - 1),
+            );
+          }),
           props.counter,
           props.operationAlarmsAndRulesProps.availabilityOutlierThreshold,
           props.nameSuffix,
@@ -115,7 +119,11 @@ export class CanaryOperationZonalAlarmsAndRules
           operation.canaryMetricDetails!.canaryLatencyMetricDetails,
           props.availabilityZone,
           availabilityZoneId,
-          operation.service.availabilityZoneNames,
+          operation.service.availabilityZoneNames.map((az) => {
+            return props.operationAlarmsAndRulesProps.azMapper.availabilityZoneIdFromAvailabilityZoneLetter(
+              az.substring(az.length - 1),
+            );
+          }),
           props.counter,
           props.operationAlarmsAndRulesProps.latencyOutlierThreshold,
           props.nameSuffix,
