@@ -7,10 +7,12 @@ import { Unit } from 'aws-cdk-lib/aws-cloudwatch';
 import { SelectedSubnets, SubnetType, Vpc } from 'aws-cdk-lib/aws-ec2';
 import {
   ApplicationLoadBalancer,
+  ApplicationProtocol,
   ApplicationTargetGroup,
   ILoadBalancerV2,
   ITargetGroup,
   NetworkLoadBalancer,
+  TargetType,
 } from 'aws-cdk-lib/aws-elasticloadbalancingv2';
 import { ILogGroup, LogGroup } from 'aws-cdk-lib/aws-logs';
 import { InstrumentedServiceMultiAZObservability } from '../src/services/InstrumentedServiceMultiAZObservability';
@@ -60,7 +62,9 @@ test('Fully instrumented service', () => {
   );
 
   let targetGroup: ITargetGroup = new ApplicationTargetGroup(stack, "TG", {
-    vpc: vpc
+    vpc: vpc,
+    targetType: TargetType.INSTANCE,
+    protocol: ApplicationProtocol.HTTP
   });
 
   let logGroup: ILogGroup = new LogGroup(stack, 'Logs', {});
