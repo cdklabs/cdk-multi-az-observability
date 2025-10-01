@@ -1,7 +1,24 @@
-import { IApplicationLoadBalancer } from "aws-cdk-lib/aws-elasticloadbalancingv2";
+import { IApplicationLoadBalancer, ITargetGroup } from "aws-cdk-lib/aws-elasticloadbalancingv2";
 import { ApplicationLoadBalancerAvailabilityOutlierAlgorithm } from "../../outlier-detection/ApplicationLoadBalancerAvailabilityOutlierAlgorithm";
 import { ApplicationLoadBalancerLatencyOutlierAlgorithm } from "../../outlier-detection/ApplicationLoadBalancerLatencyOutlierAlgorithm";
 import { Duration } from "aws-cdk-lib";
+
+/**
+ * An object to map an ALB to its target groups
+ */
+export interface AlbTargetGroupMap {
+  /**
+   * The application load balancer
+   */
+  readonly applicationLoadBalancer: IApplicationLoadBalancer;
+
+  /**
+   * The target groups associated with the ALB
+   * 
+   * @default No target groups are associated and will not display anomalous hosts or mitigated hosts on the dashboard
+   */
+  readonly targetGroups?: ITargetGroup[];
+}
 
 /**
  * The properties for performing zonal impact detection with ALB(s).
@@ -9,9 +26,9 @@ import { Duration } from "aws-cdk-lib";
 export interface ApplicationLoadBalancerDetectionProps {
 
   /**
-   * The application load balancers to collect metrics from.
+   * Map of target groups per ALB to collect metrics from.
    */
-  readonly applicationLoadBalancers: IApplicationLoadBalancer[];
+  readonly albTargetGroupMap: AlbTargetGroupMap[];
 
   /**
    * The percentage of faults for a single ALB to consider an AZ

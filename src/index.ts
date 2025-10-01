@@ -31,7 +31,7 @@ export { BasicServiceMultiAZObservability } from './basic_observability/BasicSer
 export { IBasicServiceMultiAZObservability } from './basic_observability/IBasicServiceMultiAZObservability';
 
 export { NatGatewayDetectionProps } from './basic_observability/props/NatGatewayDetectionProps';
-export { ApplicationLoadBalancerDetectionProps } from './basic_observability/props/ApplicationLoadBalancerDetectionProps';
+export { ApplicationLoadBalancerDetectionProps, AlbTargetGroupMap } from './basic_observability/props/ApplicationLoadBalancerDetectionProps';
 
 export { OutlierDetectionAlgorithm } from './utilities/OutlierDetectionAlgorithm';
 export { LatencyOutlierMetricAggregation } from './outlier-detection/LatencyOutlierMetricAggregation';

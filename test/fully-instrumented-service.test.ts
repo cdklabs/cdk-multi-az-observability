@@ -7,7 +7,9 @@ import { Unit } from 'aws-cdk-lib/aws-cloudwatch';
 import { SelectedSubnets, SubnetType, Vpc } from 'aws-cdk-lib/aws-ec2';
 import {
   ApplicationLoadBalancer,
+  ApplicationTargetGroup,
   ILoadBalancerV2,
+  ITargetGroup,
   NetworkLoadBalancer,
 } from 'aws-cdk-lib/aws-elasticloadbalancingv2';
 import { ILogGroup, LogGroup } from 'aws-cdk-lib/aws-logs';
@@ -57,6 +59,10 @@ test('Fully instrumented service', () => {
     },
   );
 
+  let targetGroup: ITargetGroup = new ApplicationTargetGroup(stack, "TG", {
+    vpc: vpc
+  });
+
   let logGroup: ILogGroup = new LogGroup(stack, 'Logs', {});
 
   let service: IService = new Service({
@@ -66,6 +72,7 @@ test('Fully instrumented service', () => {
     faultCountThreshold: 25,
     period: Duration.seconds(60),
     loadBalancer: loadBalancer,
+    targetGroups: [ targetGroup ],
     defaultAvailabilityMetricDetails: {
       metricNamespace: 'front-end/metrics',
       successMetricNames: ['Success'],

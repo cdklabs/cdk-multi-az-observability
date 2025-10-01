@@ -91,7 +91,7 @@ export class BasicServiceMultiAZObservability
 
     // Initialize class properties
     this.serviceName = props.serviceName;
-    this.applicationLoadBalancers = props.applicationLoadBalancerProps?.applicationLoadBalancers;
+    this.applicationLoadBalancers = props.applicationLoadBalancerProps?.albTargetGroupMap.map(entry => entry.applicationLoadBalancer);
     this.natGateways = props.natGatewayProps?.natGateways;
 
     this.aggregateZonalIsolatedImpactAlarms = {};
