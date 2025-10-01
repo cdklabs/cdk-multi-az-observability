@@ -57,11 +57,13 @@ test('Basic service observability test', () => {
 
   new BasicServiceMultiAZObservability(stack, 'MAZObservability', {
     applicationLoadBalancerProps: {
-      applicationLoadBalancers: [
-        new ApplicationLoadBalancer(stack, 'alb', {
-          vpc: vpc,
-          crossZoneEnabled: true,
-        }),
+      albTargetGroupMap: [
+        {
+          applicationLoadBalancer: new ApplicationLoadBalancer(stack, 'alb', {
+            vpc: vpc,
+            crossZoneEnabled: true,
+          })
+        }
       ],
       faultCountPercentThreshold: 1,
       latencyStatistic: Stats.percentile(99),
@@ -123,11 +125,13 @@ test('Basic service observability with static latency outlier detection', () => 
 
   new BasicServiceMultiAZObservability(stack, 'MAZObservability', {
     applicationLoadBalancerProps: {
-      applicationLoadBalancers: [
-        new ApplicationLoadBalancer(stack, 'alb', {
-          vpc: vpc,
-          crossZoneEnabled: true,
-        }),
+      albTargetGroupMap: [
+        {
+          applicationLoadBalancer: new ApplicationLoadBalancer(stack, 'alb', {
+            vpc: vpc,
+            crossZoneEnabled: true,
+          })
+        }
       ],
       faultCountPercentThreshold: 1,
       latencyStatistic: Stats.percentile(99),

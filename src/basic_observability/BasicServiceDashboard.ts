@@ -47,7 +47,7 @@ export class BasicServiceDashboard extends Construct {
         width: 24
       }),
       ...ApplicationLoadBalancerMetrics.generateLoadBalancerWidgets(
-          props.albs.applicationLoadBalancers,
+          new Map(props.albs.albTargetGroupMap.map(entry => [entry.applicationLoadBalancer, entry.targetGroups ? entry.targetGroups : []])),
           props.azMapper,
           props.period,
           props.albs.latencyStatistic,

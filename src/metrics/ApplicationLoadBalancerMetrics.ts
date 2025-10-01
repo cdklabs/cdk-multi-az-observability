@@ -1,5 +1,5 @@
 import { Alarm, Color, ComparisonOperator, GraphWidget, IAlarm, IMetric, IWidget, MathExpression, Metric, Stats, TreatMissingData, Unit } from "aws-cdk-lib/aws-cloudwatch";
-import { BaseLoadBalancer, HttpCodeElb, HttpCodeTarget, IApplicationLoadBalancer, ILoadBalancerV2 } from "aws-cdk-lib/aws-elasticloadbalancingv2";
+import { ApplicationTargetGroup, BaseLoadBalancer, HttpCodeElb, HttpCodeTarget, IApplicationLoadBalancer, ILoadBalancerV2, ITargetGroup } from "aws-cdk-lib/aws-elasticloadbalancingv2";
 import { AvailabilityMetricType } from "../utilities/AvailabilityMetricType";
 import { ZonalApplicationLoadBalancerLatencyMetricProps } from "../basic_observability/props/ZonalApplicationLoadBalancerLatencyMetricProps";
 import { ZonalApplicationLoadBalancerAvailabilityMetricProps } from "../basic_observability/props/ZonalApplicationLoadBalancerAvailabilityMetricProps";
@@ -1033,6 +1033,84 @@ export class ApplicationLoadBalancerMetrics {
       return mitigatedHostsPerZone;
     }
 
+    static getAggregatePerZoneAlbMetric(
+      albTargetGroupMap: Map<IApplicationLoadBalancer, ITargetGroup[]>,
+      metricName: string,
+      period: Duration,
+      azMapper: AvailabilityZoneMapper
+    ) : {[key: string]: IMetric}
+    {
+      let countPerZone: {[key: string]: IMetric} = {};
+      let metricsPerAZ: {[key: string]: IMetric[]} = {};
+
+      albTargetGroupMap.forEach((value: ITargetGroup[], key: IApplicationLoadBalancer) => {
+  
+        value.forEach((targetGroup: ITargetGroup) => {
+  
+          key.vpc!.availabilityZones.forEach((availabilityZone: string, index: number) => {
+            let azLetter = availabilityZone.substring(availabilityZone.length - 1);
+            let availabilityZoneId = azMapper.availabilityZoneIdFromAvailabilityZoneLetter(azLetter);
+          
+            if (!(azLetter in metricsPerAZ)) {
+              metricsPerAZ[azLetter] = [];
+            }
+          
+            let anomalousHostCount: IMetric = new Metric({
+              namespace: "AWS/ApplicationELB",
+              region: Aws.REGION,
+              metricName: metricName,
+              dimensionsMap: {
+                AvailabilityZone: availabilityZone,
+                LoadBalancer: (key as ILoadBalancerV2 as BaseLoadBalancer)
+                  .loadBalancerFullName,
+                TargetGroup: (targetGroup as ApplicationTargetGroup).targetGroupFullName
+              },
+              label: targetGroup.targetGroupName + " - " + availabilityZoneId,
+              unit: Unit.COUNT,
+              color: MetricsHelper.colors[index],
+              statistic: Stats.SUM,
+              period: period
+            });
+          
+            metricsPerAZ[azLetter].push(anomalousHostCount);
+          });   
+        });
+      });
+  
+      // We can have multiple target groups and ALBs per zone, so add their counts together
+      Object.keys(metricsPerAZ).forEach((azLetter: string, index: number) => {
+        let availabilityZoneId = azMapper.availabilityZoneIdFromAvailabilityZoneLetter(azLetter);
+
+        if (metricsPerAZ[azLetter].length > 1) {
+          let usingMetrics: {[key: string]: IMetric} = {};
+          metricsPerAZ[azLetter].forEach((metric: IMetric, metricIndex: number) => {
+            usingMetrics[`${azLetter}${metricIndex}`] = metric;
+          });
+        
+          countPerZone[azLetter] = new MathExpression({
+            expression: Object.keys(usingMetrics).join("+") + " + TIME_SERIES(0)",
+            usingMetrics: usingMetrics,
+            label: availabilityZoneId,
+            period: period,
+            color: MetricsHelper.colors[index]
+          });
+        }
+        else {
+          let usingMetrics: {[key: string]: IMetric} = {};
+          usingMetrics[azLetter] = metricsPerAZ[azLetter][0];
+          countPerZone[azLetter] = new MathExpression({
+            expression: `FILL(${azLetter}, 0)`,
+            usingMetrics: usingMetrics,
+            label: availabilityZoneId,
+            period: period,
+            color: MetricsHelper.colors[index]
+          });
+        }
+      });
+  
+      return countPerZone;
+    }
+
     /**
      * Calculates a weighted approximation of the latency at the provided statistic for all ALBs
      * in each zone.
@@ -1560,7 +1638,7 @@ export class ApplicationLoadBalancerMetrics {
       }
     }
 
-    static generateLoadBalancerWidgets(
+    static generateLoadBalancerWidgetsOld(
         albs: IApplicationLoadBalancer[],
         azMapper: AvailabilityZoneMapper,
         period: Duration,
@@ -1757,5 +1835,211 @@ export class ApplicationLoadBalancerMetrics {
         );
     
         return albWidgets;
-      }
+    }
+
+    static generateLoadBalancerWidgets(
+        albTargetGroupMap: Map<IApplicationLoadBalancer, ITargetGroup[]>,
+        azMapper: AvailabilityZoneMapper,
+        period: Duration,
+        latencyStatistic: string,
+        latencyThreshold: Duration,
+        faultRateThreshold: number,
+        
+      ): IWidget[] {
+        let albWidgets: IWidget[] = [];
+
+        let albs: IApplicationLoadBalancer[] = Array.from(albTargetGroupMap.keys())
+   
+        let successCountPerZone: {[key: string]: IMetric} = 
+          ApplicationLoadBalancerMetrics.getTotalAlbSuccessCountPerZone(albs, period, azMapper);
+        let faultCountPerZone: {[key: string]: IMetric} = 
+          ApplicationLoadBalancerMetrics.getTotalAlbFaultCountPerZone(albs, period, azMapper);
+        let processedBytesPerZone: {[key: string]: IMetric} = 
+          ApplicationLoadBalancerMetrics.getTotalAlbProcessedBytesPerZone(albs, period, azMapper);
+        let latencyPerZone: {[key: string]: IMetric} = 
+          ApplicationLoadBalancerMetrics.getTotalAlbLatencyPerZone(albs, latencyStatistic, period, azMapper);
+        let requestsPerZone: {[key: string]: IMetric} = 
+          ApplicationLoadBalancerMetrics.getTotalAlbRequestsPerZone(albs, period, azMapper);  
+        let faultRatePerZone: {[key: string]: IMetric} =
+          ApplicationLoadBalancerMetrics.getTotalAlbFaultRatePerZone(albs, period, azMapper);  
+        let weightedLatencyZScorePerZone: {[key: string]: IMetric} = 
+          ApplicationLoadBalancerMetrics.getWeightedLatencyZScorePerZone(albs, latencyStatistic, period, azMapper);
+    
+        albWidgets.push(
+          new GraphWidget({
+            height: 8,
+            width: 8,
+            title: "Success Count",
+            region: Aws.REGION,
+            left: Object.values(successCountPerZone),
+            leftYAxis: {
+              min: 0,
+              label: 'Count',
+              showUnits: false,
+            }
+          })
+        );
+    
+       albWidgets.push(
+          new GraphWidget({
+            height: 8,
+            width: 8,
+            title: "Target 5xx Count",
+            region: Aws.REGION,
+            left: Object.values(faultCountPerZone),
+            leftYAxis: {
+              min: 0,
+              label: 'Count',
+              showUnits: false,
+            }
+          })
+        );
+
+        albWidgets.push(
+          new GraphWidget({
+            height: 8,
+            width: 8,
+            title: "ELB 5xx Count",
+            region: Aws.REGION,
+            left: Object.values(this.getTotalAlb5xxCountPerZone(albs, period, azMapper)),
+            leftYAxis: {
+              min: 0,
+              label: 'Count',
+              showUnits: false,
+            }
+          })
+        );
+    
+        albWidgets.push(
+          new GraphWidget({
+            height: 8,
+            width: 8,
+            title: "Request Count",
+            region: Aws.REGION,
+            left: Object.values(requestsPerZone),
+            leftYAxis: {
+              min: 0,
+              label: 'Count',
+              showUnits: false,
+            }
+          })
+        );
+    
+        albWidgets.push(
+          new GraphWidget({
+            height: 8,
+            width: 8,
+            title: "Fault Rate",
+            region: Aws.REGION,
+            left: Object.values(faultRatePerZone),
+            leftYAxis: {
+              min: 0,
+              label: 'Percent',
+              showUnits: false,
+            },
+            leftAnnotations: [
+              {
+                label: "High Severity",
+                value: faultRateThreshold,
+                color: Color.RED
+              }
+            ]       
+          })
+        );
+    
+        albWidgets.push(
+          new GraphWidget({
+            height: 8,
+            width: 8,
+            title: "Processed Bytes",
+            region: Aws.REGION,
+            left: Object.values(processedBytesPerZone),
+            leftYAxis: {
+              min: 0,
+              showUnits: false,
+              label: 'Bytes'
+            }
+          })
+        );
+    
+        albWidgets.push(
+          new GraphWidget({
+            height: 8,
+            width: 8,
+            title: `Target Response Time (${latencyStatistic})`,
+            region: Aws.REGION,
+            left: Object.values(latencyPerZone),
+            leftYAxis: {
+              min: 0,
+              label: "Milliseconds",
+              showUnits: false,
+            },
+            leftAnnotations: [
+              {
+                label: "High Severity",
+                value: latencyThreshold.toMilliseconds(),
+                color: Color.RED
+              }
+            ]
+          })
+        );
+
+        albWidgets.push(
+          new GraphWidget({
+            height: 8,
+            width: 8,
+            title: `Latency Z-Score (${latencyStatistic})`,
+            region: Aws.REGION,
+            left: Object.values(weightedLatencyZScorePerZone),
+            leftYAxis: {
+              min: 0,
+              label: "Score",
+              showUnits: false,
+            },
+            leftAnnotations: [
+              {
+                label: "High Severity",
+                value: 3,
+                color: Color.RED
+              }
+            ]
+          })
+        );
+
+        // If at least 1 value is non-empty, meaning at least 1 LB has defined target groups
+        if (Array.from(albTargetGroupMap.values()).some(arr => arr.length > 0))
+        {
+          albWidgets.push(
+            new GraphWidget({
+              height: 8,
+              width: 8,
+              title: "Anomalous Hosts",
+              region: Aws.REGION,
+              left: Object.values(this.getAggregatePerZoneAlbMetric(albTargetGroupMap, "AnomalousHostCount", period, azMapper)),
+              leftYAxis: {
+                min: 0,
+                label: "Count",
+                showUnits: false,
+              }
+            })
+          );
+
+          albWidgets.push(
+            new GraphWidget({
+              height: 8,
+              width: 8,
+              title: "Mitigated Hosts",
+              region: Aws.REGION,
+              left: Object.values(this.getAggregatePerZoneAlbMetric(albTargetGroupMap, "MitigatedHostCount", period, azMapper)),
+              leftYAxis: {
+                min: 0,
+                label: "Count",
+                showUnits: false,
+              }
+            })
+          );
+        }
+    
+        return albWidgets;
+    }
 }

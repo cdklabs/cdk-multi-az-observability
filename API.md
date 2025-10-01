@@ -801,6 +801,52 @@ The timeout for each individual HTTP request.
 
 ---
 
+### AlbTargetGroupMap <a name="AlbTargetGroupMap" id="@cdklabs/multi-az-observability.AlbTargetGroupMap"></a>
+
+An object to map an ALB to its target groups.
+
+#### Initializer <a name="Initializer" id="@cdklabs/multi-az-observability.AlbTargetGroupMap.Initializer"></a>
+
+```typescript
+import { AlbTargetGroupMap } from '@cdklabs/multi-az-observability'
+
+const albTargetGroupMap: AlbTargetGroupMap = { ... }
+```
+
+#### Properties <a name="Properties" id="Properties"></a>
+
+| **Name** | **Type** | **Description** |
+| --- | --- | --- |
+| <code><a href="#@cdklabs/multi-az-observability.AlbTargetGroupMap.property.applicationLoadBalancer">applicationLoadBalancer</a></code> | <code>aws-cdk-lib.aws_elasticloadbalancingv2.IApplicationLoadBalancer</code> | The application load balancer. |
+| <code><a href="#@cdklabs/multi-az-observability.AlbTargetGroupMap.property.targetGroups">targetGroups</a></code> | <code>aws-cdk-lib.aws_elasticloadbalancingv2.ITargetGroup[]</code> | The target groups associated with the ALB. |
+
+---
+
+##### `applicationLoadBalancer`<sup>Required</sup> <a name="applicationLoadBalancer" id="@cdklabs/multi-az-observability.AlbTargetGroupMap.property.applicationLoadBalancer"></a>
+
+```typescript
+public readonly applicationLoadBalancer: IApplicationLoadBalancer;
+```
+
+- *Type:* aws-cdk-lib.aws_elasticloadbalancingv2.IApplicationLoadBalancer
+
+The application load balancer.
+
+---
+
+##### `targetGroups`<sup>Optional</sup> <a name="targetGroups" id="@cdklabs/multi-az-observability.AlbTargetGroupMap.property.targetGroups"></a>
+
+```typescript
+public readonly targetGroups: ITargetGroup[];
+```
+
+- *Type:* aws-cdk-lib.aws_elasticloadbalancingv2.ITargetGroup[]
+- *Default:* No target groups are associated and will not display anomalous hosts or mitigated hosts on the dashboard
+
+The target groups associated with the ALB.
+
+---
+
 ### ApplicationLoadBalancerDetectionProps <a name="ApplicationLoadBalancerDetectionProps" id="@cdklabs/multi-az-observability.ApplicationLoadBalancerDetectionProps"></a>
 
 The properties for performing zonal impact detection with ALB(s).
@@ -817,7 +863,7 @@ const applicationLoadBalancerDetectionProps: ApplicationLoadBalancerDetectionPro
 
 | **Name** | **Type** | **Description** |
 | --- | --- | --- |
-| <code><a href="#@cdklabs/multi-az-observability.ApplicationLoadBalancerDetectionProps.property.applicationLoadBalancers">applicationLoadBalancers</a></code> | <code>aws-cdk-lib.aws_elasticloadbalancingv2.IApplicationLoadBalancer[]</code> | The application load balancers to collect metrics from. |
+| <code><a href="#@cdklabs/multi-az-observability.ApplicationLoadBalancerDetectionProps.property.albTargetGroupMap">albTargetGroupMap</a></code> | <code><a href="#@cdklabs/multi-az-observability.AlbTargetGroupMap">AlbTargetGroupMap</a>[]</code> | Map of target groups per ALB to collect metrics from. |
 | <code><a href="#@cdklabs/multi-az-observability.ApplicationLoadBalancerDetectionProps.property.faultCountPercentThreshold">faultCountPercentThreshold</a></code> | <code>number</code> | The percentage of faults for a single ALB to consider an AZ to be unhealthy, a number between 0 and 100. |
 | <code><a href="#@cdklabs/multi-az-observability.ApplicationLoadBalancerDetectionProps.property.latencyStatistic">latencyStatistic</a></code> | <code>string</code> | The statistic used to measure target response latency, like p99,  which can be specified using Stats.percentile(99) or "p99". |
 | <code><a href="#@cdklabs/multi-az-observability.ApplicationLoadBalancerDetectionProps.property.latencyThreshold">latencyThreshold</a></code> | <code>aws-cdk-lib.Duration</code> | The threshold in milliseconds for ALB targets whose responses are slower than this value at the specified percentile statistic. |
@@ -828,15 +874,15 @@ const applicationLoadBalancerDetectionProps: ApplicationLoadBalancerDetectionPro
 
 ---
 
-##### `applicationLoadBalancers`<sup>Required</sup> <a name="applicationLoadBalancers" id="@cdklabs/multi-az-observability.ApplicationLoadBalancerDetectionProps.property.applicationLoadBalancers"></a>
+##### `albTargetGroupMap`<sup>Required</sup> <a name="albTargetGroupMap" id="@cdklabs/multi-az-observability.ApplicationLoadBalancerDetectionProps.property.albTargetGroupMap"></a>
 
 ```typescript
-public readonly applicationLoadBalancers: IApplicationLoadBalancer[];
+public readonly albTargetGroupMap: AlbTargetGroupMap[];
 ```
 
-- *Type:* aws-cdk-lib.aws_elasticloadbalancingv2.IApplicationLoadBalancer[]
+- *Type:* <a href="#@cdklabs/multi-az-observability.AlbTargetGroupMap">AlbTargetGroupMap</a>[]
 
-The application load balancers to collect metrics from.
+Map of target groups per ALB to collect metrics from.
 
 ---
 
@@ -3294,6 +3340,7 @@ const serviceProps: ServiceProps = { ... }
 | <code><a href="#@cdklabs/multi-az-observability.ServiceProps.property.defaultContributorInsightRuleDetails">defaultContributorInsightRuleDetails</a></code> | <code><a href="#@cdklabs/multi-az-observability.IContributorInsightRuleDetails">IContributorInsightRuleDetails</a></code> | The default settings that are used for contributor insight rules. |
 | <code><a href="#@cdklabs/multi-az-observability.ServiceProps.property.loadBalancer">loadBalancer</a></code> | <code>aws-cdk-lib.aws_elasticloadbalancingv2.ILoadBalancerV2</code> | The load balancer this service sits behind. |
 | <code><a href="#@cdklabs/multi-az-observability.ServiceProps.property.minimumUnhealthyTargets">minimumUnhealthyTargets</a></code> | <code><a href="#@cdklabs/multi-az-observability.MinimumUnhealthyTargets">MinimumUnhealthyTargets</a></code> | The minimum number of unhealthy targets for an AZ to be considered unhealthy. |
+| <code><a href="#@cdklabs/multi-az-observability.ServiceProps.property.targetGroups">targetGroups</a></code> | <code>aws-cdk-lib.aws_elasticloadbalancingv2.ITargetGroup[]</code> | The target groups registered with the load balancer. |
 
 ---
 
@@ -3436,6 +3483,19 @@ public readonly minimumUnhealthyTargets: MinimumUnhealthyTargets;
 - *Default:* Count of 2
 
 The minimum number of unhealthy targets for an AZ to be considered unhealthy.
+
+---
+
+##### `targetGroups`<sup>Optional</sup> <a name="targetGroups" id="@cdklabs/multi-az-observability.ServiceProps.property.targetGroups"></a>
+
+```typescript
+public readonly targetGroups: ITargetGroup[];
+```
+
+- *Type:* aws-cdk-lib.aws_elasticloadbalancingv2.ITargetGroup[]
+- *Default:* Anomalous and mitigated host metrics will not be included on dashboards
+
+The target groups registered with the load balancer.
 
 ---
 
@@ -4983,6 +5043,7 @@ Adds an operation to this service and sets the operation's service property.
 | <code><a href="#@cdklabs/multi-az-observability.Service.property.defaultContributorInsightRuleDetails">defaultContributorInsightRuleDetails</a></code> | <code><a href="#@cdklabs/multi-az-observability.IContributorInsightRuleDetails">IContributorInsightRuleDetails</a></code> | The default settings that are used for contributor insight rules. |
 | <code><a href="#@cdklabs/multi-az-observability.Service.property.loadBalancer">loadBalancer</a></code> | <code>aws-cdk-lib.aws_elasticloadbalancingv2.ILoadBalancerV2</code> | The load balancer this service sits behind. |
 | <code><a href="#@cdklabs/multi-az-observability.Service.property.minimumUnhealthyTargets">minimumUnhealthyTargets</a></code> | <code><a href="#@cdklabs/multi-az-observability.MinimumUnhealthyTargets">MinimumUnhealthyTargets</a></code> | The minimum number of unhealthy targets to consider an AZ impaired. |
+| <code><a href="#@cdklabs/multi-az-observability.Service.property.targetGroups">targetGroups</a></code> | <code>aws-cdk-lib.aws_elasticloadbalancingv2.ITargetGroup[]</code> | The target groups registered with the load balancer. |
 
 ---
 
@@ -5137,6 +5198,19 @@ public readonly minimumUnhealthyTargets: MinimumUnhealthyTargets;
 - *Default:* Count of 2
 
 The minimum number of unhealthy targets to consider an AZ impaired.
+
+---
+
+##### `targetGroups`<sup>Optional</sup> <a name="targetGroups" id="@cdklabs/multi-az-observability.Service.property.targetGroups"></a>
+
+```typescript
+public readonly targetGroups: ITargetGroup[];
+```
+
+- *Type:* aws-cdk-lib.aws_elasticloadbalancingv2.ITargetGroup[]
+- *Default:* Anomalous and mitigated host metrics will not be included on dashboards
+
+The target groups registered with the load balancer.
 
 ---
 
@@ -7939,6 +8013,7 @@ Adds an operation to this service.
 | <code><a href="#@cdklabs/multi-az-observability.IService.property.defaultContributorInsightRuleDetails">defaultContributorInsightRuleDetails</a></code> | <code><a href="#@cdklabs/multi-az-observability.IContributorInsightRuleDetails">IContributorInsightRuleDetails</a></code> | The default settings that are used for contributor insight rules. |
 | <code><a href="#@cdklabs/multi-az-observability.IService.property.loadBalancer">loadBalancer</a></code> | <code>aws-cdk-lib.aws_elasticloadbalancingv2.ILoadBalancerV2</code> | The load balancer this service sits behind. |
 | <code><a href="#@cdklabs/multi-az-observability.IService.property.minimumUnhealthyTargets">minimumUnhealthyTargets</a></code> | <code><a href="#@cdklabs/multi-az-observability.MinimumUnhealthyTargets">MinimumUnhealthyTargets</a></code> | The minimum number of unhealthy targets to consider an AZ impaired. |
+| <code><a href="#@cdklabs/multi-az-observability.IService.property.targetGroups">targetGroups</a></code> | <code>aws-cdk-lib.aws_elasticloadbalancingv2.ITargetGroup[]</code> | The target groups registered with the load balancer. |
 
 ---
 
@@ -8093,6 +8168,19 @@ public readonly minimumUnhealthyTargets: MinimumUnhealthyTargets;
 - *Default:* Count of 2
 
 The minimum number of unhealthy targets to consider an AZ impaired.
+
+---
+
+##### `targetGroups`<sup>Optional</sup> <a name="targetGroups" id="@cdklabs/multi-az-observability.IService.property.targetGroups"></a>
+
+```typescript
+public readonly targetGroups: ITargetGroup[];
+```
+
+- *Type:* aws-cdk-lib.aws_elasticloadbalancingv2.ITargetGroup[]
+- *Default:* Anomalous and mitigated host metrics will not be included on dashboards
+
+The target groups registered with the load balancer.
 
 ---
 

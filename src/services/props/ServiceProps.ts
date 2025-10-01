@@ -1,7 +1,7 @@
 // Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 import { Duration } from 'aws-cdk-lib';
-import { ILoadBalancerV2 } from 'aws-cdk-lib/aws-elasticloadbalancingv2';
+import { ILoadBalancerV2, ITargetGroup } from 'aws-cdk-lib/aws-elasticloadbalancingv2';
 import { AddCanaryTestProps } from '../../canaries/props/AddCanaryTestProps';
 import { IContributorInsightRuleDetails } from '../IContributorInsightRuleDetails';
 import { IServiceAvailabilityMetricDetails } from '../IServiceAvailabilityMetricDetails';
@@ -47,6 +47,13 @@ export interface ServiceProps {
    * that automation can use to implement a zonal shift.
    */
   readonly loadBalancer?: ILoadBalancerV2;
+
+  /**
+   * The target groups registered with the load balancer
+   * 
+   * @default Anomalous and mitigated host metrics will not be included on dashboards
+   */
+  readonly targetGroups?: ITargetGroup[];
 
   /**
    * Define these settings if you want to automatically add canary

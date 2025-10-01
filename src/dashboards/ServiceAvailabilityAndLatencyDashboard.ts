@@ -16,6 +16,7 @@ import {
 import {
   CfnLoadBalancer,
   IApplicationLoadBalancer,
+  ITargetGroup,
 } from 'aws-cdk-lib/aws-elasticloadbalancingv2';
 import { Construct } from 'constructs';
 import { IServiceAvailabilityAndLatencyDashboard } from './IServiceAvailabilityAndLatencyDashboard';
@@ -673,7 +674,9 @@ export class ServiceAvailabilityAndLatencyDashboard
 
       this.dashboard.addWidgets(
         ...ApplicationLoadBalancerMetrics.generateLoadBalancerWidgets(
-          [ props.service.loadBalancer as IApplicationLoadBalancer ],
+          new Map<IApplicationLoadBalancer, ITargetGroup[]>([
+            [props.service.loadBalancer as IApplicationLoadBalancer, props.service.targetGroups ? props.service.targetGroups : []]
+          ]),
           props.azMapper,
           props.service.period,
           props.service.defaultLatencyMetricDetails.alarmStatistic,
