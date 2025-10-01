@@ -1068,7 +1068,7 @@ export class ApplicationLoadBalancerMetrics {
               label: targetGroup.targetGroupName + " - " + availabilityZoneId,
               unit: Unit.COUNT,
               color: MetricsHelper.colors[index],
-              statistic: Stats.SUM,
+              statistic: Stats.MAXIMUM,
               period: period
             });
           
@@ -1273,7 +1273,7 @@ export class ApplicationLoadBalancerMetrics {
           usingMetrics[`${keyprefix}2`] = requestsPerZone[key];
 
           let zonalFaultRate: IMetric = new MathExpression({
-            expression: `(${keyprefix}1/${keyprefix}2) * 100`,
+            expression: `IF(${keyprefix}2 > 0, (${keyprefix}1/${keyprefix}2) * 100, 0)`,
             usingMetrics: usingMetrics,
             period: period,
             label: azMapper.availabilityZoneIdFromAvailabilityZoneLetter(key),

@@ -75,19 +75,19 @@ export class AvailabilityAndLatencyMetrics {
 
     switch (props.metricType) {
       case AvailabilityMetricType.SUCCESS_RATE:
-        expression = `((${successKeys.join('+')}) / (${successKeys.join('+')}+${faultKeys.join('+')})) * 100`;
+        expression = `((${successKeys.join('+')}) / (${successKeys.join('+')}+${faultKeys.join('+')})) * 100 + TIME_SERIES(0)`;
         break;
       case AvailabilityMetricType.REQUEST_COUNT:
-        expression = `${successKeys.join('+')}+${faultKeys.join('+')}`;
+        expression = `${successKeys.join('+')}+${faultKeys.join('+')} + TIME_SERIES(0)`;
         break;
       case AvailabilityMetricType.FAULT_COUNT:
-        expression = `(${faultKeys.join('+')})`;
+        expression = `(${faultKeys.join('+')}) + TIME_SERIES(0)`;
         break;
       case AvailabilityMetricType.FAULT_RATE:
-        expression = `((${faultKeys.join('+')}) / (${successKeys.join('+')}+${faultKeys.join('+')})) * 100`;
+        expression = `((${faultKeys.join('+')}) / (${successKeys.join('+')}+${faultKeys.join('+')})) * 100 + TIME_SERIES(0)`;
         break;
       case AvailabilityMetricType.SUCCESS_COUNT:
-        expression = `(${successKeys.join('+')})`;
+        expression = `(${successKeys.join('+')}) + TIME_SERIES(0)`;
         break;
     }
 
@@ -162,19 +162,19 @@ export class AvailabilityAndLatencyMetrics {
 
     switch (props.metricType) {
       case AvailabilityMetricType.SUCCESS_RATE:
-        expression = `((${successKeys.join('+')}) / (${successKeys.join('+')}+${faultKeys.join('+')})) * 100`;
+        expression = `((${successKeys.join('+')}) / (${successKeys.join('+')}+${faultKeys.join('+')})) * 100 + TIME_SERIES(0)`;
         break;
       case AvailabilityMetricType.REQUEST_COUNT:
-        expression = `${successKeys.join('+')}+${faultKeys.join('+')}`;
+        expression = `${successKeys.join('+')}+${faultKeys.join('+')} + TIME_SERIES(0)`;
         break;
       case AvailabilityMetricType.FAULT_COUNT:
-        expression = `(${faultKeys.join('+')})`;
+        expression = `(${faultKeys.join('+')}) + TIME_SERIES(0)`;
         break;
       case AvailabilityMetricType.FAULT_RATE:
-        expression = `((${faultKeys.join('+')}) / (${successKeys.join('+')}+${faultKeys.join('+')})) * 100`;
+        expression = `((${faultKeys.join('+')}) / (${successKeys.join('+')}+${faultKeys.join('+')})) * 100 + TIME_SERIES(0)`;
         break;
       case AvailabilityMetricType.SUCCESS_COUNT:
-        expression = `(${successKeys.join('+')})`;
+        expression = `(${successKeys.join('+')}) + TIME_SERIES(0)`;
         break;
     }
 

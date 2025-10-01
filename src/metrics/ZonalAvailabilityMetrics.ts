@@ -42,19 +42,19 @@ export class ZonalAvailabilityMetrics {
 
     switch (metrics[0].metricType) {
       case AvailabilityMetricType.SUCCESS_RATE:
-        expression = `(${Object.keys(usingMetrics).join('+')}) / ${metrics.length}`;
+        expression = `(${Object.keys(usingMetrics).join('+')}) / ${metrics.length} + TIME_SERIES(0)`;
         break;
       case AvailabilityMetricType.REQUEST_COUNT:
-        expression = `${Object.keys(usingMetrics).join('+')}`;
+        expression = `${Object.keys(usingMetrics).join('+')} + TIME_SERIES(0)`;
         break;
       case AvailabilityMetricType.FAULT_COUNT:
-        expression = `${Object.keys(usingMetrics).join('+')}`;
+        expression = `${Object.keys(usingMetrics).join('+')} + TIME_SERIES(0)`;
         break;
       case AvailabilityMetricType.FAULT_RATE:
-        expression = `(${Object.keys(usingMetrics).join('+')}) / ${metrics.length}`;
+        expression = `(${Object.keys(usingMetrics).join('+')}) / ${metrics.length} + TIME_SERIES(0)`;
         break;
       case AvailabilityMetricType.SUCCESS_COUNT:
-        expression = `${Object.keys(usingMetrics).join('+')}`;
+        expression = `${Object.keys(usingMetrics).join('+')} + TIME_SERIES(0)`;
         break;
     }
     let math: IMetric = new MathExpression({
