@@ -109,6 +109,7 @@ export class Service implements IService {
     this.operations = [];
     this.period = props.period;
     this.loadBalancer = props.loadBalancer;
+    this.targetGroups = props.targetGroups;
     this.canaryTestProps = props.canaryTestProps;
     this.defaultAvailabilityMetricDetails =
       props.defaultAvailabilityMetricDetails;
