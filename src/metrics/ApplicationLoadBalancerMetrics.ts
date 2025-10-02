@@ -1638,205 +1638,6 @@ export class ApplicationLoadBalancerMetrics {
       }
     }
 
-    static generateLoadBalancerWidgetsOld(
-        albs: IApplicationLoadBalancer[],
-        azMapper: AvailabilityZoneMapper,
-        period: Duration,
-        latencyStatistic: string,
-        latencyThreshold: Duration,
-        faultRateThreshold: number
-      ): IWidget[] {
-        let albWidgets: IWidget[] = [];
-   
-        let successCountPerZone: {[key: string]: IMetric} = 
-          ApplicationLoadBalancerMetrics.getTotalAlbSuccessCountPerZone(albs, period, azMapper);
-        let faultCountPerZone: {[key: string]: IMetric} = 
-          ApplicationLoadBalancerMetrics.getTotalAlbFaultCountPerZone(albs, period, azMapper);
-        let processedBytesPerZone: {[key: string]: IMetric} = 
-          ApplicationLoadBalancerMetrics.getTotalAlbProcessedBytesPerZone(albs, period, azMapper);
-        let latencyPerZone: {[key: string]: IMetric} = 
-          ApplicationLoadBalancerMetrics.getTotalAlbLatencyPerZone(albs, latencyStatistic, period, azMapper);
-        let requestsPerZone: {[key: string]: IMetric} = 
-          ApplicationLoadBalancerMetrics.getTotalAlbRequestsPerZone(albs, period, azMapper);  
-        let faultRatePerZone: {[key: string]: IMetric} =
-          ApplicationLoadBalancerMetrics.getTotalAlbFaultRatePerZone(albs, period, azMapper);  
-        let weightedLatencyZScorePerZone: {[key: string]: IMetric} = 
-          ApplicationLoadBalancerMetrics.getWeightedLatencyZScorePerZone(albs, latencyStatistic, period, azMapper);
-    
-        albWidgets.push(
-          new GraphWidget({
-            height: 8,
-            width: 8,
-            title: "Success Count",
-            region: Aws.REGION,
-            left: Object.values(successCountPerZone),
-            leftYAxis: {
-              min: 0,
-              label: 'Count',
-              showUnits: false,
-            }
-          })
-        );
-    
-       albWidgets.push(
-          new GraphWidget({
-            height: 8,
-            width: 8,
-            title: "Target 5xx Count",
-            region: Aws.REGION,
-            left: Object.values(faultCountPerZone),
-            leftYAxis: {
-              min: 0,
-              label: 'Count',
-              showUnits: false,
-            }
-          })
-        );
-
-        albWidgets.push(
-          new GraphWidget({
-            height: 8,
-            width: 8,
-            title: "ELB 5xx Count",
-            region: Aws.REGION,
-            left: Object.values(this.getTotalAlb5xxCountPerZone(albs, period, azMapper)),
-            leftYAxis: {
-              min: 0,
-              label: 'Count',
-              showUnits: false,
-            }
-          })
-        );
-    
-        albWidgets.push(
-          new GraphWidget({
-            height: 8,
-            width: 8,
-            title: "Request Count",
-            region: Aws.REGION,
-            left: Object.values(requestsPerZone),
-            leftYAxis: {
-              min: 0,
-              label: 'Count',
-              showUnits: false,
-            }
-          })
-        );
-    
-        albWidgets.push(
-          new GraphWidget({
-            height: 8,
-            width: 8,
-            title: "Fault Rate",
-            region: Aws.REGION,
-            left: Object.values(faultRatePerZone),
-            leftYAxis: {
-              min: 0,
-              label: 'Percent',
-              showUnits: false,
-            },
-            leftAnnotations: [
-              {
-                label: "High Severity",
-                value: faultRateThreshold,
-                color: Color.RED
-              }
-            ]       
-          })
-        );
-    
-        albWidgets.push(
-          new GraphWidget({
-            height: 8,
-            width: 8,
-            title: "Processed Bytes",
-            region: Aws.REGION,
-            left: Object.values(processedBytesPerZone),
-            leftYAxis: {
-              min: 0,
-              showUnits: false,
-              label: 'Bytes'
-            }
-          })
-        );
-    
-        albWidgets.push(
-          new GraphWidget({
-            height: 8,
-            width: 8,
-            title: `Target Response Time (${latencyStatistic})`,
-            region: Aws.REGION,
-            left: Object.values(latencyPerZone),
-            leftYAxis: {
-              min: 0,
-              label: "Milliseconds",
-              showUnits: false,
-            },
-            leftAnnotations: [
-              {
-                label: "High Severity",
-                value: latencyThreshold.toMilliseconds(),
-                color: Color.RED
-              }
-            ]
-          })
-        );
-
-        albWidgets.push(
-          new GraphWidget({
-            height: 8,
-            width: 8,
-            title: `Latency Z-Score (${latencyStatistic})`,
-            region: Aws.REGION,
-            left: Object.values(weightedLatencyZScorePerZone),
-            leftYAxis: {
-              min: 0,
-              label: "Score",
-              showUnits: false,
-            },
-            leftAnnotations: [
-              {
-                label: "High Severity",
-                value: 3,
-                color: Color.RED
-              }
-            ]
-          })
-        );
-
-        albWidgets.push(
-          new GraphWidget({
-            height: 8,
-            width: 8,
-            title: "Anomalous Hosts",
-            region: Aws.REGION,
-            left: Object.values(this.getTotalAnomalousHostCountPerZone(albs, period, azMapper)),
-            leftYAxis: {
-              min: 0,
-              label: "Count",
-              showUnits: false,
-            }
-          })
-        );
-
-        albWidgets.push(
-          new GraphWidget({
-            height: 8,
-            width: 8,
-            title: "Mitigated Hosts",
-            region: Aws.REGION,
-            left: Object.values(this.getTotalMitigatedHostCountPerZone(albs, period, azMapper)),
-            leftYAxis: {
-              min: 0,
-              label: "Count",
-              showUnits: false,
-            }
-          })
-        );
-    
-        return albWidgets;
-    }
-
     static generateLoadBalancerWidgets(
         albTargetGroupMap: Map<IApplicationLoadBalancer, ITargetGroup[]>,
         azMapper: AvailabilityZoneMapper,
@@ -2031,6 +1832,21 @@ export class ApplicationLoadBalancerMetrics {
               title: "Mitigated Hosts",
               region: Aws.REGION,
               left: Object.values(this.getAggregatePerZoneAlbMetric(albTargetGroupMap, "MitigatedHostCount", period, azMapper)),
+              leftYAxis: {
+                min: 0,
+                label: "Count",
+                showUnits: false,
+              }
+            })
+          );
+
+          albWidgets.push(
+            new GraphWidget({
+              height: 8,
+              width: 8,
+              title: "Healthy Hosts",
+              region: Aws.REGION,
+              left: Object.values(this.getAggregatePerZoneAlbMetric(albTargetGroupMap, "HealthyHostCount", period, azMapper)),
               leftYAxis: {
                 min: 0,
                 label: "Count",
