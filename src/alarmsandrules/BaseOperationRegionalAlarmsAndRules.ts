@@ -15,17 +15,17 @@ export abstract class BaseOperationRegionalAlarmsAndRules
   /**
    * Availability alarm for this operation
    */
-  availabilityAlarm: IAlarm;
+  readonly availabilityAlarm: IAlarm;
 
   /**
    * Latency alarm for this operation
    */
-  latencyAlarm: IAlarm;
+  readonly latencyAlarm: IAlarm;
 
   /**
    * Composite alarm for either availabiltiy or latency impact to this operation
    */
-  availabilityOrLatencyAlarm: IAlarm;
+  readonly availabilityOrLatencyAlarm: IAlarm;
 
   constructor(
     scope: Construct,

@@ -5,148 +5,151 @@ This is a CDK construct for multi-AZ observability to help detect single-AZ impa
 
 There is a lot of available information to think through and combine to provide signals about single-AZ impact. To simplify the setup and use reasonable defaults, this construct (available in [TypeScript](https://www.npmjs.com/package/@cdklabs/multi-az-observability), [Go](https://github.com/cdklabs/cdk-multi-az-observability-go), [Python](https://pypi.org/project/cdklabs.multi-az-observability/), [.NET](https://www.nuget.org/packages/Cdklabs.MultiAZObservability), and [Java](https://central.sonatype.com/artifact/io.github.cdklabs/cdk-multi-az-observability)) sets up the necessary observability. To use the CDK construct, you first define your service like this:
 
-```csharp
-var wildRydesService = new Service(new ServiceProps(){
-    ServiceName = "WildRydes",
-    BaseUrl = "http://www.example.com",
-    FaultCountThreshold = 25,
-    AvailabilityZoneNames = vpc.AvailabilityZones,
-    Period = Duration.Seconds(60),
-    LoadBalancer = loadBalancer,
-    DefaultAvailabilityMetricDetails = new ServiceAvailabilityMetricDetails(new ServiceAvailabilityMetricDetailsProps() {
-        AlarmStatistic = "Sum",
-        DatapointsToAlarm = 2,
-        EvaluationPeriods = 3,
-        FaultAlarmThreshold = 1,
-        FaultMetricNames = new string[] { "Fault", "Failure" },
-        GraphedFaultStatistics = new string[] { "Sum" },
-        GraphedSuccessStatistics = new string[] { "Sum" },
-        MetricNamespace = metricsNamespace,
-        Period = Duration.Seconds(60),
-        SuccessAlarmThreshold = 99,
-        SuccessMetricNames = new string[] {"Success"},
-        Unit = Unit.COUNT,
-    }),
-    DefaultLatencyMetricDetails = new ServiceLatencyMetricDetails(new ServiceLatencyMetricDetailsProps(){
-        AlarmStatistic = "p99",
-        DatapointsToAlarm = 2,
-        EvaluationPeriods = 3,
-        FaultMetricNames = new string[] { "FaultLatency" },
-        GraphedFaultStatistics = new string[] { "p50" },
-        GraphedSuccessStatistics = new string[] { "p50", "p99", "tm50", "tm99" },
-        MetricNamespace = metricsNamespace,
-        Period = Duration.Seconds(60),
-        SuccessAlarmThreshold = Duration.Millis(100),
-        SuccessMetricNames = new string[] {"SuccessLatency"},
-        Unit = Unit.MILLISECONDS,
-    }),
-    DefaultContributorInsightRuleDetails =  new ContributorInsightRuleDetails(new ContributorInsightRuleDetailsProps() {
-        AvailabilityZoneIdJsonPath = azIdJsonPath,
-        FaultMetricJsonPath = faultMetricJsonPath,
-        InstanceIdJsonPath = instanceIdJsonPath,
-        LogGroups = serverLogGroups,
-        OperationNameJsonPath = operationNameJsonPath,
-        SuccessLatencyMetricJsonPath = successLatencyMetricJsonPath
-    }),
-    CanaryTestProps = new AddCanaryTestProps() {
-        RequestCount = 60,
-        RegionalRequestCount = 60,
-        LoadBalancer = loadBalancer,
-        Schedule = "rate(1 minute)",
-        Timeout = Duration.Seconds(3),
-        NetworkConfiguration = new NetworkConfigurationProps() {
-            Vpc = vpc,
-            SubnetSelection = new SubnetSelection() { SubnetType = SubnetType.PRIVATE_ISOLATED }
-        }            
+```typescript
+let service: IService = new Service({
+    serviceName: 'test',
+    availabilityZoneNames: vpc.availabilityZones,
+    baseUrl: 'http://www.example.com',
+    faultCountThreshold: 25,
+    period: Duration.seconds(60),
+    loadBalancer: loadBalancer,
+    targetGroups: [ targetGroup1, targetGroup2 ],
+    defaultAvailabilityMetricDetails: {
+      metricNamespace: 'front-end/metrics',
+      successMetricNames: ['Success'],
+      faultMetricNames: ['Fault', 'Error'],
+      alarmStatistic: 'Sum',
+      unit: Unit.COUNT,
+      period: Duration.seconds(60),
+      evaluationPeriods: 5,
+      datapointsToAlarm: 3,
+      successAlarmThreshold: 99.9,
+      faultAlarmThreshold: 0.1,
+      graphedFaultStatistics: ['Sum'],
+      graphedSuccessStatistics: ['Sum'],
+    },
+    defaultLatencyMetricDetails: {
+      metricNamespace: 'front-end/metrics',
+      successMetricNames: ['SuccessLatency'],
+      faultMetricNames: ['FaultLatency'],
+      alarmStatistic: 'p99',
+      unit: Unit.MILLISECONDS,
+      period: Duration.seconds(60),
+      evaluationPeriods: 5,
+      datapointsToAlarm: 3,
+      successAlarmThreshold: Duration.millis(150),
+      graphedFaultStatistics: ['p99'],
+      graphedSuccessStatistics: ['p50', 'p99', 'tm99'],
+    },
+    defaultContributorInsightRuleDetails: {
+      successLatencyMetricJsonPath: '$.SuccessLatency',
+      faultMetricJsonPath: '$.Faults',
+      operationNameJsonPath: '$.Operation',
+      instanceIdJsonPath: '$.InstanceId',
+      availabilityZoneIdJsonPath: '$.AZ-ID',
+      logGroups: [logGroup],
+    },
+    canaryTestProps: {
+      requestCount: 10,
+      schedule: 'rate(1 minute)',
+      loadBalancer: loadBalancer,
+      networkConfiguration: {
+        vpc: vpc,
+        subnetSelection: { subnetType: SubnetType.PRIVATE_ISOLATED },
+      },
+    },
+    minimumUnhealthyTargets: {
+        percentage: 0.1
     }
-}
+  });
 
-wildRydesService.AddOperation(new Operation(new OperationProps() {
-    OperationName = "Signin",
-    Path = "/signin",
-    Service = wildRydesService,
-    Critical = true,
-    HttpMethods = new string[] { "GET" },
-    ServerSideAvailabilityMetricDetails = new OperationAvailabilityMetricDetails(new OperationAvailabilityMetricDetailsProps() {
-        OperationName = "Signin",
-        MetricDimensions = new MetricDimensions(new Dictionary<string, string> {{ "Operation", "Signin"}}, "AZ-ID", "Region")
-    }, wildRydesService.DefaultAvailabilityMetricDetails),
-    ServerSideLatencyMetricDetails = new OperationLatencyMetricDetails(new OperationLatencyMetricDetailsProps() {
-        OperationName = "Signin",
-        SuccessAlarmThreshold = Duration.Millis(150),
-        MetricDimensions = new MetricDimensions(new Dictionary<string, string> {{ "Operation", "Signin"}}, "AZ-ID", "Region")
-    }, wildRydesService.DefaultLatencyMetricDetails),
-    CanaryTestLatencyMetricsOverride = new CanaryTestLatencyMetricsOverride(new CanaryTestLatencyMetricsOverrideProps() {
-        SuccessAlarmThreshold = Duration.Millis(500)
-    })
-})
-wildRydesService.AddOperation(new Operation(new OperationProps() {
-    OperationName = "Pay",
-    Path = "/pay",
-    Service = wildRydesService,
-    HttpMethods = new string[] { "GET" },
-    Critical = true,
-    ServerSideAvailabilityMetricDetails = new OperationAvailabilityMetricDetails(new OperationAvailabilityMetricDetailsProps() {
-        OperationName = "Pay",
-        MetricDimensions = new MetricDimensions(new Dictionary<string, string> {{ "Operation", "Pay"}}, "AZ-ID", "Region")
-    }, wildRydesService.DefaultAvailabilityMetricDetails),
-    ServerSideLatencyMetricDetails = new OperationLatencyMetricDetails(new OperationLatencyMetricDetailsProps() {
-        OperationName = "Pay",
-        SuccessAlarmThreshold = Duration.Millis(200),
-        MetricDimensions = new MetricDimensions(new Dictionary<string, string> {{ "Operation", "Pay"}}, "AZ-ID", "Region")
-    }, wildRydesService.DefaultLatencyMetricDetails),
-    CanaryTestLatencyMetricsOverride = new CanaryTestLatencyMetricsOverride(new CanaryTestLatencyMetricsOverrideProps() {
-        SuccessAlarmThreshold = Duration.Millis(500)
-    })
-})
-wildRydesService.AddOperation(new Operation(new OperationProps() {
-    OperationName = "Ride",
-    Path = "/ride",
-    Service = wildRydesService,
-    HttpMethods = new string[] { "GET" },
-    Critical = true,
-    ServerSideAvailabilityMetricDetails = new OperationAvailabilityMetricDetails(new OperationAvailabilityMetricDetailsProps() {
-        OperationName = "Ride",
-        MetricDimensions = new MetricDimensions(new Dictionary<string, string> {{ "Operation", "Ride"}}, "AZ-ID", "Region")
-    }, wildRydesService.DefaultAvailabilityMetricDetails),
-    ServerSideLatencyMetricDetails = new OperationLatencyMetricDetails(new OperationLatencyMetricDetailsProps() {
-        OperationName = "Ride",
-        SuccessAlarmThreshold = Duration.Millis(350),
-        MetricDimensions = new MetricDimensions(new Dictionary<string, string> {{ "Operation", "Ride"}}, "AZ-ID", "Region")
-    }, wildRydesService.DefaultLatencyMetricDetails),
-    CanaryTestLatencyMetricsOverride = new CanaryTestLatencyMetricsOverride(new CanaryTestLatencyMetricsOverrideProps() {
-        SuccessAlarmThreshold = Duration.Millis(650)
-    })
-})
-wildRydesService.AddOperation(new Operation(new OperationProps() {
-    OperationName = "Home",
-    Path = "/home",
-    Service = wildRydesService,
-    HttpMethods = new string[] { "GET" },
-    Critical = true,
-    ServerSideAvailabilityMetricDetails = new OperationAvailabilityMetricDetails(new OperationAvailabilityMetricDetailsProps() {
-        OperationName = "Home",
-        MetricDimensions = new MetricDimensions(new Dictionary<string, string> {{ "Operation", "Home"}}, "AZ-ID", "Region")
-    }, wildRydesService.DefaultAvailabilityMetricDetails),
-    ServerSideLatencyMetricDetails = new OperationLatencyMetricDetails(new OperationLatencyMetricDetailsProps() {
-        OperationName = "Home",
-        SuccessAlarmThreshold = Duration.Millis(100),
-        MetricDimensions = new MetricDimensions(new Dictionary<string, string> {{ "Operation", "Home"}}, "AZ-ID", "Region")
-    }, wildRydesService.DefaultLatencyMetricDetails),
-    CanaryTestLatencyMetricsOverride = new CanaryTestLatencyMetricsOverride(new CanaryTestLatencyMetricsOverrideProps() {
-        SuccessAlarmThreshold = Duration.Millis(500)
-    })
-}));
+let rideOperation: Operation = {
+    operationName: 'ride',
+    service: service,
+    path: '/ride',
+    critical: true,
+    httpMethods: ['GET'],
+    serverSideContributorInsightRuleDetails: {
+      logGroups: [logGroup],
+      successLatencyMetricJsonPath: '$.SuccessLatency',
+      faultMetricJsonPath: '$.Faults',
+      operationNameJsonPath: '$.Operation',
+      instanceIdJsonPath: '$.InstanceId',
+      availabilityZoneIdJsonPath: '$.AZ-ID',
+    },
+    serverSideAvailabilityMetricDetails: new OperationAvailabilityMetricDetails(
+      {
+        operationName: 'ride',
+        metricDimensions: new MetricDimensions(
+          { Operation: 'ride' },
+          'AZ-ID',
+          'Region',
+        ),
+      },
+      service.defaultAvailabilityMetricDetails,
+    ),
+    serverSideLatencyMetricDetails: new OperationLatencyMetricDetails(
+      {
+        operationName: 'ride',
+        metricDimensions: new MetricDimensions(
+          { Operation: 'ride' },
+          'AZ-ID',
+          'Region',
+        ),
+      },
+      service.defaultLatencyMetricDetails,
+    ),
+};
+
+let payOperation: Operation = {
+    operationName: 'pay',
+    service: service,
+    path: '/pay',
+    critical: true,
+    httpMethods: ['GET'],
+    serverSideContributorInsightRuleDetails: {
+      logGroups: [logGroup],
+      successLatencyMetricJsonPath: '$.SuccessLatency',
+      faultMetricJsonPath: '$.Faults',
+      operationNameJsonPath: '$.Operation',
+      instanceIdJsonPath: '$.InstanceId',
+      availabilityZoneIdJsonPath: '$.AZ-ID',
+    },
+    serverSideAvailabilityMetricDetails: new OperationAvailabilityMetricDetails(
+      {
+        operationName: 'pay',
+        metricDimensions: new MetricDimensions(
+          { Operation: 'ride' },
+          'AZ-ID',
+          'Region',
+        ),
+      },
+      service.defaultAvailabilityMetricDetails,
+    ),
+    serverSideLatencyMetricDetails: new OperationLatencyMetricDetails(
+      {
+        operationName: 'pay',
+        metricDimensions: new MetricDimensions(
+          { Operation: 'ride' },
+          'AZ-ID',
+          'Region',
+        ),
+      },
+      service.defaultLatencyMetricDetails,
+    ),
+};
+
+service.addOperation(rideOperation);
+service.addOperation(payOperation);
 ```
 
 Then you provide that service definition to the CDK construct.
 
-```csharp
-InstrumentedServiceMultiAZObservability multiAvailabilityZoneObservability = new InstrumentedServiceMultiAZObservability(this, "MultiAZObservability", new InstrumentedServiceMultiAZObservabilityProps() {
-    Service = wildRydesService,
-    CreateDashboards = true,
-    Interval = Duration.Minutes(60), // The interval for the dashboard
-    OutlierDetectionAlgorithm = OutlierDetectionAlgorithm.STATIC
+```typescript
+new InstrumentedServiceMultiAZObservability(stack, 'MAZObservability', {
+    createDashboards: true,
+    service: service,
+    interval: Duration.minutes(60)
 });
 ```
 
@@ -154,28 +157,40 @@ You define some characteristics of the service, default values for metrics and a
 
 If you don't have service specific logs and custom metrics with per-AZ dimensions, you can still use the construct to evaluate ALB and/or NAT Gateway metrics to find single AZ impairments.
 
-```csharp
-BasicServiceMultiAZObservability multiAZObservability = new BasicServiceMultiAZObservability(this, "basic-service-", new BasicServiceMultiAZObservabilityProps() {  
-    ApplicationLoadBalancerProps = new ApplicationLoadBalancerDetectionProps() {
-        ApplicationLoadBalancers = [ myALB ],
-        LatencyStatistic = Stats.Percentile(99),
-        FaultCountPercentThreshold = 1,
-        LatencyThreshold = Duration.Millis(500)
+```typescript
+new BasicServiceMultiAZObservability(stack, 'MAZObservability', {
+    applicationLoadBalancerProps: {
+      albTargetGroupMap: [
+        {
+          applicationLoadBalancer: new ApplicationLoadBalancer(stack, 'alb', {
+            vpc: vpc,
+            crossZoneEnabled: true,
+          }),
+          targetGroups: [
+            targetGroup1,
+            targetGroup2
+          ]
+        }
+      ],
+      faultCountPercentThreshold: 1,
+      latencyStatistic: Stats.percentile(99),
+      latencyThreshold: Duration.millis(200),
+      latencyOutlierAlgorithm: ApplicationLoadBalancerLatencyOutlierAlgorithm.STATIC,
+      latencyOutlierThreshold: 45
     },
-    NatGatewayProps = new NatGatewayDetectionProps() {     
-        PacketLossPercentThreshold = 0.01,
-        NatGateways = {
-           { "us-east-1a", [ natGateway1 ] },
-           { "us-east-1b", [ natGateway2 ] },
-           { "us-east-1c", [ natGateway3 ] }
-        },
+    natGatewayProps: {
+       natGateways: {
+            "us-east-1a": [ natGateway1 ],
+            "us-east-1b": [ natGateway2 ],
+            "us-east-1c": [ natGateway3 ],
+        }
+        packetLossPercentThreshold: 0.01,
     },
-    CreateDashboard = true,
-    DatapointsToAlarm = 2,
-    EvaluationPeriods = 3,
-    ServiceName = "WildRydes",
-    Period = Duration.Seconds(60),
-    Interval = Duration.Minutes(60),          
+    serviceName: 'test',
+    period: cdk.Duration.seconds(60),
+    createDashboard: true,
+    evaluationPeriods: 5,
+    datapointsToAlarm: 3,
 });
 ```
 
