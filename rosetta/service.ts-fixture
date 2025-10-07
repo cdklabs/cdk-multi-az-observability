@@ -65,6 +65,7 @@ class Fixture extends Stack {
           subnetId: subnets.subnetIds[2],
         });
 
+
     let loadBalancer = new ApplicationLoadBalancer(stack, 'alb', {
             vpc: vpc,
             crossZoneEnabled: true,
@@ -80,6 +81,64 @@ class Fixture extends Stack {
   });
 
   let logGroup: ILogGroup = new LogGroup(stack, 'Logs', {});
-    /// here
+    
+  let service: IService = new Service({
+    serviceName: 'test',
+    availabilityZoneNames: vpc.availabilityZones,
+    baseUrl: 'http://www.example.com',
+    faultCountThreshold: 25,
+    period: Duration.seconds(60),
+    loadBalancer: loadBalancer,
+    targetGroups: [ targetGroup1, targetGroup2 ],
+    defaultAvailabilityMetricDetails: {
+      metricNamespace: 'front-end/metrics',
+      successMetricNames: ['Success'],
+      faultMetricNames: ['Fault', 'Error'],
+      alarmStatistic: 'Sum',
+      unit: Unit.COUNT,
+      period: Duration.seconds(60),
+      evaluationPeriods: 5,
+      datapointsToAlarm: 3,
+      successAlarmThreshold: 99.9,
+      faultAlarmThreshold: 0.1,
+      graphedFaultStatistics: ['Sum'],
+      graphedSuccessStatistics: ['Sum'],
+    },
+    defaultLatencyMetricDetails: {
+      metricNamespace: 'front-end/metrics',
+      successMetricNames: ['SuccessLatency'],
+      faultMetricNames: ['FaultLatency'],
+      alarmStatistic: 'p99',
+      unit: Unit.MILLISECONDS,
+      period: Duration.seconds(60),
+      evaluationPeriods: 5,
+      datapointsToAlarm: 3,
+      successAlarmThreshold: Duration.millis(150),
+      graphedFaultStatistics: ['p99'],
+      graphedSuccessStatistics: ['p50', 'p99', 'tm99'],
+    },
+    defaultContributorInsightRuleDetails: {
+      successLatencyMetricJsonPath: '$.SuccessLatency',
+      faultMetricJsonPath: '$.Faults',
+      operationNameJsonPath: '$.Operation',
+      instanceIdJsonPath: '$.InstanceId',
+      availabilityZoneIdJsonPath: '$.AZ-ID',
+      logGroups: [logGroup],
+    },
+    canaryTestProps: {
+      requestCount: 10,
+      schedule: 'rate(1 minute)',
+      loadBalancer: loadBalancer,
+      networkConfiguration: {
+        vpc: vpc,
+        subnetSelection: { subnetType: SubnetType.PRIVATE_ISOLATED },
+      },
+    },
+    minimumUnhealthyTargets: {
+        percentage: 0.1
+    }
+  });
+    
+  /// here
   }
 }

@@ -1308,7 +1308,7 @@ export class AvailabilityAndLatencyAlarmsAndRules {
          Aws.REGION +
           '-' +
           operationName.toLowerCase() +
-          '-customer-experience-imact' +
+          '-customer-experience-impact' +
           nameSuffix,
         alarmRule: AlarmRule.anyOf(
           regionalAvailabilityAlarm,

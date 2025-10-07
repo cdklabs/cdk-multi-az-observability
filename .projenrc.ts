@@ -12,6 +12,10 @@ const project = new CdklabsConstructLibrary ({
   cdkVersion: '2.189.1',
   defaultReleaseBranch: 'main',
   jsiiVersion: '5.8.0',
+  rosettaOptions: {
+    strict: false
+  },
+  
   name: '@cdklabs/multi-az-observability',
   devDeps: [
     'cdklabs-projen-project-types',
@@ -128,6 +132,14 @@ const project = new CdklabsConstructLibrary ({
       testMatch: ['**/*.test.ts'],
     },
   },
+  tsconfig: {
+    compilerOptions: {
+      paths: {
+        '@cdklabs/multi-az-observability': ['src/*']
+      },
+      baseUrl: "."
+    }
+  }
 });
 
 const pythonVersion = "python3.13";
