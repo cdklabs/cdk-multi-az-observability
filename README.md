@@ -14,7 +14,7 @@ let service: IService = new Service({
     period: Duration.seconds(60),
     loadBalancer: loadBalancer,
     targetGroups: [ targetGroup1, targetGroup2 ],
-    defaultAvailabilityMetricDetails: {
+    defaultAvailabilityMetricDetails: new ServiceAvailabilityMetricDetails({
       metricNamespace: 'front-end/metrics',
       successMetricNames: ['Success'],
       faultMetricNames: ['Fault', 'Error'],
@@ -27,8 +27,8 @@ let service: IService = new Service({
       faultAlarmThreshold: 0.1,
       graphedFaultStatistics: ['Sum'],
       graphedSuccessStatistics: ['Sum'],
-    },
-    defaultLatencyMetricDetails: {
+    }),
+    defaultLatencyMetricDetails: new ServiceLatencyMetricDetails({
       metricNamespace: 'front-end/metrics',
       successMetricNames: ['SuccessLatency'],
       faultMetricNames: ['FaultLatency'],
@@ -40,15 +40,15 @@ let service: IService = new Service({
       successAlarmThreshold: Duration.millis(150),
       graphedFaultStatistics: ['p99'],
       graphedSuccessStatistics: ['p50', 'p99', 'tm99'],
-    },
-    defaultContributorInsightRuleDetails: {
+    }),
+    defaultContributorInsightRuleDetails: new ContributorInsightRuleDetails({
       successLatencyMetricJsonPath: '$.SuccessLatency',
       faultMetricJsonPath: '$.Faults',
       operationNameJsonPath: '$.Operation',
       instanceIdJsonPath: '$.InstanceId',
       availabilityZoneIdJsonPath: '$.AZ-ID',
       logGroups: [logGroup],
-    },
+    }),
     canaryTestProps: {
       requestCount: 10,
       schedule: 'rate(1 minute)',
@@ -69,14 +69,14 @@ let rideOperation: Operation = {
     path: '/ride',
     critical: true,
     httpMethods: ['GET'],
-    serverSideContributorInsightRuleDetails: {
+    serverSideContributorInsightRuleDetails: new ContributorInsightRuleDetails({
       logGroups: [logGroup],
       successLatencyMetricJsonPath: '$.SuccessLatency',
       faultMetricJsonPath: '$.Faults',
       operationNameJsonPath: '$.Operation',
       instanceIdJsonPath: '$.InstanceId',
       availabilityZoneIdJsonPath: '$.AZ-ID',
-    },
+    }),
     serverSideAvailabilityMetricDetails: new OperationAvailabilityMetricDetails(
       {
         operationName: 'ride',
@@ -107,14 +107,14 @@ let payOperation: Operation = {
     path: '/pay',
     critical: true,
     httpMethods: ['GET'],
-    serverSideContributorInsightRuleDetails: {
+    serverSideContributorInsightRuleDetails: new ContributorInsightRuleDetails({
       logGroups: [logGroup],
       successLatencyMetricJsonPath: '$.SuccessLatency',
       faultMetricJsonPath: '$.Faults',
       operationNameJsonPath: '$.Operation',
       instanceIdJsonPath: '$.InstanceId',
       availabilityZoneIdJsonPath: '$.AZ-ID',
-    },
+    }),
     serverSideAvailabilityMetricDetails: new OperationAvailabilityMetricDetails(
       {
         operationName: 'pay',
@@ -145,7 +145,7 @@ service.addOperation(payOperation);
 
 Then you provide that service definition to the CDK construct.
 
-```typescript
+```typescript fixture=service
 new InstrumentedServiceMultiAZObservability(stack, 'MAZObservability', {
     createDashboards: true,
     service: service,
@@ -182,12 +182,12 @@ new BasicServiceMultiAZObservability(stack, 'MAZObservability', {
        natGateways: {
             "us-east-1a": [ natGateway1 ],
             "us-east-1b": [ natGateway2 ],
-            "us-east-1c": [ natGateway3 ],
-        }
-        packetLossPercentThreshold: 0.01,
+            "us-east-1c": [ natGateway3 ]
+        },
+        packetLossPercentThreshold: 0.01
     },
     serviceName: 'test',
-    period: cdk.Duration.seconds(60),
+    period: Duration.seconds(60),
     createDashboard: true,
     evaluationPeriods: 5,
     datapointsToAlarm: 3,

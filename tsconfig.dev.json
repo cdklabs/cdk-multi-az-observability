@@ -23,7 +23,13 @@
     "strictNullChecks": true,
     "strictPropertyInitialization": true,
     "stripInternal": true,
-    "target": "ES2020"
+    "target": "ES2020",
+    "paths": {
+      "@cdklabs/multi-az-observability": [
+        "src/*"
+      ]
+    },
+    "baseUrl": "."
   },
   "include": [
     "src/**/*.ts",
