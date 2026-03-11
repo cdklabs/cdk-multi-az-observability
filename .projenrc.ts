@@ -283,8 +283,8 @@ project.addDevDeps('jest@^30.3.0', '@types/jest@^30.0.0', 'ts-jest@^29.4.6');
 // Bump projen and cdklabs-projen-project-types to latest
 project.addDevDeps('projen@^0.99.19', 'cdklabs-projen-project-types@^0.3.16');
 
-// Force minimatch >= 5.0.1 to eliminate transitive 3.x dependencies
-project.package.addField('resolutions', { minimatch: '>=5.0.1' });
+// Force minimatch >= 5.0.1 and js-yaml >= 3.14.2 to eliminate vulnerable transitive dependencies
+project.package.addField('resolutions', { minimatch: '>=5.0.1', 'js-yaml': '>=3.14.2' });
 
 // Only required for codebuild runner
 //project.github
