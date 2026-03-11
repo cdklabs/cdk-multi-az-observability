@@ -148,7 +148,7 @@ export class ServiceAlarmsAndRules
       .filter((operation: IOperationAlarmsAndRules) => operation.canaryRegionalImpactAlarm)
       .map((operation: IOperationAlarmsAndRules) => operation.canaryRegionalImpactAlarm!);
 
-    if (canaryRegionalAvailabilityOrLatencyAlarmsForCriticalOperations) {
+    if (canaryRegionalAvailabilityOrLatencyAlarmsForCriticalOperations.length > 0) {
       this.regionalCanaryAlarm = new CompositeAlarm(
         this,
         "canary-regional-alarm",

@@ -2,6 +2,7 @@
   "dependencies": [
     {
       "name": "@types/jest",
+      "version": "^30.0.0",
       "type": "build"
     },
     {
@@ -19,6 +20,7 @@
     },
     {
       "name": "cdklabs-projen-project-types",
+      "version": "^0.3.16",
       "type": "build"
     },
     {
@@ -27,12 +29,13 @@
       "type": "build"
     },
     {
-      "name": "jest",
+      "name": "jest-junit",
+      "version": "^16",
       "type": "build"
     },
     {
-      "name": "jest-junit",
-      "version": "^16",
+      "name": "jest",
+      "version": "^30.3.0",
       "type": "build"
     },
     {
@@ -54,7 +57,7 @@
     },
     {
       "name": "jsii",
-      "version": "5.8.0",
+      "version": "5.9.32",
       "type": "build"
     },
     {
@@ -63,10 +66,12 @@
     },
     {
       "name": "projen",
+      "version": "^0.99.19",
       "type": "build"
     },
     {
       "name": "ts-jest",
+      "version": "^29.4.6",
       "type": "build"
     },
     {
@@ -89,12 +94,12 @@
     },
     {
       "name": "aws-cdk-lib",
-      "version": "^2.189.1",
+      "version": "^2.243.0",
       "type": "peer"
     },
     {
       "name": "constructs",
-      "version": "^10.0.5",
+      "version": "^10.5.1",
       "type": "peer"
     }
   ],
