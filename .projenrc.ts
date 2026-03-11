@@ -9,9 +9,10 @@ const project = new CdklabsConstructLibrary ({
   authorAddress: 'aws-cdk-dev@amazon.com',
   homepage: 'https://github.com/cdklabs/cdk-multi-az-observability',
   repositoryUrl: 'https://github.com/cdklabs/cdk-multi-az-observability/',
-  cdkVersion: '2.189.1',
+  cdkVersion: '2.243.0',
+  constructsVersion: '10.5.1',
   defaultReleaseBranch: 'main',
-  jsiiVersion: '5.8.0',
+  jsiiVersion: '5.9.32',
   rosettaOptions: {
     strict: false
   },
@@ -20,7 +21,7 @@ const project = new CdklabsConstructLibrary ({
   devDeps: [
     'cdklabs-projen-project-types',
     'aws-cdk-lib',
-    'cdk-nag'
+    'cdk-nag',
   ],
   private: false,
   npmAccess: javascript.NpmAccess.PUBLIC,
@@ -275,6 +276,15 @@ project.tasks.tryFind('post-compile')?.exec(
   '-x prefer-ref-interface:aws-cdk-lib.aws_elasticloadbalancingv2.IApplicationTargetGroup.registerListener.listener ' +
   '-x prefer-ref-interface:aws-cdk-lib.aws_elasticloadbalancingv2.MutualAuthentication.trustStore'
 );
+
+// Override jest to v30 to resolve minimatch 3.x transitive dependency
+project.addDevDeps('jest@^30.3.0', '@types/jest@^30.0.0', 'ts-jest@^29.4.6');
+
+// Bump projen and cdklabs-projen-project-types to latest
+project.addDevDeps('projen@^0.99.19', 'cdklabs-projen-project-types@^0.3.16');
+
+// Force minimatch >= 5.0.1 to eliminate transitive 3.x dependencies
+project.package.addField('resolutions', { minimatch: '>=5.0.1' });
 
 // Only required for codebuild runner
 //project.github

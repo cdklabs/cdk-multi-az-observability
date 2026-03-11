@@ -3,6 +3,8 @@
 name: upgrade-cdklabs-projen-project-types-main
 on:
   workflow_dispatch: {}
+  schedule:
+    - cron: 0 0 * * 1
 jobs:
   upgrade:
     name: Upgrade
@@ -76,7 +78,7 @@ jobs:
             *Automatically created by projen via the "upgrade-cdklabs-projen-project-types-main" workflow*
           branch: github-actions/upgrade-cdklabs-projen-project-types-main
           title: "chore(deps): upgrade cdklabs-projen-project-types"
-          labels: auto-approve
+          labels: auto-approve,auto-merge
           body: |-
             Upgrades project dependencies. See details in [workflow run].
 
