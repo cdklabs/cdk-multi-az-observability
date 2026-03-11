@@ -114,7 +114,7 @@ const project = new CdklabsConstructLibrary ({
     moduleName: 'github.com/cdklabs/cdk-multi-az-observability-go',
     // The name of the package which will become the directory in
     // the repo where the go module files are placed
-    packageName: 'multi-az-observability',
+    packageName: 'multiazobservability',
   },
   publishToPypi: {
     distName: 'cdklabs.multi-az-observability',
