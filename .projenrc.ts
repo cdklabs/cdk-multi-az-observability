@@ -269,7 +269,12 @@ const buildAssets = project.tasks.addTask('build-assets', {
 });
 
 project.tasks.tryFind('compile')?.spawn(buildAssets);
-project.tasks.tryFind('post-compile')?.exec('npx --yes awslint');
+project.tasks.tryFind('post-compile')?.exec(
+  'npx --yes awslint ' +
+  '-x prefer-ref-interface:@cdklabs/multi-az-observability.AlbTargetGroupMap.applicationLoadBalancer ' +
+  '-x prefer-ref-interface:aws-cdk-lib.aws_elasticloadbalancingv2.IApplicationTargetGroup.registerListener.listener ' +
+  '-x prefer-ref-interface:aws-cdk-lib.aws_elasticloadbalancingv2.MutualAuthentication.trustStore'
+);
 
 // Only required for codebuild runner
 //project.github
