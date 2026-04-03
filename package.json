@@ -52,7 +52,7 @@
     "@aws-cdk/integ-tests-alpha": "latest",
     "@types/jest": "^30.0.0",
     "@types/node": "^18",
-    "aws-cdk-lib": "2.243.0",
+    "aws-cdk-lib": "2.248.0",
     "cdk-nag": "^2.37.55",
     "cdklabs-projen-project-types": "^0.3.16",
     "commit-and-tag-version": "^12",
@@ -71,7 +71,7 @@
     "typescript": "^5.9.3"
   },
   "peerDependencies": {
-    "aws-cdk-lib": "^2.243.0",
+    "aws-cdk-lib": "^2.248.0",
     "constructs": "^10.5.1"
   },
   "resolutions": {

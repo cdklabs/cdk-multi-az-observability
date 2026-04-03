@@ -9,7 +9,7 @@ const project = new CdklabsConstructLibrary ({
   authorAddress: 'aws-cdk-dev@amazon.com',
   homepage: 'https://github.com/cdklabs/cdk-multi-az-observability',
   repositoryUrl: 'https://github.com/cdklabs/cdk-multi-az-observability/',
-  cdkVersion: '2.243.0',
+  cdkVersion: '2.248.0',
   constructsVersion: '10.5.1',
   defaultReleaseBranch: 'main',
   jsiiVersion: '5.9.32',
@@ -19,16 +19,19 @@ const project = new CdklabsConstructLibrary ({
   
   name: '@cdklabs/multi-az-observability',
   devDeps: [
-    'cdklabs-projen-project-types',
+    'cdklabs-projen-project-types@^0.3.16',
     'aws-cdk-lib',
     'cdk-nag',
+    'jest@^30.3.0',
+    '@types/jest@^30.0.0',
+    'ts-jest@^29.4.6',
   ],
   private: false,
   npmAccess: javascript.NpmAccess.PUBLIC,
   license: 'Apache-2.0',
   githubOptions: {
     mergify: true,
-    mergeQueue: true
+    mergeQueue: true,
   },
   autoMerge: true,
   autoApproveUpgrades: true,
@@ -276,12 +279,6 @@ project.tasks.tryFind('post-compile')?.exec(
   '-x prefer-ref-interface:aws-cdk-lib.aws_elasticloadbalancingv2.IApplicationTargetGroup.registerListener.listener ' +
   '-x prefer-ref-interface:aws-cdk-lib.aws_elasticloadbalancingv2.MutualAuthentication.trustStore'
 );
-
-// Override jest to v30 to resolve minimatch 3.x transitive dependency
-project.addDevDeps('jest@^30.3.0', '@types/jest@^30.0.0', 'ts-jest@^29.4.6');
-
-// Bump projen and cdklabs-projen-project-types to latest
-project.addDevDeps('projen@^0.99.19', 'cdklabs-projen-project-types@^0.3.16');
 
 // Force minimatch >= 5.0.1 and js-yaml >= 3.14.2 to eliminate vulnerable transitive dependencies
 project.package.addField('resolutions', { minimatch: '>=5.0.1', 'js-yaml': '>=3.14.2' });
