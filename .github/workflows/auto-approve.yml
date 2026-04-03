@@ -18,5 +18,8 @@ jobs:
     steps:
       - env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+<<<<<<< HEAD
           GH_REPO: ${{ github.repository }}
+=======
+>>>>>>> 6458e03 (fix: updated projen and dependencies (#397))
         run: gh pr review --approve "${{ github.event.pull_request.number }}"
