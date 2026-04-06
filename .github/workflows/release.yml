@@ -28,13 +28,15 @@ jobs:
         run: |-
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+      - name: Enable corepack
+        run: corepack enable
       - name: Setup Node.js
         uses: actions/setup-node@v6
         with:
           node-version: lts/*
           package-manager-cache: false
       - name: Install dependencies
-        run: yarn install --check-files --frozen-lockfile
+        run: yarn install --immutable
       - name: release
         run: npx projen release
       - name: Check if version has already been tagged
@@ -75,6 +77,8 @@ jobs:
     environment: release
     if: needs.release.outputs.tag_exists != 'true' && needs.release.outputs.latest_commit == github.sha
     steps:
+      - name: Enable corepack
+        run: corepack enable
       - uses: actions/setup-node@v6
         with:
           node-version: lts/*
@@ -101,6 +105,8 @@ jobs:
     environment: release
     if: needs.release.outputs.tag_exists != 'true' && needs.release.outputs.latest_commit == github.sha
     steps:
+      - name: Enable corepack
+        run: corepack enable
       - uses: actions/setup-node@v6
         with:
           node-version: lts/*
@@ -118,7 +124,7 @@ jobs:
         with:
           path: .repo
       - name: Install Dependencies
-        run: cd .repo && yarn install --check-files --frozen-lockfile
+        run: cd .repo && yarn install --immutable
       - name: Extract build artifact
         run: tar --strip-components=1 -xzvf dist/js/*.tgz -C .repo
       - name: Move build artifact out of the way
@@ -142,6 +148,8 @@ jobs:
     environment: release
     if: needs.release.outputs.tag_exists != 'true' && needs.release.outputs.latest_commit == github.sha
     steps:
+      - name: Enable corepack
+        run: corepack enable
       - uses: actions/setup-java@v5
         with:
           distribution: corretto
@@ -163,7 +171,7 @@ jobs:
         with:
           path: .repo
       - name: Install Dependencies
-        run: cd .repo && yarn install --check-files --frozen-lockfile
+        run: cd .repo && yarn install --immutable
       - name: Extract build artifact
         run: tar --strip-components=1 -xzvf dist/js/*.tgz -C .repo
       - name: Move build artifact out of the way
@@ -191,6 +199,8 @@ jobs:
     environment: release
     if: needs.release.outputs.tag_exists != 'true' && needs.release.outputs.latest_commit == github.sha
     steps:
+      - name: Enable corepack
+        run: corepack enable
       - uses: actions/setup-node@v6
         with:
           node-version: lts/*
@@ -211,7 +221,7 @@ jobs:
         with:
           path: .repo
       - name: Install Dependencies
-        run: cd .repo && yarn install --check-files --frozen-lockfile
+        run: cd .repo && yarn install --immutable
       - name: Extract build artifact
         run: tar --strip-components=1 -xzvf dist/js/*.tgz -C .repo
       - name: Move build artifact out of the way
@@ -234,6 +244,8 @@ jobs:
     environment: release
     if: needs.release.outputs.tag_exists != 'true' && needs.release.outputs.latest_commit == github.sha
     steps:
+      - name: Enable corepack
+        run: corepack enable
       - uses: actions/setup-node@v6
         with:
           node-version: lts/*
@@ -254,7 +266,7 @@ jobs:
         with:
           path: .repo
       - name: Install Dependencies
-        run: cd .repo && yarn install --check-files --frozen-lockfile
+        run: cd .repo && yarn install --immutable
       - name: Extract build artifact
         run: tar --strip-components=1 -xzvf dist/js/*.tgz -C .repo
       - name: Move build artifact out of the way
@@ -277,6 +289,8 @@ jobs:
     environment: release
     if: needs.release.outputs.tag_exists != 'true' && needs.release.outputs.latest_commit == github.sha
     steps:
+      - name: Enable corepack
+        run: corepack enable
       - uses: actions/setup-node@v6
         with:
           node-version: lts/*
@@ -297,7 +311,7 @@ jobs:
         with:
           path: .repo
       - name: Install Dependencies
-        run: cd .repo && yarn install --check-files --frozen-lockfile
+        run: cd .repo && yarn install --immutable
       - name: Extract build artifact
         run: tar --strip-components=1 -xzvf dist/js/*.tgz -C .repo
       - name: Move build artifact out of the way

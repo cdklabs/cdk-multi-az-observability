@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 import { CdklabsConstructLibrary } from 'cdklabs-projen-project-types';
 import { JsonPatch, javascript } from 'projen';
-import { UpgradeDependenciesSchedule } from 'projen/lib/javascript';
+import { NodePackageManager, UpgradeDependenciesSchedule } from 'projen/lib/javascript';
 
 const project = new CdklabsConstructLibrary ({
   author: 'AWS',
@@ -15,6 +15,12 @@ const project = new CdklabsConstructLibrary ({
   jsiiVersion: '5.9.32',
   rosettaOptions: {
     strict: false
+  },
+  packageManager: NodePackageManager.YARN_BERRY,
+  yarnBerryOptions: {
+    yarnRcOptions: {
+      nodeLinker: javascript.YarnNodeLinker.NODE_MODULES,
+    },
   },
   
   name: '@cdklabs/multi-az-observability',
@@ -305,5 +311,18 @@ project.github
 project.github
   ?.tryFindWorkflow('auto-approve')
   ?.file?.patch(JsonPatch.replace('/jobs/approve/steps/0/run', 'gh pr review --approve "${{ github.event.pull_request.number }}" --repo "${{ github.repository }}"'));
+
+// Add corepack enable to package jobs in build workflow
+const corepackStep = { name: 'Enable corepack', run: 'corepack enable' };
+const buildWf = project.github?.tryFindWorkflow('build');
+for (const jobName of ['package-js', 'package-java', 'package-python', 'package-dotnet', 'package-go']) {
+  buildWf?.file?.patch(JsonPatch.add(`/jobs/${jobName}/steps/0`, corepackStep));
+}
+
+// Add corepack enable to release jobs that use yarn
+const releaseWf = project.github?.tryFindWorkflow('release');
+for (const jobName of ['release_npm', 'release_maven', 'release_pypi', 'release_nuget', 'release_golang', 'release_github']) {
+  releaseWf?.file?.patch(JsonPatch.add(`/jobs/${jobName}/steps/0`, corepackStep));
+}
 
 project.synth();
