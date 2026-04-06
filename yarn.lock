@@ -21,22 +21,14 @@
     "@cdklabs/tskb" "^0.0.4"
 
 "@aws-cdk/cloud-assembly-api@^2.2.0":
-<<<<<<< HEAD
-  version "2.2.0"
-=======
   version "2.2.1"
   resolved "https://registry.yarnpkg.com/@aws-cdk/cloud-assembly-api/-/cloud-assembly-api-2.2.1.tgz#43884b6637c002731115ff922bd256dd8b231ef5"
   integrity sha512-24ARpDQzF39UTickUgDH6RIs5otPG4aaKJZ93XUSNwiPSR9T+h7gXSF982+NZVYK+7SetQaqrVbm4lcF6dmXWw==
->>>>>>> 6458e03 (fix: updated projen and dependencies (#397))
   dependencies:
     jsonschema "~1.4.1"
     semver "^7.7.4"
 
-<<<<<<< HEAD
-"@aws-cdk/cloud-assembly-schema@^53.0.0", "@aws-cdk/cloud-assembly-schema@>=53.0.0":
-=======
 "@aws-cdk/cloud-assembly-schema@^53.0.0":
->>>>>>> 6458e03 (fix: updated projen and dependencies (#397))
   version "53.12.0"
   resolved "https://registry.npmjs.org/@aws-cdk/cloud-assembly-schema/-/cloud-assembly-schema-53.12.0.tgz"
   integrity sha512-xXB5Cu6uHQl8C0uYvS0gQjMwYGWQ/UcifssdzNOgTNxPky2r68mPXEJ1snvsoLhy44X9r2px0riRglIswKX4ug==
@@ -349,8 +341,6 @@
   dependencies:
     "@jridgewell/trace-mapping" "0.3.9"
 
-<<<<<<< HEAD
-=======
 "@emnapi/core@^1.4.3":
   version "1.9.2"
   resolved "https://registry.yarnpkg.com/@emnapi/core/-/core-1.9.2.tgz#3870265ecffc7352d01ead62d8d83d8358a2d034"
@@ -373,7 +363,6 @@
   dependencies:
     tslib "^2.4.0"
 
->>>>>>> 6458e03 (fix: updated projen and dependencies (#397))
 "@hutson/parse-repository-url@^3.0.0":
   version "3.0.2"
   resolved "https://registry.npmjs.org/@hutson/parse-repository-url/-/parse-repository-url-3.0.2.tgz"
@@ -656,8 +645,6 @@
   resolved "https://registry.npmjs.org/@jridgewell/sourcemap-codec/-/sourcemap-codec-1.5.5.tgz"
   integrity sha512-cYQ9310grqxueWbl+WuIUIaiUaDcj7WOq5fVhEljNVgRfOUhY9fy2zTvfoqWsnebh8Sl70VScFbICvJnLKB0Og==
 
-<<<<<<< HEAD
-=======
 "@jridgewell/trace-mapping@0.3.9":
   version "0.3.9"
   resolved "https://registry.npmjs.org/@jridgewell/trace-mapping/-/trace-mapping-0.3.9.tgz"
@@ -666,7 +653,6 @@
     "@jridgewell/resolve-uri" "^3.0.3"
     "@jridgewell/sourcemap-codec" "^1.4.10"
 
->>>>>>> 6458e03 (fix: updated projen and dependencies (#397))
 "@jridgewell/trace-mapping@^0.3.12", "@jridgewell/trace-mapping@^0.3.23", "@jridgewell/trace-mapping@^0.3.24", "@jridgewell/trace-mapping@^0.3.25", "@jridgewell/trace-mapping@^0.3.28":
   version "0.3.31"
   resolved "https://registry.npmjs.org/@jridgewell/trace-mapping/-/trace-mapping-0.3.31.tgz"
@@ -904,8 +890,6 @@
   resolved "https://registry.npmjs.org/@xmldom/xmldom/-/xmldom-0.9.9.tgz"
   integrity sha512-qycIHAucxy/LXAYIjmLmtQ8q9GPnMbnjG1KXhWm9o5sCr6pOYDATkMPiTNa6/v8eELyqOQ2FsEqeoFYmgv/gJg==
 
-<<<<<<< HEAD
-=======
 JSONStream@^1.3.5:
   version "1.3.5"
   resolved "https://registry.npmjs.org/JSONStream/-/JSONStream-1.3.5.tgz"
@@ -914,7 +898,6 @@ JSONStream@^1.3.5:
     jsonparse "^1.2.0"
     through ">=2.2.7 <3"
 
->>>>>>> 6458e03 (fix: updated projen and dependencies (#397))
 acorn-walk@^8.1.1:
   version "8.3.5"
   resolved "https://registry.npmjs.org/acorn-walk/-/acorn-walk-8.3.5.tgz"
@@ -1028,11 +1011,7 @@ astral-regex@^2.0.0:
   resolved "https://registry.npmjs.org/astral-regex/-/astral-regex-2.0.0.tgz"
   integrity sha512-Z7tMw1ytTXt5jqMcOP+OQteU1VuNK9Y02uuJtKQ1Sv69jXQKKg5cibLwGJow8yzZP+eAc18EmLGPal0bp36rvQ==
 
-<<<<<<< HEAD
-aws-cdk-lib@^2.176.0, aws-cdk-lib@^2.245.0, aws-cdk-lib@2.248.0:
-=======
 aws-cdk-lib@2.248.0:
->>>>>>> 6458e03 (fix: updated projen and dependencies (#397))
   version "2.248.0"
   resolved "https://registry.npmjs.org/aws-cdk-lib/-/aws-cdk-lib-2.248.0.tgz"
   integrity sha512-PGQycx/OdyX+t0o6QUFI1KJAOLoyIVj2WwrN0syrwCi8lYxW2KzldZsW0X+/UN/ALNQwcjSr927ImTpuDOh+bg==
@@ -1133,24 +1112,6 @@ baseline-browser-mapping@^2.9.0:
   resolved "https://registry.npmjs.org/baseline-browser-mapping/-/baseline-browser-mapping-2.10.12.tgz"
   integrity sha512-qyq26DxfY4awP2gIRXhhLWfwzwI+N5Nxk6iQi8EFizIaWIjqicQTE4sLnZZVdeKPRcVNoJOkkpfzoIYuvCKaIQ==
 
-<<<<<<< HEAD
-brace-expansion@^1.1.7:
-  version "1.1.13"
-  resolved "https://registry.npmjs.org/brace-expansion/-/brace-expansion-1.1.13.tgz"
-  integrity sha512-9ZLprWS6EENmhEOpjCYW2c8VkmOvckIJZfkr7rBW6dObmfgJ/L1GpSYW5Hpo9lDz4D1+n0Ckz8rU7FwHDQiG/w==
-  dependencies:
-    balanced-match "^1.0.0"
-    concat-map "0.0.1"
-
-brace-expansion@^2.0.2:
-  version "2.0.3"
-  resolved "https://registry.npmjs.org/brace-expansion/-/brace-expansion-2.0.3.tgz"
-  integrity sha512-MCV/fYJEbqx68aE58kv2cA/kiky1G8vux3OR6/jbS+jIMe/6fJWa0DTzJU7dqijOWYwHi1t29FlfYI9uytqlpA==
-  dependencies:
-    balanced-match "^1.0.0"
-
-=======
->>>>>>> 6458e03 (fix: updated projen and dependencies (#397))
 brace-expansion@^5.0.5:
   version "5.0.5"
   dependencies:
@@ -1225,14 +1186,6 @@ caniuse-lite@^1.0.30001759:
 case@^1.6.3:
   version "1.6.3"
   resolved "https://registry.npmjs.org/case/-/case-1.6.3.tgz"
-<<<<<<< HEAD
-  integrity sha512-mzDSXIPaFwVDvZAHqZ9VlbyF4yyXRuX6IvB06WvPYkqJVO24kX1PPhv9bfpKNFZyxYFmmgo03HUiD8iklmJYRQ==
-
-case@1.6.3:
-  version "1.6.3"
-  resolved "https://registry.npmjs.org/case/-/case-1.6.3.tgz"
-=======
->>>>>>> 6458e03 (fix: updated projen and dependencies (#397))
   integrity sha512-mzDSXIPaFwVDvZAHqZ9VlbyF4yyXRuX6IvB06WvPYkqJVO24kX1PPhv9bfpKNFZyxYFmmgo03HUiD8iklmJYRQ==
 
 cdk-nag@^2.37.55:
@@ -1259,17 +1212,6 @@ chalk@^2.4.2:
 chalk@^4:
   version "4.1.2"
   resolved "https://registry.npmjs.org/chalk/-/chalk-4.1.2.tgz"
-<<<<<<< HEAD
-  integrity sha512-oKnbhFyRIXpUuez8iBMmyEa4nbj4IOQyuhc/wy9kY7/WVPcwIO9VA668Pu8RkO7+0G76SLROeyw9CpQ061i4mA==
-  dependencies:
-    ansi-styles "^4.1.0"
-    supports-color "^7.1.0"
-
-chalk@^4.1.2:
-  version "4.1.2"
-  resolved "https://registry.npmjs.org/chalk/-/chalk-4.1.2.tgz"
-=======
->>>>>>> 6458e03 (fix: updated projen and dependencies (#397))
   integrity sha512-oKnbhFyRIXpUuez8iBMmyEa4nbj4IOQyuhc/wy9kY7/WVPcwIO9VA668Pu8RkO7+0G76SLROeyw9CpQ061i4mA==
   dependencies:
     ansi-styles "^4.1.0"
@@ -1345,24 +1287,10 @@ color-convert@^2.0.1:
   integrity sha512-RRECPsj7iu/xb5oKYcsFHSppFNnsj/52OVTRKb4zP5onXwVF3zVmmToNcOfGC+CRDpfK/U584fMg38ZHCaElKQ==
   dependencies:
     color-name "~1.1.4"
-
-<<<<<<< HEAD
-=======
-color-name@1.1.3:
-  version "1.1.3"
-  resolved "https://registry.npmjs.org/color-name/-/color-name-1.1.3.tgz"
-  integrity sha512-72fSenhMw2HZMTVHeCA9KCmpEIbzWiQsjN+BHcBbS9vr1mtt+vJjPdksIBNUmKAW8TFUDPJK5SUU3QhE9NEXDw==
-
->>>>>>> 6458e03 (fix: updated projen and dependencies (#397))
 color-name@~1.1.4:
   version "1.1.4"
   resolved "https://registry.npmjs.org/color-name/-/color-name-1.1.4.tgz"
   integrity sha512-dOy+3AuW3a2wNbZHIuMZpTcgjGuLU/uBL/ubcZF9OXbDo8ff4O8yVp5Bf0efS8uEoYo5q4Fx7dY9OgQGXgAsQA==
-
-color-name@1.1.3:
-  version "1.1.3"
-  resolved "https://registry.npmjs.org/color-name/-/color-name-1.1.3.tgz"
-  integrity sha512-72fSenhMw2HZMTVHeCA9KCmpEIbzWiQsjN+BHcBbS9vr1mtt+vJjPdksIBNUmKAW8TFUDPJK5SUU3QhE9NEXDw==
 
 comment-json@4.2.2:
   version "4.2.2"
@@ -1428,11 +1356,7 @@ concat-stream@^2.0.0:
     readable-stream "^3.0.2"
     typedarray "^0.0.6"
 
-<<<<<<< HEAD
-constructs@^10.0.0, constructs@^10.0.5, constructs@^10.5.0, constructs@10.5.1:
-=======
 constructs@10.5.1, constructs@^10.0.0:
->>>>>>> 6458e03 (fix: updated projen and dependencies (#397))
   version "10.5.1"
   resolved "https://registry.npmjs.org/constructs/-/constructs-10.5.1.tgz"
   integrity sha512-f/TfFXiS3G/yVIXDjOQn9oTlyu9Wo7Fxyjj7lb8r92iO81jR2uST+9MstxZTmDGx/CgIbxCXkFXgupnLTNxQZg==
@@ -1920,17 +1844,6 @@ find-up@^3.0.0:
 find-up@^4.0.0:
   version "4.1.0"
   resolved "https://registry.npmjs.org/find-up/-/find-up-4.1.0.tgz"
-<<<<<<< HEAD
-  integrity sha512-PpOwAdQ/YlXQ2vj8a3h8IipDuYRi3wceVQQGYWxNINccq40Anw7BlsEXCMbt1Zt+OLA6Fq9suIpIWD0OsnISlw==
-  dependencies:
-    locate-path "^5.0.0"
-    path-exists "^4.0.0"
-
-find-up@^4.1.0:
-  version "4.1.0"
-  resolved "https://registry.npmjs.org/find-up/-/find-up-4.1.0.tgz"
-=======
->>>>>>> 6458e03 (fix: updated projen and dependencies (#397))
   integrity sha512-PpOwAdQ/YlXQ2vj8a3h8IipDuYRi3wceVQQGYWxNINccq40Anw7BlsEXCMbt1Zt+OLA6Fq9suIpIWD0OsnISlw==
   dependencies:
     locate-path "^5.0.0"
@@ -2806,11 +2719,7 @@ jsii-reflect@^1.127.0:
     workerpool "^6.5.1"
     yargs "^17.7.2"
 
-<<<<<<< HEAD
-jsii@~5.9.1, jsii@5.9.32:
-=======
 jsii@5.9.32, jsii@~5.9.1:
->>>>>>> 6458e03 (fix: updated projen and dependencies (#397))
   version "5.9.32"
   resolved "https://registry.npmjs.org/jsii/-/jsii-5.9.32.tgz"
   integrity sha512-piCJjmYwP1MX4EonRfnw/IcMBSzfB2BNKaNgAPUW9TAXAsc5tBXpd6WyK6qDe3LVWth0H3M06Js2rhgG+kxshg==
@@ -3103,33 +3012,12 @@ min-indent@^1.0.0:
   resolved "https://registry.npmjs.org/min-indent/-/min-indent-1.0.1.tgz"
   integrity sha512-I9jwMn07Sy/IwOj3zVkVik2JTvgpaykDZEigL6Rx6N9LbMywwUSMtxET+7lVoDLLd3O3IXwJwvuuns8UB/HeAg==
 
-<<<<<<< HEAD
-minimatch@^10.2.3:
-  version "10.2.5"
-  dependencies:
-    brace-expansion "^5.0.5"
-
-minimatch@^3.0.4, minimatch@^3.1.1:
-  version "3.1.5"
-  resolved "https://registry.npmjs.org/minimatch/-/minimatch-3.1.5.tgz"
-  integrity sha512-VgjWUsnnT6n+NUk6eZq77zeFdpW2LWDzP6zFGrCbHXiYNul5Dzqk2HHQ5uFH2DNW5Xbp8+jVzaeNt94ssEEl4w==
-  dependencies:
-    brace-expansion "^1.1.7"
-
-minimatch@^9.0.4:
-  version "9.0.9"
-  resolved "https://registry.npmjs.org/minimatch/-/minimatch-9.0.9.tgz"
-  integrity sha512-OBwBN9AL4dqmETlpS2zasx+vTeWclWzkblfZk7KTA5j3jeOONz/tRCnZomUyvNg83wL5Zv9Ss6HMJXAgL8R2Yg==
-  dependencies:
-    brace-expansion "^2.0.2"
-=======
 minimatch@>=5.0.1, minimatch@^10.2.3, minimatch@^3.0.4, minimatch@^3.1.1, minimatch@^9.0.4:
   version "10.2.5"
   resolved "https://registry.yarnpkg.com/minimatch/-/minimatch-10.2.5.tgz#bd48687a0be38ed2961399105600f832095861d1"
   integrity sha512-MULkVLfKGYDFYejP07QOurDLLQpcjk7Fw+7jXS2R2czRQzR56yHRveU5NDJEOviH+hETZKSkIk5c+T23GjFUMg==
   dependencies:
     brace-expansion "^5.0.5"
->>>>>>> 6458e03 (fix: updated projen and dependencies (#397))
 
 minimist-options@4.1.0:
   version "4.1.0"
@@ -3203,19 +3091,6 @@ node-releases@^2.0.27:
 normalize-package-data@^2.3.2:
   version "2.5.0"
   resolved "https://registry.npmjs.org/normalize-package-data/-/normalize-package-data-2.5.0.tgz"
-<<<<<<< HEAD
-  integrity sha512-/5CMN3T0R4XTj4DcGaexo+roZSdSFW/0AOOTROrjxzCG1wrWXEsGbRKevjlIL+ZDE4sZlJr5ED4YW0yqmkK+eA==
-  dependencies:
-    hosted-git-info "^2.1.4"
-    resolve "^1.10.0"
-    semver "2 || 3 || 4 || 5"
-    validate-npm-package-license "^3.0.1"
-
-normalize-package-data@^2.5.0:
-  version "2.5.0"
-  resolved "https://registry.npmjs.org/normalize-package-data/-/normalize-package-data-2.5.0.tgz"
-=======
->>>>>>> 6458e03 (fix: updated projen and dependencies (#397))
   integrity sha512-/5CMN3T0R4XTj4DcGaexo+roZSdSFW/0AOOTROrjxzCG1wrWXEsGbRKevjlIL+ZDE4sZlJr5ED4YW0yqmkK+eA==
   dependencies:
     hosted-git-info "^2.1.4"
@@ -3255,16 +3130,6 @@ npm-run-path@^4.0.1:
 once@^1.3.0:
   version "1.4.0"
   resolved "https://registry.npmjs.org/once/-/once-1.4.0.tgz"
-<<<<<<< HEAD
-  integrity sha512-lNaJgI+2Q5URQBkccEKHTQOPaXdUxnZZElQTZY0MFUAuaEqe1E+Nyvgdz/aIyNi6Z9MzO5dv1H8n58/GELp3+w==
-  dependencies:
-    wrappy "1"
-
-once@^1.3.1, once@^1.4.0:
-  version "1.4.0"
-  resolved "https://registry.npmjs.org/once/-/once-1.4.0.tgz"
-=======
->>>>>>> 6458e03 (fix: updated projen and dependencies (#397))
   integrity sha512-lNaJgI+2Q5URQBkccEKHTQOPaXdUxnZZElQTZY0MFUAuaEqe1E+Nyvgdz/aIyNi6Z9MzO5dv1H8n58/GELp3+w==
   dependencies:
     wrappy "1"
@@ -3296,16 +3161,6 @@ p-limit@^1.1.0:
 p-limit@^2.0.0:
   version "2.3.0"
   resolved "https://registry.npmjs.org/p-limit/-/p-limit-2.3.0.tgz"
-<<<<<<< HEAD
-  integrity sha512-//88mFWSJx8lxCzwdAABTJL2MyWB12+eIY7MDL2SqLmAkeKU9qxRvWuSyTjm3FUmpBEMuFfckAIqEaVGUDxb6w==
-  dependencies:
-    p-try "^2.0.0"
-
-p-limit@^2.2.0:
-  version "2.3.0"
-  resolved "https://registry.npmjs.org/p-limit/-/p-limit-2.3.0.tgz"
-=======
->>>>>>> 6458e03 (fix: updated projen and dependencies (#397))
   integrity sha512-//88mFWSJx8lxCzwdAABTJL2MyWB12+eIY7MDL2SqLmAkeKU9qxRvWuSyTjm3FUmpBEMuFfckAIqEaVGUDxb6w==
   dependencies:
     p-try "^2.0.0"
@@ -3445,14 +3300,6 @@ picocolors@^1.1.1:
 picomatch@^2.0.4:
   version "2.3.2"
   resolved "https://registry.npmjs.org/picomatch/-/picomatch-2.3.2.tgz"
-<<<<<<< HEAD
-  integrity sha512-V7+vQEJ06Z+c5tSye8S+nHUfI51xoXIXjHQ99cQtKUkQqqO1kO/KCJUfZXuB47h/YBlDhah2H3hdUGXn8ie0oA==
-
-picomatch@^2.3.1:
-  version "2.3.2"
-  resolved "https://registry.npmjs.org/picomatch/-/picomatch-2.3.2.tgz"
-=======
->>>>>>> 6458e03 (fix: updated projen and dependencies (#397))
   integrity sha512-V7+vQEJ06Z+c5tSye8S+nHUfI51xoXIXjHQ99cQtKUkQqqO1kO/KCJUfZXuB47h/YBlDhah2H3hdUGXn8ie0oA==
 
 picomatch@^4.0.3:
@@ -3501,11 +3348,7 @@ process-nextick-args@~2.0.0:
   resolved "https://registry.npmjs.org/process-nextick-args/-/process-nextick-args-2.0.1.tgz"
   integrity sha512-3ouUOpQhtgrbOa17J7+uxOTpITYWaGP7/AhoR3+A+/1e9skrzelGi/dXzEYyvbxubEF6Wn2ypscTKiKJFFn1ag==
 
-<<<<<<< HEAD
-projen@^0.99.19, "projen@>=0.88.6 <1.0.0":
-=======
 projen@^0.99.19:
->>>>>>> 6458e03 (fix: updated projen and dependencies (#397))
   version "0.99.34"
   resolved "https://registry.npmjs.org/projen/-/projen-0.99.34.tgz"
   integrity sha512-/eFaYhO9t00aIF9Vnb5WWoq/73gIM2fIiJq4QN+8ox8bXYebRpDmfCW2rlWVy6Oyi1z5qn6TDAHQWyJz+zdAfQ==
@@ -3660,18 +3503,6 @@ resolve-from@^5.0.0:
 resolve@^1.1.6:
   version "1.22.11"
   resolved "https://registry.npmjs.org/resolve/-/resolve-1.22.11.tgz"
-<<<<<<< HEAD
-  integrity sha512-RfqAvLnMl313r7c9oclB1HhUEAezcpLjz95wFH4LVuhk9JF/r22qmVP9AMmOU4vMX7Q8pN8jwNg/CSpdFnMjTQ==
-  dependencies:
-    is-core-module "^2.16.1"
-    path-parse "^1.0.7"
-    supports-preserve-symlinks-flag "^1.0.0"
-
-resolve@^1.10.0:
-  version "1.22.11"
-  resolved "https://registry.npmjs.org/resolve/-/resolve-1.22.11.tgz"
-=======
->>>>>>> 6458e03 (fix: updated projen and dependencies (#397))
   integrity sha512-RfqAvLnMl313r7c9oclB1HhUEAezcpLjz95wFH4LVuhk9JF/r22qmVP9AMmOU4vMX7Q8pN8jwNg/CSpdFnMjTQ==
   dependencies:
     is-core-module "^2.16.1"
@@ -3720,14 +3551,6 @@ semver@^5.5.0:
 semver@^6.3.0:
   version "6.3.1"
   resolved "https://registry.npmjs.org/semver/-/semver-6.3.1.tgz"
-<<<<<<< HEAD
-  integrity sha512-BR7VvDCVHO+q2xBEWskxS6DJE1qRnb7DxzUrogb71CWoSficBxYsiAGd+Kl0mmq/MprG9yArRkyrQxTO6XjMzA==
-
-semver@^6.3.1:
-  version "6.3.1"
-  resolved "https://registry.npmjs.org/semver/-/semver-6.3.1.tgz"
-=======
->>>>>>> 6458e03 (fix: updated projen and dependencies (#397))
   integrity sha512-BR7VvDCVHO+q2xBEWskxS6DJE1qRnb7DxzUrogb71CWoSficBxYsiAGd+Kl0mmq/MprG9yArRkyrQxTO6XjMzA==
 
 semver@^7.0.0, semver@^7.3.4, semver@^7.5.3, semver@^7.5.4, semver@^7.7.2, semver@^7.7.3, semver@^7.7.4:
@@ -3785,14 +3608,6 @@ shx@^0.4.0:
 signal-exit@^3.0.0:
   version "3.0.7"
   resolved "https://registry.npmjs.org/signal-exit/-/signal-exit-3.0.7.tgz"
-<<<<<<< HEAD
-  integrity sha512-wnD2ZE+l+SPC/uoS0vXeE9L1+0wuaMqKlfz9AMUo38JsyLSBWSFcHR1Rri62LZc12vLr1gb3jl7iwQhgwpAbGQ==
-
-signal-exit@^3.0.3:
-  version "3.0.7"
-  resolved "https://registry.npmjs.org/signal-exit/-/signal-exit-3.0.7.tgz"
-=======
->>>>>>> 6458e03 (fix: updated projen and dependencies (#397))
   integrity sha512-wnD2ZE+l+SPC/uoS0vXeE9L1+0wuaMqKlfz9AMUo38JsyLSBWSFcHR1Rri62LZc12vLr1gb3jl7iwQhgwpAbGQ==
 
 signal-exit@^4.0.1:
@@ -3867,8 +3682,6 @@ spdx-license-list@^6.11.0:
   resolved "https://registry.npmjs.org/spdx-license-list/-/spdx-license-list-6.11.0.tgz"
   integrity sha512-p5ICd51dSnh7zIMtPgbB9ShBg3HMT77OeI6WVhrFFvxa5KIFYNcqxD4joAE+n1zZ7wlJdEkrOMwC75JUMMmsJA==
 
-<<<<<<< HEAD
-=======
 split2@^3.2.2:
   version "3.2.2"
   resolved "https://registry.npmjs.org/split2/-/split2-3.2.2.tgz"
@@ -3876,7 +3689,6 @@ split2@^3.2.2:
   dependencies:
     readable-stream "^3.0.0"
 
->>>>>>> 6458e03 (fix: updated projen and dependencies (#397))
 split@^1.0.1:
   version "1.0.1"
   resolved "https://registry.npmjs.org/split/-/split-1.0.1.tgz"
@@ -3973,8 +3785,6 @@ string-width@^5.0.1, string-width@^5.1.2:
     emoji-regex "^9.2.2"
     strip-ansi "^7.0.1"
 
-<<<<<<< HEAD
-=======
 string_decoder@^1.1.1:
   version "1.3.0"
   resolved "https://registry.npmjs.org/string_decoder/-/string_decoder-1.3.0.tgz"
@@ -3989,7 +3799,6 @@ string_decoder@~1.1.1:
   dependencies:
     safe-buffer "~5.1.0"
 
->>>>>>> 6458e03 (fix: updated projen and dependencies (#397))
 "strip-ansi-cjs@npm:strip-ansi@^6.0.1":
   version "6.0.1"
   resolved "https://registry.npmjs.org/strip-ansi/-/strip-ansi-6.0.1.tgz"
@@ -4119,14 +3928,11 @@ through2@^2.0.0:
     readable-stream "~2.3.6"
     xtend "~4.0.1"
 
-<<<<<<< HEAD
-=======
 through@2, "through@>=2.2.7 <3":
   version "2.3.8"
   resolved "https://registry.npmjs.org/through/-/through-2.3.8.tgz"
   integrity sha512-w89qg7PI8wAdvX60bMDP+bFoD5Dvhm9oLheFp5O4a2QF0cSBGsBX4qZmadPMvVqlLJBBci+WqGGOAPvcDeNSVg==
 
->>>>>>> 6458e03 (fix: updated projen and dependencies (#397))
 tmpl@1.0.5:
   version "1.0.5"
   resolved "https://registry.npmjs.org/tmpl/-/tmpl-1.0.5.tgz"
@@ -4396,14 +4202,11 @@ xmlbuilder2@^4.0.3:
     "@oozcitak/util" "^10.0.0"
     js-yaml "^4.1.1"
 
-<<<<<<< HEAD
-=======
 xmlbuilder@^15.1.1:
   version "15.1.1"
   resolved "https://registry.npmjs.org/xmlbuilder/-/xmlbuilder-15.1.1.tgz"
   integrity sha512-yMqGBqtXyeN1e3TGYvgNgDVZ3j84W4cwkOXQswghol6APgZWaff9lnbvN7MHYJOiXsvGPXtjTYJEiC9J2wv9Eg==
 
->>>>>>> 6458e03 (fix: updated projen and dependencies (#397))
 xtend@~4.0.1:
   version "4.0.2"
   resolved "https://registry.npmjs.org/xtend/-/xtend-4.0.2.tgz"
@@ -4424,16 +4227,12 @@ yallist@^4.0.0:
   resolved "https://registry.npmjs.org/yallist/-/yallist-4.0.0.tgz"
   integrity sha512-3wdGidZyq5PB084XLES5TpOSRA3wjXAlIWMhum2kRcv/41Sn2emQ0dycQW4uZXLejwKvg6EsvbdlVL+FYEct7A==
 
-<<<<<<< HEAD
-yaml@^2.2.2:
-=======
 yaml@1.10.3:
   version "1.10.3"
   resolved "https://registry.yarnpkg.com/yaml/-/yaml-1.10.3.tgz#76e407ed95c42684fb8e14641e5de62fe65bbcb3"
   integrity sha512-vIYeF1u3CjlhAFekPPAk2h/Kv4T3mAkMox5OymRiJQB0spDP10LHvt+K7G9Ny6NuuMAb25/6n1qyUjAcGNf/AA==
 
 yaml@^2.2.2, yaml@^2.6.0, yaml@^2.8.3:
->>>>>>> 6458e03 (fix: updated projen and dependencies (#397))
   version "2.8.3"
   resolved "https://registry.npmjs.org/yaml/-/yaml-2.8.3.tgz"
   integrity sha512-AvbaCLOO2Otw/lW5bmh9d/WEdcDFdQp2Z2ZUH3pX9U2ihyUY0nvLv7J6TrWowklRGPYbB/IuIMfYgxaCPg5Bpg==
