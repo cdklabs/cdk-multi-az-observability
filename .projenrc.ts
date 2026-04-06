@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 import { CdklabsConstructLibrary } from 'cdklabs-projen-project-types';
 import { JsonPatch, javascript } from 'projen';
-import { UpgradeDependenciesSchedule } from 'projen/lib/javascript';
+import { NodePackageManager, UpgradeDependenciesSchedule } from 'projen/lib/javascript';
 
 const project = new CdklabsConstructLibrary ({
   author: 'AWS',
@@ -15,6 +15,12 @@ const project = new CdklabsConstructLibrary ({
   jsiiVersion: '5.9.32',
   rosettaOptions: {
     strict: false
+  },
+  packageManager: NodePackageManager.YARN_BERRY,
+  yarnBerryOptions: {
+    yarnRcOptions: {
+      nodeLinker: javascript.YarnNodeLinker.NODE_MODULES,
+    },
   },
   
   name: '@cdklabs/multi-az-observability',
@@ -301,5 +307,9 @@ project.package.addField('resolutions', { minimatch: '>=5.0.1', 'js-yaml': '>=3.
 project.github
   ?.tryFindWorkflow('auto-approve')
   ?.file?.patch(JsonPatch.replace('/jobs/approve/if', "contains(github.event.pull_request.labels.*.name, 'auto-approve') && (github.event.pull_request.user.login == 'cdklabs-automation' || github.event.pull_request.user.login == 'hakenmt' || github.event.pull_request.user.login == 'github-bot' || github.event.pull_request.user.login == 'dependabot[bot]')"));
+
+project.github
+  ?.tryFindWorkflow('auto-approve')
+  ?.file?.patch(JsonPatch.add('/jobs/approve/steps/0/env/GH_REPO', '${{ github.repository }}'));  
 
 project.synth();
