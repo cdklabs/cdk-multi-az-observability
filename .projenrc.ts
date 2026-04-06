@@ -312,7 +312,6 @@ project.github
   ?.tryFindWorkflow('auto-approve')
   ?.file?.patch(JsonPatch.replace('/jobs/approve/steps/0/run', 'gh pr review --approve "${{ github.event.pull_request.number }}" --repo "${{ github.repository }}"'));
 
-<<<<<<< vNext
 // Add corepack enable to package jobs in build workflow
 const corepackStep = { name: 'Enable corepack', run: 'corepack enable' };
 const buildWf = project.github?.tryFindWorkflow('build');
@@ -327,6 +326,3 @@ for (const jobName of ['release_npm', 'release_maven', 'release_pypi', 'release_
 }
 
 project.synth();
-=======
-project.synth();
->>>>>>> main
