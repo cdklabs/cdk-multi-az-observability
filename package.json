@@ -63,10 +63,10 @@
     "jsii-diff": "^1.127.0",
     "jsii-docgen": "^10.5.0",
     "jsii-pacmak": "^1.127.0",
-    "jsii-rosetta": "~5.9.37",
+    "jsii-rosetta": "~5.9.38",
     "prettier": "^3.8.1",
     "projen": "^0.99.19",
-    "ts-jest": "^29.4.6",
+    "ts-jest": "^29.4.9",
     "ts-node": "^10.9.2",
     "typescript": "^5.9.3"
   },
