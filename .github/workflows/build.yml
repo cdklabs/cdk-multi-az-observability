@@ -98,6 +98,8 @@ jobs:
       contents: read
     if: ${{ !needs.build.outputs.self_mutation_happened }}
     steps:
+      - name: Enable corepack
+        run: corepack enable
       - uses: actions/setup-node@v6
         with:
           node-version: lts/*
@@ -133,6 +135,8 @@ jobs:
       contents: read
     if: ${{ !needs.build.outputs.self_mutation_happened }}
     steps:
+      - name: Enable corepack
+        run: corepack enable
       - uses: actions/setup-java@v5
         with:
           distribution: corretto
@@ -172,6 +176,8 @@ jobs:
       contents: read
     if: ${{ !needs.build.outputs.self_mutation_happened }}
     steps:
+      - name: Enable corepack
+        run: corepack enable
       - uses: actions/setup-node@v6
         with:
           node-version: lts/*
@@ -210,6 +216,8 @@ jobs:
       contents: read
     if: ${{ !needs.build.outputs.self_mutation_happened }}
     steps:
+      - name: Enable corepack
+        run: corepack enable
       - uses: actions/setup-node@v6
         with:
           node-version: lts/*
@@ -248,6 +256,8 @@ jobs:
       contents: read
     if: ${{ !needs.build.outputs.self_mutation_happened }}
     steps:
+      - name: Enable corepack
+        run: corepack enable
       - uses: actions/setup-node@v6
         with:
           node-version: lts/*
