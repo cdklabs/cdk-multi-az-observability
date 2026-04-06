@@ -310,7 +310,7 @@ project.github
 
 project.github
   ?.tryFindWorkflow('auto-approve')
-  ?.file?.patch(JsonPatch.add('/jobs/approve/steps/0/env/GH_REPO', '${{ github.repository }}'));
+  ?.file?.patch(JsonPatch.replace('/jobs/approve/steps/0/run', 'gh pr review --approve "${{ github.event.pull_request.number }}" --repo "${{ github.repository }}"'));
 
 <<<<<<< vNext
 // Add corepack enable to package jobs in build workflow
