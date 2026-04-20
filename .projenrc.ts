@@ -105,14 +105,13 @@ const project = new CdklabsConstructLibrary ({
     '**/.DS_Store',
     'src/canaries/src/package',
     'src/canaries/src/canary.zip',
-    'src/outlier-detection/src/scipy',
     'src/outlier-detection/src/outlier-detection.zip',
-    'src/outlier-detection/src/scipy-layer.zip',
     'src/monitoring',
     'tsconfig.tsbuildinfo',
     'package-lock.json',
     '.jsii',
     'tsconfig.json',
+    '**/__pycache__',
   ],
   publishToNuget: {
     dotNetNamespace: 'Cdklabs.MultiAZObservability',
@@ -209,32 +208,6 @@ project.tasks.addTask('build-canary-function', {
   ],
 });
 
-project.tasks.addTask('build-scipy-layer', {
-  steps: [
-    {
-      exec: 'rm -rf src/outlier-detection/src/scipy',
-    },
-    {
-      exec: 'rm -f src/outlier-detection/src/scipy-layer.zip',
-    },
-    {
-      exec: 'mkdir src/outlier-detection/src/scipy',
-    },
-    {
-      exec: 'mkdir -p lib/outlier-detection/src',
-    },
-    {
-      exec: `pip3 install scipy --only-binary=:all: --target src/outlier-detection/src/scipy/python/lib/${pythonVersion}/site-packages --platform manylinux2014_aarch64`,
-    },
-    {
-      exec: 'cd src/outlier-detection/src/scipy && zip -r ../scipy-layer.zip .',
-    },
-    {
-      exec: 'cp src/outlier-detection/src/scipy-layer.zip lib/outlier-detection/src/scipy-layer.zip',
-    },
-  ],
-});
-
 project.tasks.addTask('build-outlier-detection-function', {
   steps: [
     {
@@ -264,9 +237,6 @@ const buildAssets = project.tasks.addTask('build-assets', {
       spawn: 'build-outlier-detection-function',
     },
     {
-      spawn: 'build-scipy-layer',
-    },
-    {
       spawn: 'build-monitoring-layer',
     },
     {
@@ -285,6 +255,9 @@ project.tasks.tryFind('post-compile')?.exec(
   '-x prefer-ref-interface:aws-cdk-lib.aws_elasticloadbalancingv2.IApplicationTargetGroup.registerListener.listener ' +
   '-x prefer-ref-interface:aws-cdk-lib.aws_elasticloadbalancingv2.MutualAuthentication.trustStore'
 );
+
+// Run Python unit tests for outlier detection as part of the test workflow
+project.tasks.tryFind('test')?.exec('python3 -m unittest discover -s test -p "test_*.py" -v');
 
 // Force minimatch >= 5.0.1 and js-yaml >= 3.14.2 to eliminate vulnerable transitive dependencies
 project.package.addField('resolutions', { minimatch: '>=5.0.1', 'js-yaml': '>=3.14.2' });
