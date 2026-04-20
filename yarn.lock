@@ -486,7 +486,7 @@ __metadata:
     jsii-pacmak: "npm:^1.128.0"
     jsii-rosetta: "npm:^5.9.39"
     prettier: "npm:^3.8.2"
-    projen: "npm:^0.99.34"
+    projen: "npm:^0.99.51"
     ts-jest: "npm:^29.4.9"
     ts-node: "npm:^10.9.2"
     typescript: "npm:^6.0.2"
@@ -1845,14 +1845,14 @@ __metadata:
   linkType: hard
 
 "cdklabs-projen-project-types@npm:^0.3.16":
-  version: 0.3.19
-  resolution: "cdklabs-projen-project-types@npm:0.3.19"
+  version: 0.3.28
+  resolution: "cdklabs-projen-project-types@npm:0.3.28"
   dependencies:
     yaml: "npm:^2.8.3"
   peerDependencies:
     constructs: ^10.0.0
-    projen: ">=0.88.6 <1.0.0"
-  checksum: 10c0/187a2b000f5be132779a391bb2bd7b02fc098a7b35e0b1b3c6173158ab91f6693e51e374274f70a64df1b35a30209a64196bc8a665a980448e4e932547cf8081
+    projen: ">=0.99.48 <1.0.0"
+  checksum: 10c0/f929fc8423bdbbf8dbb755d91327d334d78901a4701d0ce115e4d1b129803e703788aa7f3b4ffaa25a8991a49d3c0904ae9c2b38d9680fbb9efe953bb60f99db
   languageName: node
   linkType: hard
 
@@ -4972,9 +4972,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"projen@npm:^0.99.34":
-  version: 0.99.34
-  resolution: "projen@npm:0.99.34"
+"projen@npm:^0.99.51":
+  version: 0.99.51
+  resolution: "projen@npm:0.99.51"
   dependencies:
     "@iarna/toml": "npm:^2.2.5"
     case: "npm:^1.6.3"
@@ -4995,7 +4995,7 @@ __metadata:
     constructs: ^10.0.0
   bin:
     projen: bin/projen
-  checksum: 10c0/57f67a933e303d983a49ba7c0c372f2879c0c13f84e548691dd9c4a3f045e8b29392acf79ab5b70aa0af49a3dfff44ab3bf762cd26ce7427909c072755bdc99e
+  checksum: 10c0/2fab76791dff74f29d9983930b41801788055eeb7c463f442a7a1f904eccbaab94a8b97a50891d46030934344c7dff5e61937df92aaf202b0780f690088f607c
   languageName: node
   linkType: hard
 
