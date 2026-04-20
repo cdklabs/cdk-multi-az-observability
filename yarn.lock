@@ -19,13 +19,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@aws-cdk/aws-service-spec@npm:0.1.169":
-  version: 0.1.169
-  resolution: "@aws-cdk/aws-service-spec@npm:0.1.169"
+"@aws-cdk/aws-service-spec@npm:0.1.171":
+  version: 0.1.171
+  resolution: "@aws-cdk/aws-service-spec@npm:0.1.171"
   dependencies:
-    "@aws-cdk/service-spec-types": "npm:^0.0.235"
+    "@aws-cdk/service-spec-types": "npm:^0.0.237"
     "@cdklabs/tskb": "npm:^0.0.4"
-  checksum: 10c0/7108c03de12694289aa017176b350416614ac6b5489cec0ae19f1461f3e371a4d902ffad8e1263ec7968c6efe6f060360d5a6c2222cdd87307c33d9dc0aebc6f
+  checksum: 10c0/cf59b360b308ffb9d8140be55df95809328f61ce000b7e038eb9887fc7302fea43db866c696261d89a49ea9d436183f10b7f094423897602f7ae76b2d2471960
   languageName: node
   linkType: hard
 
@@ -52,33 +52,33 @@ __metadata:
   linkType: hard
 
 "@aws-cdk/integ-runner@npm:latest":
-  version: 2.197.13
-  resolution: "@aws-cdk/integ-runner@npm:2.197.13"
+  version: 2.197.15
+  resolution: "@aws-cdk/integ-runner@npm:2.197.15"
   dependencies:
-    "@aws-cdk/aws-service-spec": "npm:0.1.169"
-    aws-cdk: "npm:2.1118.0"
+    "@aws-cdk/aws-service-spec": "npm:0.1.171"
+    aws-cdk: "npm:2.1118.2"
   bin:
     integ-runner: bin/integ-runner
-  checksum: 10c0/377788676c48dd43c731428a32d8c32014fe865535e22f1c6f2b6ecbb26bfda0abfcb38e6e3f28bd01c5211e8695b998e253f5ec8daab590f498862f7111334f
+  checksum: 10c0/85861bc64d43c73ecb27f29f50b21e04e577ba514e805797dd2e33e7d025c631b8524a5d9afc3d8c4c92f189b0f5bc04a4097cf2ff42d2d636cd704282ee9771
   languageName: node
   linkType: hard
 
 "@aws-cdk/integ-tests-alpha@npm:latest":
-  version: 2.248.0-alpha.0
-  resolution: "@aws-cdk/integ-tests-alpha@npm:2.248.0-alpha.0"
+  version: 2.250.0-alpha.0
+  resolution: "@aws-cdk/integ-tests-alpha@npm:2.250.0-alpha.0"
   peerDependencies:
-    aws-cdk-lib: ^2.248.0
+    aws-cdk-lib: ^2.250.0
     constructs: ^10.5.0
-  checksum: 10c0/aed115edc318e18d69fe1a0b34c07c17449e8db252a7b85495e2b8638fb536b2c97a91de9e6bbbd8a0773e26ace455f93b0b4e6fa075d8783ba962accec96793
+  checksum: 10c0/47269371734724adde1b9b3e5d99c1e0c368b0ea4c69deefca9a600b4e096e57ea8d4f0a29699ad95b939275acc8ec3c2f43a668c4c76aa0dd78ea7e013fd174
   languageName: node
   linkType: hard
 
-"@aws-cdk/service-spec-types@npm:^0.0.235":
-  version: 0.0.235
-  resolution: "@aws-cdk/service-spec-types@npm:0.0.235"
+"@aws-cdk/service-spec-types@npm:^0.0.237":
+  version: 0.0.237
+  resolution: "@aws-cdk/service-spec-types@npm:0.0.237"
   dependencies:
     "@cdklabs/tskb": "npm:^0.0.4"
-  checksum: 10c0/b7f3a4cbf325b2cc0809f68a62bdf022e22b6525a72a1a79d0edda76bfda1958ca8664d61b5249065cc3aeda3e1049c690c762c626a5e343fb83f1256cf232a1
+  checksum: 10c0/55d5f3b37c68fa2bf9d90ff673febc76193288f97624afe8542607182c6e819b047060568d58cb57fcb5928a26e6f0811741ebc1561d0f3a5ea498c3a253211e
   languageName: node
   linkType: hard
 
@@ -485,11 +485,11 @@ __metadata:
     jsii-docgen: "npm:^10.5.0"
     jsii-pacmak: "npm:^1.128.0"
     jsii-rosetta: "npm:^5.9.39"
-    prettier: "npm:^3.8.2"
-    projen: "npm:^0.99.51"
+    prettier: "npm:^3.8.3"
+    projen: "npm:^0.99.34"
     ts-jest: "npm:^29.4.9"
     ts-node: "npm:^10.9.2"
-    typescript: "npm:^6.0.2"
+    typescript: "npm:^6.0.3"
   peerDependencies:
     aws-cdk-lib: ^2.248.0
     constructs: ^10.5.1
@@ -949,7 +949,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@jsii/spec@npm:1.128.0":
+"@jsii/spec@npm:1.128.0, @jsii/spec@npm:^1.128.0":
   version: 1.128.0
   resolution: "@jsii/spec@npm:1.128.0"
   checksum: 10c0/60c92e199717db502adbc4fabc631d086cc9637c3ba2bf5aac9252ee7c8eb2c6718c5bd215e6d49123f20121fda7f2a3aaed9f38df311f03ed400cdc89fc1822
@@ -1611,12 +1611,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"aws-cdk@npm:2.1118.0":
-  version: 2.1118.0
-  resolution: "aws-cdk@npm:2.1118.0"
+"aws-cdk@npm:2.1118.2":
+  version: 2.1118.2
+  resolution: "aws-cdk@npm:2.1118.2"
   bin:
     cdk: bin/cdk
-  checksum: 10c0/38616eca00ee2d45101016506ffee26144823b0664dccfca16318735839ba2426a2f49ad47a4a3724b7a9fa6be8ea2b33d172aa80bc46eab04c2145a69487327
+  checksum: 10c0/640f58c0d26a5b489f3d460dba6a18b52f7fa950a5e7586779cb426d8f6eb922641a4f7e62b323d7d0b7b7a612061972bdcf7c00bf4a6fd1b5b980b4f69902a0
   languageName: node
   linkType: hard
 
@@ -3858,14 +3858,14 @@ __metadata:
   linkType: hard
 
 "jsii-docgen@npm:^10.5.0":
-  version: 10.11.15
-  resolution: "jsii-docgen@npm:10.11.15"
+  version: 10.11.16
+  resolution: "jsii-docgen@npm:10.11.16"
   dependencies:
-    "@jsii/spec": "npm:^1.127.0"
+    "@jsii/spec": "npm:^1.128.0"
     case: "npm:^1.6.3"
     fast-glob: "npm:^3.3.3"
     fs-extra: "npm:^10.1.0"
-    jsii-reflect: "npm:^1.127.0"
+    jsii-reflect: "npm:^1.128.0"
     json-stream-stringify: "npm:^3.1.6"
     semver: "npm:^7.7.4"
     yargs: "npm:^16.2.0"
@@ -3873,7 +3873,7 @@ __metadata:
     jsii-rosetta: ^1.85.0 || ~5.0.14 || ~5.1.2 || ~5.2.0 || ~5.3.0 || ~5.4.0 || ~5.5.0 || ~5.6.0 || ~5.7.0 || ~5.8.0 || ~5.9.1
   bin:
     jsii-docgen: bin/jsii-docgen
-  checksum: 10c0/07e0ef45a38e7173164a42a1431e9dac9658270e2bdc6f7e23e1015a6f2c1a36c701494b14ac89263fb5e8f67bbbfcbb731b5fe5f7c798da6e2457481ae86d3a
+  checksum: 10c0/6ebe5c7cddd7c0b8d3a655761d6c9e5622f200deefbe5982449d1af832c260a33e2f7e30baf2647b5243fefbfbf769dbdc7bd0fca305a0c09b3f8e31fc0e4609
   languageName: node
   linkType: hard
 
@@ -3898,23 +3898,6 @@ __metadata:
   bin:
     jsii-pacmak: bin/jsii-pacmak
   checksum: 10c0/839ca0de6d1f16bb300342dc6df1226cce1472f64239c06a46a3d96beb25135f08a4bfd5448bf4c6b0c793f60375d87681b30de1fc854c458ccb7fd75ba42c55
-  languageName: node
-  linkType: hard
-
-"jsii-reflect@npm:^1.127.0":
-  version: 1.127.0
-  resolution: "jsii-reflect@npm:1.127.0"
-  dependencies:
-    "@jsii/check-node": "npm:1.127.0"
-    "@jsii/spec": "npm:1.127.0"
-    chalk: "npm:^4"
-    fs-extra: "npm:^10.1.0"
-    oo-ascii-tree: "npm:^1.127.0"
-    yargs: "npm:^17.7.2"
-  bin:
-    jsii-query: bin/jsii-query
-    jsii-tree: bin/jsii-tree
-  checksum: 10c0/a3234ebc794ee8922a0ead9cbc248864e87b8357a95a082fac3e2667de9c0be5085790bce61549f0e643e8b703e512d6ff51af8f78cd2e038f480ff0d749ab85
   languageName: node
   linkType: hard
 
@@ -4664,13 +4647,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"oo-ascii-tree@npm:^1.127.0":
-  version: 1.127.0
-  resolution: "oo-ascii-tree@npm:1.127.0"
-  checksum: 10c0/780e1ebad81c6bb60105a00aca139cded49a6a22b86bd73d150bd4c80a1a24dfdda7600788d5efd7df5a9d184cc9187a18c84b67634f90fdd69bc5be293a459b
-  languageName: node
-  linkType: hard
-
 "oo-ascii-tree@npm:^1.128.0":
   version: 1.128.0
   resolution: "oo-ascii-tree@npm:1.128.0"
@@ -4938,12 +4914,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"prettier@npm:^3.8.2":
-  version: 3.8.2
-  resolution: "prettier@npm:3.8.2"
+"prettier@npm:^3.8.3":
+  version: 3.8.3
+  resolution: "prettier@npm:3.8.3"
   bin:
     prettier: bin/prettier.cjs
-  checksum: 10c0/2d64bd01d269c8dd6d8c423a2a2e1fb88230a53aac523204b327de40059ccf8bd8e6fe70b8ce6154b97ed4442e9fd878504ff8a5330f3a4f64bd13d1576f7652
+  checksum: 10c0/754816fd7593eb80f6376d7476d463e832c38a12f32775a82683adb6e35b772b1f484d65f19401507b983a8c8a7cd5a4a9f12006bd56491e8f35503473f77473
   languageName: node
   linkType: hard
 
@@ -5918,13 +5894,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"typescript@npm:^6.0.2":
-  version: 6.0.2
-  resolution: "typescript@npm:6.0.2"
+"typescript@npm:^6.0.3":
+  version: 6.0.3
+  resolution: "typescript@npm:6.0.3"
   bin:
     tsc: bin/tsc
     tsserver: bin/tsserver
-  checksum: 10c0/4b860b0bf87cc0fee0f66d8ef2640b5a8a8a8c74d1129adb82e389e5f97124383823c47946bef8a73ede371461143a3aa8544399d2133c7b2e4f07e81860af7f
+  checksum: 10c0/4a25ff5045b984370f48f196b3a0120779b1b343d40b9a68d114ea5e5fff099809b2bb777576991a63a5cd59cf7bffd96ff6fe10afcefbcb8bd6fb96ad4b6606
   languageName: node
   linkType: hard
 
@@ -5938,13 +5914,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"typescript@patch:typescript@npm%3A^6.0.2#optional!builtin<compat/typescript>":
-  version: 6.0.2
-  resolution: "typescript@patch:typescript@npm%3A6.0.2#optional!builtin<compat/typescript>::version=6.0.2&hash=5786d5"
+"typescript@patch:typescript@npm%3A^6.0.3#optional!builtin<compat/typescript>":
+  version: 6.0.3
+  resolution: "typescript@patch:typescript@npm%3A6.0.3#optional!builtin<compat/typescript>::version=6.0.3&hash=5786d5"
   bin:
     tsc: bin/tsc
     tsserver: bin/tsserver
-  checksum: 10c0/49f0b84fc6ca55653e77752b8a61beabc09ee3dae5d965c31596225aa6ef213c5727b1d2e895b900416dc603854ba0872ac4a812c2a4ed6793a601f9c675de02
+  checksum: 10c0/2f25c74e65663c248fa1ade2b8459d9ce5372ff9dad07067310f132966ebec1d93f6c42f0baf77a6b6a7a91460463f708e6887013aaade22111037457c6b25df
   languageName: node
   linkType: hard
 

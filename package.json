@@ -64,11 +64,11 @@
     "jsii-docgen": "^10.5.0",
     "jsii-pacmak": "^1.128.0",
     "jsii-rosetta": "^5.9.39",
-    "prettier": "^3.8.2",
-    "projen": "^0.99.51",
+    "prettier": "^3.8.3",
+    "projen": "^0.99.34",
     "ts-jest": "^29.4.9",
     "ts-node": "^10.9.2",
-    "typescript": "^6.0.2"
+    "typescript": "^6.0.3"
   },
   "peerDependencies": {
     "aws-cdk-lib": "^2.248.0",
