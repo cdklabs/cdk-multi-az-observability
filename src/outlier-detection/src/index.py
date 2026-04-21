@@ -6,24 +6,129 @@ import json
 import time
 import traceback
 import sys
-import numpy
-from numpy import float64
-from scipy.stats import chisquare
+import math
 from aws_embedded_metrics import metric_scope
 
 cw_client = boto3.client("cloudwatch", os.environ.get("AWS_REGION", "us-east-1"))
 
-#
-#{
-#  "EventType": "GetMetricData",
-#  "GetMetricDataRequest": {
-#    "StartTime": 1697060700,
-#    "EndTime": 1697061600,
-#    "Period": 300,
-#    "Arguments": ["serviceregistry_external_http_requests{host_cluster!=\"prod\"}"] 
-#  }
-#}
-#
+
+# --- Pure Python replacements for numpy/scipy ---
+
+def _mean(vals):
+    """Calculate the arithmetic mean of a list of numbers."""
+    return sum(vals) / len(vals)
+
+
+def _std(vals):
+    """Calculate the population standard deviation."""
+    m = _mean(vals)
+    return math.sqrt(sum((x - m) ** 2 for x in vals) / len(vals))
+
+
+def _median(vals):
+    """Calculate the median of a sorted list."""
+    s = sorted(vals)
+    n = len(s)
+    mid = n // 2
+    if n % 2 == 0:
+        return (s[mid - 1] + s[mid]) / 2.0
+    return s[mid]
+
+
+def _percentile(vals, p):
+    """Calculate the p-th percentile using linear interpolation (matching numpy default)."""
+    s = sorted(vals)
+    n = len(s)
+    k = (p / 100.0) * (n - 1)
+    f = math.floor(k)
+    c = math.ceil(k)
+    if f == c:
+        return s[int(k)]
+    return s[f] * (c - k) + s[c] * (k - f)
+
+
+def _chi_squared_p_value(observed):
+    """
+    Compute the p-value for a chi-squared goodness-of-fit test against
+    a uniform expected distribution (same as scipy.stats.chisquare with
+    default parameters).
+
+    Uses the regularized incomplete gamma function to compute the survival
+    function: p = 1 - gammainc(df/2, chi2/2).
+    """
+    n = len(observed)
+    if n < 2:
+        return 1.0
+
+    total = sum(observed)
+    if total == 0:
+        return 1.0
+
+    expected = total / n
+    chi2 = sum((o - expected) ** 2 / expected for o in observed)
+    df = n - 1
+
+    return 1.0 - _regularized_gamma_inc(df / 2.0, chi2 / 2.0)
+
+
+def _regularized_gamma_inc(a, x):
+    """
+    Compute the regularized lower incomplete gamma function P(a, x)
+    using series expansion for small x and continued fraction for large x.
+    """
+    if x < 0 or a <= 0:
+        return 0.0
+    if x == 0:
+        return 0.0
+
+    if x < a + 1:
+        # Series expansion
+        return _gamma_inc_series(a, x)
+    else:
+        # Continued fraction representation
+        return 1.0 - _gamma_inc_cf(a, x)
+
+
+def _gamma_inc_series(a, x, max_iter=200, eps=1e-15):
+    """Series expansion for the regularized lower incomplete gamma function."""
+    ln_gamma_a = math.lgamma(a)
+    ap = a
+    s = 1.0 / a
+    delta = s
+    for _ in range(max_iter):
+        ap += 1.0
+        delta *= x / ap
+        s += delta
+        if abs(delta) < abs(s) * eps:
+            break
+    return s * math.exp(-x + a * math.log(x) - ln_gamma_a)
+
+
+def _gamma_inc_cf(a, x, max_iter=200, eps=1e-15):
+    """Continued fraction for the regularized upper incomplete gamma function."""
+    ln_gamma_a = math.lgamma(a)
+    b = x + 1.0 - a
+    c = 1.0 / 1e-30
+    d = 1.0 / b
+    h = d
+    for i in range(1, max_iter + 1):
+        an = -i * (i - a)
+        b += 2.0
+        d = an * d + b
+        if abs(d) < 1e-30:
+            d = 1e-30
+        c = b + an / c
+        if abs(c) < 1e-30:
+            c = 1e-30
+        d = 1.0 / d
+        delta = d * c
+        h *= delta
+        if abs(delta - 1.0) < eps:
+            break
+    return math.exp(-x + a * math.log(x) - ln_gamma_a) * h
+
+
+# --- Lambda handler and business logic ---
 
 @metric_scope
 def handler(event, context, metrics):
@@ -82,18 +187,8 @@ def handler(event, context, metrics):
     else:
         metrics.set_property("Error", "Unknown event type")
         return {}
-    
-#
-#{
-#  "EventType": "GetMetricData",
-#  "GetMetricDataRequest": {
-#    "StartTime": 1697060700,
-#    "EndTime": 1697061600,
-#    "Period": 300,
-#    "Arguments": ["serviceregistry_external_http_requests{host_cluster!=\"prod\"}"] 
-#  }
-#}
-#
+
+
 def get_metric_data(event, metrics):
     start = event["StartTime"]
     end = event["EndTime"]
@@ -104,19 +199,6 @@ def get_metric_data(event, metrics):
     metrics.set_property("Threshold", threshold)
     az_id: str= args[2]
     metrics.set_property("AZ-ID", az_id)
-    #
-    # {
-    #    "use1-az1": [
-    #        {
-    #          "Operation": "Ride",
-    #          "AZ-ID": "use-az1",
-    #          "Region": "us-east-1"
-    #        }
-    #    ],
-    #    "use1-az2": [
-    #    ]
-    # }
-    #
     dimensions_per_az: dict = json.loads(args[3])
     metric_namespace: str = args[4]
     metrics.set_property("Namespace", metric_namespace)
@@ -208,7 +290,6 @@ def get_metric_data(event, metrics):
                 if epoch_timestamp not in az_counts:
                     az_counts[epoch_timestamp] = {az:0 for az in dimensions_per_az}
 
-                # Set the value for this AZ (as identified by key) for the timestamp
                 az_counts[epoch_timestamp][az_id] = item["Values"][index]
 
         if "NextToken" in data:
@@ -216,17 +297,6 @@ def get_metric_data(event, metrics):
 
         if next_token is None:
             break
-
-    # now we should have fault counts in each az by timestamp. Next we need to compare
-    # each AZ at each timestamp to calculate the chi squared result
-
-    # {
-    #   "1716494472" : {
-    #     "use1-az1": 0,
-    #     "use1-az2": 10,
-    #     "use1-az6": 5
-    #   }
-    # }
 
     metrics.set_property("InterimCalculation", json.loads(json.dumps(az_counts, default = str)))
 
@@ -238,7 +308,7 @@ def get_metric_data(event, metrics):
         case "IQR":
             results = iqr(az_counts = az_counts, az_id = az_id, threshold = threshold, metrics = metrics)
         case "MAD":
-            results = iqr(az_counts = az_counts, az_id = az_id, threshold = threshold, metrics = metrics)
+            results = mad(az_counts = az_counts, az_id = az_id, threshold = threshold, metrics = metrics)
         case "CHI_SQUARED" | _:
             results = chi_squared(az_counts = az_counts, az_id = az_id, threshold = threshold, metrics = metrics)
 
@@ -255,6 +325,7 @@ def get_metric_data(event, metrics):
 
     return data_results
 
+
 # Chi-squared     
 def chi_squared(az_counts: dict, az_id: str, threshold, metrics):
     results = []
@@ -262,29 +333,20 @@ def chi_squared(az_counts: dict, az_id: str, threshold, metrics):
         vals = list(az_counts[timestamp_key].values())
         
         if not all(v == 0 for v in vals):
-            chi_sq_result = chisquare(vals)
-
             if len(vals) > 0:
                 expected = sum(vals) / len(vals)
-                p_value: float64 = chi_sq_result.pvalue
+                p_value = _chi_squared_p_value(vals)
                 metrics.set_property("PValue_" + str(timestamp_key), str(p_value))
 
                 for az in az_counts[timestamp_key]:
-                    # set the farthest from the average to initially be the first AZ
                     farthest_from_expected = az
                     break
 
-                # compare the other AZs for this timestamp and find the one
-                # farthest from the average
                 for az in az_counts[timestamp_key]:
                     if abs(az_counts[timestamp_key][az] - expected) > abs(az_counts[timestamp_key][farthest_from_expected] - expected):
                         farthest_from_expected = az        
 
-                # if the p-value result is less than the threshold
-                # and the one that is farthest from is the AZ we are
-                # concerned with, then there is a statistically significant
-                # difference and emit a 1 value
-                if not numpy.isnan(p_value) and p_value <= threshold and az_id == farthest_from_expected:
+                if not math.isnan(p_value) and p_value <= threshold and az_id == farthest_from_expected:
                     results.append(1)
                 else:
                     results.append(0)
@@ -303,16 +365,21 @@ def z_score(az_counts: dict, az_id: str, threshold, metrics):
     results = []
     for timestamp_key in sorted(az_counts.keys(), reverse = True):
         vals = list(az_counts[timestamp_key].values())
-        mean = numpy.mean(vals)
+        mean = _mean(vals)
         metrics.set_property("Mean_" + str(timestamp_key), mean)
-        std = numpy.std(vals)
+        std = _std(vals)
         metrics.set_property("StdDev_" + str(timestamp_key), std)
         
         val = az_counts[timestamp_key][az_id]
-        z_score = (val - mean) / std
-        metrics.set_property("ZScore_" + str(timestamp_key), z_score)
+
+        if std == 0:
+            results.append(0)
+            continue
+
+        z = (val - mean) / std
+        metrics.set_property("ZScore_" + str(timestamp_key), z)
             
-        if z_score >= threshold:
+        if z >= threshold:
             results.append(1)
         else:
             results.append(0)
@@ -324,14 +391,14 @@ def iqr(az_counts: dict, az_id: str, threshold, metrics):
     results = []
     for timestamp_key in sorted(az_counts.keys(), reverse = True):
         vals = sorted(list(az_counts[timestamp_key].values()))
-        q1 = numpy.percentile(vals, 25)
-        metrics.set_property("Q1_" + str(timestamp_key), iqr)
-        q3 = numpy.percentile(vals, 75)
-        metrics.set_property("Q3_" + str(timestamp_key), iqr)
-        iqr = q3 - q1
-        metrics.set_property("IQR_" + str(timestamp_key), iqr)
+        q1 = _percentile(vals, 25)
+        metrics.set_property("Q1_" + str(timestamp_key), q1)
+        q3 = _percentile(vals, 75)
+        metrics.set_property("Q3_" + str(timestamp_key), q3)
+        iqr_val = q3 - q1
+        metrics.set_property("IQR_" + str(timestamp_key), iqr_val)
 
-        upper_bound = q3 + (1.5 * iqr)
+        upper_bound = q3 + (1.5 * iqr_val)
 
         metrics.set_property("UPPER_BOUND_" + str(timestamp_key), upper_bound)
 
@@ -347,37 +414,17 @@ def mad(az_counts: dict, az_id: str, threshold, metrics):
     results = []
     for timestamp_key in sorted(az_counts.keys(), reverse = True):
         vals = sorted(list(az_counts[timestamp_key].values()))
-        median = numpy.median(vals)
+        median = _median(vals)
 
-        absolute_deviations = []
-        for val in vals:
-            absolute_deviations.append(abs(val - median))
+        absolute_deviations = [abs(val - median) for val in vals]
 
-        mad = numpy.median(absolute_deviations)
+        mad_val = _median(absolute_deviations)
 
-        metrics.set_property("MAD_" + str(timestamp_key), mad)
+        metrics.set_property("MAD_" + str(timestamp_key), mad_val)
 
-        median + (threshold * mad)
-
-        if az_counts[timestamp_key][az_id] >= median + (threshold * mad):
+        if az_counts[timestamp_key][az_id] >= median + (threshold * mad_val):
             results.append(1)
         else:
             results.append(0)
     
     return results
-
-
-def z_score2(data: list, tested_number, threshold, timestamp_key, metrics):
-    mean = numpy.mean(data)
-    #metrics.set_property("Mean_" + str(timestamp_key), mean)
-    std = numpy.std(data)
-    #metrics.set_property("StdDev_" + str(timestamp_key), std)
-        
-    z_score = (tested_number - mean) / std
-    #metrics.set_property("ZScore_" + str(timestamp_key), z_score)
-            
-    if z_score >= threshold:
-        return 1
-    else:
-        return 0
-    

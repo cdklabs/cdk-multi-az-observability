@@ -37,9 +37,6 @@
           "spawn": "build-outlier-detection-function"
         },
         {
-          "spawn": "build-scipy-layer"
-        },
-        {
           "spawn": "build-monitoring-layer"
         },
         {
@@ -119,32 +116,6 @@
         },
         {
           "exec": "cp src/outlier-detection/src/outlier-detection.zip lib/outlier-detection/src/outlier-detection.zip"
-        }
-      ]
-    },
-    "build-scipy-layer": {
-      "name": "build-scipy-layer",
-      "steps": [
-        {
-          "exec": "rm -rf src/outlier-detection/src/scipy"
-        },
-        {
-          "exec": "rm -f src/outlier-detection/src/scipy-layer.zip"
-        },
-        {
-          "exec": "mkdir src/outlier-detection/src/scipy"
-        },
-        {
-          "exec": "mkdir -p lib/outlier-detection/src"
-        },
-        {
-          "exec": "pip3 install scipy --only-binary=:all: --target src/outlier-detection/src/scipy/python/lib/python3.13/site-packages --platform manylinux2014_aarch64"
-        },
-        {
-          "exec": "cd src/outlier-detection/src/scipy && zip -r ../scipy-layer.zip ."
-        },
-        {
-          "exec": "cp src/outlier-detection/src/scipy-layer.zip lib/outlier-detection/src/scipy-layer.zip"
         }
       ]
     },
@@ -436,6 +407,9 @@
         },
         {
           "spawn": "integ"
+        },
+        {
+          "exec": "python3 -m unittest discover -s test -p \"test_*.py\" -v"
         }
       ]
     },

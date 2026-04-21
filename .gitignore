@@ -53,12 +53,11 @@ cdk.out
 **/.DS_Store
 src/canaries/src/package
 src/canaries/src/canary.zip
-src/outlier-detection/src/scipy
 src/outlier-detection/src/outlier-detection.zip
-src/outlier-detection/src/scipy-layer.zip
 src/monitoring
 tsconfig.tsbuildinfo
 package-lock.json
+**/__pycache__
 /test-reports/
 junit.xml
 /coverage/
