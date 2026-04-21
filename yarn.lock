@@ -2,7 +2,7 @@
 # Manual changes might be lost - proceed with caution!
 
 __metadata:
-  version: 8
+  version: 9
   cacheKey: 10c0
 
 "@aws-cdk/asset-awscli-v1@npm:2.2.273":
@@ -473,7 +473,7 @@ __metadata:
     "@aws-cdk/integ-tests-alpha": "npm:latest"
     "@types/jest": "npm:^30.0.0"
     "@types/node": "npm:^18"
-    aws-cdk-lib: "npm:2.248.0"
+    aws-cdk-lib: "npm:2.250.0"
     cdk-nag: "npm:^2.37.55"
     cdklabs-projen-project-types: "npm:^0.3.16"
     commit-and-tag-version: "npm:^12"
@@ -491,7 +491,7 @@ __metadata:
     ts-node: "npm:^10.9.2"
     typescript: "npm:^6.0.3"
   peerDependencies:
-    aws-cdk-lib: ^2.248.0
+    aws-cdk-lib: ^2.250.0
     constructs: ^10.5.1
   languageName: unknown
   linkType: soft
@@ -1586,9 +1586,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"aws-cdk-lib@npm:2.248.0":
-  version: 2.248.0
-  resolution: "aws-cdk-lib@npm:2.248.0"
+"aws-cdk-lib@npm:2.250.0":
+  version: 2.250.0
+  resolution: "aws-cdk-lib@npm:2.250.0"
   dependencies:
     "@aws-cdk/asset-awscli-v1": "npm:2.2.273"
     "@aws-cdk/asset-node-proxy-agent-v6": "npm:^2.1.1"
@@ -1607,7 +1607,7 @@ __metadata:
     yaml: "npm:1.10.3"
   peerDependencies:
     constructs: ^10.5.0
-  checksum: 10c0/3954c3ffbe3625cefcc04b1bd0d77d6926af6eaed6eeefb167cf66c5142c0ccc045874ed67ffaa7951cfb3d04ad02df6b9f6fc0240b31cf65fa860df47bf6bad
+  checksum: 10c0/8146354f3f69554bcd041bd45c03b495aa23b7ccea3ea01cafbfcd4e7acdc0afa7e770deffa25113cdb423c60c861f394dec18c509ea5d1495094aed2abae367
   languageName: node
   linkType: hard
 

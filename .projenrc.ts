@@ -9,7 +9,7 @@ const project = new CdklabsConstructLibrary ({
   authorAddress: 'aws-cdk-dev@amazon.com',
   homepage: 'https://github.com/cdklabs/cdk-multi-az-observability',
   repositoryUrl: 'https://github.com/cdklabs/cdk-multi-az-observability/',
-  cdkVersion: '2.248.0',
+  cdkVersion: '2.250.0',
   constructsVersion: '10.5.1',
   defaultReleaseBranch: 'main',
   jsiiVersion: '5.9.32',
@@ -18,6 +18,7 @@ const project = new CdklabsConstructLibrary ({
   },
   packageManager: NodePackageManager.YARN_BERRY,
   yarnBerryOptions: {
+    version: '4.14.1',
     yarnRcOptions: {
       nodeLinker: javascript.YarnNodeLinker.NODE_MODULES,
     },
