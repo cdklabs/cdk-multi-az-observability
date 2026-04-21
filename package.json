@@ -51,7 +51,7 @@
     "@aws-cdk/integ-tests-alpha": "latest",
     "@types/jest": "^30.0.0",
     "@types/node": "^18",
-    "aws-cdk-lib": "2.248.0",
+    "aws-cdk-lib": "2.250.0",
     "cdk-nag": "^2.37.55",
     "cdklabs-projen-project-types": "^0.3.16",
     "commit-and-tag-version": "^12",
@@ -70,7 +70,7 @@
     "typescript": "^6.0.3"
   },
   "peerDependencies": {
-    "aws-cdk-lib": "^2.248.0",
+    "aws-cdk-lib": "^2.250.0",
     "constructs": "^10.5.1"
   },
   "resolutions": {
@@ -92,7 +92,7 @@
   "devEngines": {
     "packageManager": {
       "name": "yarn",
-      "version": ">=4",
+      "version": "4.14.1",
       "onFail": "ignore"
     }
   },
@@ -103,7 +103,7 @@
     "access": "public"
   },
   "version": "0.0.0",
-  "packageManager": "yarn@4.13.0",
+  "packageManager": "yarn@4.14.1",
   "jest": {
     "coverageProvider": "v8",
     "roots": [
