@@ -481,15 +481,15 @@ __metadata:
     jest: "npm:^30.3.0"
     jest-junit: "npm:^16"
     jsii: "npm:5.9.32"
-    jsii-diff: "npm:^1.127.0"
+    jsii-diff: "npm:^1.128.0"
     jsii-docgen: "npm:^10.5.0"
-    jsii-pacmak: "npm:^1.127.0"
-    jsii-rosetta: "npm:~5.9.37"
-    prettier: "npm:^3.8.1"
+    jsii-pacmak: "npm:^1.128.0"
+    jsii-rosetta: "npm:^5.9.39"
+    prettier: "npm:^3.8.3"
     projen: "npm:^0.99.34"
-    ts-jest: "npm:^29.4.6"
+    ts-jest: "npm:^29.4.9"
     ts-node: "npm:^10.9.2"
-    typescript: "npm:^6.0.2"
+    typescript: "npm:^6.0.3"
   peerDependencies:
     aws-cdk-lib: ^2.250.0
     constructs: ^10.5.1
@@ -3841,7 +3841,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"jsii-diff@npm:^1.127.0":
+"jsii-diff@npm:^1.128.0":
   version: 1.128.0
   resolution: "jsii-diff@npm:1.128.0"
   dependencies:
@@ -3877,7 +3877,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"jsii-pacmak@npm:^1.127.0":
+"jsii-pacmak@npm:^1.128.0":
   version: 1.128.0
   resolution: "jsii-pacmak@npm:1.128.0"
   dependencies:
@@ -3918,7 +3918,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"jsii-rosetta@npm:~5.9.37":
+"jsii-rosetta@npm:^5.9.39":
   version: 5.9.39
   resolution: "jsii-rosetta@npm:5.9.39"
   dependencies:
@@ -4914,7 +4914,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"prettier@npm:^3.8.1":
+"prettier@npm:^3.8.3":
   version: 3.8.3
   resolution: "prettier@npm:3.8.3"
   bin:
@@ -5760,7 +5760,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ts-jest@npm:^29.4.6":
+"ts-jest@npm:^29.4.9":
   version: 29.4.9
   resolution: "ts-jest@npm:29.4.9"
   dependencies:
@@ -5894,7 +5894,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"typescript@npm:^6.0.2":
+"typescript@npm:^6.0.3":
   version: 6.0.3
   resolution: "typescript@npm:6.0.3"
   bin:
@@ -5914,7 +5914,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"typescript@patch:typescript@npm%3A^6.0.2#optional!builtin<compat/typescript>":
+"typescript@patch:typescript@npm%3A^6.0.3#optional!builtin<compat/typescript>":
   version: 6.0.3
   resolution: "typescript@patch:typescript@npm%3A6.0.3#optional!builtin<compat/typescript>::version=6.0.3&hash=5786d5"
   bin:
