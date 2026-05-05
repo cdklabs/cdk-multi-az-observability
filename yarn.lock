@@ -19,66 +19,66 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@aws-cdk/aws-service-spec@npm:0.1.171":
-  version: 0.1.171
-  resolution: "@aws-cdk/aws-service-spec@npm:0.1.171"
+"@aws-cdk/aws-service-spec@npm:0.1.175":
+  version: 0.1.175
+  resolution: "@aws-cdk/aws-service-spec@npm:0.1.175"
   dependencies:
-    "@aws-cdk/service-spec-types": "npm:^0.0.237"
+    "@aws-cdk/service-spec-types": "npm:^0.0.241"
     "@cdklabs/tskb": "npm:^0.0.4"
-  checksum: 10c0/cf59b360b308ffb9d8140be55df95809328f61ce000b7e038eb9887fc7302fea43db866c696261d89a49ea9d436183f10b7f094423897602f7ae76b2d2471960
+  checksum: 10c0/7dbc987438756bcf880905ef548211b9a733bccd3bb69d79e2c05a949ca80f62804a12a85fda7d1f5d793ee7887e78565be5a55bd3d18ac1bf72fc7fabe95dcc
   languageName: node
   linkType: hard
 
 "@aws-cdk/cloud-assembly-api@npm:^2.2.0":
-  version: 2.2.1
-  resolution: "@aws-cdk/cloud-assembly-api@npm:2.2.1"
+  version: 2.2.2
+  resolution: "@aws-cdk/cloud-assembly-api@npm:2.2.2"
   dependencies:
     jsonschema: "npm:~1.4.1"
     semver: "npm:^7.7.4"
   peerDependencies:
-    "@aws-cdk/cloud-assembly-schema": ">=53.8.0"
-  checksum: 10c0/ef2ddb3e0e03e05039f76cdca856eb2c7ab240ca125513be0085c33d2354e62a2431a74f9334564af87cda26f8e0658f507fc130c34568ebf572bd646d3ada78
+    "@aws-cdk/cloud-assembly-schema": ">=53.15.0"
+  checksum: 10c0/cc5e7edd13d9d7e4ad7878c16f85a1a15c68e9ec51b71ad4a4c884ef0b3ed28fc25dc0627f0c226d65615cc6011ca02de94401862b650a996f8ccdff651e4d44
   languageName: node
   linkType: hard
 
 "@aws-cdk/cloud-assembly-schema@npm:^53.0.0":
-  version: 53.13.0
-  resolution: "@aws-cdk/cloud-assembly-schema@npm:53.13.0"
+  version: 53.20.0
+  resolution: "@aws-cdk/cloud-assembly-schema@npm:53.20.0"
   dependencies:
     jsonschema: "npm:~1.4.1"
     semver: "npm:^7.7.4"
-  checksum: 10c0/825baa970e1084d64e0fa02d01772ca7498177d5e331c40cf05e7dd4f42d252c92a7e4a384f793144256d3783f18e3df6e0c88b630c56b96e12207b2411060a7
+  checksum: 10c0/6c0e8702acce984e05b0a1ec1422325a71ff79408833777442b33dc83ae0f2b4346430356b983ee2a5029cdcc90cf7ca9e854050b630c50e1b853482012bd041
   languageName: node
   linkType: hard
 
 "@aws-cdk/integ-runner@npm:latest":
-  version: 2.197.18
-  resolution: "@aws-cdk/integ-runner@npm:2.197.18"
+  version: 2.197.19
+  resolution: "@aws-cdk/integ-runner@npm:2.197.19"
   dependencies:
-    "@aws-cdk/aws-service-spec": "npm:0.1.171"
-    aws-cdk: "npm:2.1119.0"
+    "@aws-cdk/aws-service-spec": "npm:0.1.175"
+    aws-cdk: "npm:2.1120.0"
   bin:
     integ-runner: bin/integ-runner
-  checksum: 10c0/ba600010100dc0dbaa8d4b784316d33b5fc63a60bc18834ecab89032ca69e74d8f344643fa716194f3fc020ce573bc3e358d37ad40e791616575da809a68c3ab
+  checksum: 10c0/b37da9df93a038f78e1d0c854ac844088025aa140cf83a69df666f52afdf7997244868238fd13c2b85dd645428df5cd7875e497fb5335ffba9f182a93c39e676
   languageName: node
   linkType: hard
 
 "@aws-cdk/integ-tests-alpha@npm:latest":
-  version: 2.250.0-alpha.0
-  resolution: "@aws-cdk/integ-tests-alpha@npm:2.250.0-alpha.0"
+  version: 2.252.0-alpha.0
+  resolution: "@aws-cdk/integ-tests-alpha@npm:2.252.0-alpha.0"
   peerDependencies:
-    aws-cdk-lib: ^2.250.0
+    aws-cdk-lib: ^2.252.0
     constructs: ^10.5.0
-  checksum: 10c0/47269371734724adde1b9b3e5d99c1e0c368b0ea4c69deefca9a600b4e096e57ea8d4f0a29699ad95b939275acc8ec3c2f43a668c4c76aa0dd78ea7e013fd174
+  checksum: 10c0/a9064fd1cfa6a937cafb17052c90da579154c32cb0a691ac7a142994ac4f81055eb974d357dc2727831a8094f55742fed47c57c6f90538b934f2956817861c89
   languageName: node
   linkType: hard
 
-"@aws-cdk/service-spec-types@npm:^0.0.237":
-  version: 0.0.237
-  resolution: "@aws-cdk/service-spec-types@npm:0.0.237"
+"@aws-cdk/service-spec-types@npm:^0.0.241":
+  version: 0.0.241
+  resolution: "@aws-cdk/service-spec-types@npm:0.0.241"
   dependencies:
     "@cdklabs/tskb": "npm:^0.0.4"
-  checksum: 10c0/55d5f3b37c68fa2bf9d90ff673febc76193288f97624afe8542607182c6e819b047060568d58cb57fcb5928a26e6f0811741ebc1561d0f3a5ea498c3a253211e
+  checksum: 10c0/d267f64526dbac09aee2a07c5e1b520d25ab1e39002025c3d8e10734ce9edfff2dbfd00d0a1f96de719f4a105808849dc8b8853355d940af9599c580ef17f731
   languageName: node
   linkType: hard
 
@@ -474,17 +474,17 @@ __metadata:
     "@types/jest": "npm:^30.0.0"
     "@types/node": "npm:^18"
     aws-cdk-lib: "npm:2.250.0"
-    cdk-nag: "npm:^2.38.1"
+    cdk-nag: "npm:^2.38.2"
     cdklabs-projen-project-types: "npm:^0.3.16"
     commit-and-tag-version: "npm:^12"
     constructs: "npm:10.5.1"
     jest: "npm:^30.3.0"
     jest-junit: "npm:^16"
     jsii: "npm:5.9.32"
-    jsii-diff: "npm:^1.128.0"
+    jsii-diff: "npm:^1.129.0"
     jsii-docgen: "npm:^10.5.0"
-    jsii-pacmak: "npm:^1.128.0"
-    jsii-rosetta: "npm:^5.9.42"
+    jsii-pacmak: "npm:^1.129.0"
+    jsii-rosetta: "npm:^5.9.43"
     prettier: "npm:^3.8.3"
     projen: "npm:^0.99.52"
     ts-jest: "npm:^29.4.9"
@@ -942,6 +942,16 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@jsii/check-node@npm:1.129.0":
+  version: 1.129.0
+  resolution: "@jsii/check-node@npm:1.129.0"
+  dependencies:
+    chalk: "npm:^4.1.2"
+    semver: "npm:^7.7.4"
+  checksum: 10c0/acf24e650516af363a733aa2ea74cbdcdd4e66b7d9225676fd85a7d5f9f5b34778e9035db2133d06f0642e9b79ac53ed998cb3d43dca9c84a41999e0c2ece9c2
+  languageName: node
+  linkType: hard
+
 "@jsii/spec@npm:1.127.0":
   version: 1.127.0
   resolution: "@jsii/spec@npm:1.127.0"
@@ -953,6 +963,13 @@ __metadata:
   version: 1.128.0
   resolution: "@jsii/spec@npm:1.128.0"
   checksum: 10c0/60c92e199717db502adbc4fabc631d086cc9637c3ba2bf5aac9252ee7c8eb2c6718c5bd215e6d49123f20121fda7f2a3aaed9f38df311f03ed400cdc89fc1822
+  languageName: node
+  linkType: hard
+
+"@jsii/spec@npm:1.129.0":
+  version: 1.129.0
+  resolution: "@jsii/spec@npm:1.129.0"
+  checksum: 10c0/9d5cfd536c99153c2af19af54171353d2c84e4f29411a043a89ae2a5eb92acb9e635251b551042d7aa8886378e22af51bfdfa34f3eda9e6a1b947186b2b1ccab
   languageName: node
   linkType: hard
 
@@ -1611,12 +1628,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"aws-cdk@npm:2.1119.0":
-  version: 2.1119.0
-  resolution: "aws-cdk@npm:2.1119.0"
+"aws-cdk@npm:2.1120.0":
+  version: 2.1120.0
+  resolution: "aws-cdk@npm:2.1120.0"
   bin:
     cdk: bin/cdk
-  checksum: 10c0/8a7307dd86c15d124038546f9d8638a18ef29905f65f1d8151aec6dc8982cb7798a4784c658051bce5f9cbe6b63e25e4e170b85e1042d840b833a0f2c1ab6e29
+  checksum: 10c0/f74149d06d6220164788b8e3c9970cf04fa4d99e1a41beeae613f1897fa24ce3d1dff4aa11406a94f08c9e6dcafc807939b8b2fcf419418f783dd9673bbcc720
   languageName: node
   linkType: hard
 
@@ -1834,13 +1851,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"cdk-nag@npm:^2.38.1":
-  version: 2.38.1
-  resolution: "cdk-nag@npm:2.38.1"
+"cdk-nag@npm:^2.38.2":
+  version: 2.38.2
+  resolution: "cdk-nag@npm:2.38.2"
   peerDependencies:
     aws-cdk-lib: ^2.176.0
     constructs: ^10.5.1
-  checksum: 10c0/cc05dcfec518388e1c31d4ba1d478974b52173460e8b8c12e2f2d812f2609a6c5713123a556343b941d94f320e8e3a439c045db52303cdcc3cf594f5dbc82f5a
+  checksum: 10c0/9dbac8ab7040a5499e8b86d4199b725cdf32fbac028b0168f8c48ca82525a181db1568e94a3666bdcffabedb3c842dd7719d0f9afcf3072bebfddbfbf0f4bf75
   languageName: node
   linkType: hard
 
@@ -1941,14 +1958,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"codemaker@npm:^1.128.0":
-  version: 1.128.0
-  resolution: "codemaker@npm:1.128.0"
+"codemaker@npm:^1.129.0":
+  version: 1.129.0
+  resolution: "codemaker@npm:1.129.0"
   dependencies:
     camelcase: "npm:^6.3.0"
     decamelize: "npm:^5.0.1"
     fs-extra: "npm:^10.1.0"
-  checksum: 10c0/8654b71b32ecc3ed03d7440e346608d995588bac81a608cfec674cfa7731af1c8139047068dc57705ca7c43b373d0a76ece42d8f84b409c41174634641221931
+  checksum: 10c0/cc9f0b88cd35fa3d473d4b96d3074b84744b5d0aee34ae745be2fdd8dadfd7cbf3383282d074a38960a10794d09ca12b16fef346ba5e0ffc42efc33ce8c05d74
   languageName: node
   linkType: hard
 
@@ -3841,19 +3858,19 @@ __metadata:
   languageName: node
   linkType: hard
 
-"jsii-diff@npm:^1.128.0":
-  version: 1.128.0
-  resolution: "jsii-diff@npm:1.128.0"
+"jsii-diff@npm:^1.129.0":
+  version: 1.129.0
+  resolution: "jsii-diff@npm:1.129.0"
   dependencies:
-    "@jsii/check-node": "npm:1.128.0"
-    "@jsii/spec": "npm:1.128.0"
+    "@jsii/check-node": "npm:1.129.0"
+    "@jsii/spec": "npm:1.129.0"
     fs-extra: "npm:^10.1.0"
-    jsii-reflect: "npm:^1.128.0"
+    jsii-reflect: "npm:^1.129.0"
     log4js: "npm:^6.9.1"
     yargs: "npm:^17.7.2"
   bin:
     jsii-diff: bin/jsii-diff
-  checksum: 10c0/a3e5aeb51ee35255ebad9e4e5edae48dde2c684aab75e88841bb52ca1e42098f01ab0597f4a91f69483fdf7073b65fd0892b3a1867ace22a90b95cc8b6520b89
+  checksum: 10c0/3a84dc7656f9830a83e68a730f4aad4e4e5edba79785a21f75988b6c572a95bd29837038bc23f96455f96974468dcdc71e90b7f0dece84b2d8531b3a0836333c
   languageName: node
   linkType: hard
 
@@ -3877,18 +3894,18 @@ __metadata:
   languageName: node
   linkType: hard
 
-"jsii-pacmak@npm:^1.128.0":
-  version: 1.128.0
-  resolution: "jsii-pacmak@npm:1.128.0"
+"jsii-pacmak@npm:^1.129.0":
+  version: 1.129.0
+  resolution: "jsii-pacmak@npm:1.129.0"
   dependencies:
-    "@jsii/check-node": "npm:1.128.0"
-    "@jsii/spec": "npm:1.128.0"
+    "@jsii/check-node": "npm:1.129.0"
+    "@jsii/spec": "npm:1.129.0"
     clone: "npm:^2.1.2"
-    codemaker: "npm:^1.128.0"
+    codemaker: "npm:^1.129.0"
     commonmark: "npm:^0.31.2"
     escape-string-regexp: "npm:^4.0.0"
     fs-extra: "npm:^10.1.0"
-    jsii-reflect: "npm:^1.128.0"
+    jsii-reflect: "npm:^1.129.0"
     semver: "npm:^7.7.4"
     spdx-license-list: "npm:^6.11.0"
     xmlbuilder: "npm:^15.1.1"
@@ -3897,7 +3914,7 @@ __metadata:
     jsii-rosetta: ">=5.9.0"
   bin:
     jsii-pacmak: bin/jsii-pacmak
-  checksum: 10c0/839ca0de6d1f16bb300342dc6df1226cce1472f64239c06a46a3d96beb25135f08a4bfd5448bf4c6b0c793f60375d87681b30de1fc854c458ccb7fd75ba42c55
+  checksum: 10c0/091a4efef8b8bee8248a46597e58c0a933d75bfe72a00ed4198e7300191238cfe8d464c229deb106d15f77cf66fe7ed2712ca3950243f5babc519d08220eca24
   languageName: node
   linkType: hard
 
@@ -3918,9 +3935,26 @@ __metadata:
   languageName: node
   linkType: hard
 
-"jsii-rosetta@npm:^5.9.42":
-  version: 5.9.42
-  resolution: "jsii-rosetta@npm:5.9.42"
+"jsii-reflect@npm:^1.129.0":
+  version: 1.129.0
+  resolution: "jsii-reflect@npm:1.129.0"
+  dependencies:
+    "@jsii/check-node": "npm:1.129.0"
+    "@jsii/spec": "npm:1.129.0"
+    chalk: "npm:^4"
+    fs-extra: "npm:^10.1.0"
+    oo-ascii-tree: "npm:^1.129.0"
+    yargs: "npm:^17.7.2"
+  bin:
+    jsii-query: bin/jsii-query
+    jsii-tree: bin/jsii-tree
+  checksum: 10c0/5d406b119d7dbb18818652899f36e2a7af2ecaee4edf25896034c98803671b3acd2d06e6cfdd4eccb9def7bb9281e23bf33c1bf57fdcccca680d46d70728d864
+  languageName: node
+  linkType: hard
+
+"jsii-rosetta@npm:^5.9.43":
+  version: 5.9.43
+  resolution: "jsii-rosetta@npm:5.9.43"
   dependencies:
     "@jsii/check-node": "npm:^1.128.0"
     "@jsii/spec": "npm:^1.128.0"
@@ -3937,7 +3971,7 @@ __metadata:
     yargs: "npm:^17.7.2"
   bin:
     jsii-rosetta: bin/jsii-rosetta
-  checksum: 10c0/ba05931b0e14e8a9fbb07e77dee10b1560e4c41a00ffe075714702f02d048c8576309825dc80b3019f147dba354cecae14a6ee29353f8a28ceb8bc5e31a5e332
+  checksum: 10c0/2a77ffce5c89494faa9ff7101d03b0b32e7fffcbd099c497c47986c89574662719b3b3a01d43bc01dec41594b29dcc731fe6a0611763f42a1c5d255cc6843201
   languageName: node
   linkType: hard
 
@@ -4651,6 +4685,13 @@ __metadata:
   version: 1.128.0
   resolution: "oo-ascii-tree@npm:1.128.0"
   checksum: 10c0/1aa0e63436bafddbbc5e1dc84dc942eb00dcd1914972452b86fed801b3a5c92160f9a3cdc32c116c0192eb6345a0a5748f80ffcf9aa9ea17e3479b28bb55e48b
+  languageName: node
+  linkType: hard
+
+"oo-ascii-tree@npm:^1.129.0":
+  version: 1.129.0
+  resolution: "oo-ascii-tree@npm:1.129.0"
+  checksum: 10c0/dc6c49b1c53633598721cc9b1f1d5f983387bff3368b3a1d510a526ac7c95c15b13321be479b363082dc9280850e27640e5cba9e7755ea32974becf73819a560
   languageName: node
   linkType: hard
 
