@@ -479,7 +479,7 @@ __metadata:
     commit-and-tag-version: "npm:^12"
     constructs: "npm:10.5.1"
     jest: "npm:^30.4.0"
-    jest-junit: "npm:^16"
+    jest-junit: "npm:^17"
     jsii: "npm:5.9.32"
     jsii-diff: "npm:^1.129.0"
     jsii-docgen: "npm:^10.5.0"
