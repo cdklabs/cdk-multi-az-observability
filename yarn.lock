@@ -486,7 +486,7 @@ __metadata:
     jsii-pacmak: "npm:^1.129.0"
     jsii-rosetta: "npm:^5.9.44"
     prettier: "npm:^3.8.3"
-    projen: "npm:^0.99.58"
+    projen: "npm:^0.99.62"
     ts-jest: "npm:^29.4.9"
     ts-node: "npm:^10.9.2"
     typescript: "npm:^6.0.3"
@@ -1919,14 +1919,14 @@ __metadata:
   linkType: hard
 
 "cdklabs-projen-project-types@npm:^0.3.16":
-  version: 0.3.32
-  resolution: "cdklabs-projen-project-types@npm:0.3.32"
+  version: 0.3.35
+  resolution: "cdklabs-projen-project-types@npm:0.3.35"
   dependencies:
     yaml: "npm:^2.8.4"
   peerDependencies:
     constructs: ^10.0.0
     projen: ">=0.99.48 <1.0.0"
-  checksum: 10c0/d736f0fa8e76db590a4c1a7b57c0a59934bdea2b9b8d20d0f30b9ec701b10bade04d135ebafcfbecba33b11bb0c17303b29e1ce970671684135fb2ec4246c183
+  checksum: 10c0/0b1851bc07f4f32b44100910d410502b7778a9f9b3cded457adcd7b03f9b114a37dbf7b90c2355f5539ad45b7f40ad2766dc8f2a6cbc437e3e1ad44c89b2b3e9
   languageName: node
   linkType: hard
 
@@ -5130,9 +5130,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"projen@npm:^0.99.58":
-  version: 0.99.58
-  resolution: "projen@npm:0.99.58"
+"projen@npm:^0.99.62":
+  version: 0.99.62
+  resolution: "projen@npm:0.99.62"
   dependencies:
     "@iarna/toml": "npm:^2.2.5"
     case: "npm:^1.6.3"
@@ -5144,7 +5144,7 @@ __metadata:
     fast-json-patch: "npm:^3.1.1"
     ini: "npm:^2.0.0"
     parse-conflict-json: "npm:^4.0.0"
-    semver: "npm:^7.7.4"
+    semver: "npm:^7.8.0"
     shx: "npm:^0.4.0"
     xmlbuilder2: "npm:^4.0.3"
     yaml: "npm:^2.2.2"
@@ -5153,7 +5153,7 @@ __metadata:
     constructs: ^10.0.0
   bin:
     projen: bin/projen
-  checksum: 10c0/957eab35bc53fc0aadff0096469fba79e7d4bc849ef0026c24b9219e552d9c15be50a70c708d7d3e9a07d8ff4a334ade4046393f3d0c93525400626b7d2675f2
+  checksum: 10c0/87a96e77242ab743d9369be2c537583ee940e2d95a0386c7e3358c2cd407d7363a199fa977f2b9197121eef14fe5f4bb4bd067e23e4145e1af77052ae3f84682
   languageName: node
   linkType: hard
 
@@ -5438,6 +5438,15 @@ __metadata:
   bin:
     semver: bin/semver.js
   checksum: 10c0/5215ad0234e2845d4ea5bb9d836d42b03499546ddafb12075566899fc617f68794bb6f146076b6881d755de17d6c6cc73372555879ec7dce2c2feee947866ad2
+  languageName: node
+  linkType: hard
+
+"semver@npm:^7.8.0":
+  version: 7.8.0
+  resolution: "semver@npm:7.8.0"
+  bin:
+    semver: bin/semver.js
+  checksum: 10c0/8f096ca9b80ffd47b308d03f9ce8c873e27e2983f36023c559cdc92c51e8433fc23ebbfe57ec9623fc155636a6961ee989501099841ae4bb1babc8d2b3f048cd
   languageName: node
   linkType: hard
 
