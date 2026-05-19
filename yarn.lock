@@ -1920,14 +1920,14 @@ __metadata:
   linkType: hard
 
 "cdklabs-projen-project-types@npm:^0.3.16":
-  version: 0.3.35
-  resolution: "cdklabs-projen-project-types@npm:0.3.35"
+  version: 0.3.36
+  resolution: "cdklabs-projen-project-types@npm:0.3.36"
   dependencies:
-    yaml: "npm:^2.8.4"
+    yaml: "npm:^2.9.0"
   peerDependencies:
     constructs: ^10.0.0
     projen: ">=0.99.48 <1.0.0"
-  checksum: 10c0/0b1851bc07f4f32b44100910d410502b7778a9f9b3cded457adcd7b03f9b114a37dbf7b90c2355f5539ad45b7f40ad2766dc8f2a6cbc437e3e1ad44c89b2b3e9
+  checksum: 10c0/06901a1a6f08441943d80edf8c52a41290bc4196c0970d8b3dbf126ee2a663c62c6e63dbd82c8cd6021dfec1368b393287ed96a6e4f1907e655ca642425a75c1
   languageName: node
   linkType: hard
 
@@ -6491,12 +6491,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"yaml@npm:^2.8.4":
-  version: 2.8.4
-  resolution: "yaml@npm:2.8.4"
+"yaml@npm:^2.9.0":
+  version: 2.9.0
+  resolution: "yaml@npm:2.9.0"
   bin:
     yaml: bin.mjs
-  checksum: 10c0/0a33a1fa28d4bc79f61a12ec7ef7a2bce0ce5f8e80c6eaecfb4a0c88c08767dd1ede372b6a3bcd70891213b8c9f3169b355c97e77026d3b3459e10d2cccaef1e
+  checksum: 10c0/f340718df45e97a9551b9bf9dac61c80050bc464513b710debfb5067c380c8472e3b67809cffacb4ab5ffb5e66ef9310816c88b05f371cec60abfedd8c88e0a2
   languageName: node
   linkType: hard
 
