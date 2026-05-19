@@ -58,7 +58,7 @@ const project = new CdklabsConstructLibrary ({
   projenrcTs: true,
   description:
     'A CDK construct for implementing multi-AZ observability to detect single AZ impairments',
-  dependabot: false,
+  dependabot: true,
   dependabotOptions: {
     labels: [
       "auto-approve",
