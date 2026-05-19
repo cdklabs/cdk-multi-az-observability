@@ -4134,8 +4134,8 @@ __metadata:
   linkType: hard
 
 "jsii-rosetta@npm:^5.9.45":
-  version: 5.9.45
-  resolution: "jsii-rosetta@npm:5.9.45"
+  version: 5.9.46
+  resolution: "jsii-rosetta@npm:5.9.46"
   dependencies:
     "@jsii/check-node": "npm:^1.129.0"
     "@jsii/spec": "npm:^1.129.0"
@@ -4144,7 +4144,7 @@ __metadata:
     commonmark: "npm:^0.31.2"
     fast-glob: "npm:^3.3.3"
     jsii: "npm:~5.9.1"
-    semver: "npm:^7.7.4"
+    semver: "npm:^7.8.0"
     semver-intersect: "npm:^1.5.0"
     stream-json: "npm:^1.9.1"
     typescript: "npm:~5.9"
@@ -4152,7 +4152,7 @@ __metadata:
     yargs: "npm:^17.7.2"
   bin:
     jsii-rosetta: bin/jsii-rosetta
-  checksum: 10c0/56c8a91343d8ca48eb9b324d9fa274332882a18393cb7ba52b58e6d34342c37c50f6827c292ec362e3b96c2e5a5712f94ce8c398ba5242ab901d092f400941a4
+  checksum: 10c0/c3fa939df9314fcbe4ad60b9a2a2fdc2e76cb44a44dc6da86a679eace70b29345c6f136c97709957389cecacf06f848568aaffbcf6fe5170db36f5de227d5acb
   languageName: node
   linkType: hard
 
