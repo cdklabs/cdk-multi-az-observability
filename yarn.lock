@@ -983,7 +983,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@jsii/check-node@npm:1.130.0, @jsii/check-node@npm:^1.129.0":
+"@jsii/check-node@npm:1.130.0":
   version: 1.130.0
   resolution: "@jsii/check-node@npm:1.130.0"
   dependencies:
@@ -1003,7 +1003,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@jsii/check-node@npm:1.132.0":
+"@jsii/check-node@npm:1.132.0, @jsii/check-node@npm:^1.131.0":
   version: 1.132.0
   resolution: "@jsii/check-node@npm:1.132.0"
   dependencies:
@@ -1034,17 +1034,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@jsii/spec@npm:1.132.0":
+"@jsii/spec@npm:1.132.0, @jsii/spec@npm:^1.131.0":
   version: 1.132.0
   resolution: "@jsii/spec@npm:1.132.0"
   checksum: 10c0/c0f62aa25665130e75f73f11493b5452bfb6705319c99f95fdacccca410f403b6b5380d792d0f7e0de4a1c09d47d0642ca9527b0bf03f9bcda261b8c5f2788bf
-  languageName: node
-  linkType: hard
-
-"@jsii/spec@npm:^1.129.0":
-  version: 1.129.0
-  resolution: "@jsii/spec@npm:1.129.0"
-  checksum: 10c0/9d5cfd536c99153c2af19af54171353d2c84e4f29411a043a89ae2a5eb92acb9e635251b551042d7aa8886378e22af51bfdfa34f3eda9e6a1b947186b2b1ccab
   languageName: node
   linkType: hard
 
@@ -4124,11 +4117,11 @@ __metadata:
   linkType: hard
 
 "jsii-rosetta@npm:^5.9.46":
-  version: 5.9.46
-  resolution: "jsii-rosetta@npm:5.9.46"
+  version: 5.9.47
+  resolution: "jsii-rosetta@npm:5.9.47"
   dependencies:
-    "@jsii/check-node": "npm:^1.129.0"
-    "@jsii/spec": "npm:^1.129.0"
+    "@jsii/check-node": "npm:^1.131.0"
+    "@jsii/spec": "npm:^1.131.0"
     "@xmldom/xmldom": "npm:^0.9.10"
     chalk: "npm:^4"
     commonmark: "npm:^0.31.2"
@@ -4142,7 +4135,7 @@ __metadata:
     yargs: "npm:^17.7.2"
   bin:
     jsii-rosetta: bin/jsii-rosetta
-  checksum: 10c0/c3fa939df9314fcbe4ad60b9a2a2fdc2e76cb44a44dc6da86a679eace70b29345c6f136c97709957389cecacf06f848568aaffbcf6fe5170db36f5de227d5acb
+  checksum: 10c0/73f1e6cbdc442a70dab96a0733e827b5b2250a35a77a4e6584a8915bd412e28b2da73ae60b9755107ca7f5cb8b19ebee5c24088a03c31a81972b4f8fa5605d6c
   languageName: node
   linkType: hard
 
