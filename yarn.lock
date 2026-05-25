@@ -4030,18 +4030,18 @@ __metadata:
   linkType: hard
 
 "jsii-diff@npm:^1.131.0":
-  version: 1.131.0
-  resolution: "jsii-diff@npm:1.131.0"
+  version: 1.132.0
+  resolution: "jsii-diff@npm:1.132.0"
   dependencies:
-    "@jsii/check-node": "npm:1.131.0"
-    "@jsii/spec": "npm:1.131.0"
+    "@jsii/check-node": "npm:1.132.0"
+    "@jsii/spec": "npm:1.132.0"
     fs-extra: "npm:^10.1.0"
-    jsii-reflect: "npm:^1.131.0"
+    jsii-reflect: "npm:^1.132.0"
     log4js: "npm:^6.9.1"
     yargs: "npm:^17.7.2"
   bin:
     jsii-diff: bin/jsii-diff
-  checksum: 10c0/c1bd616bdd3b7bdb67e98cb54504ea65f6131f748176b031e27a77bde13e8c311f92d452df36a2d729db17a12d02b13315bde81fd8fb1dff639a723690b5f67c
+  checksum: 10c0/aa18f2e470c0b192d0db91a0fdd1bb6fc5c95cb6d07873ad12cd2d1b88a5355b8f1988d62a4aa87b7b4a69a8589ce5bf95cf29b1845c16948fc655d848bcf37f
   languageName: node
   linkType: hard
 
@@ -4089,7 +4089,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"jsii-reflect@npm:^1.130.0, jsii-reflect@npm:^1.131.0":
+"jsii-reflect@npm:^1.130.0":
   version: 1.131.0
   resolution: "jsii-reflect@npm:1.131.0"
   dependencies:
