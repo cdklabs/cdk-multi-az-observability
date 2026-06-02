@@ -4100,8 +4100,8 @@ __metadata:
   linkType: hard
 
 "jsii-rosetta@npm:^5.9.48":
-  version: 5.9.48
-  resolution: "jsii-rosetta@npm:5.9.48"
+  version: 5.9.49
+  resolution: "jsii-rosetta@npm:5.9.49"
   dependencies:
     "@jsii/check-node": "npm:^1.132.0"
     "@jsii/spec": "npm:^1.132.0"
@@ -4118,7 +4118,7 @@ __metadata:
     yargs: "npm:^17.7.2"
   bin:
     jsii-rosetta: bin/jsii-rosetta
-  checksum: 10c0/f77aafcfb6d56fbd9fe9361f299d3960061073b2973d38e9e549105c17ad942ed42bc43db7e29db43d05f1663ef74cbf91e860acaa2320505089f95a0e2a3378
+  checksum: 10c0/28d57b0358bc580f58d61d56425191e9d307e90cbcfd57b40b9d00eeb5bedc3bf1ae46cad81b3c3925964f85bc2e2493d2d83483ba219c13aa857db31d5a89e0
   languageName: node
   linkType: hard
 
