@@ -1017,7 +1017,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@jsii/spec@npm:1.133.0":
+"@jsii/spec@npm:1.133.0, @jsii/spec@npm:^1.133.0":
   version: 1.133.0
   resolution: "@jsii/spec@npm:1.133.0"
   checksum: 10c0/e656b56e4bf7d8fd8285e4198d7be4c5e6aed6abe220249dcd18a808f78293dc544dc84ba28f602edb04a52d65c4041ec50605ec232e141e8c5292a83905fd0e
@@ -4022,14 +4022,14 @@ __metadata:
   linkType: hard
 
 "jsii-docgen@npm:^10.5.0":
-  version: 10.11.21
-  resolution: "jsii-docgen@npm:10.11.21"
+  version: 10.11.22
+  resolution: "jsii-docgen@npm:10.11.22"
   dependencies:
-    "@jsii/spec": "npm:^1.132.0"
+    "@jsii/spec": "npm:^1.133.0"
     case: "npm:^1.6.3"
     fast-glob: "npm:^3.3.3"
     fs-extra: "npm:^10.1.0"
-    jsii-reflect: "npm:^1.132.0"
+    jsii-reflect: "npm:^1.133.0"
     json-stream-stringify: "npm:^3.1.6"
     semver: "npm:^7.8.1"
     yargs: "npm:^16.2.0"
@@ -4037,7 +4037,7 @@ __metadata:
     jsii-rosetta: ^1.85.0 || ~5.0.14 || ~5.1.2 || ~5.2.0 || ~5.3.0 || ~5.4.0 || ~5.5.0 || ~5.6.0 || ~5.7.0 || ~5.8.0 || ~5.9.1
   bin:
     jsii-docgen: bin/jsii-docgen
-  checksum: 10c0/7b20c9e0de2cf2312f6b417ff450ea8df11c043c1e9d8b40d205e588b3fca8eb61d93c1e102bf5575b4df1019aabd204d54f9f780e6b667aec2eb8dac5a5ed3a
+  checksum: 10c0/17bc04c2b3149b3629887c9499758bc30701a679f86360c0a20f9706fa7cf564651376f4e7de2b2fbba7262167665d6235c1870ac1d86af482bf1e707ea41e6e
   languageName: node
   linkType: hard
 
