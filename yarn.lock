@@ -13,9 +13,9 @@ __metadata:
   linkType: hard
 
 "@aws-cdk/asset-node-proxy-agent-v6@npm:^2.1.1":
-  version: 2.1.1
-  resolution: "@aws-cdk/asset-node-proxy-agent-v6@npm:2.1.1"
-  checksum: 10c0/cb9684d0e4693c01ce9698522c268acf804d61a0ff665958accb58914c547ce54690861c8b58dbb2bbf12cc0c7e7215ccbb4f0edd402e8fd9cfa3b32e48218ca
+  version: 2.1.2
+  resolution: "@aws-cdk/asset-node-proxy-agent-v6@npm:2.1.2"
+  checksum: 10c0/5b80cf4e4b853d4410d80ab906adfa9c268c9a78b9df6f736ecee09dbd1e527e893188469d8bdc932e34c4778ffd4abda74288ea009174f42f8be1acf82824e7
   languageName: node
   linkType: hard
 
@@ -64,12 +64,12 @@ __metadata:
   linkType: hard
 
 "@aws-cdk/integ-tests-alpha@npm:latest":
-  version: 2.257.0-alpha.0
-  resolution: "@aws-cdk/integ-tests-alpha@npm:2.257.0-alpha.0"
+  version: 2.258.0-alpha.0
+  resolution: "@aws-cdk/integ-tests-alpha@npm:2.258.0-alpha.0"
   peerDependencies:
-    aws-cdk-lib: ^2.257.0
+    aws-cdk-lib: ^2.258.0
     constructs: ^10.5.0
-  checksum: 10c0/900109fae9b6819e4ca978ac0a68dfedd9b4ba6257dd8cdac2df16726b62c741721fc57873f4385a3f46e5fdea73de79610c5065e761d60b1b9d9ad0f70d8606
+  checksum: 10c0/800ee78f9acd299be0fff930b503a674df01ff06a17ecaf0b6604553da3628b953ca11a1f52196d63d2a567e7aeae9f2b082b78dd89cff757aba12a3c40d0947
   languageName: node
   linkType: hard
 
@@ -481,10 +481,10 @@ __metadata:
     jest: "npm:^30.4.2"
     jest-junit: "npm:^17"
     jsii: "npm:5.9.32"
-    jsii-diff: "npm:^1.132.0"
+    jsii-diff: "npm:^1.134.0"
     jsii-docgen: "npm:^10.5.0"
-    jsii-pacmak: "npm:^1.132.0"
-    jsii-rosetta: "npm:^5.9.48"
+    jsii-pacmak: "npm:^1.134.0"
+    jsii-rosetta: "npm:^5.9.49"
     prettier: "npm:^3.8.3"
     projen: "npm:^0.99.70"
     ts-jest: "npm:^29.4.11"
@@ -2882,13 +2882,13 @@ __metadata:
   linkType: hard
 
 "fs-extra@npm:^11.3.3":
-  version: 11.3.4
-  resolution: "fs-extra@npm:11.3.4"
+  version: 11.3.5
+  resolution: "fs-extra@npm:11.3.5"
   dependencies:
     graceful-fs: "npm:^4.2.0"
     jsonfile: "npm:^6.0.1"
     universalify: "npm:^2.0.0"
-  checksum: 10c0/e08276f767a62496ae97d711aaa692c6a478177f24a85979b6a2881c9db9c68b8c2ad5da0bcf92c0b2a474cea6e935ec245656441527958fd8372cb647087df0
+  checksum: 10c0/33e80bad6b5d17308faa197e5ede99ecba4b6f6cb4aa4645d52745476c75afc57665bdf39ec75b2ebb38b97b7110f634a8dcc0a546e248eb4de059275cf5ac90
   languageName: node
   linkType: hard
 
@@ -4022,7 +4022,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"jsii-diff@npm:^1.132.0":
+"jsii-diff@npm:^1.134.0":
   version: 1.134.0
   resolution: "jsii-diff@npm:1.134.0"
   dependencies:
@@ -4039,8 +4039,8 @@ __metadata:
   linkType: hard
 
 "jsii-docgen@npm:^10.5.0":
-  version: 10.11.23
-  resolution: "jsii-docgen@npm:10.11.23"
+  version: 10.11.22
+  resolution: "jsii-docgen@npm:10.11.22"
   dependencies:
     "@jsii/spec": "npm:^1.133.0"
     case: "npm:^1.6.3"
@@ -4054,11 +4054,11 @@ __metadata:
     jsii-rosetta: ^1.85.0 || ~5.0.14 || ~5.1.2 || ~5.2.0 || ~5.3.0 || ~5.4.0 || ~5.5.0 || ~5.6.0 || ~5.7.0 || ~5.8.0 || ~5.9.1
   bin:
     jsii-docgen: bin/jsii-docgen
-  checksum: 10c0/70a7dd563b4924e7e626f35cfe84b2d1d5793eff71757dcd6854f8844538706692adb31b264d71ac93975c2aacd754dce4dee4fe74577386b32a0aca9abc4a60
+  checksum: 10c0/17bc04c2b3149b3629887c9499758bc30701a679f86360c0a20f9706fa7cf564651376f4e7de2b2fbba7262167665d6235c1870ac1d86af482bf1e707ea41e6e
   languageName: node
   linkType: hard
 
-"jsii-pacmak@npm:^1.132.0":
+"jsii-pacmak@npm:^1.134.0":
   version: 1.134.0
   resolution: "jsii-pacmak@npm:1.134.0"
   dependencies:
@@ -4116,7 +4116,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"jsii-rosetta@npm:^5.9.48":
+"jsii-rosetta@npm:^5.9.49":
   version: 5.9.49
   resolution: "jsii-rosetta@npm:5.9.49"
   dependencies:
@@ -4162,8 +4162,8 @@ __metadata:
   linkType: hard
 
 "jsii@npm:~5.9.1":
-  version: 5.9.43
-  resolution: "jsii@npm:5.9.43"
+  version: 5.9.44
+  resolution: "jsii@npm:5.9.44"
   dependencies:
     "@jsii/check-node": "npm:1.132.0"
     "@jsii/spec": "npm:1.132.0"
@@ -4179,7 +4179,7 @@ __metadata:
     yargs: "npm:^17.7.2"
   bin:
     jsii: bin/jsii
-  checksum: 10c0/dc5490e14ddcdee8019abad8728cf83ce05eacb5e6d8cbe648cf4b2b150924e4c0929dd869918f7e905ebeb579c68993948ff9ec51d4a9c8d223b95f5c7f3cf9
+  checksum: 10c0/35295348d9a65645cd33dad3b1c0e80d9c349cbfe61770b6cd4a1f9d8047ef410ca7d721bbbbb5f8ae77fec7ced6c4f8e26c1c56bbf9f912b633c708e27976e3
   languageName: node
   linkType: hard
 
