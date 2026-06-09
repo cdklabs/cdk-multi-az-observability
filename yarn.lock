@@ -993,16 +993,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@jsii/check-node@npm:1.133.0":
-  version: 1.133.0
-  resolution: "@jsii/check-node@npm:1.133.0"
-  dependencies:
-    chalk: "npm:^4.1.2"
-    semver: "npm:^7.8.1"
-  checksum: 10c0/7d50b54ff50ce91f7fcc6b70c374701a8929a098d88fb938e524ae9cb8d0b1feda19159b48b6ac36842a07fd61070a05212cbb62837da14dda8d31c9d2831d6f
-  languageName: node
-  linkType: hard
-
 "@jsii/check-node@npm:1.134.0":
   version: 1.134.0
   resolution: "@jsii/check-node@npm:1.134.0"
@@ -1027,14 +1017,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@jsii/spec@npm:1.133.0, @jsii/spec@npm:^1.133.0":
-  version: 1.133.0
-  resolution: "@jsii/spec@npm:1.133.0"
-  checksum: 10c0/e656b56e4bf7d8fd8285e4198d7be4c5e6aed6abe220249dcd18a808f78293dc544dc84ba28f602edb04a52d65c4041ec50605ec232e141e8c5292a83905fd0e
-  languageName: node
-  linkType: hard
-
-"@jsii/spec@npm:1.134.0":
+"@jsii/spec@npm:1.134.0, @jsii/spec@npm:^1.134.0":
   version: 1.134.0
   resolution: "@jsii/spec@npm:1.134.0"
   checksum: 10c0/925f6d956d34ce15929ac3d42e5ae229179abb1939898afc14b33218956e76f848f218dc17c55fde7f25c666da085af7a525f2edf82466440a2b7ea9ddb9ec91
@@ -4039,22 +4022,22 @@ __metadata:
   linkType: hard
 
 "jsii-docgen@npm:^10.5.0":
-  version: 10.11.23
-  resolution: "jsii-docgen@npm:10.11.23"
+  version: 10.11.24
+  resolution: "jsii-docgen@npm:10.11.24"
   dependencies:
-    "@jsii/spec": "npm:^1.133.0"
+    "@jsii/spec": "npm:^1.134.0"
     case: "npm:^1.6.3"
     fast-glob: "npm:^3.3.3"
     fs-extra: "npm:^10.1.0"
-    jsii-reflect: "npm:^1.133.0"
+    jsii-reflect: "npm:^1.134.0"
     json-stream-stringify: "npm:^3.1.6"
-    semver: "npm:^7.8.1"
+    semver: "npm:^7.8.3"
     yargs: "npm:^16.2.0"
   peerDependencies:
     jsii-rosetta: ^1.85.0 || ~5.0.14 || ~5.1.2 || ~5.2.0 || ~5.3.0 || ~5.4.0 || ~5.5.0 || ~5.6.0 || ~5.7.0 || ~5.8.0 || ~5.9.1
   bin:
     jsii-docgen: bin/jsii-docgen
-  checksum: 10c0/70a7dd563b4924e7e626f35cfe84b2d1d5793eff71757dcd6854f8844538706692adb31b264d71ac93975c2aacd754dce4dee4fe74577386b32a0aca9abc4a60
+  checksum: 10c0/4579de12d804269e54b1b735cb1492140a9af2d55994583d6d83420a856671f38b7e69e61843adc6d8f6d248ac18678c76ee40893714b4b0f8350d77107660df
   languageName: node
   linkType: hard
 
@@ -4079,23 +4062,6 @@ __metadata:
   bin:
     jsii-pacmak: bin/jsii-pacmak
   checksum: 10c0/813026ea7bd570c35895c863a236aa194d1b7695bc53d0283478ce441a1c308e49700ce0dafe1d4ae433522b6f89a0b16621043bff58a1baf7b086a955137508
-  languageName: node
-  linkType: hard
-
-"jsii-reflect@npm:^1.133.0":
-  version: 1.133.0
-  resolution: "jsii-reflect@npm:1.133.0"
-  dependencies:
-    "@jsii/check-node": "npm:1.133.0"
-    "@jsii/spec": "npm:1.133.0"
-    chalk: "npm:^4"
-    fs-extra: "npm:^10.1.0"
-    oo-ascii-tree: "npm:^1.133.0"
-    yargs: "npm:^17.7.2"
-  bin:
-    jsii-query: bin/jsii-query
-    jsii-tree: bin/jsii-tree
-  checksum: 10c0/418de51bbaca0de5200c32c97d5eabbe170531f72bdb2688f24ec1f10221f568d9d7e1a919cab0df79827a5450f50d845091c3208a7cf24f36fc56d60891a556
   languageName: node
   linkType: hard
 
@@ -4838,13 +4804,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"oo-ascii-tree@npm:^1.133.0":
-  version: 1.133.0
-  resolution: "oo-ascii-tree@npm:1.133.0"
-  checksum: 10c0/2474f5a2a564583c644d632f51f4d600fa5875b1346df8621ce66c56a3c3a9718e4bc477694ee26ab873ccb5ed3d6811a9fcc68393ba9afbee72ad703b587aee
-  languageName: node
-  linkType: hard
-
 "oo-ascii-tree@npm:^1.134.0":
   version: 1.134.0
   resolution: "oo-ascii-tree@npm:1.134.0"
@@ -5500,6 +5459,15 @@ __metadata:
   bin:
     semver: bin/semver.js
   checksum: 10c0/8e8c193fa75b938e5b3ccf6707c6447e4b34f73e493e72b03f3185393489f45e049144052f624217c346d6c6e0a301dda8eeab2f14413e337218ecb1cbd2de16
+  languageName: node
+  linkType: hard
+
+"semver@npm:^7.8.3":
+  version: 7.8.3
+  resolution: "semver@npm:7.8.3"
+  bin:
+    semver: bin/semver.js
+  checksum: 10c0/06d96d5b5c03acd8b0dceeae458e5d4b4ea2b6c16a2b0dfa88a0f19b91d19be1a4a192c7abfa825218c4c36c087d831b928c27d5b79a622e370bd12e95578a99
   languageName: node
   linkType: hard
 
