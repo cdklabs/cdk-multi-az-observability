@@ -2033,14 +2033,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"codemaker@npm:^1.134.0":
-  version: 1.134.0
-  resolution: "codemaker@npm:1.134.0"
+"codemaker@npm:^1.135.0":
+  version: 1.135.0
+  resolution: "codemaker@npm:1.135.0"
   dependencies:
     camelcase: "npm:^6.3.0"
     decamelize: "npm:^5.0.1"
     fs-extra: "npm:^10.1.0"
-  checksum: 10c0/dcc73ff0169653edaf6a37c9e403f65c44fd4926a0416db3e3ca7f6d84a175f02b4f87d9f33322750b05b34662129b9ea4e4eac9e1a5487a56384699f72e26e6
+  checksum: 10c0/8e3380c1d941d56829299970535a078d685db7bbb2478f7cae8a8830ee63502b26c740e1c024cf6ed05731360990be2b1f01d9a2a6e9c10734347025c0c94fcd
   languageName: node
   linkType: hard
 
@@ -4059,18 +4059,18 @@ __metadata:
   linkType: hard
 
 "jsii-pacmak@npm:^1.134.0":
-  version: 1.134.0
-  resolution: "jsii-pacmak@npm:1.134.0"
+  version: 1.135.0
+  resolution: "jsii-pacmak@npm:1.135.0"
   dependencies:
-    "@jsii/check-node": "npm:1.134.0"
-    "@jsii/spec": "npm:1.134.0"
+    "@jsii/check-node": "npm:1.135.0"
+    "@jsii/spec": "npm:1.135.0"
     clone: "npm:^2.1.2"
-    codemaker: "npm:^1.134.0"
+    codemaker: "npm:^1.135.0"
     commonmark: "npm:^0.31.2"
     escape-string-regexp: "npm:^4.0.0"
     fs-extra: "npm:^10.1.0"
-    jsii-reflect: "npm:^1.134.0"
-    semver: "npm:^7.8.1"
+    jsii-reflect: "npm:^1.135.0"
+    semver: "npm:^7.8.2"
     spdx-license-list: "npm:^6.11.0"
     xmlbuilder: "npm:^15.1.1"
     yargs: "npm:^17.7.2"
@@ -4078,7 +4078,7 @@ __metadata:
     jsii-rosetta: ">=5.9.0"
   bin:
     jsii-pacmak: bin/jsii-pacmak
-  checksum: 10c0/813026ea7bd570c35895c863a236aa194d1b7695bc53d0283478ce441a1c308e49700ce0dafe1d4ae433522b6f89a0b16621043bff58a1baf7b086a955137508
+  checksum: 10c0/ec8f43d4e3e9b0cec93466c7a599b7985dfe62c76254ae5f7347ed3c640ebc3016047483121cc72aa347ee76939ebc5683572858f0560f8f642d5964f38e8999
   languageName: node
   linkType: hard
 
