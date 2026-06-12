@@ -4022,8 +4022,8 @@ __metadata:
   linkType: hard
 
 "jsii-docgen@npm:^10.5.0":
-  version: 10.11.24
-  resolution: "jsii-docgen@npm:10.11.24"
+  version: 10.12.0
+  resolution: "jsii-docgen@npm:10.12.0"
   dependencies:
     "@jsii/spec": "npm:^1.134.0"
     case: "npm:^1.6.3"
@@ -4034,10 +4034,10 @@ __metadata:
     semver: "npm:^7.8.3"
     yargs: "npm:^16.2.0"
   peerDependencies:
-    jsii-rosetta: ^1.85.0 || ~5.0.14 || ~5.1.2 || ~5.2.0 || ~5.3.0 || ~5.4.0 || ~5.5.0 || ~5.6.0 || ~5.7.0 || ~5.8.0 || ~5.9.1
+    jsii-rosetta: ^1.85.0 || ~5.0.14 || ~5.1.2 || ~5.2.0 || ~5.3.0 || ~5.4.0 || ~5.5.0 || ~5.6.0 || ~5.7.0 || ~5.8.0 || ~5.9.1 || ~6.0.0
   bin:
     jsii-docgen: bin/jsii-docgen
-  checksum: 10c0/4579de12d804269e54b1b735cb1492140a9af2d55994583d6d83420a856671f38b7e69e61843adc6d8f6d248ac18678c76ee40893714b4b0f8350d77107660df
+  checksum: 10c0/f29f5aad8f49e27564cb8f376d8c5e30dabe8a262a821a57fb9d79e6292320b78a5a3a701bf11a0c17211d830f0b9de8c4c0ecea6b68d8636004f5dbbb357fd6
   languageName: node
   linkType: hard
 
