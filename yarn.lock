@@ -486,7 +486,7 @@ __metadata:
     jsii-pacmak: "npm:^1.134.0"
     jsii-rosetta: "npm:^5.9.49"
     prettier: "npm:^3.8.3"
-    projen: "npm:^0.99.71"
+    projen: "npm:^0.99.74"
     ts-jest: "npm:^29.4.11"
     ts-node: "npm:^10.9.2"
     typescript: "npm:^6.0.3"
@@ -5165,9 +5165,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"projen@npm:^0.99.71":
-  version: 0.99.71
-  resolution: "projen@npm:0.99.71"
+"projen@npm:^0.99.74":
+  version: 0.99.74
+  resolution: "projen@npm:0.99.74"
   dependencies:
     "@iarna/toml": "npm:^2.2.5"
     case: "npm:^1.6.3"
@@ -5179,7 +5179,7 @@ __metadata:
     fast-json-patch: "npm:^3.1.1"
     ini: "npm:^2.0.0"
     parse-conflict-json: "npm:^4.0.0"
-    semver: "npm:^7.8.2"
+    semver: "npm:^7.8.4"
     shx: "npm:^0.4.0"
     xmlbuilder2: "npm:^4.0.3"
     yaml: "npm:^2.2.2"
@@ -5188,7 +5188,7 @@ __metadata:
     constructs: ^10.5.0
   bin:
     projen: bin/projen
-  checksum: 10c0/593453ab979c075ea1ed2c7ef2a77e484c2b08bb852ad08223dd1a324876a5cdb47c018665c776ec682937707211e860f490270b9d6f38695653ad12ba84d175
+  checksum: 10c0/0746633bcd14e496d09108554b851068af1368276adc9f248a205e3466579e2aeaa93f02fc9a6d4654acb6429b754e782a2cdf5a67bfe7669d994e08fa71a6c1
   languageName: node
   linkType: hard
 
@@ -5509,6 +5509,15 @@ __metadata:
   bin:
     semver: bin/semver.js
   checksum: 10c0/06d96d5b5c03acd8b0dceeae458e5d4b4ea2b6c16a2b0dfa88a0f19b91d19be1a4a192c7abfa825218c4c36c087d831b928c27d5b79a622e370bd12e95578a99
+  languageName: node
+  linkType: hard
+
+"semver@npm:^7.8.4":
+  version: 7.8.4
+  resolution: "semver@npm:7.8.4"
+  bin:
+    semver: bin/semver.js
+  checksum: 10c0/81b7c296fd7927b80f67fa516b75fa1017caac8167795320de28e76ccbc6f7f01763c30ecd10d6a0d8fd089708ab0548a5aebb94b0870e99c2a2b4600a46389b
   languageName: node
   linkType: hard
 
