@@ -64,12 +64,12 @@ __metadata:
   linkType: hard
 
 "@aws-cdk/integ-tests-alpha@npm:latest":
-  version: 2.258.1-alpha.0
-  resolution: "@aws-cdk/integ-tests-alpha@npm:2.258.1-alpha.0"
+  version: 2.260.0-alpha.0
+  resolution: "@aws-cdk/integ-tests-alpha@npm:2.260.0-alpha.0"
   peerDependencies:
-    aws-cdk-lib: ^2.258.1
+    aws-cdk-lib: ^2.260.0
     constructs: ^10.5.0
-  checksum: 10c0/0dc391ba0f9099994118542a830349f15d505b2d7af8326f8986c8be6078e8d5cc01b7d0683796bbc66ed8b97ff2079f9534cecb1038d8a8fd9c4795a185f11b
+  checksum: 10c0/43cacd599e10455cf21a1594c6374c5e6f6916a83dcfa82f2f213a2cdb959af8001919658d70eb37ee06a7976d5a4eaa08408b163a98f85681f8dfcc4afd1487
   languageName: node
   linkType: hard
 
@@ -540,9 +540,9 @@ __metadata:
     jest: "npm:^30.4.2"
     jest-junit: "npm:^17"
     jsii: "npm:5.9.32"
-    jsii-diff: "npm:^1.135.0"
+    jsii-diff: "npm:^1.136.0"
     jsii-docgen: "npm:^10.5.0"
-    jsii-pacmak: "npm:^1.135.0"
+    jsii-pacmak: "npm:^1.136.0"
     jsii-rosetta: "npm:^5.9.49"
     prettier: "npm:^3.8.4"
     projen: "npm:^0.99.71"
@@ -4081,7 +4081,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"jsii-diff@npm:^1.135.0":
+"jsii-diff@npm:^1.136.0":
   version: 1.136.0
   resolution: "jsii-diff@npm:1.136.0"
   dependencies:
@@ -4117,7 +4117,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"jsii-pacmak@npm:^1.135.0":
+"jsii-pacmak@npm:^1.136.0":
   version: 1.136.0
   resolution: "jsii-pacmak@npm:1.136.0"
   dependencies:
