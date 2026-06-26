@@ -1042,7 +1042,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@jsii/check-node@npm:1.132.0, @jsii/check-node@npm:^1.132.0":
+"@jsii/check-node@npm:1.132.0":
   version: 1.132.0
   resolution: "@jsii/check-node@npm:1.132.0"
   dependencies:
@@ -1052,7 +1052,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@jsii/check-node@npm:1.137.0":
+"@jsii/check-node@npm:1.137.0, @jsii/check-node@npm:^1.136.0":
   version: 1.137.0
   resolution: "@jsii/check-node@npm:1.137.0"
   dependencies:
@@ -1069,7 +1069,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@jsii/spec@npm:1.132.0, @jsii/spec@npm:^1.132.0":
+"@jsii/spec@npm:1.132.0":
   version: 1.132.0
   resolution: "@jsii/spec@npm:1.132.0"
   checksum: 10c0/c0f62aa25665130e75f73f11493b5452bfb6705319c99f95fdacccca410f403b6b5380d792d0f7e0de4a1c09d47d0642ca9527b0bf03f9bcda261b8c5f2788bf
@@ -4142,25 +4142,25 @@ __metadata:
   linkType: hard
 
 "jsii-rosetta@npm:^5.9.49":
-  version: 5.9.49
-  resolution: "jsii-rosetta@npm:5.9.49"
+  version: 5.9.53
+  resolution: "jsii-rosetta@npm:5.9.53"
   dependencies:
-    "@jsii/check-node": "npm:^1.132.0"
-    "@jsii/spec": "npm:^1.132.0"
+    "@jsii/check-node": "npm:^1.136.0"
+    "@jsii/spec": "npm:^1.136.0"
     "@xmldom/xmldom": "npm:^0.9.10"
     chalk: "npm:^4"
     commonmark: "npm:^0.31.2"
     fast-glob: "npm:^3.3.3"
     jsii: "npm:~5.9.1"
-    semver: "npm:^7.8.1"
+    semver: "npm:^7.8.5"
     semver-intersect: "npm:^1.5.0"
     stream-json: "npm:^1.9.1"
     typescript: "npm:~5.9"
     workerpool: "npm:^6.5.1"
-    yargs: "npm:^17.7.2"
+    yargs: "npm:^17.7.3"
   bin:
     jsii-rosetta: bin/jsii-rosetta
-  checksum: 10c0/28d57b0358bc580f58d61d56425191e9d307e90cbcfd57b40b9d00eeb5bedc3bf1ae46cad81b3c3925964f85bc2e2493d2d83483ba219c13aa857db31d5a89e0
+  checksum: 10c0/aced1d13bb1891ab3f7a3807a77998b5a3be7e89c49d5f941038207e5feb445eb55bc517fe9c916e0e42df676190b5a099c3dec18df0cf850b083a67a9e89261
   languageName: node
   linkType: hard
 
@@ -6620,6 +6620,21 @@ __metadata:
     y18n: "npm:^5.0.5"
     yargs-parser: "npm:^21.1.1"
   checksum: 10c0/ccd7e723e61ad5965fffbb791366db689572b80cca80e0f96aad968dfff4156cd7cd1ad18607afe1046d8241e6fb2d6c08bf7fa7bfb5eaec818735d8feac8f05
+  languageName: node
+  linkType: hard
+
+"yargs@npm:^17.7.3":
+  version: 17.7.3
+  resolution: "yargs@npm:17.7.3"
+  dependencies:
+    cliui: "npm:^8.0.1"
+    escalade: "npm:^3.1.1"
+    get-caller-file: "npm:^2.0.5"
+    require-directory: "npm:^2.1.1"
+    string-width: "npm:^4.2.3"
+    y18n: "npm:^5.0.5"
+    yargs-parser: "npm:^21.1.1"
+  checksum: 10c0/7a28572f7e785a57886e34fdbddb9b28756dec552e1453d5f6e7cdd00ad8721a4e8c4321d33683f5e61cacb36ad43258adbb48396b71ec4ed14abee0fc0d0c1f
   languageName: node
   linkType: hard
 
