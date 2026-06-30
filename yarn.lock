@@ -1076,7 +1076,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@jsii/spec@npm:1.137.0, @jsii/spec@npm:^1.136.0, @jsii/spec@npm:^1.137.0":
+"@jsii/spec@npm:1.137.0, @jsii/spec@npm:^1.137.0":
   version: 1.137.0
   resolution: "@jsii/spec@npm:1.137.0"
   checksum: 10c0/69298bdafb06de6b2e7a1af77715c45a7e0d4ea97508df8259f84e5b59ce7dd7d90161773d52c81e11ce532a28c91756e73cb843c645976c5627da96c7f7c710
@@ -4081,22 +4081,22 @@ __metadata:
   linkType: hard
 
 "jsii-docgen@npm:^10.5.0":
-  version: 10.12.2
-  resolution: "jsii-docgen@npm:10.12.2"
+  version: 10.12.3
+  resolution: "jsii-docgen@npm:10.12.3"
   dependencies:
-    "@jsii/spec": "npm:^1.136.0"
+    "@jsii/spec": "npm:^1.137.0"
     case: "npm:^1.6.3"
     fast-glob: "npm:^3.3.3"
     fs-extra: "npm:^10.1.0"
-    jsii-reflect: "npm:^1.136.0"
-    json-stream-stringify: "npm:^3.1.6"
+    jsii-reflect: "npm:^1.137.0"
+    json-stream-stringify: "npm:^3.1.7"
     semver: "npm:^7.8.5"
     yargs: "npm:^16.2.2"
   peerDependencies:
     jsii-rosetta: ^1.85.0 || ~5.0.14 || ~5.1.2 || ~5.2.0 || ~5.3.0 || ~5.4.0 || ~5.5.0 || ~5.6.0 || ~5.7.0 || ~5.8.0 || ~5.9.1 || ~6.0.0
   bin:
     jsii-docgen: bin/jsii-docgen
-  checksum: 10c0/0cbcce0b13805599a00eb26133f39785f2ab75368106a1d9b6d8ffa6a2e1dedf944e783bb47cf8b357bf3e87bf5eab2d0f754cc14166b442a4746e4834c398a3
+  checksum: 10c0/e18167171bf7f63c78c439d3f9c74d523eb06df3413ede9e651a8e59def2a996ea499ab4dd492f50704dc3bc9c8873e304defa5169d5299b34227631ed133eb0
   languageName: node
   linkType: hard
 
@@ -4124,7 +4124,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"jsii-reflect@npm:^1.136.0, jsii-reflect@npm:^1.137.0":
+"jsii-reflect@npm:^1.137.0":
   version: 1.137.0
   resolution: "jsii-reflect@npm:1.137.0"
   dependencies:
@@ -4236,10 +4236,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"json-stream-stringify@npm:^3.1.6":
-  version: 3.1.6
-  resolution: "json-stream-stringify@npm:3.1.6"
-  checksum: 10c0/cb45e65143f4634ebb2dc0732410a942eaf86f88a7938b2f6397f4c6b96a7ba936e74d4d17db48c9221f669153996362b2ff50fe8c7fed8a7548646f98ae1f58
+"json-stream-stringify@npm:^3.1.7":
+  version: 3.1.7
+  resolution: "json-stream-stringify@npm:3.1.7"
+  checksum: 10c0/53d01e897e06b62e799b13eb6b2dc52e14fd77a99d2d079d2ae012acc3c9893062b563e5aa1782f3bbaf9bb0f1ef60b9de20e64b905170a1c47e81513bff1ac9
   languageName: node
   linkType: hard
 
