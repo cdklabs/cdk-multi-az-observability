@@ -52,14 +52,13 @@ __metadata:
   linkType: hard
 
 "@aws-cdk/integ-runner@npm:latest":
-  version: 2.200.2
-  resolution: "@aws-cdk/integ-runner@npm:2.200.2"
+  version: 2.202.0
+  resolution: "@aws-cdk/integ-runner@npm:2.202.0"
   dependencies:
     "@aws-cdk/aws-service-spec": "npm:0.1.185"
-    aws-cdk: "npm:2.1128.1"
   bin:
     integ-runner: bin/integ-runner
-  checksum: 10c0/af9866ead0d28446278ac2cdf07b2751ac3eaf89e977ea1a35242344c86e1e71c0f254a8d4939cfc401e42c1a45c2e771438a438b4c35571331a0aa15492a520
+  checksum: 10c0/87e8ade353d1878a4fe751bf24290e2125c0a36b8d0be6d3a001df5b51004fc287aa69a2d88e55068dc88825f4ab371eaf81ab9a40c38af55875f0635976ce8c
   languageName: node
   linkType: hard
 
@@ -1742,15 +1741,6 @@ __metadata:
   peerDependencies:
     constructs: ^10.5.0
   checksum: 10c0/8146354f3f69554bcd041bd45c03b495aa23b7ccea3ea01cafbfcd4e7acdc0afa7e770deffa25113cdb423c60c861f394dec18c509ea5d1495094aed2abae367
-  languageName: node
-  linkType: hard
-
-"aws-cdk@npm:2.1128.1":
-  version: 2.1128.1
-  resolution: "aws-cdk@npm:2.1128.1"
-  bin:
-    cdk: bin/cdk
-  checksum: 10c0/60bcda882a9cace19efebdc70af28fd93dc0a22b67c4173c2328fa26dc7a858c2c779c50c75aa3e71b92f0d15652f20975001fde537b640e5a35bde0c8a00b43
   languageName: node
   linkType: hard
 
