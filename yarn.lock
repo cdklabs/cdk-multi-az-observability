@@ -52,13 +52,13 @@ __metadata:
   linkType: hard
 
 "@aws-cdk/integ-runner@npm:latest":
-  version: 2.202.0
-  resolution: "@aws-cdk/integ-runner@npm:2.202.0"
+  version: 2.202.1
+  resolution: "@aws-cdk/integ-runner@npm:2.202.1"
   dependencies:
     "@aws-cdk/aws-service-spec": "npm:0.1.185"
   bin:
     integ-runner: bin/integ-runner
-  checksum: 10c0/87e8ade353d1878a4fe751bf24290e2125c0a36b8d0be6d3a001df5b51004fc287aa69a2d88e55068dc88825f4ab371eaf81ab9a40c38af55875f0635976ce8c
+  checksum: 10c0/62b3099bc71a320a8259c88b9c33787b2dd6113ca72692c1e3672fba6fb46d4d56c71fded0e7aadc8f5230e5c4378866c4058e487fad62c755d9939608bc6cbb
   languageName: node
   linkType: hard
 
