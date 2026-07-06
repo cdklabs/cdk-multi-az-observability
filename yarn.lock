@@ -63,12 +63,12 @@ __metadata:
   linkType: hard
 
 "@aws-cdk/integ-tests-alpha@npm:latest":
-  version: 2.260.0-alpha.0
-  resolution: "@aws-cdk/integ-tests-alpha@npm:2.260.0-alpha.0"
+  version: 2.261.0-alpha.0
+  resolution: "@aws-cdk/integ-tests-alpha@npm:2.261.0-alpha.0"
   peerDependencies:
-    aws-cdk-lib: ^2.260.0
+    aws-cdk-lib: ^2.261.0
     constructs: ^10.5.0
-  checksum: 10c0/43cacd599e10455cf21a1594c6374c5e6f6916a83dcfa82f2f213a2cdb959af8001919658d70eb37ee06a7976d5a4eaa08408b163a98f85681f8dfcc4afd1487
+  checksum: 10c0/e54ad14c98c52f014f9bef91af8bee125e4eb5fd73d8a4ece9505b5782455ccfad0c1cc521621435f6ebc295800e1a9c1f7effd698af350b9531d40500035a23
   languageName: node
   linkType: hard
 
@@ -539,11 +539,11 @@ __metadata:
     jest: "npm:^30.4.2"
     jest-junit: "npm:^17"
     jsii: "npm:5.9.32"
-    jsii-diff: "npm:^1.137.0"
+    jsii-diff: "npm:^1.138.0"
     jsii-docgen: "npm:^10.5.0"
-    jsii-pacmak: "npm:^1.137.0"
-    jsii-rosetta: "npm:^5.9.53"
-    prettier: "npm:^3.8.4"
+    jsii-pacmak: "npm:^1.138.0"
+    jsii-rosetta: "npm:^5.9.54"
+    prettier: "npm:^3.9.4"
     projen: "npm:^0.99.71"
     ts-jest: "npm:^29.4.11"
     ts-node: "npm:^10.9.2"
@@ -1370,11 +1370,11 @@ __metadata:
   linkType: hard
 
 "@types/node@npm:*":
-  version: 26.0.1
-  resolution: "@types/node@npm:26.0.1"
+  version: 26.1.0
+  resolution: "@types/node@npm:26.1.0"
   dependencies:
     undici-types: "npm:~8.3.0"
-  checksum: 10c0/31d204333c70124da6bcac7d1f27d8980149fe3f95a8419bfcd19c3e5823705c0e370d71ac34399352e1263b2d5fc41c87af964ec81e5a05a32224d65d8d224e
+  checksum: 10c0/61c22ad1ef215e24138cb8b7368fb68bab9de4c123b3f23d411749b015ba1b7d22f878ad54add26a0b69068d7e07c04af665069d8571b6c6c3b9b2fb73b7bd91
   languageName: node
   linkType: hard
 
@@ -1618,14 +1618,14 @@ __metadata:
   linkType: hard
 
 "ajv@npm:^8.0.1":
-  version: 8.18.0
-  resolution: "ajv@npm:8.18.0"
+  version: 8.20.0
+  resolution: "ajv@npm:8.20.0"
   dependencies:
     fast-deep-equal: "npm:^3.1.3"
     fast-uri: "npm:^3.0.1"
     json-schema-traverse: "npm:^1.0.0"
     require-from-string: "npm:^2.0.2"
-  checksum: 10c0/e7517c426173513a07391be951879932bdf3348feaebd2199f5b901c20f99d60db8cd1591502d4d551dc82f594e82a05c4fe1c70139b15b8937f7afeaed9532f
+  checksum: 10c0/5df9a1c8f83863cde1bd3a9ddb426f599718f88e3dc9153616c79fb28e0be455335830d7f21d745576519f057b371352daa31047b6a33d7036fe08777d60cf2a
   languageName: node
   linkType: hard
 
@@ -2787,9 +2787,9 @@ __metadata:
   linkType: hard
 
 "fast-uri@npm:^3.0.1":
-  version: 3.1.2
-  resolution: "fast-uri@npm:3.1.2"
-  checksum: 10c0/5b35641895959f3f7ab7a7b1b5542bded159346f25ec9f256817b206d50b64eda5828e90d605a2e2fc645c90519a7259c2bab2c942ee728c88b88e5be21b090d
+  version: 3.1.3
+  resolution: "fast-uri@npm:3.1.3"
+  checksum: 10c0/0ce405815546770ad7e730b8f8fd58db80cefe4533ee99ee1a3263f11d2ccc3b8a0cf10d6cd9ba590e9746eb43b60f2ef2631d0c379a9ebba063ce0d4076b109
   languageName: node
   linkType: hard
 
@@ -2931,13 +2931,13 @@ __metadata:
   linkType: hard
 
 "fs-extra@npm:^11.3.3":
-  version: 11.3.5
-  resolution: "fs-extra@npm:11.3.5"
+  version: 11.3.6
+  resolution: "fs-extra@npm:11.3.6"
   dependencies:
     graceful-fs: "npm:^4.2.0"
     jsonfile: "npm:^6.0.1"
     universalify: "npm:^2.0.0"
-  checksum: 10c0/33e80bad6b5d17308faa197e5ede99ecba4b6f6cb4aa4645d52745476c75afc57665bdf39ec75b2ebb38b97b7110f634a8dcc0a546e248eb4de059275cf5ac90
+  checksum: 10c0/191c96bf71519fe08595f7920b6e568f6e44b48ed968624f35cb3bb7f4f9b05718b99cd6bf81938c0f7b1daa6d151383c33e0cbfdfe4d95419d7ea121de8e91a
   languageName: node
   linkType: hard
 
@@ -4071,7 +4071,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"jsii-diff@npm:^1.137.0":
+"jsii-diff@npm:^1.138.0":
   version: 1.138.0
   resolution: "jsii-diff@npm:1.138.0"
   dependencies:
@@ -4107,7 +4107,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"jsii-pacmak@npm:^1.137.0":
+"jsii-pacmak@npm:^1.138.0":
   version: 1.138.0
   resolution: "jsii-pacmak@npm:1.138.0"
   dependencies:
@@ -4165,7 +4165,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"jsii-rosetta@npm:^5.9.53":
+"jsii-rosetta@npm:^5.9.54":
   version: 5.9.54
   resolution: "jsii-rosetta@npm:5.9.54"
   dependencies:
@@ -5168,7 +5168,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"prettier@npm:^3.8.4":
+"prettier@npm:^3.9.4":
   version: 3.9.4
   resolution: "prettier@npm:3.9.4"
   bin:
