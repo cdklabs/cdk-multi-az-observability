@@ -4072,18 +4072,18 @@ __metadata:
   linkType: hard
 
 "jsii-diff@npm:^1.138.0":
-  version: 1.138.0
-  resolution: "jsii-diff@npm:1.138.0"
+  version: 1.139.0
+  resolution: "jsii-diff@npm:1.139.0"
   dependencies:
-    "@jsii/check-node": "npm:1.138.0"
-    "@jsii/spec": "npm:1.138.0"
+    "@jsii/check-node": "npm:1.139.0"
+    "@jsii/spec": "npm:1.139.0"
     fs-extra: "npm:^10.1.0"
-    jsii-reflect: "npm:^1.138.0"
+    jsii-reflect: "npm:^1.139.0"
     log4js: "npm:^6.9.1"
     yargs: "npm:^17.7.3"
   bin:
     jsii-diff: bin/jsii-diff
-  checksum: 10c0/4f61b83a62531287b5c37bbf9a55a07613e11424dbd5e91731ef74537c6e68138d51cd558f89c795caba65fa4c33db75716269c3bbf568a7af0b273fb99dadb1
+  checksum: 10c0/b76312d6d11f6f163890f2c67590bfffe056f8e91ef573ab5b0fd43791247c7c7a25e3a3ab73799cf3e186af298dc1d19d2643c9acb8740f3b31e4696d11f6f3
   languageName: node
   linkType: hard
 
