@@ -58,6 +58,7 @@ src/outlier-detection/src/outlier-detection.zip
 src/monitoring
 tsconfig.tsbuildinfo
 package-lock.json
+tsconfig.json
 **/__pycache__
 /test-reports/
 junit.xml
@@ -72,12 +73,13 @@ junit.xml
 !/.prettierignore
 !/.prettierrc.json
 !/test/
-!/tsconfig.dev.json
+!/tsconfig.json
+!/test/tsconfig.json
 !/src/
 /lib
 /dist/
+!/projenrc/tsconfig.json
 .jsii
-tsconfig.json
 !/API.md
 .jsii.tabl.json
 !/rosetta/default.ts-fixture
