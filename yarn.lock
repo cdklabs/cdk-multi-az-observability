@@ -19,13 +19,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@aws-cdk/aws-service-spec@npm:0.1.196":
-  version: 0.1.196
-  resolution: "@aws-cdk/aws-service-spec@npm:0.1.196"
+"@aws-cdk/aws-service-spec@npm:0.1.199":
+  version: 0.1.199
+  resolution: "@aws-cdk/aws-service-spec@npm:0.1.199"
   dependencies:
-    "@aws-cdk/service-spec-types": "npm:^0.0.262"
+    "@aws-cdk/service-spec-types": "npm:^0.0.265"
     "@cdklabs/tskb": "npm:^0.0.4"
-  checksum: 10c0/6d0b1031be6b26958b20cf87c19de028975720c498d933e23214adb4da3bfaa4baa9f3f6414713fd4bf86c9654e5ceb1531f0836e215c59eea66ff6a531e191e
+  checksum: 10c0/5e7b514e6e88b6a562b1cde54bef865dcdcfdc33ffd77ebb18426842bdf6e4cca79488f972bbbac59022c913bafb29cbe1c86b2473a45a20f21af9be5bad51be
   languageName: node
   linkType: hard
 
@@ -53,13 +53,13 @@ __metadata:
   linkType: hard
 
 "@aws-cdk/integ-runner@npm:latest":
-  version: 2.204.0
-  resolution: "@aws-cdk/integ-runner@npm:2.204.0"
+  version: 2.204.1
+  resolution: "@aws-cdk/integ-runner@npm:2.204.1"
   dependencies:
-    "@aws-cdk/aws-service-spec": "npm:0.1.196"
+    "@aws-cdk/aws-service-spec": "npm:0.1.199"
   bin:
     integ-runner: bin/integ-runner
-  checksum: 10c0/b5b40955cf7e4498c9426f306d5777b77a90dbe7582e1d11feeaf713ac92b27e5a367893732fb85ccb60666aa87684346cea4040846c39c6bee5fefc6aa6bde1
+  checksum: 10c0/0812445e33084412d87488660166c1fec069f7a5cd3ae306787e48b63a33f2ab427c0c9c7e8b3b6fcf190cc22646c67d0997e722b6793c72f7ca1a47e916892e
   languageName: node
   linkType: hard
 
@@ -73,12 +73,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@aws-cdk/service-spec-types@npm:^0.0.262":
-  version: 0.0.262
-  resolution: "@aws-cdk/service-spec-types@npm:0.0.262"
+"@aws-cdk/service-spec-types@npm:^0.0.265":
+  version: 0.0.265
+  resolution: "@aws-cdk/service-spec-types@npm:0.0.265"
   dependencies:
     "@cdklabs/tskb": "npm:^0.0.4"
-  checksum: 10c0/db95d9f46ca9d3482145fc6e1247154bbf935afeead13ac87b8bf6d33dc01b1a23adad8344b88ec8d35136076db29beab549c5ef021a64fb6a6f78f727e366f5
+  checksum: 10c0/577c3475be4ada74463046d3835720aea28f2a145634c6110248915a244d34b2dba24fc09ee3565cc1e888ee5186f917b377f1739622be9e487aa8a952e3b8e0
   languageName: node
   linkType: hard
 
