@@ -64,12 +64,12 @@ __metadata:
   linkType: hard
 
 "@aws-cdk/integ-tests-alpha@npm:latest":
-  version: 2.262.2-alpha.0
-  resolution: "@aws-cdk/integ-tests-alpha@npm:2.262.2-alpha.0"
+  version: 2.263.0-alpha.0
+  resolution: "@aws-cdk/integ-tests-alpha@npm:2.263.0-alpha.0"
   peerDependencies:
-    aws-cdk-lib: ^2.262.2
+    aws-cdk-lib: ^2.263.0
     constructs: ^10.5.0
-  checksum: 10c0/5abdd8ed2a6c40517b60385cfdd7619c84c80a651c3651c52e6c86cbec5e6312c9454e45ece3fa26815055dd20ce8b29ca0f68f987a8ebccbd9c4e2e3a2d47d1
+  checksum: 10c0/7197a00b0fbd0122eb7d255783586fa70eb5a496ef9fb1ba4b85baf8949cd6756f7918b9c49f575917de58b176d69773414207c87c976f48a1183fdd2fb83f37
   languageName: node
   linkType: hard
 
@@ -543,7 +543,7 @@ __metadata:
     jsii-diff: "npm:^1.139.0"
     jsii-docgen: "npm:^10.5.0"
     jsii-pacmak: "npm:^1.139.0"
-    jsii-rosetta: "npm:^5.9.58"
+    jsii-rosetta: "npm:^5.9.60"
     prettier: "npm:^3.9.6"
     projen: "npm:^0.99.71"
     ts-jest: "npm:^29.4.12"
@@ -4115,7 +4115,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"jsii-rosetta@npm:^5.9.58":
+"jsii-rosetta@npm:^5.9.60":
   version: 5.9.60
   resolution: "jsii-rosetta@npm:5.9.60"
   dependencies:
@@ -4161,8 +4161,8 @@ __metadata:
   linkType: hard
 
 "jsii@npm:~5.9.1":
-  version: 5.9.49
-  resolution: "jsii@npm:5.9.49"
+  version: 5.9.51
+  resolution: "jsii@npm:5.9.51"
   dependencies:
     "@jsii/check-node": "npm:1.139.0"
     "@jsii/spec": "npm:1.139.0"
@@ -4178,7 +4178,7 @@ __metadata:
     yargs: "npm:^17.7.3"
   bin:
     jsii: bin/jsii
-  checksum: 10c0/b04b7afe4fe745a7f96e97474489cf5612a3a390120fb34778e9024978fc93fb86ffb316bdca16449cac11c95a69f239df542c7a79bc5d77e0d78b795af03df3
+  checksum: 10c0/441fdcfbfc7703f6405de18244e2ca0f1bfd17842d903cef8fe03d0d761bd1b948ab6b79b9f170cf67f91877a6765fbbee4a92c0bed9159fd9fa839500336350
   languageName: node
   linkType: hard
 
