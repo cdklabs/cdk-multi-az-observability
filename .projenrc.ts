@@ -141,14 +141,6 @@ const project = new CdklabsConstructLibrary ({
       roots: ['<rootDir>/test'],
       testMatch: ['**/*.test.ts'],
     },
-  },
-  tsconfig: {
-    compilerOptions: {
-      paths: {
-        '@cdklabs/multi-az-observability': ['src/*']
-      },
-      baseUrl: "."
-    }
   }
 });
 
