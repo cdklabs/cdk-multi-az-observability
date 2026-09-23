@@ -82,6 +82,16 @@ const project = new CdklabsConstructLibrary ({
     //"ubuntu-24.04-arm"
     "ubuntu-22.04-arm"
   ],
+  // projen >=0.100 no longer applies `workflowRunsOn` to the build workflow's
+  // `build`/`self-mutation` jobs (it defaults them to ubuntu-latest). Those jobs
+  // run the arm64 Docker asset builds (canary/monitoring layer), so pin them to
+  // the arm runner too, otherwise `docker run --platform linux/arm64` fails with
+  // "exec format error" on x86.
+  buildWorkflowOptions: {
+    runsOn: [
+      "ubuntu-22.04-arm"
+    ]
+  },
   keywords: [
     'cdk',
     'aws-cdk',
@@ -141,14 +151,6 @@ const project = new CdklabsConstructLibrary ({
       roots: ['<rootDir>/test'],
       testMatch: ['**/*.test.ts'],
     },
-  },
-  tsconfig: {
-    compilerOptions: {
-      paths: {
-        '@cdklabs/multi-az-observability': ['src/*']
-      },
-      baseUrl: "."
-    }
   }
 });
 
