@@ -262,8 +262,8 @@ project.tasks.tryFind('post-compile')?.exec(
 // Run Python unit tests for outlier detection as part of the test workflow
 project.tasks.tryFind('test')?.exec('python3 -m unittest discover -s test -p "test_*.py" -v');
 
-// Force minimatch >= 5.0.1 and js-yaml >= 3.14.2 to eliminate vulnerable transitive dependencies
-project.package.addField('resolutions', { minimatch: '>=5.0.1', 'js-yaml': '>=3.14.2' });
+// Force minimatch >= 5.0.1 and js-yaml >= 4.3.2 to eliminate vulnerable transitive dependencies
+project.package.addField('resolutions', { minimatch: '>=5.0.1', 'js-yaml': '^4.3.2' });
 
 // Only required for codebuild runner
 //project.github
