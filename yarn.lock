@@ -19,13 +19,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@aws-cdk/aws-service-spec@npm:0.1.210":
-  version: 0.1.210
-  resolution: "@aws-cdk/aws-service-spec@npm:0.1.210"
+"@aws-cdk/aws-service-spec@npm:0.1.212":
+  version: 0.1.212
+  resolution: "@aws-cdk/aws-service-spec@npm:0.1.212"
   dependencies:
-    "@aws-cdk/service-spec-types": "npm:^0.0.276"
+    "@aws-cdk/service-spec-types": "npm:^0.0.278"
     "@cdklabs/tskb": "npm:^0.0.4"
-  checksum: 10c0/2df5c2b6f65d03eae05addcf908df90faee8cc98e224fcb4732d6a974e9b53c38892b9fdbd1d990120cf3cab67fdcbbd76a9b57d7fd0a6d71e8593461f04648d
+  checksum: 10c0/190ad01272c76d180bb5d359f614e796d0dbe558f08862b74ec954216386636ba9b07d0ce5cda64778d4e9756dfb97fff932a42b17a415330a55fb3108c84d94
   languageName: node
   linkType: hard
 
@@ -53,13 +53,13 @@ __metadata:
   linkType: hard
 
 "@aws-cdk/integ-runner@npm:latest":
-  version: 2.205.3
-  resolution: "@aws-cdk/integ-runner@npm:2.205.3"
+  version: 2.205.4
+  resolution: "@aws-cdk/integ-runner@npm:2.205.4"
   dependencies:
-    "@aws-cdk/aws-service-spec": "npm:0.1.210"
+    "@aws-cdk/aws-service-spec": "npm:0.1.212"
   bin:
     integ-runner: bin/integ-runner
-  checksum: 10c0/c8fd460a0e6dd89e3c6033501f3c90a9d09a12ccace2a3521d0f48f9f42c25a7238e905c988265609b4396bee7d7f7970e2643e851cd9510dc9d59b79671beac
+  checksum: 10c0/8972b180c04e8cc9f344c7b929e44f23a41226c4707c61c2b6a55c420c71d38cd7e8bec926dfc3dc69903660b42a191f97b312822bd1eb38fa205b412e69faad
   languageName: node
   linkType: hard
 
@@ -73,12 +73,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@aws-cdk/service-spec-types@npm:^0.0.276":
-  version: 0.0.276
-  resolution: "@aws-cdk/service-spec-types@npm:0.0.276"
+"@aws-cdk/service-spec-types@npm:^0.0.278":
+  version: 0.0.278
+  resolution: "@aws-cdk/service-spec-types@npm:0.0.278"
   dependencies:
     "@cdklabs/tskb": "npm:^0.0.4"
-  checksum: 10c0/65149a816a6ac8b650b0ccd7eef0204c8c1403e357ac705870bcf1615d3ca3c9bd5c345e9696fbb979ac4b49fa6277fa54fa6d13d34dae4ef42eafd55c78bfc0
+  checksum: 10c0/cc14002c54a669d4b4efbd0c217f6bd7bf69eae464cc1a27ae3c548a54c90d3e94aa426b85c4f6317dccb64a32f15e82a062b40ca6544aac4a9b33497c80675c
   languageName: node
   linkType: hard
 
@@ -537,16 +537,16 @@ __metadata:
     cdklabs-projen-project-types: "npm:^0.3.16"
     commit-and-tag-version: "npm:^13"
     constructs: "npm:10.5.1"
-    jest: "npm:^30.5.1"
+    jest: "npm:^30.5.2"
     jest-junit: "npm:^17"
     jsii: "npm:5.9.32"
     jsii-diff: "npm:^1.140.0"
     jsii-docgen: "npm:^10.5.0"
     jsii-pacmak: "npm:^1.140.0"
-    jsii-rosetta: "npm:^5.9.66"
-    prettier: "npm:^3.9.8"
+    jsii-rosetta: "npm:^5.9.67"
+    prettier: "npm:^3.9.9"
     projen: "npm:^0.103.27"
-    ts-jest: "npm:^29.4.12"
+    ts-jest: "npm:^29.4.13"
     ts-node: "npm:^10.9.2"
     typescript: "npm:^6.0.3"
   peerDependencies:
@@ -1565,11 +1565,11 @@ __metadata:
   linkType: hard
 
 "@types/node@npm:*":
-  version: 26.6.1
-  resolution: "@types/node@npm:26.6.1"
+  version: 26.6.2
+  resolution: "@types/node@npm:26.6.2"
   dependencies:
     undici-types: "npm:~8.9.0"
-  checksum: 10c0/c90d3db40e7c9c92f0854ecdcaabd9c1923b7e2a43cf2c97cf147a5aba7e18a1c80034088edfb1bb2153ceffdd87be7ce0a256b80ec7cd92e619c564133ae5fe
+  checksum: 10c0/bb411ff5863a79a28ffa4ebadf2499d44046aa114d25a7a6c78f57def118123a0a7dea99e8fe38849099e9dba2b41b8853a7a282037618559f58653c35e7c5c5
   languageName: node
   linkType: hard
 
@@ -2915,13 +2915,13 @@ __metadata:
   linkType: hard
 
 "fs-extra@npm:^11.3.3":
-  version: 11.4.0
-  resolution: "fs-extra@npm:11.4.0"
+  version: 11.4.1
+  resolution: "fs-extra@npm:11.4.1"
   dependencies:
     graceful-fs: "npm:^4.2.0"
     jsonfile: "npm:^6.0.1"
     universalify: "npm:^2.0.0"
-  checksum: 10c0/1e311eca820a12d3d795f2043dcd5628d017f4d21e634f3f9ef314ae68bee9979758262fb9cb35ffa6f26454c3fffe8b15558733e91e8fc729b07b10bb98d8b6
+  checksum: 10c0/15fafc34e0b6c1b59f0f92aae90b5fab44129ad7ebc1362cc593f2dec1d8a765b7b70b40e2bc779ee146f6ff13a736a065ddb991e5b597e294919ccb0c8ff834
   languageName: node
   linkType: hard
 
@@ -3766,7 +3766,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"jest@npm:^30.5.1":
+"jest@npm:^30.5.2":
   version: 30.5.2
   resolution: "jest@npm:30.5.2"
   dependencies:
@@ -3889,7 +3889,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"jsii-rosetta@npm:^5.9.66":
+"jsii-rosetta@npm:^5.9.67":
   version: 5.9.67
   resolution: "jsii-rosetta@npm:5.9.67"
   dependencies:
@@ -4633,12 +4633,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"prettier@npm:^3.9.8":
-  version: 3.9.8
-  resolution: "prettier@npm:3.9.8"
+"prettier@npm:^3.9.9":
+  version: 3.9.9
+  resolution: "prettier@npm:3.9.9"
   bin:
     prettier: bin/prettier.cjs
-  checksum: 10c0/257e5ef11ba5006d0b0712271705701c065c8003e07763f996ce185d39633902f3fe1f814839eed76f75c97b6d5376d6157bd9f44db18cacb1dbdcb263cc66ae
+  checksum: 10c0/d50ea2537b2ff7dbd5088a214f4d936484e55c665cea2185b477a55b0770be55f3b156a71f63a9a639def6b334667bb327139dc85f2a1041c0a34752cdc74647
   languageName: node
   linkType: hard
 
@@ -5149,9 +5149,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ts-jest@npm:^29.4.12":
-  version: 29.4.12
-  resolution: "ts-jest@npm:29.4.12"
+"ts-jest@npm:^29.4.13":
+  version: 29.4.13
+  resolution: "ts-jest@npm:29.4.13"
   dependencies:
     bs-logger: "npm:^0.2.6"
     fast-json-stable-stringify: "npm:^2.1.0"
@@ -5163,7 +5163,7 @@ __metadata:
     type-fest: "npm:^4.41.0"
     yargs-parser: "npm:^21.1.1"
   peerDependencies:
-    "@babel/core": ">=7.0.0-beta.0 <8"
+    "@babel/core": ">=7.0.0-beta.0 <9"
     "@jest/transform": ^29.0.0 || ^30.0.0
     "@jest/types": ^29.0.0 || ^30.0.0
     babel-jest: ^29.0.0 || ^30.0.0
@@ -5185,7 +5185,7 @@ __metadata:
       optional: true
   bin:
     ts-jest: cli.js
-  checksum: 10c0/cf08cf4b417085578db038b525c8b22cf6af689601eab697fe84a46fa07bddcd506bd961c607c8f25c705e90ea8ac8ecf258fc200161f4e0882d0d7db4db9ec9
+  checksum: 10c0/8c0c445ec8793fb877edd1ab9091eee148e2ebbbd678b58f4dfa46ad2c440356ec942ac38591477ef1389256389019fc6b946caf0411f17f2bf9ddc52e711b2f
   languageName: node
   linkType: hard
 
