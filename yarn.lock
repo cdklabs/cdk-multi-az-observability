@@ -1109,16 +1109,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@jsii/check-node@npm:1.140.0":
-  version: 1.140.0
-  resolution: "@jsii/check-node@npm:1.140.0"
-  dependencies:
-    chalk: "npm:^4.1.2"
-    semver: "npm:^7.8.5"
-  checksum: 10c0/f08e039d79f5f775b8303c546c1a96bb06e16c97f1f1bac8be5f08fe288bcd9d4a7546b02571b06825cbecf5fe5443d5b09de7f6e6ee0d7853cbaa24676755df
-  languageName: node
-  linkType: hard
-
 "@jsii/check-node@npm:1.141.0, @jsii/check-node@npm:^1.141.0":
   version: 1.141.0
   resolution: "@jsii/check-node@npm:1.141.0"
@@ -1133,13 +1123,6 @@ __metadata:
   version: 1.127.0
   resolution: "@jsii/spec@npm:1.127.0"
   checksum: 10c0/dc46c71d92765dacd7dc4c6956b10d4d39477da9b9eaa208d5f08c3b547d6f847f1edceb0496fc18abb8106fcaceff32172a61c8cb1a4b72093bc679483aacb4
-  languageName: node
-  linkType: hard
-
-"@jsii/spec@npm:1.140.0, @jsii/spec@npm:^1.140.0":
-  version: 1.140.0
-  resolution: "@jsii/spec@npm:1.140.0"
-  checksum: 10c0/096180c3fd86a35bdd48fb8fb26dbd123439f25a4287652a14244903689b83df90ef8f1aa55ecbcaf7ce5025f5ee4249c5f0b7bd2ecaaa52924163c24c8db508
   languageName: node
   linkType: hard
 
@@ -3846,14 +3829,14 @@ __metadata:
   linkType: hard
 
 "jsii-docgen@npm:^10.5.0":
-  version: 10.12.6
-  resolution: "jsii-docgen@npm:10.12.6"
+  version: 10.12.7
+  resolution: "jsii-docgen@npm:10.12.7"
   dependencies:
-    "@jsii/spec": "npm:^1.140.0"
+    "@jsii/spec": "npm:^1.141.0"
     case: "npm:^1.6.3"
     fast-glob: "npm:^3.3.3"
     fs-extra: "npm:^10.1.0"
-    jsii-reflect: "npm:^1.140.0"
+    jsii-reflect: "npm:^1.141.0"
     json-stream-stringify: "npm:^3.1.7"
     semver: "npm:^7.8.5"
     yargs: "npm:^16.2.2"
@@ -3861,7 +3844,7 @@ __metadata:
     jsii-rosetta: ^1.85.0 || ~5.0.14 || ~5.1.2 || ~5.2.0 || ~5.3.0 || ~5.4.0 || ~5.5.0 || ~5.6.0 || ~5.7.0 || ~5.8.0 || ~5.9.1 || ~6.0.0
   bin:
     jsii-docgen: bin/jsii-docgen
-  checksum: 10c0/20b60b2ee902d7b0e5a7af2b052369f9d641adf2c491340c51edddb99fa4aadabd300ba255ac40d09595e283afe657fca61fa9c7e977608490220419dc2e9e1c
+  checksum: 10c0/d981d2e68678d999123bb5b2a3bc50ece30aed7744ee90ed112e003ee137941d2d6459ba2f280d96830bb85f95f3f52897be9b84ad248591ef9935c528d7291e
   languageName: node
   linkType: hard
 
@@ -3886,23 +3869,6 @@ __metadata:
   bin:
     jsii-pacmak: bin/jsii-pacmak
   checksum: 10c0/686a35d0eb7078a1db36e2b6c994e4640227bc3bf264a8eab04fab5d65196f99dbf6ce56661477986b07bac4585882f929ed7f4aea33f6128b5e2bb898858860
-  languageName: node
-  linkType: hard
-
-"jsii-reflect@npm:^1.140.0":
-  version: 1.140.0
-  resolution: "jsii-reflect@npm:1.140.0"
-  dependencies:
-    "@jsii/check-node": "npm:1.140.0"
-    "@jsii/spec": "npm:1.140.0"
-    chalk: "npm:^4"
-    fs-extra: "npm:^10.1.0"
-    oo-ascii-tree: "npm:^1.140.0"
-    yargs: "npm:^17.7.3"
-  bin:
-    jsii-query: bin/jsii-query
-    jsii-tree: bin/jsii-tree
-  checksum: 10c0/390c47e45ed75e0ce040837c2299f6b93020b380ba625dfe11bffbb30a1dd9e55e831f11fafa3101c8688b143edee1914daabbfcfb177870e9139aebb46a2388
   languageName: node
   linkType: hard
 
@@ -4476,13 +4442,6 @@ __metadata:
   dependencies:
     mimic-fn: "npm:^2.1.0"
   checksum: 10c0/ffcef6fbb2692c3c40749f31ea2e22677a876daea92959b8a80b521d95cca7a668c884d8b2045d1d8ee7d56796aa405c405462af112a1477594cc63531baeb8f
-  languageName: node
-  linkType: hard
-
-"oo-ascii-tree@npm:^1.140.0":
-  version: 1.140.0
-  resolution: "oo-ascii-tree@npm:1.140.0"
-  checksum: 10c0/e534117c15b0c0c4c610d6fd318de3fb702ab72a849b5e992d2190c7fa460fe831fae52321c9cc918fde2296f4f2b2332e2bc9d355143087d37169c3e0883601
   languageName: node
   linkType: hard
 
