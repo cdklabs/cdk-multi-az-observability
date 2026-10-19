@@ -543,10 +543,10 @@ __metadata:
     jsii-diff: "npm:^1.141.0"
     jsii-docgen: "npm:^10.5.0"
     jsii-pacmak: "npm:^1.141.0"
-    jsii-rosetta: "npm:^5.9.69"
-    prettier: "npm:^3.9.9"
+    jsii-rosetta: "npm:^5.9.70"
+    prettier: "npm:^3.9.10"
     projen: "npm:^0.103.27"
-    ts-jest: "npm:^29.4.14"
+    ts-jest: "npm:^29.4.15"
     ts-node: "npm:^10.9.2"
     typescript: "npm:^6.0.3"
   peerDependencies:
@@ -600,14 +600,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@conventional-changelog/template@npm:1.2.1":
-  version: 1.2.1
-  resolution: "@conventional-changelog/template@npm:1.2.1"
-  checksum: 10c0/5a391c5fa8f740d892aac8d5ee14e255625d6c1938e6c3c04c104129a58b5baff3c9c04592744ba0dbbbce7b421ca906af378f194b10d7803c4906b23028e0b4
-  languageName: node
-  linkType: hard
-
-"@conventional-changelog/template@npm:^1.3.0, @conventional-changelog/template@npm:^1.4.0":
+"@conventional-changelog/template@npm:1.4.0, @conventional-changelog/template@npm:^1.3.0, @conventional-changelog/template@npm:^1.4.0":
   version: 1.4.0
   resolution: "@conventional-changelog/template@npm:1.4.0"
   checksum: 10c0/052ac38b43f67b2572d101ced1dee2691a2ac3828cbc1041738cf1646b956ff0fb3e87258ec59f46eb2c3fcc9a68bb89f90b8dcb1e354880f2c71d8f5ef3a021
@@ -1565,11 +1558,11 @@ __metadata:
   linkType: hard
 
 "@types/node@npm:*":
-  version: 26.6.4
-  resolution: "@types/node@npm:26.6.4"
+  version: 26.6.5
+  resolution: "@types/node@npm:26.6.5"
   dependencies:
     undici-types: "npm:~8.9.0"
-  checksum: 10c0/094e7362df9200ba4c2da09131ca3b5d1aa51535a268a24e4ee2546d9c5a323d1d30cbdaaaa3db7ef8b2387572d1f9edabb11538ab7a09d3bca33ae5cddc2b1b
+  checksum: 10c0/4f791f69466ace7842c09e7bef96cb1ddbb65cf3db916ef7e84f0e2b2a17220b6b816dc7539d01520cadfb17ed7169b8214910900493e0a83be8bc7d124ec20a
   languageName: node
   linkType: hard
 
@@ -2172,10 +2165,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"chalk@npm:^6.0.0":
-  version: 6.0.0
-  resolution: "chalk@npm:6.0.0"
-  checksum: 10c0/47fd9028aa66fa532295525fe3ac5aec5e467e0d86847d4b5f6e01f9c9bb70b6fd1edca79cddc78a0f31a357baa65cc752d30c6557d025904207d113c82d8962
+"chalk@npm:^6.0.1":
+  version: 6.0.1
+  resolution: "chalk@npm:6.0.1"
+  checksum: 10c0/4c58238fa874f531b5201bf99ebd374742be31f8e306c7783d930856aec305f2dea3e07531a8805b2a7ba92807296e39ced52e9f673703e0264d96e83998a429
   languageName: node
   linkType: hard
 
@@ -2291,12 +2284,12 @@ __metadata:
   linkType: hard
 
 "commit-and-tag-version@npm:^13":
-  version: 13.2.2
-  resolution: "commit-and-tag-version@npm:13.2.2"
+  version: 13.3.0
+  resolution: "commit-and-tag-version@npm:13.3.0"
   dependencies:
     "@conventional-changelog/git-client": "npm:3.1.0"
-    "@conventional-changelog/template": "npm:1.2.1"
-    chalk: "npm:^6.0.0"
+    "@conventional-changelog/template": "npm:1.4.0"
+    chalk: "npm:^6.0.1"
     conventional-changelog: "npm:8.1.0"
     conventional-changelog-config-spec: "npm:2.1.0"
     conventional-changelog-conventionalcommits: "npm:10.4.0"
@@ -2312,7 +2305,7 @@ __metadata:
     yargs: "npm:^17.7.2"
   bin:
     commit-and-tag-version: bin/cli.js
-  checksum: 10c0/32ecfc2667a9b535aea6f0c2172e22119c553405cb6e6e7341d4d52414f4da9e57fa5c839fa4e460d950838a661f5399e658d9a1d6c2200c8b9a12a7efa39cf8
+  checksum: 10c0/b39869b3c3044efef899f32f141a8924099571fefa1c279fc72c18c4e315283c0bbf839f72402c03bd60b0304652193914a15c960c5631df9b475351b29428e4
   languageName: node
   linkType: hard
 
@@ -3009,7 +3002,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"handlebars@npm:^4.7.9":
+"handlebars@npm:^4.7.10":
   version: 4.7.10
   resolution: "handlebars@npm:4.7.10"
   dependencies:
@@ -3889,7 +3882,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"jsii-rosetta@npm:^5.9.69":
+"jsii-rosetta@npm:^5.9.70":
   version: 5.9.70
   resolution: "jsii-rosetta@npm:5.9.70"
   dependencies:
@@ -3935,8 +3928,8 @@ __metadata:
   linkType: hard
 
 "jsii@npm:~5.9.1":
-  version: 5.9.55
-  resolution: "jsii@npm:5.9.55"
+  version: 5.9.56
+  resolution: "jsii@npm:5.9.56"
   dependencies:
     "@jsii/check-node": "npm:1.141.0"
     "@jsii/spec": "npm:1.141.0"
@@ -3952,7 +3945,7 @@ __metadata:
     yargs: "npm:^17.7.3"
   bin:
     jsii: bin/jsii
-  checksum: 10c0/528524eda1981d20e6cdd8f6afed50492d360bc5d4ea6862cd2ef3a42906509faacd4bb2b835542e674fe518ee8cacd8744ab215a80e5ddd10db3f9eb27cd3a9
+  checksum: 10c0/6cc6bc41d5f76c162f1cc0aa064634fcfd1489945a594bfc6bb367e2059bafd400f5d20b29c1d3cd314d60725407c98153b7f53e18a11da8d9e4b6e4e3c857c7
   languageName: node
   linkType: hard
 
@@ -4633,7 +4626,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"prettier@npm:^3.9.9":
+"prettier@npm:^3.9.10":
   version: 3.9.10
   resolution: "prettier@npm:3.9.10"
   bin:
@@ -5149,13 +5142,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ts-jest@npm:^29.4.14":
-  version: 29.4.14
-  resolution: "ts-jest@npm:29.4.14"
+"ts-jest@npm:^29.4.15":
+  version: 29.4.15
+  resolution: "ts-jest@npm:29.4.15"
   dependencies:
     bs-logger: "npm:^0.2.6"
     fast-json-stable-stringify: "npm:^2.1.0"
-    handlebars: "npm:^4.7.9"
+    handlebars: "npm:^4.7.10"
     json5: "npm:^2.2.3"
     lodash.memoize: "npm:^4.1.2"
     make-error: "npm:^1.3.6"
@@ -5185,7 +5178,7 @@ __metadata:
       optional: true
   bin:
     ts-jest: cli.js
-  checksum: 10c0/58780804871e5752d7f42e69a38ea0716d0a6330272f3a253cf10dbf8c59390f64f2da6fff3d93dcb1bc514d8fa5d02963d8ef6d062fdfa96113b3aad0fd9331
+  checksum: 10c0/99f8f71c0ee07adc036cf8917eadb29a2a5e002ed695e568c464a51661352a042bf69539d29a3e2c43773fc4e7525d47eae6dfabef45277b3a85a6d2a28a1071
   languageName: node
   linkType: hard
 
