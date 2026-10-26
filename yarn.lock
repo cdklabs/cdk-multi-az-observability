@@ -19,13 +19,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@aws-cdk/aws-service-spec@npm:0.1.217":
-  version: 0.1.217
-  resolution: "@aws-cdk/aws-service-spec@npm:0.1.217"
+"@aws-cdk/aws-service-spec@npm:0.1.221":
+  version: 0.1.221
+  resolution: "@aws-cdk/aws-service-spec@npm:0.1.221"
   dependencies:
-    "@aws-cdk/service-spec-types": "npm:^0.0.283"
+    "@aws-cdk/service-spec-types": "npm:^0.0.287"
     "@cdklabs/tskb": "npm:^0.0.4"
-  checksum: 10c0/0ff902550555edac023472ab38a4f13d08b5a0b3724e6764a58cc7f91c51fc4d86fb30c1a7ecfdda08191f14f04f479f457021bd5e740e19a1833a664377330c
+  checksum: 10c0/dd25641ff7e7fda943af95754b42848e39186ac97f27290652ff1ad1439efc99eab051e65ce83a7c3ac9783a167bd01904f8599ea69e679d58bbcf10ce002c34
   languageName: node
   linkType: hard
 
@@ -53,32 +53,32 @@ __metadata:
   linkType: hard
 
 "@aws-cdk/integ-runner@npm:latest":
-  version: 2.205.6
-  resolution: "@aws-cdk/integ-runner@npm:2.205.6"
+  version: 2.205.8
+  resolution: "@aws-cdk/integ-runner@npm:2.205.8"
   dependencies:
-    "@aws-cdk/aws-service-spec": "npm:0.1.217"
+    "@aws-cdk/aws-service-spec": "npm:0.1.221"
   bin:
     integ-runner: bin/integ-runner
-  checksum: 10c0/54e0e09354d6024b19ec95ca36680910198c50afa1e1ddcedf8d066705ce157420b08e3c73c0f084787f3ea7b1209504d4fafb8f0839374a783267aa0e7229b0
+  checksum: 10c0/67f655bf67116e92e471b4c6058e71f97e43870468748cd331759d140e40d0760840b4ed75b32e0e779d4886bf3b4a691a8e6267508fe95880a1ee15fd1a7176
   languageName: node
   linkType: hard
 
 "@aws-cdk/integ-tests-alpha@npm:latest":
-  version: 2.273.0-alpha.0
-  resolution: "@aws-cdk/integ-tests-alpha@npm:2.273.0-alpha.0"
+  version: 2.274.0-alpha.0
+  resolution: "@aws-cdk/integ-tests-alpha@npm:2.274.0-alpha.0"
   peerDependencies:
-    aws-cdk-lib: ^2.273.0
+    aws-cdk-lib: ^2.274.0
     constructs: ^10.5.0
-  checksum: 10c0/391b588b99253397bee08add71d66850f6292bcef96cbcad954ed5d842c8188c740be04981e207dfa1a8aeff50c4300c780fcd77b63ac2639c608bbb003aec39
+  checksum: 10c0/ca87047909e93faafb044ca53a7ed34e53c4c2ce91ac143ba558ac0a616430fdbde9c2a6cb96561b0894f3d7fbcbb2eac7a0c86b564cc3e590a1958e13b73a9a
   languageName: node
   linkType: hard
 
-"@aws-cdk/service-spec-types@npm:^0.0.283":
-  version: 0.0.283
-  resolution: "@aws-cdk/service-spec-types@npm:0.0.283"
+"@aws-cdk/service-spec-types@npm:^0.0.287":
+  version: 0.0.287
+  resolution: "@aws-cdk/service-spec-types@npm:0.0.287"
   dependencies:
     "@cdklabs/tskb": "npm:^0.0.4"
-  checksum: 10c0/b3cda7e2f8cf82e91030b3bc5f5e7f1dec3de7c444c5b0bcf6650fab7643c0d4358ff09b89e5b56f2b9a7e8fbb7c4b371ac28f49ee1e6a283522ec069a30e1a3
+  checksum: 10c0/e8f81f7d6ba00d0e0afba077ce2e81291a9ff7cc8f808096116e36c264857e0245fdaf79e773ffc6f80f8c042ebf4bcc3d369ff46559f946e7a2520990ca4345
   languageName: node
   linkType: hard
 
@@ -540,10 +540,10 @@ __metadata:
     jest: "npm:^30.5.2"
     jest-junit: "npm:^17"
     jsii: "npm:5.9.32"
-    jsii-diff: "npm:^1.141.0"
+    jsii-diff: "npm:^1.142.0"
     jsii-docgen: "npm:^10.5.0"
-    jsii-pacmak: "npm:^1.141.0"
-    jsii-rosetta: "npm:^5.9.70"
+    jsii-pacmak: "npm:^1.142.0"
+    jsii-rosetta: "npm:^5.9.71"
     prettier: "npm:^3.9.10"
     projen: "npm:^0.103.27"
     ts-jest: "npm:^29.4.15"
@@ -2771,9 +2771,9 @@ __metadata:
   linkType: hard
 
 "fast-uri@npm:^3.0.1":
-  version: 3.1.8
-  resolution: "fast-uri@npm:3.1.8"
-  checksum: 10c0/c9c47860a7f9110176d94bb30a02942182f0bfc8d6780e9702f320336dc2dadb83b1d9879cceaf8d4b439642d1ec6d78c317cb808ab155455551bd5d9d7c22d8
+  version: 3.1.9
+  resolution: "fast-uri@npm:3.1.9"
+  checksum: 10c0/052757540d8c0bbc16bb124a45b8f5cb5d0932f9b89f019221ee41cdb3cafc1db44b2e809d6b888b87922af3e5560a863124454e9d9193e1fc955887357b5add
   languageName: node
   linkType: hard
 
@@ -3822,7 +3822,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"jsii-diff@npm:^1.141.0":
+"jsii-diff@npm:^1.142.0":
   version: 1.142.0
   resolution: "jsii-diff@npm:1.142.0"
   dependencies:
@@ -3858,7 +3858,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"jsii-pacmak@npm:^1.141.0":
+"jsii-pacmak@npm:^1.142.0":
   version: 1.142.0
   resolution: "jsii-pacmak@npm:1.142.0"
   dependencies:
@@ -3916,7 +3916,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"jsii-rosetta@npm:^5.9.70":
+"jsii-rosetta@npm:^5.9.71":
   version: 5.9.71
   resolution: "jsii-rosetta@npm:5.9.71"
   dependencies:
