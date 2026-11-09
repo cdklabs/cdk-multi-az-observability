@@ -19,13 +19,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@aws-cdk/aws-service-spec@npm:0.1.223":
-  version: 0.1.223
-  resolution: "@aws-cdk/aws-service-spec@npm:0.1.223"
+"@aws-cdk/aws-service-spec@npm:0.1.226":
+  version: 0.1.226
+  resolution: "@aws-cdk/aws-service-spec@npm:0.1.226"
   dependencies:
-    "@aws-cdk/service-spec-types": "npm:^0.0.289"
+    "@aws-cdk/service-spec-types": "npm:^0.0.292"
     "@cdklabs/tskb": "npm:^0.0.4"
-  checksum: 10c0/6a101352cd5a78f3619ee4fa2fb0fd00df4928e23191f744d68fd85b6240cfc7aedca029e1b6dacd3e86e087a410b9137a4af461af91bdef9af8d8b74a2795f5
+  checksum: 10c0/09423898a8e5694c392c1c773c05dbdc6f73fb1665fc7dc980917fbdf16b8b67e4a5bdf47d69dfabf5528caabd05d690fcb166803f7c48630a0e7c7a7763e293
   languageName: node
   linkType: hard
 
@@ -53,13 +53,13 @@ __metadata:
   linkType: hard
 
 "@aws-cdk/integ-runner@npm:latest":
-  version: 2.206.0
-  resolution: "@aws-cdk/integ-runner@npm:2.206.0"
+  version: 2.206.1
+  resolution: "@aws-cdk/integ-runner@npm:2.206.1"
   dependencies:
-    "@aws-cdk/aws-service-spec": "npm:0.1.223"
+    "@aws-cdk/aws-service-spec": "npm:0.1.226"
   bin:
     integ-runner: bin/integ-runner
-  checksum: 10c0/b39cb3c2156ad8734e12736a37020cba78dc6c54e0a8f0b46307fcbaf561cc53d0f7edec2798a2f770fd2a734f9ff23eea950a3da5667fb609b93292396c5e1c
+  checksum: 10c0/27dd6b4a0f485a700a56ba80b320a1104ded6ccf578c27f3eb74332cda28a9700c571db05ebb9a4138560eb72a7d133a35ca6ba071604c3c7772cedc492b7981
   languageName: node
   linkType: hard
 
@@ -73,12 +73,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@aws-cdk/service-spec-types@npm:^0.0.289":
-  version: 0.0.289
-  resolution: "@aws-cdk/service-spec-types@npm:0.0.289"
+"@aws-cdk/service-spec-types@npm:^0.0.292":
+  version: 0.0.292
+  resolution: "@aws-cdk/service-spec-types@npm:0.0.292"
   dependencies:
     "@cdklabs/tskb": "npm:^0.0.4"
-  checksum: 10c0/66c5a692a0596a052e14df446e9249ad2902ea0f961eb52a9b9303e32f8e74e1f235d5c56f8adef9d30e12ca3a4374105ae39b4ae2b02838722b6cc3b726685f
+  checksum: 10c0/6e26c6467b9a92be488f7cffcd6a07dc6321b791187837340238aeda12a795a42e731e6846188bea99e0951ba144d0fc9e71b7d08e8d4e2311e2206ffbe3c318
   languageName: node
   linkType: hard
 
@@ -4088,13 +4088,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"lodash.truncate@npm:^4.4.2":
-  version: 4.4.2
-  resolution: "lodash.truncate@npm:4.4.2"
-  checksum: 10c0/4e870d54e8a6c86c8687e057cec4069d2e941446ccab7f40b4d9555fa5872d917d0b6aa73bece7765500a3123f1723bcdba9ae881b679ef120bba9e1a0b0ed70
-  languageName: node
-  linkType: hard
-
 "log4js@npm:^6.9.1":
   version: 6.9.1
   resolution: "log4js@npm:6.9.1"
@@ -4815,12 +4808,21 @@ __metadata:
   languageName: node
   linkType: hard
 
-"semver@npm:^7.5.2, semver@npm:^7.8.0, semver@npm:^7.8.5":
+"semver@npm:^7.5.2, semver@npm:^7.8.5":
   version: 7.8.5
   resolution: "semver@npm:7.8.5"
   bin:
     semver: bin/semver.js
   checksum: 10c0/b1f3127a5be8125a94f37188b361c212466c292c6910adce3ec106cff5dc211ccaedc4739c11bb70fda59d6fc1f040a9bca289f4e093451521a2372e5231fe0c
+  languageName: node
+  linkType: hard
+
+"semver@npm:^7.8.0":
+  version: 7.8.6
+  resolution: "semver@npm:7.8.6"
+  bin:
+    semver: bin/semver.js
+  checksum: 10c0/bf0a4d16eb067e5391323649e46b4a268644d7f8ee88e37c7668d35e861ec145b6e7df576d898007fc0d9a2cedcbc33f71460aa3bbea18eedfa5af58c064d7fe
   languageName: node
   linkType: hard
 
@@ -5087,15 +5089,14 @@ __metadata:
   linkType: hard
 
 "table@npm:^6.9.0":
-  version: 6.9.0
-  resolution: "table@npm:6.9.0"
+  version: 6.10.1
+  resolution: "table@npm:6.10.1"
   dependencies:
     ajv: "npm:^8.0.1"
-    lodash.truncate: "npm:^4.4.2"
     slice-ansi: "npm:^4.0.0"
     string-width: "npm:^4.2.3"
     strip-ansi: "npm:^6.0.1"
-  checksum: 10c0/35646185712bb65985fbae5975dda46696325844b78735f95faefae83e86df0a265277819a3e67d189de6e858c509b54e66ca3958ffd51bde56ef1118d455bf4
+  checksum: 10c0/0aa3cd90766294e6f31676009e1fb2fa80249f803ac8f314ffd8c5c6db3fe888261fe7cefa21dc5c017eb2dbf3f9bc8cea1ee59e8cab855ea9af16ffed0f8d46
   languageName: node
   linkType: hard
 
