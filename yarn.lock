@@ -3822,8 +3822,8 @@ __metadata:
   linkType: hard
 
 "jsii-docgen@npm:^10.5.0":
-  version: 10.12.8
-  resolution: "jsii-docgen@npm:10.12.8"
+  version: 10.12.9
+  resolution: "jsii-docgen@npm:10.12.9"
   dependencies:
     "@jsii/spec": "npm:^1.142.0"
     case: "npm:^1.6.3"
@@ -3831,13 +3831,13 @@ __metadata:
     fs-extra: "npm:^10.1.0"
     jsii-reflect: "npm:^1.142.0"
     json-stream-stringify: "npm:^3.1.7"
-    semver: "npm:^7.8.5"
+    semver: "npm:^7.8.6"
     yargs: "npm:^16.2.2"
   peerDependencies:
     jsii-rosetta: ^1.85.0 || ~5.0.14 || ~5.1.2 || ~5.2.0 || ~5.3.0 || ~5.4.0 || ~5.5.0 || ~5.6.0 || ~5.7.0 || ~5.8.0 || ~5.9.1 || ~6.0.0
   bin:
     jsii-docgen: bin/jsii-docgen
-  checksum: 10c0/aa3e642e51d1407ecd4846f795b2b0e8fb0e21beea8d763f8e4c47a02c5d13d21b41cee18ca6bf82fc76ad1d6a0156a91b5f5a41ff7cca6fcf7e2e1da405b6c2
+  checksum: 10c0/40b7d7d614ce18d6977df63473e39549b6a2062aad509f69b4bcc2425c6a27a6ff01a5c2db7ec7f9174ad2b3c294a24b712e7a40270edc6dddd36246a4466b44
   languageName: node
   linkType: hard
 
@@ -4817,7 +4817,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"semver@npm:^7.8.0":
+"semver@npm:^7.8.0, semver@npm:^7.8.6":
   version: 7.8.6
   resolution: "semver@npm:7.8.6"
   bin:
