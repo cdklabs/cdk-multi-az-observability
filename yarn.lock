@@ -3883,8 +3883,8 @@ __metadata:
   linkType: hard
 
 "jsii-rosetta@npm:^5.9.73":
-  version: 5.9.73
-  resolution: "jsii-rosetta@npm:5.9.73"
+  version: 5.9.74
+  resolution: "jsii-rosetta@npm:5.9.74"
   dependencies:
     "@jsii/check-node": "npm:^1.142.0"
     "@jsii/spec": "npm:^1.142.0"
@@ -3895,13 +3895,13 @@ __metadata:
     jsii: "npm:~5.9.1"
     semver: "npm:^7.8.6"
     semver-intersect: "npm:^1.5.0"
-    stream-json: "npm:^3.8.0"
+    stream-json: "npm:^3.9.0"
     typescript: "npm:~5.9"
     workerpool: "npm:^6.5.1"
     yargs: "npm:^17.7.3"
   bin:
     jsii-rosetta: bin/jsii-rosetta
-  checksum: 10c0/c90946ff6cce149f01e2253be1e2e525468700f473f71ca26c87bb34c743911725f5993e5ce6a6157192182239f4a520b13afb4539ab4af248bca3d526e39d53
+  checksum: 10c0/e006d905835ff467d34e29aa3a5d95d6974bb856a5c7c976f760f58bbef874590ebe9e5a6af5847dad9bc1d79bb1020eb0e2602dcf8645013b98c28e7894a428
   languageName: node
   linkType: hard
 
@@ -4961,7 +4961,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"stream-json@npm:^3.8.0":
+"stream-json@npm:^3.9.0":
   version: 3.9.0
   resolution: "stream-json@npm:3.9.0"
   dependencies:
