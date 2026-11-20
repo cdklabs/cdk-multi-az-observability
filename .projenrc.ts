@@ -23,7 +23,7 @@ const project = new CdklabsConstructLibrary ({
       nodeLinker: javascript.YarnNodeLinker.NODE_MODULES,
     },
   },
-  
+
   name: '@cdklabs/multi-az-observability',
   devDeps: [
     'cdklabs-projen-project-types@^0.3.16',
@@ -58,19 +58,14 @@ const project = new CdklabsConstructLibrary ({
   projenrcTs: true,
   description:
     'A CDK construct for implementing multi-AZ observability to detect single AZ impairments',
-  dependabot: true,
-  dependabotOptions: {
-    labels: [
-      "auto-approve",
-      "auto-merge"
-    ]
-  },
   buildWorkflow: true,
-  depsUpgrade: true,
   release: true,
   npmProvenance: false,
   releaseToNpm: true,
   majorVersion: 0,
+
+  // Gets configured in the base task already and this conflicts
+  // depsUpgrade: true,
   depsUpgradeOptions: {
     workflowOptions: {
       labels: ['auto-approve', 'auto-merge'],
