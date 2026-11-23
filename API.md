@@ -4,7 +4,7 @@
 
 ### AvailabilityZoneMapper <a name="AvailabilityZoneMapper" id="@cdklabs/multi-az-observability.AvailabilityZoneMapper"></a>
 
-- *Implements:* <a href="#@cdklabs/multi-az-observability.IAvailabilityZoneMapper">IAvailabilityZoneMapper</a>
+- *Implements:* constructs.IConstruct, constructs.IDependable, <a href="#@cdklabs/multi-az-observability.IAvailabilityZoneMapper">IAvailabilityZoneMapper</a>
 
 A construct that allows you to map AZ names to ids and back.
 
@@ -302,7 +302,7 @@ The custom resource that can be referenced to use Fn::GetAtt functions on to ret
 
 ### BasicServiceMultiAZObservability <a name="BasicServiceMultiAZObservability" id="@cdklabs/multi-az-observability.BasicServiceMultiAZObservability"></a>
 
-- *Implements:* <a href="#@cdklabs/multi-az-observability.IBasicServiceMultiAZObservability">IBasicServiceMultiAZObservability</a>
+- *Implements:* constructs.IConstruct, constructs.IDependable, <a href="#@cdklabs/multi-az-observability.IBasicServiceMultiAZObservability">IBasicServiceMultiAZObservability</a>
 
 Basic observability for a service using metrics from ALBs and NAT Gateways.
 
@@ -532,7 +532,7 @@ The alarms indicating if an AZ is an outlier for NAT GW packet loss and has isol
 
 ### InstrumentedServiceMultiAZObservability <a name="InstrumentedServiceMultiAZObservability" id="@cdklabs/multi-az-observability.InstrumentedServiceMultiAZObservability"></a>
 
-- *Implements:* <a href="#@cdklabs/multi-az-observability.IInstrumentedServiceMultiAZObservability">IInstrumentedServiceMultiAZObservability</a>
+- *Implements:* constructs.IConstruct, constructs.IDependable, <a href="#@cdklabs/multi-az-observability.IInstrumentedServiceMultiAZObservability">IInstrumentedServiceMultiAZObservability</a>
 
 An service that implements its own instrumentation to record availability and latency metrics that can be used to create alarms, rules, and dashboards from.
 
@@ -3673,6 +3673,8 @@ The canary latency metric details.
 
 ### CanaryTestAvailabilityMetricsOverride <a name="CanaryTestAvailabilityMetricsOverride" id="@cdklabs/multi-az-observability.CanaryTestAvailabilityMetricsOverride"></a>
 
+- *Implements:* <a href="#@cdklabs/multi-az-observability.ICanaryTestMetricsOverride">ICanaryTestMetricsOverride</a>
+
 Provides overrides for the default metric settings used for the automatically created canary tests.
 
 #### Initializers <a name="Initializers" id="@cdklabs/multi-az-observability.CanaryTestAvailabilityMetricsOverride.Initializer"></a>
@@ -3784,6 +3786,8 @@ The threshold for alarms associated with availability success metrics, for examp
 
 
 ### CanaryTestLatencyMetricsOverride <a name="CanaryTestLatencyMetricsOverride" id="@cdklabs/multi-az-observability.CanaryTestLatencyMetricsOverride"></a>
+
+- *Implements:* <a href="#@cdklabs/multi-az-observability.ICanaryTestMetricsOverride">ICanaryTestMetricsOverride</a>
 
 Provides overrides for the default metric settings used for the automatically created canary tests.
 
@@ -4428,7 +4432,7 @@ The server side details for contributor insights rules.
 
 ### OperationAvailabilityMetricDetails <a name="OperationAvailabilityMetricDetails" id="@cdklabs/multi-az-observability.OperationAvailabilityMetricDetails"></a>
 
-- *Implements:* <a href="#@cdklabs/multi-az-observability.IOperationAvailabilityMetricDetails">IOperationAvailabilityMetricDetails</a>
+- *Implements:* <a href="#@cdklabs/multi-az-observability.IOperationMetricDetails">IOperationMetricDetails</a>, <a href="#@cdklabs/multi-az-observability.IOperationAvailabilityMetricDetails">IOperationAvailabilityMetricDetails</a>
 
 Availability metric details for an operation.
 
@@ -4661,7 +4665,7 @@ The threshold for alarms associated with availability success metrics, for examp
 
 ### OperationLatencyMetricDetails <a name="OperationLatencyMetricDetails" id="@cdklabs/multi-az-observability.OperationLatencyMetricDetails"></a>
 
-- *Implements:* <a href="#@cdklabs/multi-az-observability.IOperationLatencyMetricDetails">IOperationLatencyMetricDetails</a>
+- *Implements:* <a href="#@cdklabs/multi-az-observability.IOperationMetricDetails">IOperationMetricDetails</a>, <a href="#@cdklabs/multi-az-observability.IOperationLatencyMetricDetails">IOperationLatencyMetricDetails</a>
 
 Latency metric details for an operation.
 
@@ -5325,7 +5329,7 @@ The target groups registered with the load balancer.
 
 ### ServiceAvailabilityMetricDetails <a name="ServiceAvailabilityMetricDetails" id="@cdklabs/multi-az-observability.ServiceAvailabilityMetricDetails"></a>
 
-- *Implements:* <a href="#@cdklabs/multi-az-observability.IServiceAvailabilityMetricDetails">IServiceAvailabilityMetricDetails</a>
+- *Implements:* <a href="#@cdklabs/multi-az-observability.IServiceMetricDetails">IServiceMetricDetails</a>, <a href="#@cdklabs/multi-az-observability.IServiceAvailabilityMetricDetails">IServiceAvailabilityMetricDetails</a>
 
 Default availability metric details for a service.
 
@@ -5525,7 +5529,7 @@ The threshold for alarms associated with availability success metrics, for examp
 
 ### ServiceLatencyMetricDetails <a name="ServiceLatencyMetricDetails" id="@cdklabs/multi-az-observability.ServiceLatencyMetricDetails"></a>
 
-- *Implements:* <a href="#@cdklabs/multi-az-observability.IServiceLatencyMetricDetails">IServiceLatencyMetricDetails</a>
+- *Implements:* <a href="#@cdklabs/multi-az-observability.IServiceMetricDetails">IServiceMetricDetails</a>, <a href="#@cdklabs/multi-az-observability.IServiceLatencyMetricDetails">IServiceLatencyMetricDetails</a>
 
 Default latency metric details for a service.
 
